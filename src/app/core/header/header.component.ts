@@ -12,4 +12,7 @@ export class HeaderComponent implements OnInit {
   ngOnInit() {
   }
 
+  public userIsAdmin(): boolean {
+    return false;
+  }
 }

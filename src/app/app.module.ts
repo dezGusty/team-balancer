@@ -9,6 +9,7 @@ import { NextMatchComponent } from './matches/next-match/next-match.component';
 import { PlayersComponent } from './players/players.component';
 import { PlayerComponent } from './players/player/player.component';
 import { PlayerEditComponent } from './players/player-edit/player-edit.component';
+import { PlayerAddComponent } from './players/player-add/player-add.component';
 
 @NgModule({
   declarations: [
@@ -19,7 +20,8 @@ import { PlayerEditComponent } from './players/player-edit/player-edit.component
     NextMatchComponent,
     PlayersComponent,
     PlayerComponent,
-    PlayerEditComponent
+    PlayerEditComponent,
+    PlayerAddComponent
   ],
   imports: [
     BrowserModule

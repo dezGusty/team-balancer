@@ -14,7 +14,8 @@
         <a class="nav-link" href="#">Players</a>
       </li>
       <li class="nav-item">
-        <a class="nav-link disabled" href="#">Admin</a>
+        <a class="nav-link"
+        [ngClass]="{disabled: !userIsAdmin()}" href="#">Admin</a>
       </li>
     </ul>
   </div>

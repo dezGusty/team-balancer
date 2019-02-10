@@ -8,7 +8,10 @@ import { Component, OnInit } from '@angular/core';
 export class PlayerComponent implements OnInit {
   playerId = -1;
   playerName = 'anonymous';
-  constructor() { }
+  constructor(public aPlayerId?: number, public aPlayerName?: string) {
+    this.playerId = aPlayerId;
+    this.playerName = aPlayerName;
+   }
 
   ngOnInit() {
   }
