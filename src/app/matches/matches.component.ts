@@ -1,4 +1,5 @@
 import { Component, OnInit } from '@angular/core';
+import { Match } from '../shared/match.model';
 
 @Component({
   selector: 'app-matches',
@@ -6,7 +7,10 @@ import { Component, OnInit } from '@angular/core';
   styleUrls: ['./matches.component.css']
 })
 export class MatchesComponent implements OnInit {
-
+  matches: Match[] = [
+    new Match(new Date('2019-02-07')),
+    new Match(new Date('2019-02-14')),
+  ];
   constructor() { }
 
   ngOnInit() {

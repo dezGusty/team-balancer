@@ -10,6 +10,7 @@ import { PlayersComponent } from './players/players.component';
 import { PlayerComponent } from './players/player/player.component';
 import { PlayerEditComponent } from './players/player-edit/player-edit.component';
 import { PlayerAddComponent } from './players/player-add/player-add.component';
+import { PreviousMatchesComponent } from './matches/previous-matches/previous-matches.component';
 
 @NgModule({
   declarations: [
@@ -21,7 +22,8 @@ import { PlayerAddComponent } from './players/player-add/player-add.component';
     PlayersComponent,
     PlayerComponent,
     PlayerEditComponent,
-    PlayerAddComponent
+    PlayerAddComponent,
+    PreviousMatchesComponent
   ],
   imports: [
     BrowserModule

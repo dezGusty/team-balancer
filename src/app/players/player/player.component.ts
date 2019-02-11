@@ -1,4 +1,5 @@
 import { Component, OnInit } from '@angular/core';
+import { Player } from 'src/app/shared/player.model';
 
 @Component({
   selector: 'app-player',
@@ -6,12 +7,9 @@ import { Component, OnInit } from '@angular/core';
   styleUrls: ['./player.component.css']
 })
 export class PlayerComponent implements OnInit {
-  playerId = -1;
-  playerName = 'anonymous';
-  constructor(public aPlayerId?: number, public aPlayerName?: string) {
-    this.playerId = aPlayerId;
-    this.playerName = aPlayerName;
-   }
+  playerInfo: Player;
+  constructor() {
+  }
 
   ngOnInit() {
   }

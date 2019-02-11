@@ -1,11 +1,12 @@
 <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
-  <a href="#" class="navbar-brand">TFL</a>
+  <a href="#" class="navbar-brand">tfl</a>
 
-  <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarTogglerTFL" aria-controls="navbarTogglerTFL" aria-expanded="false" aria-label="Toggle navigation">
+  <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarTogglerTFL"
+    aria-controls="navbarTogglerTFL" aria-expanded="false" aria-label="Toggle navigation">
     <span class="navbar-toggler-icon"></span>
   </button>
 
-  <div class="collapse navbar-collapse" id="navbarTogglerTFL">
+  <div class="navbar-default" id="navbarTogglerTFL">
     <ul class="navbar-nav mr-auto mt-2 mt-lg-0">
       <li class="nav-item active">
         <a class="nav-link" href="#">Matches<span class="sr-only">(current)</span></a>
@@ -14,9 +15,12 @@
         <a class="nav-link" href="#">Players</a>
       </li>
       <li class="nav-item">
-        <a class="nav-link"
-        [ngClass]="{disabled: !userIsAdmin()}" href="#">Admin</a>
+        <a class="nav-link" [ngClass]="{disabled: !userIsAdmin()}" href="#">Admin</a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link" href="#">Account</a>
       </li>
     </ul>
+
   </div>
 </nav>
