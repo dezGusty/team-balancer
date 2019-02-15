@@ -1,9 +1,14 @@
 <!--The content below is only a placeholder and can be replaced.-->
-<app-core></app-core>
-<h3>
-  <div class="md-2">
-    Welcome to {{ title }}!
-  </div>
-</h3>
-<app-matches></app-matches>
-<app-players></app-players>
+<app-header (screenSelected)="onNavigate($event)"></app-header>
+<div [ngSwitch]='selectedScreen'>
+  <app-players *ngSwitchCase="'players'"></app-players>
+  <app-matches *ngSwitchCase="'matches'"></app-matches>
+  <app-next-match *ngSwitchCase="'next-match'"></app-next-match>
+  <h3 *ngSwitchDefault>
+    <div class="md-2">
+      Welcome to {{ title }}!
+    </div>
+  </h3>
+</div>
+<!-- <app-matches></app-matches>
+<app-players></app-players> -->

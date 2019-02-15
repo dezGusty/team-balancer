@@ -1,5 +1,6 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, Input } from '@angular/core';
 import { Player } from 'src/app/shared/player.model';
+import { PlayersService } from 'src/app/shared/players.service';
 
 @Component({
   selector: 'app-player',
@@ -7,11 +8,17 @@ import { Player } from 'src/app/shared/player.model';
   styleUrls: ['./player.component.css']
 })
 export class PlayerComponent implements OnInit {
-  playerInfo: Player;
-  constructor() {
+  @Input() player: Player;
+  @Input() isCurrentlySelected: boolean;
+
+  constructor(private playersSvc: PlayersService) {
   }
 
   ngOnInit() {
   }
 
+
+  onSelected() {
+    this.playersSvc.playerSelected.emit(this.player);
+  }
 }

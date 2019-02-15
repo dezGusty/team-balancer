@@ -2,8 +2,7 @@ import { BrowserModule } from '@angular/platform-browser';
 import { NgModule } from '@angular/core';
 
 import { AppComponent } from './app.component';
-import { CoreComponent } from './core/core.component';
-import { HeaderComponent } from './core/header/header.component';
+import { HeaderComponent } from './header/header.component';
 import { MatchesComponent } from './matches/matches.component';
 import { NextMatchComponent } from './matches/next-match/next-match.component';
 import { PlayersComponent } from './players/players.component';
@@ -15,7 +14,6 @@ import { PreviousMatchesComponent } from './matches/previous-matches/previous-ma
 @NgModule({
   declarations: [
     AppComponent,
-    CoreComponent,
     HeaderComponent,
     MatchesComponent,
     NextMatchComponent,

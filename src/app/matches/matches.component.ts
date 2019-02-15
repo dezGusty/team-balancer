@@ -11,9 +11,11 @@ export class MatchesComponent implements OnInit {
     new Match(new Date('2019-02-07')),
     new Match(new Date('2019-02-14')),
   ];
+  private nextMatchCreated: boolean;
   constructor() { }
 
   ngOnInit() {
+    this.nextMatchCreated = true;
   }
 
 }

@@ -1,24 +1,15 @@
 <!-- <div class="row">
-    <div class="col-xs-6">
-        <p>{{playerInfo.name}} (with ID: {{playerInfo.id}})</p>
-    </div>
-</div>
-<div class="row">
-    <div class="col-xs-6">
-        Current rating: {{ playerInfo.rating }}
-    </div>
-</div>
-
-<div class="row">
-    <div class="col-xs-6">
-        <div class="btn-group">
-            <button class="btn btn-primary dropdown-toggle">
-                Actions... <span class="caret"></span>
-            </button>
-            <ul class="dropdown-menu">
-                <li><a href="#">Add to match</a></li>
-                <li><a href="#">Edit player</a></li>
-            </ul>
-        </div>
-    </div>
+    <div class="col-md-12"> -->
+<a href="#" class="list-group-item list-group-item-action" (click)="onSelected()"
+    [ngClass]="{active: isCurrentlySelected}">
+    <span class="col-sm-3">
+        <!-- <p>{{ player.id }}</p> -->
+        <span class="badge badge-primary badge-pill">{{ player.id }}</span>
+    </span>
+    <span class="col-sm-7">
+        {{ player.name }}
+        {{ player.rating }}
+    </span>
+</a>
+<!-- </div>
 </div> -->

@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { Player } from 'src/app/shared/player.model';
+import { MatchService } from 'src/app/shared/match.service';
 
 @Component({
   selector: 'app-next-match',
@@ -8,12 +9,7 @@ import { Player } from 'src/app/shared/player.model';
 })
 export class NextMatchComponent implements OnInit {
 
-  players: Player[] = [
-    new Player(1, 'johny'),
-    new Player(2, 'gus'),
-    new Player(3, 'iulian')
-  ];
-  constructor() { }
+  constructor(matchesSvc: MatchService) { }
 
   ngOnInit() {
   }

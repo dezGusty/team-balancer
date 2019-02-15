@@ -7,4 +7,9 @@ import { Component } from '@angular/core';
 })
 export class AppComponent {
   title = 'team-balancer';
+  selectedScreen = '';
+
+  onNavigate(screen: string) {
+    this.selectedScreen = screen;
+  }
 }
