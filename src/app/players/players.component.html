@@ -7,15 +7,20 @@
                 <p class="list-group-item-heading">{{ playerItem.name }}</p>
             </div>
         </a> -->
-        <app-player *ngFor='let playerItem of players'
-         [player]="playerItem"
-         [isCurrentlySelected]="playerItem === selectedPlayer"></app-player>
+        <app-player *ngFor='let playerItem of players' [player]="playerItem"
+            [isCurrentlySelected]="playerItem === selectedPlayer"></app-player>
     </div>
     <!-- show the details panel on the right side -->
-    <app-player-edit *ngIf="playerIsSelected();" [player]="selectedPlayer"></app-player-edit>
+    <app-player-details *ngIf="playerIsSelected();" [player]="selectedPlayer"></app-player-details>
 </div>
 <div class="row">
     <div class="col-md-6">
-        <app-player-add *ngIf='canAddPlayers()'></app-player-add>
+        <button class="btn btn-outline-secondary">Add Player</button>
+        <button class="btn btn-outline-secondary" *ngIf="playerIsSelected();">Edit Player</button>
     </div>
 </div>
+<!-- <div class="row">
+    <div class="col-md-6">
+        <app-player-add *ngIf='canAddPlayers()'></app-player-add>
+    </div>
+</div> -->

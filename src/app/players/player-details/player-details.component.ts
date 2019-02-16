@@ -2,11 +2,11 @@ import { Component, OnInit, Input } from '@angular/core';
 import { Player } from 'src/app/shared/player.model';
 
 @Component({
-  selector: 'app-player-edit',
-  templateUrl: './player-edit.component.html',
-  styleUrls: ['./player-edit.component.css']
+  selector: 'app-player-details',
+  templateUrl: './player-details.component.html',
+  styleUrls: ['./player-details.component.css']
 })
-export class PlayerEditComponent implements OnInit {
+export class PlayerDetailsComponent implements OnInit {
   @Input() player: Player;
   constructor() { }
 

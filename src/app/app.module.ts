@@ -7,7 +7,7 @@ import { MatchesComponent } from './matches/matches.component';
 import { NextMatchComponent } from './matches/next-match/next-match.component';
 import { PlayersComponent } from './players/players.component';
 import { PlayerComponent } from './players/player/player.component';
-import { PlayerEditComponent } from './players/player-edit/player-edit.component';
+import { PlayerDetailsComponent } from './players/player-details/player-details.component';
 import { PlayerAddComponent } from './players/player-add/player-add.component';
 import { PreviousMatchesComponent } from './matches/previous-matches/previous-matches.component';
 
@@ -19,7 +19,7 @@ import { PreviousMatchesComponent } from './matches/previous-matches/previous-ma
     NextMatchComponent,
     PlayersComponent,
     PlayerComponent,
-    PlayerEditComponent,
+    PlayerDetailsComponent,
     PlayerAddComponent,
     PreviousMatchesComponent
   ],
