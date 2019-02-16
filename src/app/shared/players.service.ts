@@ -19,6 +19,18 @@ export class PlayersService {
         this.playerList.push(player);
     }
 
+    createDefaultPlayer(): Player {
+        // get the id.
+        const newID = Math.max.apply(
+            Math,
+            this.playerList.map((item) => item.id))
+            + 1;
+
+        const newName = 'new_player_' + Date.now().toFixed() + '_' + newID;
+        const result = new Player(newID, newName);
+
+        return result;
+    }
 
 
 

@@ -1,0 +1,16 @@
+<button class="btn">Add Player</button>
+<form (ngSubmit)="onSubmit()" action="">
+    <div class="form-group">
+        <label for="playerid"></label>
+        <input disabled type="text" id="playerid" class="form-control" ngModel name="playerid">
+    </div>
+    <div class="form-group">
+        <label for="playername"></label>
+        <input type="text" id="playername" class="form-control" ngModel name="playername">
+    </div>
+    <div class="form-group">
+        <label for="playerrating"></label>
+        <input type="text" id="playerrating" class="form-control" ngModel name="playerrating">
+    </div>
+    <button class="btn btn-orimary" type="submit">Ok</button>
+</form>

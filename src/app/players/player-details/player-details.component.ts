@@ -13,4 +13,12 @@ export class PlayerDetailsComponent implements OnInit {
   ngOnInit() {
   }
 
+  public canEditPlayer(): boolean {
+    return true;
+  }
+
+  public onEditPlayerClicked($event): void {
+    console.log('Edit player clicked.', $event);
+  }
+
 }

@@ -1,5 +1,6 @@
 import { BrowserModule } from '@angular/platform-browser';
 import { NgModule } from '@angular/core';
+import { FormsModule } from '@angular/forms';
 
 import { AppComponent } from './app.component';
 import { HeaderComponent } from './header/header.component';
@@ -8,8 +9,9 @@ import { NextMatchComponent } from './matches/next-match/next-match.component';
 import { PlayersComponent } from './players/players.component';
 import { PlayerComponent } from './players/player/player.component';
 import { PlayerDetailsComponent } from './players/player-details/player-details.component';
-import { PlayerAddComponent } from './players/player-add/player-add.component';
+import { PlayerEditComponent } from './players/player-edit/player-edit.component';
 import { PreviousMatchesComponent } from './matches/previous-matches/previous-matches.component';
+import { AboutComponent } from './about/about.component';
 
 @NgModule({
   declarations: [
@@ -20,11 +22,13 @@ import { PreviousMatchesComponent } from './matches/previous-matches/previous-ma
     PlayersComponent,
     PlayerComponent,
     PlayerDetailsComponent,
-    PlayerAddComponent,
-    PreviousMatchesComponent
+    PlayerEditComponent,
+    PreviousMatchesComponent,
+    AboutComponent
   ],
   imports: [
-    BrowserModule
+    BrowserModule,
+    FormsModule
   ],
   providers: [],
   bootstrap: [AppComponent]

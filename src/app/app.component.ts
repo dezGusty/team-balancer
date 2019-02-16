@@ -10,6 +10,7 @@ export class AppComponent {
   selectedScreen = '';
 
   onNavigate(screen: string) {
+    console.log('new screen selected: ' + screen);
     this.selectedScreen = screen;
   }
 }

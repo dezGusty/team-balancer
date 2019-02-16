@@ -11,9 +11,11 @@ import { PlayersService } from '../shared/players.service';
 export class PlayersComponent implements OnInit {
   players: Player[];
   selectedPlayer: Player;
+  editMode: boolean;
 
   constructor(private playersSvc: PlayersService) {
     this.selectedPlayer = null;
+    this.editMode = false;
   }
 
   ngOnInit() {
@@ -33,5 +35,31 @@ export class PlayersComponent implements OnInit {
 
   public playerIsSelected(): boolean {
     return this.selectedPlayer != null;
+  }
+
+  public editDone(): void {
+    console.log('editing done');
+    this.editMode = false;
+  }
+
+
+  public onNewPlayerClicked($event): void {
+    console.log('new player clicked', $event);
+    // double check?
+    if (!this.canAddPlayers()) {
+      return;
+    }
+    this.selectedPlayer = this.playersSvc.createDefaultPlayer();
+    this.playersSvc.addPlayer(
+      this.selectedPlayer
+    );
+    // re-init?
+    this.players = this.playersSvc.getPlayers();
+
+  }
+
+  public onEditPlayerClicked($event): void {
+    console.log('edit player clicked', $event);
+    this.editMode = true;
   }
 }
