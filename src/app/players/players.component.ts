@@ -39,6 +39,18 @@ export class PlayersComponent implements OnInit {
 
   public editDone($event): void {
     console.log('editing done', $event);
+    const changedObject: { saved: boolean, playername: string, playerrating: number } = $event;
+    if (changedObject.saved) {
+      // update the player in the service.
+      const clonedPlayer = { ...this.selectedPlayer };
+      clonedPlayer.name = changedObject.playername;
+      clonedPlayer.rating = changedObject.playerrating;
+
+      if (this.playersSvc.updatePlayer(this.selectedPlayer, clonedPlayer)) {
+        // re-init?
+        this.players = this.playersSvc.getPlayers();
+      }
+    }
     this.editMode = false;
   }
 

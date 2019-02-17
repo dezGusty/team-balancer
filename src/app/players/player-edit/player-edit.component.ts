@@ -11,24 +11,24 @@ import { stringify } from '@angular/core/src/render3/util';
 })
 export class PlayerEditComponent implements OnInit {
   @Input() player: Player;
-  @Output() submitted = new EventEmitter<{ saved: boolean, playername: string, playerrating: string }>();
+  @Output() submitted = new EventEmitter<{ saved: boolean, playername: string, playerrating: number }>();
   constructor() { }
 
   ngOnInit() {
   }
 
   onSubmit(form: NgForm) {
-    const changedObject: { saved: boolean, playername: string, playerrating: string } = form.value;
+    const changedObject: { saved: boolean, playername: string, playerrating: number } = form.value;
     changedObject.saved = true;
     this.submitted.emit(changedObject);
     form.reset();
   }
 
   onCancel($event) {
-    const changedObject: { saved: boolean, playername: string, playerrating: string } = {
+    const changedObject: { saved: boolean, playername: string, playerrating: number } = {
       saved: false,
       playername: '',
-      playerrating: ''
+      playerrating: 0
     };
     this.submitted.emit(changedObject);
   }
