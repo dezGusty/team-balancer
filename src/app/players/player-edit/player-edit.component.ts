@@ -1,5 +1,8 @@
 import { Component, OnInit, Input, Output, EventEmitter } from '@angular/core';
 import { Player } from 'src/app/shared/player.model';
+import { NgForm } from '@angular/forms';
+import { analyzeAndValidateNgModules } from '@angular/compiler';
+import { stringify } from '@angular/core/src/render3/util';
 
 @Component({
   selector: 'app-player-edit',
@@ -8,16 +11,26 @@ import { Player } from 'src/app/shared/player.model';
 })
 export class PlayerEditComponent implements OnInit {
   @Input() player: Player;
-  @Output() submitted = new EventEmitter<string>();
-
+  @Output() submitted = new EventEmitter<{ saved: boolean, playername: string, playerrating: string }>();
   constructor() { }
 
   ngOnInit() {
   }
 
-  onSubmit() {
-    console.log('Form submitted');
-    this.submitted.emit('closed');
+  onSubmit(form: NgForm) {
+    const changedObject: { saved: boolean, playername: string, playerrating: string } = form.value;
+    changedObject.saved = true;
+    this.submitted.emit(changedObject);
+    form.reset();
+  }
+
+  onCancel($event) {
+    const changedObject: { saved: boolean, playername: string, playerrating: string } = {
+      saved: false,
+      playername: '',
+      playerrating: ''
+    };
+    this.submitted.emit(changedObject);
   }
 
 }

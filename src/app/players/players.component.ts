@@ -37,8 +37,8 @@ export class PlayersComponent implements OnInit {
     return this.selectedPlayer != null;
   }
 
-  public editDone(): void {
-    console.log('editing done');
+  public editDone($event): void {
+    console.log('editing done', $event);
     this.editMode = false;
   }
 
