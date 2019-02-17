@@ -12,6 +12,8 @@ import { PlayerDetailsComponent } from './players/player-details/player-details.
 import { PlayerEditComponent } from './players/player-edit/player-edit.component';
 import { PreviousMatchesComponent } from './matches/previous-matches/previous-matches.component';
 import { AboutComponent } from './about/about.component';
+import { MatchService } from './shared/match.service';
+import { PlayersService } from './shared/players.service';
 
 @NgModule({
   declarations: [
@@ -30,7 +32,7 @@ import { AboutComponent } from './about/about.component';
     BrowserModule,
     FormsModule
   ],
-  providers: [],
+  providers: [PlayersService, MatchService],
   bootstrap: [AppComponent]
 })
 export class AppModule { }

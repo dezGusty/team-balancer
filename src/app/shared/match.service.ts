@@ -11,14 +11,16 @@ export class MatchService {
     currentMatchCompleted = new EventEmitter<Match>();
 
     public constructor() {
-        this.nextMatch = null;
+        // this.nextMatch = null;
+        console.log('[temp] creating hardcoded match for feb 21st');
+        this.nextMatch = new Match(new Date(2019, 2, 21));
     }
 
     public getNextMatch(): Match {
         return this.nextMatch;
     }
 
-    public createCurrentMatch(matchDate: Date): void {
+    public createNextMatch(matchDate: Date): void {
         this.nextMatch = new Match(matchDate);
     }
 

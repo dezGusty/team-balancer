@@ -1,14 +1,13 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, OnDestroy } from '@angular/core';
 import { Player } from '../shared/player.model';
 import { PlayersService } from '../shared/players.service';
 
 @Component({
   selector: 'app-players',
   templateUrl: './players.component.html',
-  styleUrls: ['./players.component.css'],
-  providers: [PlayersService]
+  styleUrls: ['./players.component.css']
 })
-export class PlayersComponent implements OnInit {
+export class PlayersComponent implements OnInit, OnDestroy {
   players: Player[];
   selectedPlayer: Player;
   editMode: boolean;
@@ -27,6 +26,10 @@ export class PlayersComponent implements OnInit {
           this.selectedPlayer = player;
         }
       );
+  }
+
+  ngOnDestroy() {
+    this.playersSvc.playerSelected.unsubscribe();
   }
 
   public canAddPlayers(): boolean {
@@ -76,5 +79,13 @@ export class PlayersComponent implements OnInit {
   public onEditPlayerClicked($event): void {
     console.log('edit player clicked', $event);
     this.editMode = true;
+
+    // TODO: replace with service call
+    // in service: startedEditing = new Subject<number>(); // index
+    // in listeners: subscription: Subscription;
+    // on listeners init: sub= playersSvc.startedEditing.subscribe((index: number) => {...})
+    // on destroy: unsubscribe sub
+    // here
+    // this.playerSvc.startedEditing.next(index);
   }
 }

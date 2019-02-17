@@ -7,11 +7,7 @@ import { Match } from '../shared/match.model';
   styleUrls: ['./matches.component.css']
 })
 export class MatchesComponent implements OnInit {
-  matches: Match[] = [
-    new Match(new Date('2019-02-07')),
-    new Match(new Date('2019-02-14')),
-  ];
-  private nextMatchCreated: boolean;
+  public nextMatchCreated: boolean;
   constructor() { }
 
   ngOnInit() {

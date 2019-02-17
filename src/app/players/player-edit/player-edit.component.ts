@@ -1,8 +1,6 @@
 import { Component, OnInit, Input, Output, EventEmitter } from '@angular/core';
 import { Player } from 'src/app/shared/player.model';
 import { NgForm } from '@angular/forms';
-import { analyzeAndValidateNgModules } from '@angular/compiler';
-import { stringify } from '@angular/core/src/render3/util';
 
 @Component({
   selector: 'app-player-edit',
