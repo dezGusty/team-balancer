@@ -49,6 +49,7 @@ export class PlayersComponent implements OnInit {
       if (this.playersSvc.updatePlayer(this.selectedPlayer, clonedPlayer)) {
         // re-init?
         this.players = this.playersSvc.getPlayers();
+        this.selectedPlayer = clonedPlayer;
       }
     }
     this.editMode = false;
@@ -68,6 +69,8 @@ export class PlayersComponent implements OnInit {
     // re-init?
     this.players = this.playersSvc.getPlayers();
 
+    // auto-edit
+    this.editMode = true;
   }
 
   public onEditPlayerClicked($event): void {
