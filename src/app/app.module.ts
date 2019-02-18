@@ -19,6 +19,9 @@ import { PlayerStartComponent } from './players/player-start/player-start.compon
 import { PlayerNewComponent } from './players/player-new/player-new.component';
 import { PlayerFilterPipe } from './matches/player-filter.pipe';
 import { MatchPlayerComponent } from './players/match-player/match-player.component';
+import { SigninComponent } from './auth/signin/signin.component';
+import { SignupComponent } from './auth/signup/signup.component';
+import { AuthService } from './auth/auth.service';
 
 @NgModule({
   declarations: [
@@ -35,14 +38,16 @@ import { MatchPlayerComponent } from './players/match-player/match-player.compon
     PlayerStartComponent,
     PlayerNewComponent,
     PlayerFilterPipe,
-    MatchPlayerComponent
+    MatchPlayerComponent,
+    SigninComponent,
+    SignupComponent
   ],
   imports: [
     BrowserModule,
     FormsModule,
     AppRoutingModule
   ],
-  providers: [PlayersService, MatchService],
+  providers: [PlayersService, MatchService, AuthService],
   bootstrap: [AppComponent]
 })
 export class AppModule { }
