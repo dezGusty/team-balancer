@@ -1,10 +1,16 @@
-<a href="#" class="list-group-item list-group-item-action" (click)="onSelected()"
-    [ngClass]="{active: isCurrentlySelected}">
-    <span class="col-sm-3">
-        <span class="badge badge-primary badge-pill">{{ player.id }}</span>
+<a class="list-group-item list-group-item-action player-card clearfix" (click)="onSelected()"
+    routerLinkActive="active"
+    [routerLink]="[id]">
+    <span class="col-2 border-right player-card-internalid">
+        {{ player.id }}
     </span>
-    <span class="col-sm-7">
+    <span class="col-2">
+        <img src="./../../../assets/default_user_pic.svg" alt="pic" height="19em">
+    </span>
+    <span class="col-auto">
         {{ player.name }}
+    </span>
+    <span class="col-2  float-right">
         {{ player.rating }}
     </span>
 </a>

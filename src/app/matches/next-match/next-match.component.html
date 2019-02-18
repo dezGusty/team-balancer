@@ -1,27 +1,21 @@
 <div *ngIf="matchData; else noMatchYet">
   <div class="row">
-    <div class="col-md-3">
+    <div class="col-md-5">
       Available players...
       <!-- show the list of players on the left side -->
       <div>
-        <app-player *ngFor='let playerItem of players' [player]="playerItem"
-          [isCurrentlySelected]="playerItem === selectedPlayer"
-          ></app-player>
+        <app-player *ngFor='let playerItem of players' [player]="playerItem"></app-player>
       </div>
     </div>
-    <div class="col-md-1">
-      <!-- <button>Add</button> -->
-    </div>
-    <div class="col-md-3">
+    <div class="col-md-5">
       Selected players ...
       <!-- show the list of players on the right side -->
       <div>
         <!-- TODO: move to different component (E.g. app-player-lite). To allow different badges to be selected
         (E.g. organizer, draw winner, backup) -->
-          <app-player *ngFor='let playerItem of matchData.players' [player]="playerItem"
-            [isCurrentlySelected]="playerItem === selectedPlayer"></app-player>
-        </div>
+        <app-player *ngFor='let playerItem of matchData.players' [player]="playerItem"></app-player>
       </div>
+    </div>
   </div>
 </div>
 <ng-template #noMatchYet>

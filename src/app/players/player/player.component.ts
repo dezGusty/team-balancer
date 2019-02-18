@@ -9,7 +9,7 @@ import { PlayersService } from 'src/app/shared/players.service';
 })
 export class PlayerComponent implements OnInit {
   @Input() player: Player;
-  @Input() isCurrentlySelected: boolean;
+  @Input() id: number;
 
   constructor(private playersSvc: PlayersService) {
   }
@@ -19,6 +19,6 @@ export class PlayerComponent implements OnInit {
 
 
   onSelected() {
-    this.playersSvc.playerSelected.emit(this.player);
+    this.playersSvc.playerSelectedEvent.emit(this.player);
   }
 }

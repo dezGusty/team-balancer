@@ -1,6 +1,8 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
 import { Player } from '../shared/player.model';
 import { PlayersService } from '../shared/players.service';
+import { Subscription } from 'rxjs';
+import { Router, ActivatedRoute } from '@angular/router';
 
 @Component({
   selector: 'app-players',
@@ -11,25 +13,43 @@ export class PlayersComponent implements OnInit, OnDestroy {
   players: Player[];
   selectedPlayer: Player;
   editMode: boolean;
+  playerSelectSubscription: Subscription;
+  playerDataChangeSubscription: Subscription;
 
-  constructor(private playersSvc: PlayersService) {
+  constructor(private playersSvc: PlayersService, private router: Router, private route: ActivatedRoute) {
     this.selectedPlayer = null;
     this.editMode = false;
   }
 
   ngOnInit() {
     this.players = this.playersSvc.getPlayers();
-    this.playersSvc.playerSelected
+    this.playerSelectSubscription = this.playersSvc.playerSelectedEvent
       .subscribe(
         (player: Player) => {
           console.log('selected: ' + player.name);
           this.selectedPlayer = player;
         }
       );
+
+    this.playerDataChangeSubscription = this.playersSvc.playerDataChangeEvent
+      .subscribe(
+        (player: Player) => {
+          console.log('player change');
+          if (player == null) {
+            // reload all
+            this.players = this.playersSvc.getPlayers();
+          } else {
+            // reload single player only.
+          }
+          // re-init?
+        }
+
+      )
   }
 
   ngOnDestroy() {
-    this.playersSvc.playerSelected.unsubscribe();
+    this.playerSelectSubscription.unsubscribe();
+    this.playerDataChangeSubscription.unsubscribe();
   }
 
   public canAddPlayers(): boolean {
@@ -61,24 +81,27 @@ export class PlayersComponent implements OnInit, OnDestroy {
 
   public onNewPlayerClicked($event): void {
     console.log('new player clicked', $event);
-    // double check?
-    if (!this.canAddPlayers()) {
-      return;
-    }
-    this.selectedPlayer = this.playersSvc.createDefaultPlayer();
-    this.playersSvc.addPlayer(
-      this.selectedPlayer
-    );
-    // re-init?
-    this.players = this.playersSvc.getPlayers();
+    this.router.navigate(['new'], { relativeTo: this.route });
 
-    // auto-edit
-    this.editMode = true;
+    // // double check?
+    // if (!this.canAddPlayers()) {
+    //   return;
+    // }
+    // this.selectedPlayer = this.playersSvc.createDefaultPlayer();
+    // this.playersSvc.addPlayer(
+    //   this.selectedPlayer
+    // );
+    // // re-init?
+    // this.players = this.playersSvc.getPlayers();
+
+    // // auto-edit
+    // this.editMode = true;
   }
 
   public onEditPlayerClicked($event): void {
     console.log('edit player clicked', $event);
-    this.editMode = true;
+    // this.editMode = true;
+    this.router.navigate([this.selectedPlayer.id, 'edit'], { relativeTo: this.route });
 
     // TODO: replace with service call
     // in service: startedEditing = new Subject<number>(); // index

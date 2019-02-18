@@ -1,31 +1,27 @@
-<nav class="navbar navbar-expand-lg navbar-dark bg-dark">
-  <a href="#" class="navbar-brand" (click)="onSelect('')">tfl</a>
+<nav class="navbar navbar-expand-sm navbar-dark bg-dark ">
+  <a class="navbar-brand" routerLink="/about">tfl
+    <span><img src="./../../assets/ball.svg" height="30rem" alt=""></span></a>
 
-  <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarTogglerTFL"
-    aria-controls="navbarTogglerTFL" aria-expanded="false" aria-label="Toggle navigation">
-    <span class="navbar-toggler-icon"></span>
-  </button>
-
-  <div class="navbar-default" id="navbarTogglerTFL">
-    <ul class="navbar-nav mr-auto mt-2 mt-lg-0">
-      <li class="nav-item active">
-        <a class="nav-link" href="#" (click)="onSelect('next-match')">Next Match<span class="sr-only">(current)</span></a>
+  <div class="navbar-default col-10" id="navbarTogglerTFL">
+    <ul class="navbar-nav">
+      <li routerLinkActive="active" class="nav-item">
+        <a class="nav-link" routerLink="/nextmatch">Next Match</a>
       </li>
-      <li class="nav-item">
-        <a class="nav-link" href="#" (click)="onSelect('players')">Players</a>
+      <li routerLinkActive="active" class="nav-item">
+        <a class="nav-link" routerLink="/players">Players</a>
       </li>
-      <li class="nav-item">
-        <a class="nav-link disabled" href="#" (click)="onSelect('matches')">Matches</a>
+      <li routerLinkActive="active" class="nav-item">
+        <a class="nav-link disabled" routerLink="/matches">Matches</a>
       </li>
-      <li class="nav-item">
-        <a class="nav-link" [ngClass]="{disabled: !userIsAdmin()}" href="#">Admin</a>
+      <li routerLinkActive="active" class="nav-item">
+        <a class="nav-link" [ngClass]="{disabled: !userIsAdmin()}">Admin</a>
       </li>
-      <li class="nav-item">
-        <a class="nav-link" href="#" (click)="onSelect('about')">About</a>
+      <li routerLinkActive="active" class="nav-item">
+        <a class="nav-link" routerLink="/about">About</a>
       </li>
 
-      <li class="nav-item disabled">
-        <a class="nav-link" href="#">Account</a>
+      <li routerLinkActive="active" class="nav-item disabled">
+        <a class="nav-link" routerLink="/account">Account</a>
       </li>
     </ul>
 

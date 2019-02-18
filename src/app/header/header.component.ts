@@ -16,8 +16,4 @@ export class HeaderComponent implements OnInit {
   public userIsAdmin(): boolean {
     return false;
   }
-
-  onSelect(feature: string) {
-    this.screenSelected.emit(feature);
-  }
 }

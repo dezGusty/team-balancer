@@ -14,6 +14,9 @@ import { PreviousMatchesComponent } from './matches/previous-matches/previous-ma
 import { AboutComponent } from './about/about.component';
 import { MatchService } from './shared/match.service';
 import { PlayersService } from './shared/players.service';
+import { AppRoutingModule } from './app-routing.module';
+import { PlayerStartComponent } from './players/player-start/player-start.component';
+import { PlayerNewComponent } from './players/player-new/player-new.component';
 
 @NgModule({
   declarations: [
@@ -26,11 +29,14 @@ import { PlayersService } from './shared/players.service';
     PlayerDetailsComponent,
     PlayerEditComponent,
     PreviousMatchesComponent,
-    AboutComponent
+    AboutComponent,
+    PlayerStartComponent,
+    PlayerNewComponent
   ],
   imports: [
     BrowserModule,
-    FormsModule
+    FormsModule,
+    AppRoutingModule
   ],
   providers: [PlayersService, MatchService],
   bootstrap: [AppComponent]

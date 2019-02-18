@@ -1,15 +1,20 @@
 <div class="row">
     <!-- show the list of players on the left side -->
-    <div class="col-md-6">
-        <app-player *ngFor='let playerItem of players' [player]="playerItem"
-            [isCurrentlySelected]="playerItem === selectedPlayer"></app-player>
+    <div class="col-6">
+        <app-player *ngFor='let playerItem of players' [player]="playerItem" [id]="playerItem.id"></app-player>
     </div>
     <!-- show the details panel on the right side -->
-    <app-player-details *ngIf="playerIsSelected() && !editMode" [player]="selectedPlayer"></app-player-details>
-    <app-player-edit *ngIf="playerIsSelected() && editMode" [player]="selectedPlayer" (submitted)='editDone($event)' ></app-player-edit>
+    <div class="col-6">
+        <router-outlet></router-outlet>
+    </div>
+    <!-- <div class="col-6">
+        <app-player-details *ngIf="playerIsSelected() && !editMode" [player]="selectedPlayer"></app-player-details>
+        <app-player-edit *ngIf="playerIsSelected() && editMode" [player]="selectedPlayer"
+            (submitted)='editDone($event)'></app-player-edit>
+    </div> -->
 </div>
 <div class="row">
-    <div class="col-md-6">
+    <div class="col-6">
         <button class="btn btn-outline-secondary" *ngIf='canAddPlayers()' (click)='onNewPlayerClicked($event)'>New
             Player</button>
         <button class="btn btn-outline-secondary" *ngIf="playerIsSelected()" (click)='onEditPlayerClicked($event)'>Edit

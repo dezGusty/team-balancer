@@ -1,8 +1,9 @@
 import { Component, OnInit, Input, OnDestroy } from '@angular/core';
-import { MatchService } from 'src/app/shared/match.service';
-import { Match } from 'src/app/shared/match.model';
-import { PlayersService } from 'src/app/shared/players.service';
-import { Player } from 'src/app/shared/player.model';
+import { Subscription } from 'rxjs';
+import { Match } from '../../shared/match.model';
+import { Player } from '../../shared/player.model';
+import { PlayersService } from '../../shared/players.service';
+import { MatchService } from '../../shared/match.service';
 
 @Component({
   selector: 'app-next-match',
@@ -14,6 +15,7 @@ export class NextMatchComponent implements OnInit, OnDestroy {
   public matchData: Match;
   public players: Player[];
   public selectedPlayer: Player;
+  private playerSelectSubscription: Subscription;
 
   constructor(private matchSvc: MatchService, private playersSvc: PlayersService) { }
 
@@ -21,7 +23,7 @@ export class NextMatchComponent implements OnInit, OnDestroy {
     this.matchData = this.matchSvc.getNextMatch();
     this.players = this.playersSvc.getPlayers();
 
-    this.playersSvc.playerSelected
+    this.playerSelectSubscription = this.playersSvc.playerSelectedEvent
       .subscribe(
         (player: Player) => {
           this.matchData.addPlayer(player);
@@ -31,7 +33,8 @@ export class NextMatchComponent implements OnInit, OnDestroy {
 
 
   ngOnDestroy() {
-    this.playersSvc.playerSelected.unsubscribe();
+    console.log('[nextmatch] component destroy');
+    this.playerSelectSubscription.unsubscribe();
   }
 
 }

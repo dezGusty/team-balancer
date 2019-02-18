@@ -1,6 +1,8 @@
-import { Component, OnInit, Input, Output, EventEmitter } from '@angular/core';
-import { Player } from 'src/app/shared/player.model';
+import { Component, OnInit, Input } from '@angular/core';
+import { Player } from './../../shared/player.model';
 import { NgForm } from '@angular/forms';
+import { ActivatedRoute, Params, Router } from '@angular/router';
+import { PlayersService } from '../../shared/players.service';
 
 @Component({
   selector: 'app-player-edit',
@@ -9,26 +11,70 @@ import { NgForm } from '@angular/forms';
 })
 export class PlayerEditComponent implements OnInit {
   @Input() player: Player;
-  @Output() submitted = new EventEmitter<{ saved: boolean, playername: string, playerrating: number }>();
-  constructor() { }
+
+  id: number;
+  editMode = false;
+
+  constructor(
+    private playersSvc: PlayersService,
+    private router: Router,
+    private route: ActivatedRoute) {
+
+  }
 
   ngOnInit() {
+    this.route.params.subscribe(
+      (params: Params) => {
+        this.id = +params['id'];
+        this.editMode = params['id'] != null;
+        console.log('id: ' + this.id + '; edit? ' + this.editMode);
+        if (!this.editMode) {
+          // New mode.
+          this.player = this.playersSvc.createDefaultPlayer();
+        } else {
+          this.player = this.playersSvc.getPlayerById(this.id);
+          if (null == this.player) {
+            // trigger a reroute?
+            console.warn('[player edit] invalid id');
+            this.router.navigate(['..'], { relativeTo: this.route });
+          }
+        }
+      }
+    )
   }
 
   onSubmit(form: NgForm) {
-    const changedObject: { saved: boolean, playername: string, playerrating: number } = form.value;
-    changedObject.saved = true;
-    this.submitted.emit(changedObject);
+    const changedObject: { playerid: number, playername: string, playerrating: number } = form.value;
+    console.log(changedObject);
+
+    // update the player in the service.
+    const clonedPlayer = { ...this.player };
+    clonedPlayer.name = changedObject.playername;
+    clonedPlayer.rating = changedObject.playerrating;
+
+    if (this.editMode) {
+      // edit mode
+
+      this.playersSvc.updatePlayerById(this.id, clonedPlayer);
+    } else {
+      // New mode.
+      clonedPlayer.id = changedObject.playerid;
+      this.playersSvc.addPlayer(clonedPlayer);
+    }
+
+    this.playersSvc.playerDataChangeEvent.emit(null);
     form.reset();
+
+    if (this.editMode) {
+      this.router.navigate(['..'], { relativeTo: this.route });
+    } else {
+      // new 
+      this.router.navigate(['..'], { relativeTo: this.route });
+    }
   }
 
   onCancel($event) {
-    const changedObject: { saved: boolean, playername: string, playerrating: number } = {
-      saved: false,
-      playername: '',
-      playerrating: 0
-    };
-    this.submitted.emit(changedObject);
-  }
+    this.router.navigate(['..'], { relativeTo: this.route });
 
+  }
 }
