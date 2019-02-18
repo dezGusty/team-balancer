@@ -1,7 +1,7 @@
 import { Component, OnInit, Input, OnDestroy } from '@angular/core';
 import { Subscription } from 'rxjs';
 import { Match } from '../../shared/match.model';
-import { Player } from '../../shared/player.model';
+import { Player, filterPlayerArray } from '../../shared/player.model';
 import { PlayersService } from '../../shared/players.service';
 import { MatchService } from '../../shared/match.service';
 
@@ -12,8 +12,9 @@ import { MatchService } from '../../shared/match.service';
 })
 export class NextMatchComponent implements OnInit, OnDestroy {
 
+  searchedName: string;
+
   public matchData: Match;
-  public players: Player[];
   public selectedPlayer: Player;
   private playerSelectSubscription: Subscription;
 
@@ -21,14 +22,21 @@ export class NextMatchComponent implements OnInit, OnDestroy {
 
   ngOnInit() {
     this.matchData = this.matchSvc.getNextMatch();
-    this.players = this.playersSvc.getPlayers();
+    this.matchData.availablePlayersPool = this.playersSvc.getPlayers();
+    this.matchData.draftPlayers.forEach(element => {
+      this.matchData.removePlayerFromPool(element)
+    });
 
     this.playerSelectSubscription = this.playersSvc.playerSelectedEvent
       .subscribe(
         (player: Player) => {
-          this.matchData.addPlayer(player);
+          this.matchData.movePlayerToDraft(player);
         }
       );
+
+    setTimeout(() => { // this will make the execution after the above boolean has changed
+      //this.src.nativeElement.focus();
+    }, 0);
   }
 
 
@@ -37,4 +45,32 @@ export class NextMatchComponent implements OnInit, OnDestroy {
     this.playerSelectSubscription.unsubscribe();
   }
 
+  onSearchContentChange($event) {
+    if ($event.code === 'Enter') {
+      // try to apply the target value.
+      console.log($event, $event.target.value);
+      const filteredPlayers = filterPlayerArray(this.matchData.availablePlayersPool, $event.target.value);
+      if (filteredPlayers.length === 1) {
+        this.matchData.movePlayerToDraft(filteredPlayers[0]);
+      }
+
+      this.searchedName = '';
+    }
+  }
+
+  onPlayerSelected($event) {
+    const selectedPlayer: Player = $event;
+    if (null == selectedPlayer) {
+      return;
+    }
+
+    const currentPosition = this.matchData.draftPlayers.indexOf(selectedPlayer);
+    console.log('draft idx: ' + currentPosition);
+    if (currentPosition !== -1) {
+      this.matchData.movePlayerBackToPool(selectedPlayer);
+      return;
+    } else {
+      this.matchData.movePlayerToDraft(selectedPlayer);
+    }
+  }
 }

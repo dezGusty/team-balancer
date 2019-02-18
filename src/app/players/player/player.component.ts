@@ -1,6 +1,6 @@
 import { Component, OnInit, Input } from '@angular/core';
-import { Player } from 'src/app/shared/player.model';
-import { PlayersService } from 'src/app/shared/players.service';
+import { Player } from '../../shared/player.model';
+import { PlayersService } from '../../shared/players.service';
 
 @Component({
   selector: 'app-player',

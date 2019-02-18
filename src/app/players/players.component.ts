@@ -40,11 +40,10 @@ export class PlayersComponent implements OnInit, OnDestroy {
             this.players = this.playersSvc.getPlayers();
           } else {
             // reload single player only.
+            this.players = this.playersSvc.getPlayers();
           }
-          // re-init?
         }
-
-      )
+      );
   }
 
   ngOnDestroy() {

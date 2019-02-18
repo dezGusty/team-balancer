@@ -25,8 +25,8 @@ export class PlayerEditComponent implements OnInit {
   ngOnInit() {
     this.route.params.subscribe(
       (params: Params) => {
-        this.id = +params['id'];
-        this.editMode = params['id'] != null;
+        this.id = +params.id;
+        this.editMode = params.id != null;
         console.log('id: ' + this.id + '; edit? ' + this.editMode);
         if (!this.editMode) {
           // New mode.
@@ -40,7 +40,7 @@ export class PlayerEditComponent implements OnInit {
           }
         }
       }
-    )
+    );
   }
 
   onSubmit(form: NgForm) {
@@ -65,16 +65,10 @@ export class PlayerEditComponent implements OnInit {
     this.playersSvc.playerDataChangeEvent.emit(null);
     form.reset();
 
-    if (this.editMode) {
-      this.router.navigate(['..'], { relativeTo: this.route });
-    } else {
-      // new 
-      this.router.navigate(['..'], { relativeTo: this.route });
-    }
+    this.router.navigate(['..'], { relativeTo: this.route });
   }
 
   onCancel($event) {
     this.router.navigate(['..'], { relativeTo: this.route });
-
   }
 }

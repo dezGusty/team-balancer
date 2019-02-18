@@ -23,7 +23,7 @@ export class PlayerDetailsComponent implements OnInit {
   ngOnInit() {
     this.route.params.subscribe(
       (params: Params) => {
-        this.id = +params['id'];
+        this.id = +params.id;
         const auxPlayer = this.playersSvc.getPlayerById(this.id);
         if (null == auxPlayer) {
           // trigger a reroute?
@@ -34,7 +34,7 @@ export class PlayerDetailsComponent implements OnInit {
           this.player = auxPlayer;
         }
       }
-    )
+    );
   }
 
   public canEditPlayer(): boolean {

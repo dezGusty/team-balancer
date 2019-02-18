@@ -1,4 +1,5 @@
 import { Player } from './player.model';
+import { MatchResultType } from './match-result.model';
 
 export class MatchResults {
     // free comments to be set by organizer.

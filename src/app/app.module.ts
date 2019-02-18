@@ -17,6 +17,8 @@ import { PlayersService } from './shared/players.service';
 import { AppRoutingModule } from './app-routing.module';
 import { PlayerStartComponent } from './players/player-start/player-start.component';
 import { PlayerNewComponent } from './players/player-new/player-new.component';
+import { PlayerFilterPipe } from './matches/player-filter.pipe';
+import { MatchPlayerComponent } from './players/match-player/match-player.component';
 
 @NgModule({
   declarations: [
@@ -31,7 +33,9 @@ import { PlayerNewComponent } from './players/player-new/player-new.component';
     PreviousMatchesComponent,
     AboutComponent,
     PlayerStartComponent,
-    PlayerNewComponent
+    PlayerNewComponent,
+    PlayerFilterPipe,
+    MatchPlayerComponent
   ],
   imports: [
     BrowserModule,

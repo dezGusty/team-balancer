@@ -6,3 +6,17 @@ export class Player {
     }
 
 }
+
+export function filterPlayerArray(items: Player[], searchedValue: string): Player[] {
+    if (!items) {
+        return [];
+    }
+    if (!searchedValue) {
+        return items;
+    }
+    searchedValue = searchedValue.toLocaleLowerCase();
+
+    return items.filter(it => {
+        return it.name.toLocaleLowerCase().includes(searchedValue);
+    });
+}
