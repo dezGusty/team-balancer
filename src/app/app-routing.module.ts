@@ -8,6 +8,7 @@ import { PlayerDetailsComponent } from './players/player-details/player-details.
 import { PlayerStartComponent } from './players/player-start/player-start.component';
 import { PlayerEditComponent } from './players/player-edit/player-edit.component';
 import { SigninComponent } from './auth/signin/signin.component';
+import { SignupComponent } from './auth/signup/signup.component';
 
 const appRoutes: Routes = [
     { path: '', redirectTo: '/nextmatch', pathMatch: 'full' },
@@ -22,7 +23,8 @@ const appRoutes: Routes = [
     { path: 'matches', component: MatchesComponent },
     { path: 'nextmatch', component: NextMatchComponent },
     { path: 'about', component: AboutComponent },
-    { path: 'signin', component: SigninComponent }
+    { path: 'signin', component: SigninComponent },
+    { path: 'signup', component: SignupComponent }
 ];
 
 @NgModule({

@@ -1,5 +1,4 @@
 import { Component, OnInit } from '@angular/core';
-import * as firebase from 'firebase';
 
 @Component({
   selector: 'app-root',
@@ -9,11 +8,6 @@ import * as firebase from 'firebase';
 export class AppComponent implements OnInit {
   title = 'team-balancer';
 
-  ngOnInit() {
-    // add data from firebase console.
-    firebase.initializeApp({
-      
-
-    });
-  }
+  ngOnInit() { }
 }
+
