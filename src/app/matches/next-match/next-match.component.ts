@@ -61,9 +61,12 @@ export class NextMatchComponent implements OnInit, OnDestroy {
     const currentPosition = this.matchData.draftPlayers.indexOf(selectedPlayer);
     if (currentPosition !== -1) {
       this.matchData.movePlayerBackToPool(selectedPlayer);
+      this.searchedName = '';
       return;
     } else {
       this.matchData.movePlayerToDraft(selectedPlayer);
+      this.searchedName = '';
+      return;
     }
   }
 }

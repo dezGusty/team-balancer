@@ -27,8 +27,6 @@ export class Match {
     }
 
     movePlayerToDraft(newPlayer: Player): boolean {
-        console.log('initial draft', this.draftPlayers);
-        console.log('initial pool', this.availablePlayersPool);
         if (this.draftPlayers.includes(newPlayer)) {
             console.log('[match] player [' + newPlayer.name + '] already drafted');
             return false;
@@ -36,8 +34,6 @@ export class Match {
 
         this.removePlayerFromPool(newPlayer);
         this.draftPlayers.push(newPlayer);
-        console.log('post draft', this.draftPlayers);
-        console.log('post pool', this.availablePlayersPool);
 
         return true;
     }
