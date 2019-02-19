@@ -1,13 +1,42 @@
 import { Player } from './player.model';
-import { EventEmitter } from '@angular/core';
+import { EventEmitter, Injectable } from '@angular/core';
+import { AngularFirestore, QuerySnapshot } from 'angularfire2/firestore';
+import { Observable } from 'rxjs';
 
+@Injectable()
 export class PlayersService {
-    private playerList: Player[] = [
+
+    private useDB = true;
+    private testPlayerList: Player[] = [
         new Player(1, 'Johnny'),
         new Player(2, 'gus'),
         new Player(3, 'iulian'),
         new Player(4, 'mircea')
     ];
+
+    // constructor.
+    constructor(private db: AngularFirestore) {
+        if (!this.useDB) {
+            this.playerList = this.testPlayerList;
+            return;
+        }
+
+        // subscribe to firebase collection changes.
+        const playersCol = this.db.collection<Player>('players');
+        this.serverPlayers = playersCol.valueChanges();
+
+        this.serverPlayers.subscribe(
+            (values) => {
+                console.log('[players] firebase data change', values);
+
+                this.playerList = values;
+                this.playerDataChangeEvent.emit();
+            }
+        );
+    }
+    private serverPlayers: Observable<Player[]>;
+
+    private playerList: Player[] = [];
 
     playerSelectedEvent = new EventEmitter<Player>();
     playerDataChangeEvent = new EventEmitter<Player>();
@@ -19,6 +48,7 @@ export class PlayersService {
     addPlayer(player: Player) {
         console.log('[playerssvc] added player');
         this.playerList.push(player);
+        this.saveSinglePlayerToFirebase(player);
     }
 
     getPlayerById(id: number) {
@@ -40,6 +70,7 @@ export class PlayersService {
         }
         this.playerList[oldIndex] = newPlayer;
         console.log('Replaced player. New one', newPlayer);
+        this.updateSinglePlayerToFirebase(newPlayer);
         return true;
     }
 
@@ -53,6 +84,9 @@ export class PlayersService {
 
         this.playerList[oldIndex] = newPlayer;
         console.log('[players.svc] Replaced player for id ' + id + '. New one', newPlayer);
+
+        this.updateSinglePlayerToFirebase(newPlayer);
+
         return true;
     }
 
@@ -69,6 +103,26 @@ export class PlayersService {
         return result;
     }
 
+    saveAllPlayers() {
+        const playersRef = this.db.collection('/players').ref;
+        this.playerList.forEach((player) => {
+            let obj = {};
+            obj = { ...player };
+            playersRef.doc(player.id.toString()).set(obj);
+        });
+    }
+
+    saveSinglePlayerToFirebase(player: Player) {
+        const playersRef = this.db.collection('/players').ref;
+        const obj = { ...player };
+        playersRef.doc(player.id.toString()).set(obj);
+    }
+
+    updateSinglePlayerToFirebase(player: Player) {
+        const playersRef = this.db.collection('/players').ref;
+        const obj = { ...player };
+        playersRef.doc(player.id.toString()).update(obj);
+    }
 
 
 }

@@ -7,11 +7,6 @@
     <div class="col-6">
         <router-outlet></router-outlet>
     </div>
-    <!-- <div class="col-6">
-        <app-player-details *ngIf="playerIsSelected() && !editMode" [player]="selectedPlayer"></app-player-details>
-        <app-player-edit *ngIf="playerIsSelected() && editMode" [player]="selectedPlayer"
-            (submitted)='editDone($event)'></app-player-edit>
-    </div> -->
 </div>
 <div class="row">
     <div class="col-6">
@@ -19,5 +14,7 @@
             Player</button>
         <button class="btn btn-outline-secondary" *ngIf="playerIsSelected()" (click)='onEditPlayerClicked($event)'>Edit
             Player</button>
+        <!-- <button class="btn btn-outline-secondary" (click)='onSavePlayerClicked($event)'>Save
+            Players</button> -->
     </div>
 </div>

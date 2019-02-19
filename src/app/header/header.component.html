@@ -1,8 +1,12 @@
-<nav class="navbar navbar-expand-sm navbar-dark bg-dark ">
+<nav class="navbar navbar-expand-sm navbar-dark bg-dark">
   <a class="navbar-brand" routerLink="/about">tfl
     <span><img src="./../../assets/ball.svg" height="30rem" alt=""></span></a>
-
-  <div class="navbar-default col-10" id="navbarTogglerTFL">
+  <button class="navbar-toggler" type="button" (click)="isCollapsed = !isCollapsed" 
+  data-toggle="collapse" data-target="#navbarNavDropdown" [attr.aria-expanded]="!isCollapsed"
+    aria-controls="navbarNavDropdown" aria-label="Toggle navigation">
+    <span class="navbar-toggler-icon"></span>
+  </button>
+  <div class="collapse navbar-collapse" id="navbarNavDropdown" [ngbCollapse]="isCollapsed">
     <ul class="navbar-nav">
       <li routerLinkActive="active" class="nav-item">
         <a class="nav-link" routerLink="/nextmatch">Next Match</a>
