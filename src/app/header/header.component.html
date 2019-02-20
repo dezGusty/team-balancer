@@ -1,17 +1,17 @@
 <nav class="navbar navbar-expand-sm navbar-dark bg-dark">
-  <a class="navbar-brand" routerLink="/about">tfl
-    <span><img src="./../../assets/ball.svg" height="30rem" alt=""></span></a>
-  <button class="navbar-toggler" type="button" (click)="isCollapsed = !isCollapsed" 
-  data-toggle="collapse" data-target="#navbarNavDropdown" [attr.aria-expanded]="!isCollapsed"
-    aria-controls="navbarNavDropdown" aria-label="Toggle navigation">
+  <a class="navbar-brand" routerLink="/about">TFL
+    <span><img src="./../../assets/ball.svg" height="24rem" alt=""></span></a>
+  <button class="navbar-toggler" type="button" (click)="isCollapsed = !isCollapsed" data-toggle="collapse"
+    data-target="#navbarNavDropdown" [attr.aria-expanded]="!isCollapsed" aria-controls="navbarNavDropdown"
+    aria-label="Toggle navigation">
     <span class="navbar-toggler-icon"></span>
   </button>
   <div class="collapse navbar-collapse" id="navbarNavDropdown" [ngbCollapse]="isCollapsed">
     <ul class="navbar-nav">
-      <li routerLinkActive="active" class="nav-item">
+      <li routerLinkActive="active" class="nav-item" *ngIf="this.isAuthenticated()">
         <a class="nav-link" routerLink="/nextmatch">Next Match</a>
       </li>
-      <li routerLinkActive="active" class="nav-item">
+      <li routerLinkActive="active" class="nav-item" *ngIf="this.isAuthenticated()">
         <a class="nav-link" routerLink="/players">Players</a>
       </li>
       <!-- <li routerLinkActive="active" class="nav-item">
@@ -24,8 +24,13 @@
         <a class="nav-link" routerLink="/about">About</a>
       </li>
 
-      <li routerLinkActive="active" class="nav-item disabled">
-        <a class="nav-link" routerLink="/signin">Account</a>
+    </ul>
+    <ul class="navbar-nav navbar-right">
+      <li routerLinkActive="active" class="nav-item" *ngIf="!this.isAuthenticated()">
+        <a class="nav-link" routerLink="/signin">Sign in</a>
+      </li>
+      <li routerLinkActive="active" class="nav-item" *ngIf="this.isAuthenticated()">
+        <a class="nav-link" (click)="onSignout();" style="cursor: pointer">Sign out</a>
       </li>
     </ul>
 

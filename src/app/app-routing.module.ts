@@ -11,7 +11,7 @@ import { SigninComponent } from './auth/signin/signin.component';
 import { SignupComponent } from './auth/signup/signup.component';
 
 const appRoutes: Routes = [
-    { path: '', redirectTo: '/nextmatch', pathMatch: 'full' },
+    { path: '', redirectTo: '/about', pathMatch: 'full' },
     {
         path: 'players', component: PlayersComponent, children: [
             { path: '', component: PlayerStartComponent },

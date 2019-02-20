@@ -37,7 +37,9 @@ export class NextMatchComponent implements OnInit, OnDestroy {
 
 
   ngOnDestroy() {
-    this.playerSelectSubscription.unsubscribe();
+    if (this.playerSelectSubscription) {
+      this.playerSelectSubscription.unsubscribe();
+    }
   }
 
   onSearchContentChange($event) {
