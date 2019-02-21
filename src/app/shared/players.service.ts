@@ -1,10 +1,12 @@
 import { Player } from './player.model';
 import { EventEmitter, Injectable } from '@angular/core';
 import { AngularFirestore, QuerySnapshot } from 'angularfire2/firestore';
-import { Observable } from 'rxjs';
+import { Observable, Subscription } from 'rxjs';
+import { AuthService } from '../auth/auth.service';
 
 @Injectable()
 export class PlayersService {
+    private subscription: Subscription;
 
     private useDB = true;
     private testPlayerList: Player[] = [
@@ -15,7 +17,16 @@ export class PlayersService {
     ];
 
     // constructor.
-    constructor(private db: AngularFirestore) {
+    constructor(private db: AngularFirestore, private authSvc: AuthService) {
+
+        this.authSvc.onSignInOut.subscribe((message) => {
+            if (message === 'signout-pending') {
+                this.unsubscribeFromDataSources();
+            } else {
+                //...
+            }
+        });
+
         if (!this.useDB) {
             this.playerList = this.testPlayerList;
             return;
@@ -25,7 +36,7 @@ export class PlayersService {
         const playersCol = this.db.collection<Player>('players');
         this.serverPlayers = playersCol.valueChanges();
 
-        this.serverPlayers.subscribe(
+        this.subscription = this.serverPlayers.subscribe(
             (values) => {
                 console.log('[players] firebase data change', values);
 
@@ -34,12 +45,19 @@ export class PlayersService {
             }
         );
     }
+
     private serverPlayers: Observable<Player[]>;
 
     private playerList: Player[] = [];
 
     playerSelectedEvent = new EventEmitter<Player>();
     playerDataChangeEvent = new EventEmitter<Player>();
+
+    unsubscribeFromDataSources() {
+        if (this.subscription) {
+            this.subscription.unsubscribe();
+        }
+    }
 
     getPlayers() {
         return this.playerList.slice();

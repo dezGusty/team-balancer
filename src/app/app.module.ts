@@ -29,6 +29,8 @@ import { AngularFireModule } from 'angularfire2';
 import { AngularFirestoreModule } from 'angularfire2/firestore';
 import { AngularFireAuthModule } from 'angularfire2/auth';
 import { environment } from '../environments/environment';
+import { AuthGuard } from './auth/auth-guard.service';
+import { OrganizerGuard } from './auth/organizer-guard.service';
 
 
 @NgModule({
@@ -59,7 +61,7 @@ import { environment } from '../environments/environment';
     AppRoutingModule,
     NgbCollapseModule
   ],
-  providers: [PlayersService, MatchService, AuthService],
+  providers: [PlayersService, MatchService, AuthService, AuthGuard, OrganizerGuard],
   bootstrap: [AppComponent]
 })
 export class AppModule { }

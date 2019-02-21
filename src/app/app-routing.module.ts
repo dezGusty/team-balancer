@@ -9,19 +9,21 @@ import { PlayerStartComponent } from './players/player-start/player-start.compon
 import { PlayerEditComponent } from './players/player-edit/player-edit.component';
 import { SigninComponent } from './auth/signin/signin.component';
 import { SignupComponent } from './auth/signup/signup.component';
+import { AuthGuard } from './auth/auth-guard.service';
+import { OrganizerGuard } from './auth/organizer-guard.service';
 
 const appRoutes: Routes = [
-    { path: '', redirectTo: '/about', pathMatch: 'full' },
+    { path: '', redirectTo: '/signin', pathMatch: 'full' },
     {
-        path: 'players', component: PlayersComponent, children: [
+        path: 'players', canActivate: [AuthGuard, OrganizerGuard], component: PlayersComponent, children: [
             { path: '', component: PlayerStartComponent },
             { path: 'new', component: PlayerEditComponent },
             { path: ':id', component: PlayerDetailsComponent },
             { path: ':id/edit', component: PlayerEditComponent }
         ]
     },
-    { path: 'matches', component: MatchesComponent },
-    { path: 'nextmatch', component: NextMatchComponent },
+    { path: 'matches', canActivate: [AuthGuard], component: MatchesComponent },
+    { path: 'nextmatch', canActivate: [AuthGuard], component: NextMatchComponent },
     { path: 'about', component: AboutComponent },
     { path: 'signin', component: SigninComponent },
     { path: 'signup', component: SignupComponent }
