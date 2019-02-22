@@ -26,6 +26,13 @@ export class AuthService {
             })
         );
     }
+
+    /**
+     * Store a cache for the currently logged in user.
+     * This means that all permission checks (E.g. is the current user a match organizer)
+     * shall be performed on the data read at the login time. The user needs to log-in
+     * again in order to read any updated permissions.
+     */
     private cachedUser: User;
     private token: string;
     private subscription: Subscription;
@@ -86,11 +93,14 @@ export class AuthService {
 
     isAuthenticated(): boolean {
         const result = (this.token != null);
-        // console.log('[auth]', result);
         return result;
     }
 
     isAuthenticatedAsOrganizer(): boolean {
+        if (!this.cachedUser || !this.cachedUser.roles) {
+            return false;
+        }
+
         if (this.cachedUser.roles.organizer) {
             console.log('[org] returning', this.cachedUser.roles.organizer);
 
@@ -102,29 +112,29 @@ export class AuthService {
 
     updateAndCacheUser(authdata: firebase.User) {
         const userData = new User(authdata);
-        const userPath = authdata.uid + '_';
+        const userPath = authdata.uid;
         console.log('[upd user]', userData, authdata.uid);
         const userRef = this.db.doc('users/' + userPath).get();
         console.log(userRef);
 
         this.subscription = userRef.subscribe(user => {
             if (user.exists) {
-                console.log('***1', userData);
+                // existing user. read the roles.
                 const originalObj = user.get('roles');
                 if (originalObj) {
                     userData.roles = originalObj;
-                    console.log('***2', userData);
+                } else {
+                    console.log('User does not have role. Should create');
                 }
-                console.log('***3', userData);
                 const obj = { ...userData };
-                console.log('User does not have role. Should create');
                 this.db.doc('users/' + userPath).set(obj, { merge: true });
                 this.cachedUser = obj;
             } else {
-                // Create user doc.
+                // New user. Create the user doc.
                 const obj = { ...userData };
-                console.log('User does not have role. Should create');
+                console.log('User does not exist. Should create');
                 this.db.doc('users/' + userPath).set(obj);
+                this.cachedUser = obj;
             }
         });
     }
