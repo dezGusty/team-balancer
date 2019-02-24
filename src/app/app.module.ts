@@ -31,6 +31,7 @@ import { AngularFireAuthModule } from 'angularfire2/auth';
 import { environment } from '../environments/environment';
 import { AuthGuard } from './auth/auth-guard.service';
 import { OrganizerGuard } from './auth/organizer-guard.service';
+import { CustomgameComponent } from './customgame/customgame.component';
 
 
 @NgModule({
@@ -50,7 +51,8 @@ import { OrganizerGuard } from './auth/organizer-guard.service';
     PlayerFilterPipe,
     MatchPlayerComponent,
     SigninComponent,
-    SignupComponent
+    SignupComponent,
+    CustomgameComponent
   ],
   imports: [
     AngularFireModule.initializeApp(environment.firebase),

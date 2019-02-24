@@ -11,6 +11,7 @@ import { SigninComponent } from './auth/signin/signin.component';
 import { SignupComponent } from './auth/signup/signup.component';
 import { AuthGuard } from './auth/auth-guard.service';
 import { OrganizerGuard } from './auth/organizer-guard.service';
+import { CustomgameComponent } from './customgame/customgame.component';
 
 const appRoutes: Routes = [
     { path: '', redirectTo: '/signin', pathMatch: 'full' },
@@ -24,6 +25,7 @@ const appRoutes: Routes = [
     },
     { path: 'matches', canActivate: [AuthGuard], component: MatchesComponent },
     { path: 'nextmatch', canActivate: [AuthGuard], component: NextMatchComponent },
+    { path: 'custom', canActivate: [AuthGuard], component: CustomgameComponent },
     { path: 'about', component: AboutComponent },
     { path: 'signin', component: SigninComponent },
     { path: 'signup', component: SignupComponent }
