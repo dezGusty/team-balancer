@@ -119,11 +119,8 @@ export class AuthService {
         }
 
         if (this.cachedUser.roles.organizer) {
-            console.log('[org] returning', this.cachedUser.roles.organizer);
-
             return this.cachedUser.roles.organizer;
         }
-        console.log('[org] returning', false);
         return false;
     }
 

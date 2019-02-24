@@ -1,4 +1,4 @@
-import { Component, OnInit, Input, OnDestroy } from '@angular/core';
+import { Component, OnInit, OnDestroy } from '@angular/core';
 import { Subscription } from 'rxjs';
 import { Match } from '../../shared/match.model';
 import { Player, filterPlayerArray } from '../../shared/player.model';
@@ -17,6 +17,7 @@ export class NextMatchComponent implements OnInit, OnDestroy {
   public matchData: Match;
   public selectedPlayer: Player;
   private playerSelectSubscription: Subscription;
+  private playerDataChangeSubscription: Subscription;
 
   constructor(private matchSvc: MatchService, private playersSvc: PlayersService) { }
 
@@ -33,11 +34,28 @@ export class NextMatchComponent implements OnInit, OnDestroy {
           this.matchData.movePlayerToDraft(player);
         }
       );
+
+    this.playerDataChangeSubscription = this.playersSvc.playerDataChangeEvent
+      .subscribe(
+        (player: Player) => {
+          console.log('player change');
+          if (player == null) {
+            // reload all
+            this.matchData.availablePlayersPool = this.playersSvc.getPlayers();
+          } else {
+            // reload single player only.
+            this.matchData.availablePlayersPool = this.playersSvc.getPlayers();
+          }
+        }
+      );
   }
 
 
   ngOnDestroy() {
     if (this.playerSelectSubscription) {
+      this.playerSelectSubscription.unsubscribe();
+    }
+    if (this.playerDataChangeSubscription) {
       this.playerSelectSubscription.unsubscribe();
     }
   }

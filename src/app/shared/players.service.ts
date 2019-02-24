@@ -13,7 +13,10 @@ export class PlayersService {
 
     // constructor.
     constructor(private db: AngularFirestore, private authSvc: AuthService) {
-        console.log('[players] waiting for login...');
+        if (!this.authSvc.isAuthenticated()) {
+            console.log('[players] waiting for login...');
+        }
+
         this.authSvc.onSignInOut.subscribe((message) => {
             if (message === 'signout-pending') {
                 this.unsubscribeFromDataSources();
@@ -61,7 +64,7 @@ export class PlayersService {
         console.log('[players] subscribing to data sources');
 
         // subscribe to firebase collection changes.
-        const currentRatings = this.db.doc('ratings/current2').get();
+        const currentRatings = this.db.doc('ratings/current').get();
         this.dataChangeSubscription = currentRatings.subscribe(playerListDoc => {
             if (!playerListDoc.exists) {
                 return;
@@ -142,10 +145,10 @@ export class PlayersService {
     }
 
     saveAllPlayers() {
-        const playersRef = this.db.doc('/ratings/current2').ref;
+        const playersRef = this.db.doc('/ratings/current').ref;
         const obj = { players: this.playerList };
 
-        playersRef.set(obj, { merge: true })
+        playersRef.set(obj, { merge: true });
     }
 
     saveSinglePlayerToFirebaseOld(player: Player) {
