@@ -36,12 +36,20 @@ export class AuthService {
     private cachedUser: User;
     private token: string;
     private subscription: Subscription;
+
+    /**
+     * Use this event emitter to inform subscribers that a sign-in event took place or sign-out event
+     * is about to take place.
+     */
     public onSignInOut: EventEmitter<string> = new EventEmitter<string>();
 
     signupUser() {
         //
     }
 
+    /**
+     * Perform the login into the application via Google.
+     */
     doGoogleLogin() {
         return new Promise<any>((resolve, reject) => {
             const provider = new firebase.auth.GoogleAuthProvider();
@@ -50,11 +58,20 @@ export class AuthService {
             this.afAuth.auth
                 .signInWithPopup(provider)
                 .then(res => {
-                    this.router.navigate(['/']);
+                    console.log('[firebase login]');
+
                     this.getToken();
                     this.updateAndCacheUser(res.user);
                     this.onSignInOut.emit('signin-done');
+                    this.router.navigate(['/']);
                     resolve(res);
+                })
+                .catch((error) => {
+                    // error.code;
+                    // error.message;
+                    // error.email
+                    // error.credential
+                    console.warn('error when logging in', error);
                 });
         });
     }
@@ -115,7 +132,6 @@ export class AuthService {
         const userPath = authdata.uid;
         console.log('[upd user]', userData, authdata.uid);
         const userRef = this.db.doc('users/' + userPath).get();
-        console.log(userRef);
 
         this.subscription = userRef.subscribe(user => {
             if (user.exists) {
