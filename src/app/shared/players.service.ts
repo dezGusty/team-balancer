@@ -1,49 +1,34 @@
 import { Player } from './player.model';
 import { EventEmitter, Injectable } from '@angular/core';
-import { AngularFirestore, QuerySnapshot } from 'angularfire2/firestore';
+import { AngularFirestore } from 'angularfire2/firestore';
 import { Observable, Subscription } from 'rxjs';
 import { AuthService } from '../auth/auth.service';
 
+/**
+ * Stores and retrieves player related information.
+ */
 @Injectable()
 export class PlayersService {
-    private subscription: Subscription;
-
-    private useDB = true;
-    private testPlayerList: Player[] = [
-        new Player(1, 'Johnny'),
-        new Player(2, 'gus'),
-        new Player(3, 'iulian'),
-        new Player(4, 'mircea')
-    ];
+    private dataChangeSubscription: Subscription;
 
     // constructor.
     constructor(private db: AngularFirestore, private authSvc: AuthService) {
-
+        console.log('[players] waiting for login...');
         this.authSvc.onSignInOut.subscribe((message) => {
             if (message === 'signout-pending') {
                 this.unsubscribeFromDataSources();
+            } else if (message === 'signin-done') {
+                this.subscribeToDataSources();
             } else {
-                //...
+                console.log('[players] unexpected message from auth svc: ' + message);
             }
         });
 
-        if (!this.useDB) {
-            this.playerList = this.testPlayerList;
-            return;
+        // if already logged in, there will be no notification for signin-done.
+        // simulate the event now.
+        if (this.authSvc.isAuthenticated()) {
+            this.subscribeToDataSources();
         }
-
-        // subscribe to firebase collection changes.
-        const playersCol = this.db.collection<Player>('players');
-        this.serverPlayers = playersCol.valueChanges();
-
-        this.subscription = this.serverPlayers.subscribe(
-            (values) => {
-                console.log('[players] firebase data change', values);
-
-                this.playerList = values;
-                this.playerDataChangeEvent.emit();
-            }
-        );
     }
 
     private serverPlayers: Observable<Player[]>;
@@ -53,9 +38,45 @@ export class PlayersService {
     playerSelectedEvent = new EventEmitter<Player>();
     playerDataChangeEvent = new EventEmitter<Player>();
 
+    /**
+     * @deprecated
+     */
+    subscribeToDataSourcesOld() {
+        console.log('[players] subscribing to data sources');
+
+        // subscribe to firebase collection changes.
+        const playersCol = this.db.collection<Player>('players');
+        this.serverPlayers = playersCol.valueChanges();
+
+        this.dataChangeSubscription = this.serverPlayers.subscribe(
+            (values) => {
+                console.log('[players] firebase data change', values);
+                this.playerList = values;
+                this.playerDataChangeEvent.emit();
+            }
+        );
+    }
+
+    subscribeToDataSources() {
+        console.log('[players] subscribing to data sources');
+
+        // subscribe to firebase collection changes.
+        const currentRatings = this.db.doc('ratings/current2').get();
+        this.dataChangeSubscription = currentRatings.subscribe(playerListDoc => {
+            if (!playerListDoc.exists) {
+                return;
+            }
+
+            const playersArray: Player[] = playerListDoc.get('players');
+            this.playerList = playersArray;
+            this.playerDataChangeEvent.emit();
+        });
+    }
+
     unsubscribeFromDataSources() {
-        if (this.subscription) {
-            this.subscription.unsubscribe();
+        console.log('[players] unsubscribing from data sources');
+        if (this.dataChangeSubscription) {
+            this.dataChangeSubscription.unsubscribe();
         }
     }
 
@@ -74,24 +95,11 @@ export class PlayersService {
             item => item.id === id);
     }
 
-    updatePlayer(oldPlayer: Player, newPlayer: Player): boolean {
-        const oldIndex = this.playerList.indexOf(oldPlayer);
-        if (oldIndex === -1) {
-            // old entry not found?
-            console.warn('Tried to update a player, but did not find it in the previous entries list');
-            return false;
-        }
-        if (oldPlayer.id !== newPlayer.id) {
-            // old entry not found?
-            console.warn('Tried to update a player using a different ID. Update is meant for the same player ID.');
-            return false;
-        }
-        this.playerList[oldIndex] = newPlayer;
-        console.log('Replaced player. New one', newPlayer);
-        this.updateSinglePlayerToFirebase(newPlayer);
-        return true;
-    }
-
+    /**
+     * Updates a player, based on the ID.
+     * @param id The ID of the player.
+     * @param newPlayer The new object (already constructed) to use.
+     */
     updatePlayerById(id: number, newPlayer: Player): boolean {
         const oldIndex = this.playerList.findIndex((playerItem) => (playerItem.id === id));
         if (oldIndex === -1) {
@@ -121,7 +129,10 @@ export class PlayersService {
         return result;
     }
 
-    saveAllPlayers() {
+    /**
+     * @deprecated
+     */
+    saveAllPlayersOld() {
         const playersRef = this.db.collection('/players').ref;
         this.playerList.forEach((player) => {
             let obj = {};
@@ -130,17 +141,29 @@ export class PlayersService {
         });
     }
 
-    saveSinglePlayerToFirebase(player: Player) {
+    saveAllPlayers() {
+        const playersRef = this.db.doc('/ratings/current2').ref;
+        const obj = { players: this.playerList };
+
+        playersRef.set(obj, { merge: true })
+    }
+
+    saveSinglePlayerToFirebaseOld(player: Player) {
         const playersRef = this.db.collection('/players').ref;
         const obj = { ...player };
         playersRef.doc(player.id.toString()).set(obj);
     }
 
-    updateSinglePlayerToFirebase(player: Player) {
+    updateSinglePlayerToFirebaseOld(player: Player) {
         const playersRef = this.db.collection('/players').ref;
         const obj = { ...player };
         playersRef.doc(player.id.toString()).update(obj);
     }
+    saveSinglePlayerToFirebase(player: Player) {
+        this.saveAllPlayers();
+    }
 
-
+    updateSinglePlayerToFirebase(player: Player) {
+        this.saveAllPlayers();
+    }
 }

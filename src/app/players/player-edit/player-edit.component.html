@@ -13,6 +13,19 @@
                 use.</span>
         </div>
         <div class="form-group col-12">
+            <label class="col-form-label" for="displayName">Display Name</label>
+            <input type="text" id="displayName" class="form-control" [ngModel]="player.displayName" name="displayName"
+                #displayName="ngModel">
+            <span class="help-block" *ngIf="!displayName.valid && displayName.touched">Name invalid or already in
+                use.</span>
+        </div>
+        <div class="form-group col-12">
+            <label class="col-form-label" for="keywords">Keywords (alternative search criteria)</label>
+            <input type="text" id="keywords" class="form-control" [ngModel]="player.keywords" name="keywords"
+                #keywords="ngModel">
+            <span class="help-block" *ngIf="!keywords.valid && keywords.touched">Keywords: invalid.</span>
+        </div>
+        <div class="form-group col-12">
             <label class="col-form-label" for="playerrating">Rating</label>
             <input type="number" id="playerrating" class="form-control" [ngModel]="player.rating" name="playerrating"
                 required #playerrating="ngModel">

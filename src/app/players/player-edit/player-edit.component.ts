@@ -44,13 +44,21 @@ export class PlayerEditComponent implements OnInit {
   }
 
   onSubmit(form: NgForm) {
-    const changedObject: { playerid: number, playername: string, playerrating: number } = form.value;
+    const changedObject: {
+      playerid: number,
+      playername: string,
+      playerrating: number,
+      keywords: string,
+      displayName: string
+    } = form.value;
     console.log(changedObject);
 
     // update the player in the service.
-    const clonedPlayer = { ...this.player };
+    const clonedPlayer: Player = Object.assign({}, this.player);
     clonedPlayer.name = changedObject.playername;
     clonedPlayer.rating = changedObject.playerrating;
+    clonedPlayer.keywords = changedObject.keywords;
+    clonedPlayer.displayName = changedObject.displayName;
 
     if (this.editMode) {
       // edit mode
