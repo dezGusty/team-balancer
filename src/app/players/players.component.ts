@@ -47,8 +47,12 @@ export class PlayersComponent implements OnInit, OnDestroy {
   }
 
   ngOnDestroy() {
-    this.playerSelectSubscription.unsubscribe();
-    this.playerDataChangeSubscription.unsubscribe();
+    if (this.playerSelectSubscription) {
+      this.playerSelectSubscription.unsubscribe();
+    }
+    if (this.playerDataChangeSubscription) {
+      this.playerDataChangeSubscription.unsubscribe();
+    }
   }
 
   public canAddPlayers(): boolean {
