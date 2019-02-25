@@ -14,17 +14,37 @@ export class AuthService {
         private router: Router,
         private db: AngularFirestore,
         private afAuth: AngularFireAuth) {
-        this.getToken();
 
-        this.afAuth.authState.pipe(
-            switchMap(auth => {
+        this.afAuth.authState.subscribe(
+            (auth) => {
                 if (auth) {
+                    this.afAuth.auth.currentUser.getIdToken()
+                        .then(
+                            (token: string) => {
+                                this.token = token;
+                            }
+                        );
+                    this.updateAndCacheUserAfterLogin(this.afAuth.auth.currentUser);
                     return this.db.doc('users/' + auth.uid).get();
                 } else {
                     return null;
                 }
-            })
+            }
         );
+
+        // this.afAuth.authState.pipe(
+        //     switchMap(auth => {
+        //         if (auth) {
+        //             console.log('[xyz] logged in');
+        //             return this.db.doc('users/' + auth.uid).get();
+        //         } else {
+        //             console.log('[xyz] not logged in');
+
+        //             return null;
+        //         }
+        //     })
+        // );
+
     }
 
     /**
@@ -61,7 +81,7 @@ export class AuthService {
                     console.log('[firebase login]');
 
                     this.getToken();
-                    this.updateAndCacheUser(res.user);
+                    this.updateAndCacheUserAfterLogin(res.user);
                     this.onSignInOut.emit('signin-done');
                     this.router.navigate(['/']);
                     resolve(res);
@@ -105,6 +125,7 @@ export class AuthService {
                     // console.log('[token]', this.token);
                 }
             );
+        // return the previous /cached token
         return this.token;
     }
 
@@ -124,7 +145,7 @@ export class AuthService {
         return false;
     }
 
-    updateAndCacheUser(authdata: firebase.User) {
+    updateAndCacheUserAfterLogin(authdata: firebase.User) {
         const userData = new User(authdata);
         const userPath = authdata.uid;
         console.log('[upd user]', userData, authdata.uid);
