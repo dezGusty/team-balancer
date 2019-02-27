@@ -17,8 +17,8 @@ export class MatchVersusComponent implements OnInit {
     team2: Array<Player>
   }>();
 
-  protected extractedTeam1: Array<Player> = [];
-  protected extractedTeam2: Array<Player> = [];
+  extractedTeam1: Array<Player> = [];
+  extractedTeam2: Array<Player> = [];
 
   constructor() {
   }
