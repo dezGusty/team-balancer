@@ -1,5 +1,13 @@
 # Setting up hosting for firebase
 
+## Prerequisites
+
+firebase installed
+
+```cmd
+npm install -g firebase-tools
+```
+
 ## Build
 
 Build your application release
