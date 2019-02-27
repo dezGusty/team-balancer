@@ -1,0 +1,38 @@
+import { Component, OnInit, Input } from '@angular/core';
+import { Player, getDisplayName } from 'src/app/shared/player.model';
+
+@Component({
+  selector: 'app-match-versus',
+  templateUrl: './match-versus.component.html',
+  styleUrls: ['./match-versus.component.css']
+})
+export class MatchVersusComponent implements OnInit {
+
+  @Input() contentsIndex: number;
+  @Input() playerList: Player[];
+
+  // one to one mapping for the same index with the displayedMatchCombos array
+  @Input() displayedMatchDetails = new Array<{
+    team1: Array<Player>,
+    team2: Array<Player>
+  }>();
+
+  protected extractedTeam1: Array<Player> = [];
+  protected extractedTeam2: Array<Player> = [];
+
+  constructor() {
+  }
+
+  ngOnInit() {
+    if (this.displayedMatchDetails[this.contentsIndex]) {
+      this.extractedTeam1 = this.displayedMatchDetails[this.contentsIndex].team1;
+    }
+    if (this.displayedMatchDetails[this.contentsIndex]) {
+      this.extractedTeam2 = this.displayedMatchDetails[this.contentsIndex].team2;
+    }
+  }
+
+  getDisplayNameForPlayer(player: Player): string {
+    return getDisplayName(player);
+  }
+}

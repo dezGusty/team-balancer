@@ -1,0 +1,18 @@
+<div class="row">
+  <div class="col-5">
+    team one
+    <ul>
+      <li *ngFor="let leftItem of this.extractedTeam1">
+        {{ this.getDisplayNameForPlayer(leftItem) }}
+      </li>
+    </ul>
+  </div>
+  <div class="col-5">
+    team two
+    <ul>
+      <li *ngFor="let rightItem of this.extractedTeam2">
+        {{ this.getDisplayNameForPlayer(rightItem) }}
+      </li>
+    </ul>
+  </div>
+</div>
