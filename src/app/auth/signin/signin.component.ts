@@ -16,11 +16,16 @@ export class SigninComponent implements OnInit {
 
   ngOnInit() {
     console.log('[signin] init');
+
+    if (this.authSvc.isAuthenticated()) {
+      // this.router.navigate(['/custom']);
+    }
   }
 
   tryGoogleLogin() {
     this.authSvc.doGoogleLogin()
       .then(res => {
+        console.log('[signin] navigating to root');
         this.router.navigate(['/players']);
       });
   }

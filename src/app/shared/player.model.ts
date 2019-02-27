@@ -9,15 +9,20 @@ export class Player {
     constructor(public id: number, public name: string) {
         this.rating = 2.5;
     }
+}
 
-    getDisplayName(): string {
-        if (this.displayName && this.displayName !== '') {
-            return this.displayName;
-        }
-
-        return this.name;
+/**
+ * @description Retrieves the display name for a player in a standard or
+ * nice format.
+ * @param player The player object to use.
+ * @returns The display name.
+ */
+export function getDisplayName(player: Player): string {
+    if (player.displayName && player.displayName !== '') {
+        return player.displayName;
     }
 
+    return player.name;
 }
 
 /**

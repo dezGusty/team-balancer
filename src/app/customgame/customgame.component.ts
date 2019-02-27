@@ -1,8 +1,7 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
-import { Subscription } from 'rxjs';
+import { Subscription, Subject } from 'rxjs';
 import { Match } from '../shared/match.model';
 import { Player, filterPlayerArray } from '../shared/player.model';
-import { MatchService } from '../shared/match.service';
 import { PlayersService } from '../shared/players.service';
 
 @Component({
@@ -13,21 +12,23 @@ import { PlayersService } from '../shared/players.service';
 export class CustomgameComponent implements OnInit, OnDestroy {
 
   searchedName: string;
+  public showCombinations = false;
 
-  public matchData: Match;
+  public matchData = new Match(new Date(Date.now()));
   public selectedPlayer: Player;
   private playerSelectSubscription: Subscription;
   private playerDataChangeSubscription: Subscription;
+  makeTeamsSubject: Subject<void> = new Subject<void>();
 
-  constructor(private matchSvc: MatchService, private playersSvc: PlayersService) { }
+
+  constructor(private playersSvc: PlayersService) {
+    this.matchData.availablePlayersPool = this.playersSvc.getPlayers();
+    this.matchData.draftPlayers.forEach(element => {
+      this.matchData.removePlayerFromPool(element);
+    });
+  }
 
   ngOnInit() {
-    this.matchData = new Match(new Date(Date.now()));
-    this.matchData.availablePlayersPool = this.playersSvc.getPlayers();
-    // this.matchData.draftPlayers.forEach(element => {
-    //   this.matchData.removePlayerFromPool(element);
-    // });
-
     this.playerSelectSubscription = this.playersSvc.playerSelectedEvent
       .subscribe(
         (player: Player) => {
@@ -43,6 +44,7 @@ export class CustomgameComponent implements OnInit, OnDestroy {
             this.matchData.availablePlayersPool = this.playersSvc.getPlayers();
           } else {
             // reload single player only.
+            // temporary: reload all. TODO: reload single player.
             this.matchData.availablePlayersPool = this.playersSvc.getPlayers();
           }
         }
@@ -54,8 +56,13 @@ export class CustomgameComponent implements OnInit, OnDestroy {
       this.playerSelectSubscription.unsubscribe();
     }
     if (this.playerDataChangeSubscription) {
-      this.playerSelectSubscription.unsubscribe();
+      this.playerDataChangeSubscription.unsubscribe();
     }
+  }
+
+  emitMakeTeamsEventToChild() {
+    console.log('emitting event');
+    this.makeTeamsSubject.next();
   }
 
   onSearchContentChange($event) {
@@ -67,6 +74,13 @@ export class CustomgameComponent implements OnInit, OnDestroy {
       }
 
       this.searchedName = '';
+    } else {
+
+      // try to apply the target value.
+      const filteredPlayers = filterPlayerArray(this.matchData.availablePlayersPool, $event.target.value);
+      if (filteredPlayers.length === 1) {
+        // show special marker?
+      }
     }
   }
 
@@ -80,11 +94,14 @@ export class CustomgameComponent implements OnInit, OnDestroy {
     if (currentPosition !== -1) {
       this.matchData.movePlayerBackToPool(selectedPlayer);
       this.searchedName = '';
-      return;
     } else {
       this.matchData.movePlayerToDraft(selectedPlayer);
       this.searchedName = '';
-      return;
     }
+  }
+
+  onMakeTeamsClicked() {
+    this.showCombinations = true;
+    this.emitMakeTeamsEventToChild();
   }
 }

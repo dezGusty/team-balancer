@@ -32,6 +32,9 @@ import { environment } from '../environments/environment';
 import { AuthGuard } from './auth/auth-guard.service';
 import { OrganizerGuard } from './auth/organizer-guard.service';
 import { CustomgameComponent } from './customgame/customgame.component';
+import { PlayerCardComponent } from './player-card/player-card.component';
+import { MatchCombosComponent } from './matches/match-combos/match-combos.component';
+import { MatchVersusComponent } from './matches/match-versus/match-versus.component';
 
 
 @NgModule({
@@ -52,7 +55,10 @@ import { CustomgameComponent } from './customgame/customgame.component';
     MatchPlayerComponent,
     SigninComponent,
     SignupComponent,
-    CustomgameComponent
+    CustomgameComponent,
+    PlayerCardComponent,
+    MatchCombosComponent,
+    MatchVersusComponent
   ],
   imports: [
     AngularFireModule.initializeApp(environment.firebase),

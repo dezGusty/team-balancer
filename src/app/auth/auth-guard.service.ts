@@ -20,6 +20,8 @@ export class AuthGuard implements CanActivate {
         if (this.authSvc.isAuthenticated()) {
             return true;
         } else {
+            console.log('[guard] navigating to root');
+
             this.router.navigate(['/']);
         }
         return this.authSvc.isAuthenticated();

@@ -16,6 +16,9 @@ export class Match {
         const existingPos = this.availablePlayersPool.indexOf(newPlayer);
         if (existingPos !== -1) {
             this.availablePlayersPool.splice(existingPos, 1);
+            this.availablePlayersPool = [...this.availablePlayersPool];
+        } else {
+            console.log('[match] failed to remove player from pool', newPlayer);
         }
     }
 
@@ -23,6 +26,7 @@ export class Match {
         const existingPos = this.draftPlayers.indexOf(newPlayer);
         if (existingPos !== -1) {
             this.draftPlayers.splice(existingPos, 1);
+            this.draftPlayers = [...this.draftPlayers];
         }
     }
 

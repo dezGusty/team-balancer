@@ -14,7 +14,7 @@ import { OrganizerGuard } from './auth/organizer-guard.service';
 import { CustomgameComponent } from './customgame/customgame.component';
 
 const appRoutes: Routes = [
-    { path: '', redirectTo: '/signin', pathMatch: 'full' },
+    { path: '', redirectTo: '/about', pathMatch: 'full' },
     {
         path: 'players', canActivate: [AuthGuard, OrganizerGuard], component: PlayersComponent, children: [
             { path: '', component: PlayerStartComponent },
