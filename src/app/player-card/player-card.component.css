@@ -1,0 +1,25 @@
+.player-card {
+    cursor: pointer;
+    margin: 0.25em 0 0.25em 0;
+    padding: 0.25em;
+}
+
+.player-card img {
+    vertical-align: bottom;
+}
+
+.player-card-rating {
+    text-align: right;
+    vertical-align: bottom;
+    float: right;
+}
+
+.player-card-internalid {
+    font-size: x-small;
+}
+
+.player-card-namesubtext {
+    font-size: xx-small;
+    vertical-align: bottom;
+    text-align: right;
+}

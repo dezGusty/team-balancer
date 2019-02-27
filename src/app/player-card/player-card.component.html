@@ -1,0 +1,15 @@
+<a class="list-group-item list-group-item-action player-card clearfix" (click)="onClicked($event)">
+  <span class="col-2 border-right player-card-internalid">
+    {{ player.rating }}
+  </span>
+  <span class="col-auto"></span>
+  <span class="col-2">
+    <img src="./../../../assets/default_user_pic.svg" alt="pic" height="19em">
+  </span>
+  <span class="col-12">
+    {{ localDisplayName }}
+  </span>
+  <span class="col-12 float-right player-card-namesubtext">
+    {{ player.name }}
+  </span>
+</a>
