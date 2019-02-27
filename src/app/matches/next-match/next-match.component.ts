@@ -14,6 +14,7 @@ export class NextMatchComponent implements OnInit, OnDestroy {
 
   searchedName: string;
 
+  // public matchData = new Match(new Date(Date.now()));
   public matchData: Match;
   public selectedPlayer: Player;
   private playerSelectSubscription: Subscription;
@@ -50,13 +51,12 @@ export class NextMatchComponent implements OnInit, OnDestroy {
       );
   }
 
-
   ngOnDestroy() {
     if (this.playerSelectSubscription) {
       this.playerSelectSubscription.unsubscribe();
     }
     if (this.playerDataChangeSubscription) {
-      this.playerSelectSubscription.unsubscribe();
+      this.playerDataChangeSubscription.unsubscribe();
     }
   }
 
