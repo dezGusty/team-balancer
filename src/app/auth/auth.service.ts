@@ -2,9 +2,8 @@ import { AngularFireAuth } from 'angularfire2/auth';
 import * as firebase from 'firebase/app';
 import { Injectable, EventEmitter } from '@angular/core';
 import { Router } from '@angular/router';
-import { switchMap, take } from 'rxjs/operators';
 import { AngularFirestore } from 'angularfire2/firestore';
-import { User } from '../shared/user.model';
+import { User, UserRoles } from '../shared/user.model';
 import { Subscription } from 'rxjs';
 
 @Injectable()
@@ -31,20 +30,6 @@ export class AuthService {
                 }
             }
         );
-
-        // this.afAuth.authState.pipe(
-        //     switchMap(auth => {
-        //         if (auth) {
-        //             console.log('[xyz] logged in');
-        //             return this.db.doc('users/' + auth.uid).get();
-        //         } else {
-        //             console.log('[xyz] not logged in');
-
-        //             return null;
-        //         }
-        //     })
-        // );
-
     }
 
     /**
@@ -83,6 +68,7 @@ export class AuthService {
                     this.getToken();
                     this.updateAndCacheUserAfterLogin(res.user);
                     this.onSignInOut.emit('signin-done');
+                    console.log('[login] navigating to root');
                     this.router.navigate(['/']);
                     resolve(res);
                 })
@@ -110,6 +96,7 @@ export class AuthService {
             .signOut()
             .then(() => {
                 this.token = null;
+                console.log('[guard] navigating in place');
                 this.router.navigate(['']);
             });
     }
@@ -154,14 +141,20 @@ export class AuthService {
         this.subscription = userRef.subscribe(user => {
             if (user.exists) {
                 // existing user. read the roles.
-                const originalObj = user.get('roles');
+                const originalObj: UserRoles = user.get('roles');
                 if (originalObj) {
                     userData.roles = originalObj;
                 } else {
                     console.log('User does not have role. Should create');
                 }
                 const obj = { ...userData };
-                this.db.doc('users/' + userPath).set(obj, { merge: true });
+                if (!originalObj || !originalObj.standard) {
+                    // no permission property stored initially.
+                    // store something.
+                    console.log('[auth] storing user permissions');
+
+                    this.db.doc('users/' + userPath).set(obj, { merge: true });
+                }
                 this.cachedUser = obj;
             } else {
                 // New user. Create the user doc.
