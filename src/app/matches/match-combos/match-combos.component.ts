@@ -46,6 +46,13 @@ export class MatchCombosComponent implements OnInit, OnDestroy {
     this.eventsSubscription.unsubscribe();
   }
 
+  onMatchSelected(data: {
+    team1: Array<Player>,
+    team2: Array<Player>
+  }) {
+    console.log('match selected', data);
+  }
+
   prepareTeams() {
     console.log('preparing teams');
 
@@ -119,7 +126,8 @@ export class MatchCombosComponent implements OnInit, OnDestroy {
     });
 
     let customCounter = Math.pow(2, idealNumberOfPlayers) - 2;
-    const maxValue = Math.pow(2, players.length) - 1;
+    const maxValue = Math.pow(2, players.length - 1) - 1;
+    console.log('maxval:', maxValue);
     while (customCounter < maxValue) {
       customCounter++;
       let stringifiedBinary = customCounter.toString(2);
@@ -178,12 +186,18 @@ export class MatchCombosComponent implements OnInit, OnDestroy {
     // console.log('Ideal balance value', totalSum / 2, 'from', totalSum);
   }
 
-  onGameOptionSelected($event) {
+  onGameOptionSelected($event, i) {
     const selectedOption: { value: number, diff: number, combination: string } = $event;
     this.showDetailedSelection = true;
 
     // show the selection details...
+    console.log('game option selected', selectedOption, i);
 
+    console.log('1', this.displayedMatchDetails[i].team1);
+    console.log('2', this.displayedMatchDetails[i].team2);
+
+    // TODO: Augustin Preda, 2019-03-07: move to separate display, allow to store the selected match?
+    // create next component.
 
   }
 }

@@ -1,11 +1,11 @@
 <ul class="list-group">
   <li class="list-group-item list-group-item-action clearfix"
     *ngFor="let gameOption of this.displayedMatchCombos; let i = index" style="cursor: pointer"
-    (click)="onGameOptionSelected(gameOption);">
+    (click)="onGameOptionSelected(gameOption, i);">
     <span class="game-option-index"># {{i+1}}</span>
     <span class="game-option-index">combo-code: {{gameOption.combination}}</span>
-    <p  class="game-option-index">diff: {{gameOption.diff}}</p>
-    <app-match-versus [contentsIndex]="i" 
-    [displayedMatchDetails]="this.displayedMatchDetails" [playerList]="this.playerList"></app-match-versus>
+    <p class="game-option-index">diff: {{gameOption.diff}}</p>
+    <app-match-versus [contentsIndex]="i" [displayedMatchDetails]="this.displayedMatchDetails"
+      [playerList]="this.playerList"></app-match-versus>
   </li>
 </ul>

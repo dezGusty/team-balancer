@@ -12,9 +12,7 @@
     <div class="col-6">
         <button class="btn btn-outline-secondary" *ngIf='canAddPlayers()' (click)='onNewPlayerClicked($event)'>New
             Player</button>
-        <button class="btn btn-outline-secondary" *ngIf="playerIsSelected()" (click)='onEditPlayerClicked($event)'>Edit
+        <button class="btn btn-outline-secondary" *ngIf="playerIsSelected() && canEditPlayers()" (click)='onEditPlayerClicked($event)'>Edit
             Player</button>
-        <!-- <button class="btn btn-outline-secondary" (click)='onSavePlayerClicked($event)'>Save
-            Players</button> -->
     </div>
 </div>

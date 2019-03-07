@@ -3,6 +3,7 @@ import { Player } from '../shared/player.model';
 import { PlayersService } from '../shared/players.service';
 import { Subscription } from 'rxjs';
 import { Router, ActivatedRoute } from '@angular/router';
+import { AuthService } from '../auth/auth.service';
 
 @Component({
   selector: 'app-players',
@@ -16,7 +17,11 @@ export class PlayersComponent implements OnInit, OnDestroy {
   playerSelectSubscription: Subscription;
   playerDataChangeSubscription: Subscription;
 
-  constructor(private playersSvc: PlayersService, private router: Router, private route: ActivatedRoute) {
+  constructor(
+    private authSvc: AuthService,
+    private playersSvc: PlayersService,
+    private router: Router,
+    private route: ActivatedRoute) {
     this.selectedPlayer = null;
     this.editMode = false;
   }
@@ -56,7 +61,11 @@ export class PlayersComponent implements OnInit, OnDestroy {
   }
 
   public canAddPlayers(): boolean {
-    return true;
+    return this.authSvc.isAuthenticatedAsOrganizer();
+  }
+
+  public canEditPlayers(): boolean {
+    return this.authSvc.isAuthenticatedAsOrganizer();
   }
 
   public playerIsSelected(): boolean {

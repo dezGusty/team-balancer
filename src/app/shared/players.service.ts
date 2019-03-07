@@ -145,7 +145,8 @@ export class PlayersService {
     }
 
     saveAllPlayers() {
-        const playersRef = this.db.doc('/ratings/current').ref;
+        const matchName = 'current';
+        const playersRef = this.db.doc('/ratings/' + matchName).ref;
         const obj = { players: this.playerList };
 
         playersRef.set(obj, { merge: true });
