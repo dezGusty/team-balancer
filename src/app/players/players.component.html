@@ -1,7 +1,8 @@
 <div class="row">
     <!-- show the list of players on the left side -->
     <div class="col-6">
-        <app-player *ngFor='let playerItem of players' [player]="playerItem" [id]="playerItem.id"></app-player>
+        <app-player *ngFor='let playerItem of players; let even = even; let odd = odd'
+         [player]="playerItem" [id]="playerItem.id" [ngClass]="{ odd: odd, even: even }"></app-player>
     </div>
     <!-- show the details panel on the right side -->
     <div class="col-6">

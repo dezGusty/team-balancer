@@ -135,7 +135,6 @@ export class AuthService {
     updateAndCacheUserAfterLogin(authdata: firebase.User) {
         const userData = new User(authdata);
         const userPath = authdata.uid;
-        console.log('[upd user]', userData, authdata.uid);
         const userRef = this.db.doc('users/' + userPath).get();
 
         this.subscription = userRef.subscribe(user => {

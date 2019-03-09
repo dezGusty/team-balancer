@@ -1,6 +1,7 @@
 import { Component, OnInit, Input, OnDestroy } from '@angular/core';
 import { Player } from 'src/app/shared/player.model';
 import { Observable, Subscription } from 'rxjs';
+import { CustomGame } from 'src/app/shared/custom-game.model';
 
 @Component({
   selector: 'app-match-combos',
@@ -13,6 +14,8 @@ export class MatchCombosComponent implements OnInit, OnDestroy {
   private eventsSubscription: Subscription;
 
   showDetailedSelection = false;
+  showDetailedSelectionIndex = -1;
+  selectionData: CustomGame = undefined;
 
   listOfOptions = new Array<{ value: number, diff: number, combination: string }>();
   displayedMatchCombos = new Array<{
@@ -189,6 +192,7 @@ export class MatchCombosComponent implements OnInit, OnDestroy {
   onGameOptionSelected($event, i) {
     const selectedOption: { value: number, diff: number, combination: string } = $event;
     this.showDetailedSelection = true;
+    this.showDetailedSelectionIndex = i;
 
     // show the selection details...
     console.log('game option selected', selectedOption, i);
@@ -198,6 +202,7 @@ export class MatchCombosComponent implements OnInit, OnDestroy {
 
     // TODO: Augustin Preda, 2019-03-07: move to separate display, allow to store the selected match?
     // create next component.
+    this.selectionData = new CustomGame(this.displayedMatchDetails[i].team1, this.displayedMatchDetails[i].team2);
 
   }
 }

@@ -23,32 +23,32 @@ export class NextMatchComponent implements OnInit, OnDestroy {
   constructor(private matchSvc: MatchService, private playersSvc: PlayersService) { }
 
   ngOnInit() {
-    this.matchData = this.matchSvc.getNextMatch();
-    this.matchData.availablePlayersPool = this.playersSvc.getPlayers();
-    this.matchData.draftPlayers.forEach(element => {
-      this.matchData.removePlayerFromPool(element);
-    });
+    // this.matchData = this.matchSvc.getNextMatch();
+    // this.matchData.availablePlayersPool = this.playersSvc.getPlayers();
+    // this.matchData.draftPlayers.forEach(element => {
+    //   this.matchData.removePlayerFromPool(element);
+    // });
 
-    this.playerSelectSubscription = this.playersSvc.playerSelectedEvent
-      .subscribe(
-        (player: Player) => {
-          this.matchData.movePlayerToDraft(player);
-        }
-      );
+    // this.playerSelectSubscription = this.playersSvc.playerSelectedEvent
+    //   .subscribe(
+    //     (player: Player) => {
+    //       this.matchData.movePlayerToDraft(player);
+    //     }
+    //   );
 
-    this.playerDataChangeSubscription = this.playersSvc.playerDataChangeEvent
-      .subscribe(
-        (player: Player) => {
-          console.log('player change');
-          if (player == null) {
-            // reload all
-            this.matchData.availablePlayersPool = this.playersSvc.getPlayers();
-          } else {
-            // reload single player only.
-            this.matchData.availablePlayersPool = this.playersSvc.getPlayers();
-          }
-        }
-      );
+    // this.playerDataChangeSubscription = this.playersSvc.playerDataChangeEvent
+    //   .subscribe(
+    //     (player: Player) => {
+    //       console.log('player change');
+    //       if (player == null) {
+    //         // reload all
+    //         this.matchData.availablePlayersPool = this.playersSvc.getPlayers();
+    //       } else {
+    //         // reload single player only.
+    //         this.matchData.availablePlayersPool = this.playersSvc.getPlayers();
+    //       }
+    //     }
+    //   );
   }
 
   ngOnDestroy() {

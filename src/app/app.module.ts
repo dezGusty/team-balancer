@@ -3,6 +3,9 @@ import { NgModule } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 
 import { NgbCollapseModule } from '@ng-bootstrap/ng-bootstrap';
+import { AuthService } from './auth/auth.service';
+import { PlayersService } from './shared/players.service';
+import { MatchService } from './shared/match.service';
 
 import { AppComponent } from './app.component';
 import { HeaderComponent } from './header/header.component';
@@ -14,8 +17,6 @@ import { PlayerDetailsComponent } from './players/player-details/player-details.
 import { PlayerEditComponent } from './players/player-edit/player-edit.component';
 import { PreviousMatchesComponent } from './matches/previous-matches/previous-matches.component';
 import { AboutComponent } from './about/about.component';
-import { MatchService } from './shared/match.service';
-import { PlayersService } from './shared/players.service';
 import { AppRoutingModule } from './app-routing.module';
 import { PlayerStartComponent } from './players/player-start/player-start.component';
 import { PlayerNewComponent } from './players/player-new/player-new.component';
@@ -23,7 +24,6 @@ import { PlayerFilterPipe } from './matches/player-filter.pipe';
 import { MatchPlayerComponent } from './players/match-player/match-player.component';
 import { SigninComponent } from './auth/signin/signin.component';
 import { SignupComponent } from './auth/signup/signup.component';
-import { AuthService } from './auth/auth.service';
 
 import { AngularFireModule } from 'angularfire2';
 import { AngularFirestoreModule } from 'angularfire2/firestore';
@@ -35,6 +35,8 @@ import { CustomgameComponent } from './customgame/customgame.component';
 import { PlayerCardComponent } from './player-card/player-card.component';
 import { MatchCombosComponent } from './matches/match-combos/match-combos.component';
 import { MatchVersusComponent } from './matches/match-versus/match-versus.component';
+import { MatchStorageComponent } from './matches/match-storage/match-storage.component';
+import { CopyClipboardDirective } from './shared/copy-clipboard.directive';
 
 
 @NgModule({
@@ -58,7 +60,9 @@ import { MatchVersusComponent } from './matches/match-versus/match-versus.compon
     CustomgameComponent,
     PlayerCardComponent,
     MatchCombosComponent,
-    MatchVersusComponent
+    MatchVersusComponent,
+    MatchStorageComponent,
+    CopyClipboardDirective
   ],
   imports: [
     AngularFireModule.initializeApp(environment.firebase),
