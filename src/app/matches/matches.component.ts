@@ -6,11 +6,9 @@ import { Component, OnInit } from '@angular/core';
   styleUrls: ['./matches.component.css']
 })
 export class MatchesComponent implements OnInit {
-  public nextMatchCreated: boolean;
   constructor() { }
 
   ngOnInit() {
-    this.nextMatchCreated = true;
   }
 
 }
