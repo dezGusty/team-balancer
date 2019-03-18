@@ -1,45 +1,99 @@
-// import { Match } from './match.model';
-// import { EventEmitter } from '@angular/core';
-// import { MatchResults } from './match-results.model';
 import { AngularFirestore } from 'angularfire2/firestore';
 import { CustomGame } from './custom-game.model';
-import { Injectable } from '@angular/core';
+import { Injectable, EventEmitter } from '@angular/core';
+import { AuthService } from '../auth/auth.service';
+import { Subscription } from 'rxjs';
 
 /**
  * Stores and retrieves match related information.
  */
 @Injectable()
 export class MatchService {
+    private dataChangeSubscription: Subscription;
+    private recentMatchNames: string[];
+    recentMatchesChangeEvent = new EventEmitter<string>();
 
-    // private archivedMatches: Match[] = [];
-    // private nextMatch: Match;
+    public maxNumberOfRecentMatches = 5;
 
-    // nextMatchCreated = new EventEmitter<Match>();
-    // currentMatchCompleted = new EventEmitter<Match>();
+    public constructor(private db: AngularFirestore, private authSvc: AuthService) {
+        if (!this.authSvc.isAuthenticated()) {
+            console.log('[matches] waiting for login...');
+        }
 
-    public constructor(private db: AngularFirestore) {
-        // this.nextMatch = null;
-        // console.log('[temp] creating hardcoded match for feb 21st');
-        // this.nextMatch = new Match(new Date(2019, 2, 21));
+        this.authSvc.onSignInOut.subscribe((message) => {
+            if (message === 'signout-pending') {
+                this.unsubscribeFromDataSources();
+            } else if (message === 'signin-done') {
+                this.subscribeToDataSources();
+            } else {
+                console.log('[matches] unexpected message from auth svc: ' + message);
+            }
+        });
+
+        // if already logged in, there will be no notification for signin-done.
+        // simulate the event now.
+        if (this.authSvc.isAuthenticated()) {
+            this.subscribeToDataSources();
+        }
     }
 
-    // public getNextMatch(): Match {
-    //     return this.nextMatch;
-    // }
+    subscribeToDataSources() {
+        console.log('[matches] subscribing to data sources');
 
-    // public createNextMatch(matchDate: Date): void {
-    //     this.nextMatch = new Match(matchDate);
-    // }
+        // subscribe to firebase collection changes.
+        const recentMatches = this.db.doc('matches/recent').get();
+        this.dataChangeSubscription = recentMatches.subscribe(
+            recentMatchesDoc => this.readRecentMatchesFromDoc(recentMatchesDoc));
+    }
 
-    // public finalizeCurrentMatch(results: MatchResults) {
-    //     // TODO: implement
-    // }
+    readRecentMatchesFromDoc(recentMatchesDoc) {
+        if (!recentMatchesDoc.exists) {
+            return;
+        }
 
-    public getRecentMatchList() {
-        const matchesColRef = this.db.doc('/matches/recent').ref;
+        const readRecentMatchNames: string[] = recentMatchesDoc.get('items');
+        console.log('[match-svc] readRecentMatchNames:', readRecentMatchNames);
 
-        // TODO: implement; return list of items from fixed document.
-        // TODO: add update of fixed document when changing the /matches/*
+        if (this.recentMatchNames !== readRecentMatchNames) {
+            this.recentMatchNames = readRecentMatchNames;
+            this.recentMatchesChangeEvent.emit();
+        }
+    }
+
+    unsubscribeFromDataSources() {
+        console.log('[players] unsubscribing from data sources');
+        if (this.dataChangeSubscription) {
+            this.dataChangeSubscription.unsubscribe();
+        }
+    }
+
+
+    public getRecentMatchList(): string[] {
+        return this.recentMatchNames;
+    }
+
+    public saveMatchNameToRecentList(matchName: string) {
+        let newRecentMatches: string[] = [];
+        if (this.recentMatchNames) {
+            const index = this.recentMatchNames.findIndex((game) => game === matchName);
+            if (index !== -1) {
+                // Found.
+                return;
+            }
+
+            newRecentMatches = this.recentMatchNames.slice();
+        }
+
+        newRecentMatches.push(matchName);
+
+        if (newRecentMatches.length > this.maxNumberOfRecentMatches) {
+            newRecentMatches.splice(0, 1);
+        }
+        const recentMatchRef = this.db.doc('/matches/recent').ref;
+        const obj = { items: newRecentMatches };
+        recentMatchRef.set(obj, { merge: true });
+
+        this.readRecentMatchesFromDoc(recentMatchRef);
     }
 
     public saveCustomMatch(matchName: string, customGame: CustomGame) {
@@ -48,5 +102,8 @@ export class MatchService {
         const obj = { team1: customGame.team1, team2: customGame.team2 };
 
         matchRef.set(obj, { merge: true });
+
+        // also update the recent list.
+        this.saveMatchNameToRecentList(matchName);
     }
 }
