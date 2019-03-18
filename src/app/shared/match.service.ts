@@ -3,6 +3,7 @@ import { CustomGame } from './custom-game.model';
 import { Injectable, EventEmitter } from '@angular/core';
 import { AuthService } from '../auth/auth.service';
 import { Subscription } from 'rxjs';
+import { CustomPrevGame } from './custom-prev-game.model';
 
 /**
  * Stores and retrieves match related information.
@@ -12,6 +13,9 @@ export class MatchService {
     private dataChangeSubscription: Subscription;
     private recentMatchNames: string[];
     recentMatchesChangeEvent = new EventEmitter<string>();
+    matchRetrievedEvent = new EventEmitter<CustomPrevGame>();
+
+    private individualMatchRetrieval: Subscription[] = [];
 
     public maxNumberOfRecentMatches = 5;
 
@@ -44,7 +48,43 @@ export class MatchService {
         const recentMatches = this.db.doc('matches/recent').get();
         this.dataChangeSubscription = recentMatches.subscribe(
             recentMatchesDoc => this.readRecentMatchesFromDoc(recentMatchesDoc));
+
     }
+
+
+    public issueMatchRetrievalForDate(matchName: string) {
+        this.individualMatchRetrieval.push(
+            this.db.doc('matches/' + matchName).get().subscribe(item => {
+                const fbData = item.data();
+                const obj = {
+                    team1: fbData.team1,
+                    team2: fbData.team2,
+                    scoreTeam1: fbData.scoreTeam1,
+                    scoreTeam2: fbData.scoreTeam2,
+                    appliedResults: fbData.appliedResults
+                };
+                const result: CustomPrevGame = obj;
+                this.matchRetrievedEvent.emit(result);
+            }));
+    }
+
+    // public readMatchByName(matchName: string): CustomPrevGame {
+    //     let result: CustomPrevGame = null;
+    //     const matchDoc = this.db.doc('matches/' + matchName).get().subscribe(item => {
+    //         const fbData = item.data();
+    //         console.log('item CCCCC', item.data());
+    //         const obj = {
+    //             team1: fbData.team1,
+    //             team2: fbData.team2,
+    //             scoreTeam1: fbData.scoreTeam1,
+    //             scoreTeam2: fbData.scoreTeam2
+    //         };
+    //         result = obj;
+    //         return result;
+    //     });
+    //     console.log('mat', matchDoc);
+    //     return null;
+    // }
 
     readRecentMatchesFromDoc(recentMatchesDoc) {
         if (!recentMatchesDoc.exists) {
@@ -52,7 +92,6 @@ export class MatchService {
         }
 
         const readRecentMatchNames: string[] = recentMatchesDoc.get('items');
-        console.log('[match-svc] readRecentMatchNames:', readRecentMatchNames);
 
         if (this.recentMatchNames !== readRecentMatchNames) {
             this.recentMatchNames = readRecentMatchNames;
@@ -65,6 +104,9 @@ export class MatchService {
         if (this.dataChangeSubscription) {
             this.dataChangeSubscription.unsubscribe();
         }
+        this.individualMatchRetrieval.forEach(subscription => {
+            subscription.unsubscribe();
+        });
     }
 
 
@@ -72,6 +114,14 @@ export class MatchService {
         return this.recentMatchNames;
     }
 
+    /**
+     * Saves a given match name in the 'recent' list. If the name is already part of the list,
+     * nothing happens, if it's not there already, it's added.
+     * The 'recent' list is a rolling list, containing the most recent N items. Adding the N+1th item
+     * will evict the oldest item from the list.
+     *
+     * @param matchName Match name to save into the 'recent' list.
+     */
     public saveMatchNameToRecentList(matchName: string) {
         let newRecentMatches: string[] = [];
         if (this.recentMatchNames) {
@@ -97,7 +147,6 @@ export class MatchService {
     }
 
     public saveCustomMatch(matchName: string, customGame: CustomGame) {
-        console.log('[match-svc] saving custom match for ', matchName);
         const matchRef = this.db.doc('/matches/' + matchName).ref;
         const obj = { team1: customGame.team1, team2: customGame.team2 };
 

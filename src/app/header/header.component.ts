@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { AuthService } from '../auth/auth.service';
+import { Router, Event, NavigationStart } from '@angular/router';
 
 @Component({
   selector: 'app-header',
@@ -9,20 +10,34 @@ import { AuthService } from '../auth/auth.service';
 export class HeaderComponent implements OnInit {
   isCollapsed = true;
 
-  constructor(private authSvc: AuthService) { }
+  /**
+   * Constructor.
+   * @param authSvc The authentication service
+   * @param router The router. Used to listen for navigation events 
+   * and collapse the navbar.
+   */
+  constructor(private authSvc: AuthService, private router: Router) {
+    this.router.events.subscribe((evt: Event) => {
+      if (evt instanceof NavigationStart) {
+        this.isCollapsed = true;
+      }
+    });
+  }
 
   ngOnInit() {
   }
 
-  public userIsAdmin(): boolean {
-    return false;
-  }
-
+  /**
+   * Retrieves the authentication state from the service.
+   */
   public isAuthenticated(): boolean {
     return this.authSvc.isAuthenticated();
   }
 
-  public onSignout() {
+  /**
+   * React to the signout button being clicked from the UI.
+   */
+  public onSignoutBtnClick() {
     this.authSvc.signOut();
   }
 }

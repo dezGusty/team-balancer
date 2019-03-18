@@ -1,0 +1,34 @@
+<form (submit)="onMatchSaveCliked()">
+  <div class="row">
+    <div class="col-12">
+      Date:
+
+    </div>
+    <div class="col-6 border-right">
+      team one
+      <ul>
+        <li *ngFor="let leftItem of this.extractedTeam1">
+          {{ this.getDisplayNameForPlayer(leftItem) }}
+        </li>
+      </ul>
+      <!-- <div class="score">{{team1Score}}</div> -->
+      <input type="number" class="form-control" name="team1Score" id="team1Score" [(ngModel)]="this.team1Score"
+        #team1ScoreEntry="ngModel">
+
+    </div>
+    <div class="col-6">
+      team two
+      <ul>
+        <li *ngFor="let rightItem of this.extractedTeam2">
+          {{ this.getDisplayNameForPlayer(rightItem) }}
+        </li>
+      </ul>
+      <!-- <div class="score">{{team2Score}}</div> -->
+      <input type="number" class="form-control" name="team2Score" id="team2Score" [(ngModel)]="this.team2Score"
+        #team2ScoreEntry="ngModel">
+    </div>
+  </div>
+  <div class="row col-md-6">
+    <button class="btn btn-sm btn-primary">Store</button>
+  </div>
+</form>

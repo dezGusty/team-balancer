@@ -15,7 +15,7 @@ import { PlayersComponent } from './players/players.component';
 import { PlayerComponent } from './players/player/player.component';
 import { PlayerDetailsComponent } from './players/player-details/player-details.component';
 import { PlayerEditComponent } from './players/player-edit/player-edit.component';
-import { PreviousMatchesComponent } from './matches/previous-matches/previous-matches.component';
+import { RecentMatchesComponent } from './matches/previous-matches/recent-matches.component';
 import { AboutComponent } from './about/about.component';
 import { AppRoutingModule } from './app-routing.module';
 import { PlayerStartComponent } from './players/player-start/player-start.component';
@@ -37,6 +37,7 @@ import { MatchCombosComponent } from './matches/match-combos/match-combos.compon
 import { MatchVersusComponent } from './matches/match-versus/match-versus.component';
 import { MatchStorageComponent } from './matches/match-storage/match-storage.component';
 import { CopyClipboardDirective } from './shared/copy-clipboard.directive';
+import { PrevMatchDetailComponent } from './matches/prev-match-detail/prev-match-detail.component';
 
 
 @NgModule({
@@ -49,7 +50,7 @@ import { CopyClipboardDirective } from './shared/copy-clipboard.directive';
     PlayerComponent,
     PlayerDetailsComponent,
     PlayerEditComponent,
-    PreviousMatchesComponent,
+    RecentMatchesComponent,
     AboutComponent,
     PlayerStartComponent,
     PlayerNewComponent,
@@ -62,7 +63,8 @@ import { CopyClipboardDirective } from './shared/copy-clipboard.directive';
     MatchCombosComponent,
     MatchVersusComponent,
     MatchStorageComponent,
-    CopyClipboardDirective
+    CopyClipboardDirective,
+    PrevMatchDetailComponent
   ],
   imports: [
     AngularFireModule.initializeApp(environment.firebase),

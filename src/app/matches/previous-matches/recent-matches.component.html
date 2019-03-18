@@ -1,0 +1,16 @@
+<div class="row">
+  <!-- show the list of players on the left side -->
+  <div class="col-md-6">
+    <ul>
+      <li *ngFor='let match of this.getRecentMatchNames(); let idx = index; let even = even; let odd = odd' 
+      (click)="onMatchEntryClicked(idx)"
+      [routerLink]="[getSelectedMatch(idx)]">
+        {{match}}
+      </li>
+    </ul>
+  </div>
+  <!-- show the details panel on the right side -->
+  <div class="col-md-6">
+    <router-outlet></router-outlet>
+  </div>
+</div>
