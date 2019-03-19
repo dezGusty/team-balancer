@@ -29,6 +29,7 @@
     </div>
   </div>
   <div class="row col-md-6">
-    <button class="btn btn-sm btn-primary">Store</button>
+    <button *ngIf='!this.matchResultsStored' class="btn btn-sm btn-primary">Store</button>
+    <button *ngIf='!this.matchResultsAppliedToRatings' class="btn btn-sm btn-secondary">Update ratings</button>
   </div>
 </form>

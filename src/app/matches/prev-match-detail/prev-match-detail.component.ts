@@ -1,10 +1,9 @@
-import { Component, OnInit, Input, OnDestroy } from '@angular/core';
+import { Component, OnInit, OnDestroy } from '@angular/core';
 import { Player, getDisplayName } from '../../shared/player.model';
-import { Router, ActivatedRoute, Params } from '@angular/router';
+import { ActivatedRoute, Params } from '@angular/router';
 import { MatchService } from '../../shared/match.service';
 import { CustomPrevGame } from '../../shared/custom-prev-game.model';
-import { Observable, Subscription } from 'rxjs';
-import { isNgTemplate } from '@angular/compiler';
+import { Subscription } from 'rxjs';
 
 @Component({
   selector: 'app-prev-match-detail',
@@ -14,7 +13,6 @@ import { isNgTemplate } from '@angular/compiler';
 export class PrevMatchDetailComponent implements OnInit, OnDestroy {
 
   customGame: CustomPrevGame;
-  // @Input() customGameObj: Observable<CustomPrevGame>;
   private subscriptions: Subscription[] = [];
 
   extractedTeam1: Array<Player> = [];
@@ -22,7 +20,9 @@ export class PrevMatchDetailComponent implements OnInit, OnDestroy {
 
   public team1Score = 0;
   public team2Score = 0;
-  appliedResults = false;
+
+  public matchResultsStored = true;
+  public matchResultsAppliedToRatings = true;
 
   matchSearchKey = '';
 
@@ -43,20 +43,20 @@ export class PrevMatchDetailComponent implements OnInit, OnDestroy {
         this.customGame = customGame;
         this.extractedTeam1 = customGame.team1;
         this.extractedTeam2 = customGame.team2;
+        this.matchResultsStored = true;
         if (customGame.scoreTeam1 != null) {
           this.team1Score = customGame.scoreTeam1;
         } else {
           this.team1Score = 0;
+          this.matchResultsStored = false;
         }
         if (customGame.scoreTeam2 != null) {
           this.team2Score = customGame.scoreTeam2;
         } else {
           this.team2Score = 0;
+          this.matchResultsStored = false;
         }
-        this.appliedResults = customGame.appliedResults;
-
-        console.log('score1:', this.team1Score);
-        console.log('score2:', this.team2Score);
+        this.matchResultsAppliedToRatings = customGame.appliedResults;
       }
       ));
   }
