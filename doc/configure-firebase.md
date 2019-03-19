@@ -129,4 +129,10 @@ Hosting URL: https://teams-balancer.firebaseapp.com
 ```
 
 Access it.
-E.g.
+
+## Quick update
+
+```cmd
+ng build --prod
+firebase deploy
+```
