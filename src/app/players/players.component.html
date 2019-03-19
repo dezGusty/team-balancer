@@ -1,8 +1,17 @@
 <div class="row">
+    <div class="col-md-6">
+        <div class="border-bottom">
+            <input class="form-control border-0" type="text" [(ngModel)]="searchedName"
+                (keyup)="onSearchContentChange($event)" placeholder="Search..." aria-label="Search" #srcNameArea
+                autofocus>
+        </div>
+    </div>
+</div>
+<div class="row">
     <!-- show the list of players on the left side -->
     <div class="col-6">
-        <app-player *ngFor='let playerItem of players; let even = even; let odd = odd'
-         [player]="playerItem" [id]="playerItem.id" [ngClass]="{ odd: odd, even: even }"></app-player>
+        <app-player *ngFor='let playerItem of players | playerFilter: searchedName; let even = even; let odd = odd' [player]="playerItem"
+            [id]="playerItem.id" [ngClass]="{ odd: odd, even: even }" ></app-player>
     </div>
     <!-- show the details panel on the right side -->
     <div class="col-6">
@@ -13,7 +22,8 @@
     <div class="col-6">
         <button class="btn btn-outline-secondary" *ngIf='canAddPlayers()' (click)='onNewPlayerClicked($event)'>New
             Player</button>
-        <button class="btn btn-outline-secondary" *ngIf="playerIsSelected() && canEditPlayers()" (click)='onEditPlayerClicked($event)'>Edit
+        <button class="btn btn-outline-secondary" *ngIf="playerIsSelected() && canEditPlayers()"
+            (click)='onEditPlayerClicked($event)'>Edit
             Player</button>
     </div>
 </div>

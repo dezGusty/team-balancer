@@ -1,5 +1,5 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
-import { Player } from '../shared/player.model';
+import { Player, filterPlayerArray } from '../shared/player.model';
 import { PlayersService } from '../shared/players.service';
 import { Subscription } from 'rxjs';
 import { Router, ActivatedRoute } from '@angular/router';
@@ -16,6 +16,7 @@ export class PlayersComponent implements OnInit, OnDestroy {
   editMode: boolean;
   playerSelectSubscription: Subscription;
   playerDataChangeSubscription: Subscription;
+  searchedName = '';
 
   constructor(
     private authSvc: AuthService,
@@ -87,5 +88,13 @@ export class PlayersComponent implements OnInit, OnDestroy {
   public onSavePlayerClicked($event): void {
     console.log('save player clicked');
     this.playersSvc.saveAllPlayers();
+  }
+
+  onSearchContentChange($event) {
+    // try to apply the target value.
+    const filteredPlayers = filterPlayerArray(this.players, $event.target.value);
+    if (filteredPlayers.length === 1) {
+      // show special marker?
+    }
   }
 }
