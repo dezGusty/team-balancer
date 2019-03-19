@@ -4,6 +4,7 @@ import { ActivatedRoute, Params } from '@angular/router';
 import { MatchService } from '../../shared/match.service';
 import { CustomPrevGame } from '../../shared/custom-prev-game.model';
 import { Subscription } from 'rxjs';
+import { PlayersService } from 'src/app/shared/players.service';
 
 @Component({
   selector: 'app-prev-match-detail',
@@ -28,7 +29,8 @@ export class PrevMatchDetailComponent implements OnInit, OnDestroy {
 
   constructor(
     private route: ActivatedRoute,
-    private matchSvc: MatchService) { }
+    private matchSvc: MatchService,
+    private playersSvc: PlayersService) { }
 
   ngOnInit() {
     this.subscriptions.push(this.route.params.subscribe(
@@ -84,5 +86,17 @@ export class PrevMatchDetailComponent implements OnInit, OnDestroy {
     this.customGame.scoreTeam1 = this.team1Score;
     this.customGame.scoreTeam2 = this.team2Score;
     this.matchSvc.saveCustomPrevMatch(this.matchSearchKey, this.customGame);
+  }
+
+  onUpdateRatingsClick() {
+    const newPlayers = this.playersSvc.updateRatingsForGame(
+      this.playersSvc.getPlayers(), this.customGame
+    );
+    console.log('------ old players ----------');
+    console.log(this.playersSvc.getPlayers());
+
+    console.log('------ new players ----------');
+    console.log(newPlayers);
+
   }
 }

@@ -84,7 +84,6 @@ export class MatchService {
     }
 
     unsubscribeFromDataSources() {
-        console.log('[players] unsubscribing from data sources');
         if (this.dataChangeSubscription) {
             this.dataChangeSubscription.unsubscribe();
         }
@@ -92,7 +91,6 @@ export class MatchService {
             subscription.unsubscribe();
         });
     }
-
 
     public getRecentMatchList(): string[] {
         return this.recentMatchNames;

@@ -3,6 +3,7 @@ import { EventEmitter, Injectable } from '@angular/core';
 import { AngularFirestore } from 'angularfire2/firestore';
 import { Observable, Subscription } from 'rxjs';
 import { AuthService } from '../auth/auth.service';
+import { CustomPrevGame } from './custom-prev-game.model';
 
 /**
  * Stores and retrieves player related information.
@@ -169,5 +170,44 @@ export class PlayersService {
 
     updateSinglePlayerToFirebase(player: Player) {
         this.saveAllPlayers();
+    }
+
+    public updateRatingsForGame(players: Player[], game: CustomPrevGame): Player[] {
+        if (game.scoreTeam1 == null || game.scoreTeam2 == null
+            || game.scoreTeam1 === game.scoreTeam2) {
+            // nothing to do
+            return players.slice();
+        }
+
+        // (deep) clone the array
+        const playersCpy = players.map(x => ({ ...x }));
+
+        const difference = game.scoreTeam1 - game.scoreTeam2;
+        let winners: string[] = [];
+        let losers: string[] = [];
+        if (difference > 0) {
+            winners = game.team1.map((player) => player.name);
+            losers = game.team2.map((player) => player.name);
+        } else {
+            losers = game.team1.map((player) => player.name);
+            winners = game.team2.map((player) => player.name);
+        }
+
+        return playersCpy.map(player => {
+            // if the game contains the player name in the winner list
+            // or the loser list modify the rating.
+            // otherwise, just leave it as it is.
+            if (winners.includes(player.name)) {
+                // improve rating (lower numerical value)
+                player.rating -= player.rating * (0.02 + difference * 0.002);
+                return player;
+            } else if (losers.includes(player.name)) {
+                // worsen rating (higher numerical value)
+                player.rating += player.rating * (0.02 + difference * 0.002);
+                return player;
+            } else {
+                return player;
+            }
+        });
     }
 }
