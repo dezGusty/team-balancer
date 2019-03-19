@@ -14,6 +14,7 @@ export class AuthService {
         private db: AngularFirestore,
         private afAuth: AngularFireAuth) {
 
+        this.token = sessionStorage.getItem('token');
         this.afAuth.authState.subscribe(
             (auth) => {
                 if (auth) {
@@ -21,6 +22,7 @@ export class AuthService {
                         .then(
                             (token: string) => {
                                 this.token = token;
+                                sessionStorage.setItem('token', this.token);
                             }
                         );
                     this.updateAndCacheUserAfterLogin(this.afAuth.auth.currentUser);
@@ -65,7 +67,7 @@ export class AuthService {
                 .then(res => {
                     console.log('[firebase login]');
 
-                    this.getToken();
+                    this.issueTokenRetrieval();
                     this.updateAndCacheUserAfterLogin(res.user);
                     this.onSignInOut.emit('signin-done');
                     console.log('[login] navigating to root');
@@ -101,19 +103,20 @@ export class AuthService {
             });
     }
 
-    getToken() {
+    private issueTokenRetrieval() {
         if (!this.afAuth.auth || !this.afAuth.auth.currentUser) {
             return;
         }
+
+        // Request the token. Store it when received.
         this.afAuth.auth.currentUser.getIdToken()
             .then(
                 (token: string) => {
                     this.token = token;
-                    // console.log('[token]', this.token);
                 }
-            );
-        // return the previous /cached token
-        return this.token;
+            ).catch((error) => {
+                console.warn('[guard] Failed to retrieve token', error);
+            });
     }
 
     isAuthenticated(): boolean {
@@ -121,15 +124,20 @@ export class AuthService {
         return result;
     }
 
-    isAuthenticatedAsOrganizer(): boolean {
-        if (!this.cachedUser || !this.cachedUser.roles) {
-            return false;
-        }
-
-        if (this.cachedUser.roles.organizer) {
-            return this.cachedUser.roles.organizer;
+    public doesRoleContainOrganizer(role: UserRoles) {
+        if (role.organizer) {
+            return role.organizer;
         }
         return false;
+    }
+
+    isAuthenticatedAsOrganizer(): boolean {
+        if (!this.cachedUser || !this.cachedUser.roles) {
+            const roles: UserRoles = JSON.parse(sessionStorage.getItem('roles'));
+            return this.doesRoleContainOrganizer(roles);
+        }
+
+        return this.doesRoleContainOrganizer(this.cachedUser.roles);
     }
 
     updateAndCacheUserAfterLogin(authdata: firebase.User) {
@@ -155,12 +163,14 @@ export class AuthService {
                     this.db.doc('users/' + userPath).set(obj, { merge: true });
                 }
                 this.cachedUser = obj;
+                sessionStorage.setItem('roles', JSON.stringify(this.cachedUser.roles));
             } else {
                 // New user. Create the user doc.
                 const obj = { ...userData };
                 console.log('User does not exist. Should create');
                 this.db.doc('users/' + userPath).set(obj);
                 this.cachedUser = obj;
+                sessionStorage.setItem('roles', JSON.stringify(this.cachedUser.roles));
             }
         });
     }

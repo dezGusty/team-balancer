@@ -11,8 +11,8 @@ export class AboutComponent implements OnInit {
   public releaseDate: Date;
 
   constructor() {
-    this.version = '0.2.1';
-    this.releaseDate = new Date(2019, 3, 8);
+    this.version = '0.3.1';
+    this.releaseDate = new Date(2019, 3, 19);
   }
 
   ngOnInit() {
