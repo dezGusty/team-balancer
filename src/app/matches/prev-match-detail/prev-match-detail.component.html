@@ -28,8 +28,9 @@
         #team2ScoreEntry="ngModel">
     </div>
   </div>
-  <div class="row col-md-6">
-    <button *ngIf='!this.matchResultsStored' class="btn btn-sm btn-primary">Store</button>
+  <div class="row">
+    <button *ngIf='!this.matchResultsStored' class="btn btn-sm btn-primary" (click)="onStoreResultClick()">Store
+      Result</button>
     <button *ngIf='!this.matchResultsAppliedToRatings' class="btn btn-sm btn-secondary">Update ratings</button>
   </div>
 </form>

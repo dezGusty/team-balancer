@@ -68,23 +68,7 @@ export class MatchService {
             }));
     }
 
-    // public readMatchByName(matchName: string): CustomPrevGame {
-    //     let result: CustomPrevGame = null;
-    //     const matchDoc = this.db.doc('matches/' + matchName).get().subscribe(item => {
-    //         const fbData = item.data();
-    //         console.log('item CCCCC', item.data());
-    //         const obj = {
-    //             team1: fbData.team1,
-    //             team2: fbData.team2,
-    //             scoreTeam1: fbData.scoreTeam1,
-    //             scoreTeam2: fbData.scoreTeam2
-    //         };
-    //         result = obj;
-    //         return result;
-    //     });
-    //     console.log('mat', matchDoc);
-    //     return null;
-    // }
+
 
     readRecentMatchesFromDoc(recentMatchesDoc) {
         if (!recentMatchesDoc.exists) {
@@ -154,5 +138,32 @@ export class MatchService {
 
         // also update the recent list.
         this.saveMatchNameToRecentList(matchName);
+    }
+
+    public saveCustomPrevMatch(matchName: string, game: CustomPrevGame) {
+        console.log('save custom prev mtch', matchName, game);
+        const matchRef = this.db.doc('/matches/' + matchName).ref;
+        const objScore = {
+            team1: game.team1,
+            team2: game.team2
+        };
+
+        let obj;
+
+        if (game.appliedResults) {
+            obj = { ...objScore, appliedResults: game.appliedResults };
+        } else {
+            obj = objScore;
+        }
+
+        if (game.scoreTeam1 != null) {
+            obj = { ...obj, scoreTeam1: game.scoreTeam1 };
+        }
+        if (game.scoreTeam2 != null) {
+            obj = { ...obj, scoreTeam2: game.scoreTeam2 };
+        }
+
+        console.log('save custom prev obj', obj);
+        matchRef.set(obj, { merge: true });
     }
 }

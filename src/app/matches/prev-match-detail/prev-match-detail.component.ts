@@ -79,4 +79,10 @@ export class PrevMatchDetailComponent implements OnInit, OnDestroy {
   onMatchSaveCliked() {
 
   }
+
+  onStoreResultClick() {
+    this.customGame.scoreTeam1 = this.team1Score;
+    this.customGame.scoreTeam2 = this.team2Score;
+    this.matchSvc.saveCustomPrevMatch(this.matchSearchKey, this.customGame);
+  }
 }
