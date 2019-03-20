@@ -10,8 +10,8 @@
 <div class="row justify-content-center">
     <!-- show the list of players on the left side -->
     <div class="col-6 col-sm-6 col-md-5 col-lg-4 left-player-list">
-        <app-player *ngFor='let playerItem of players | playerFilter: searchedName; let even = even; let odd = odd'
-            [player]="playerItem" [id]="playerItem.id" [ngClass]="{ odd: odd, even: even }"></app-player>
+        <app-player-routed-card *ngFor='let playerItem of players | playerFilter: searchedName; let even = even; let odd = odd'
+            [player]="playerItem" [id]="playerItem.id" [ngClass]="{ odd: odd, even: even }"></app-player-routed-card>
     </div>
     <!-- show the details panel on the right side -->
     <div class="col-6 col-sm-6 col-md-5 col-lg-4 right-player-list">

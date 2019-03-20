@@ -1,13 +1,12 @@
 import { Component, OnInit, Input, Output, EventEmitter } from '@angular/core';
-import { Player, getDisplayName } from '../../shared/player.model';
-import { PlayersService } from '../../shared/players.service';
+import { Player } from '../../shared/player.model';
 
 @Component({
-  selector: 'app-player',
+  selector: 'app-player-routed-card',
   templateUrl: './player.component.html',
-  styleUrls: ['./player.component.css']
+  styles: ['']
 })
-export class PlayerComponent implements OnInit {
+export class PlayerRoutedCardComponent implements OnInit {
   @Input() player: Player;
   @Input() id: number;
   @Output() playerSelected = new EventEmitter<Player>();
