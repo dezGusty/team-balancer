@@ -27,7 +27,7 @@ export class PlayerDetailsComponent implements OnInit {
         const auxPlayer = this.playersSvc.getPlayerById(this.id);
         if (null == auxPlayer) {
           // trigger a reroute?
-          console.warn('[player details] invalid id');
+          console.warn('[player details] invalid id:' + this.id);
           this.router.navigate(['..'], { relativeTo: this.route });
           return;
         } else {

@@ -18,6 +18,13 @@ export class PlayersService {
             console.log('[players] waiting for login...');
         }
 
+        // Load the cached players from the session storage.
+        const cachedPlayers = sessionStorage.getItem('players');
+        if (cachedPlayers) {
+            this.playerList = JSON.parse(cachedPlayers);
+        }
+
+        // Subscribe to the login-logout events.
         this.authSvc.onSignInOut.subscribe((message) => {
             if (message === 'signout-pending') {
                 this.unsubscribeFromDataSources();
@@ -35,31 +42,10 @@ export class PlayersService {
         }
     }
 
-    private serverPlayers: Observable<Player[]>;
-
     private playerList: Player[] = [];
 
     playerSelectedEvent = new EventEmitter<Player>();
     playerDataChangeEvent = new EventEmitter<Player>();
-
-    /**
-     * @deprecated
-     */
-    subscribeToDataSourcesOld() {
-        console.log('[players] subscribing to data sources');
-
-        // subscribe to firebase collection changes.
-        const playersCol = this.db.collection<Player>('players');
-        this.serverPlayers = playersCol.valueChanges();
-
-        this.dataChangeSubscription = this.serverPlayers.subscribe(
-            (values) => {
-                console.log('[players] firebase data change', values);
-                this.playerList = values;
-                this.playerDataChangeEvent.emit();
-            }
-        );
-    }
 
     subscribeToDataSources() {
         console.log('[players] subscribing to data sources');
@@ -73,6 +59,7 @@ export class PlayersService {
 
             const playersArray: Player[] = playerListDoc.get('players');
             this.playerList = playersArray;
+            sessionStorage.setItem('players', JSON.stringify(this.playerList));
             this.playerDataChangeEvent.emit();
         });
     }
@@ -146,11 +133,13 @@ export class PlayersService {
     }
 
     saveAllPlayers() {
-        const matchName = 'current';
-        const playersRef = this.db.doc('/ratings/' + matchName).ref;
-        const obj = { players: this.playerList };
+        this.savePlayersToList(this.playerList, 'current');
+    }
 
-        playersRef.set(obj, { merge: true });
+    public savePlayersToList(playersArr: Player[], listName: string) {
+        const docRef = this.db.doc('/ratings/' + listName).ref;
+        const obj = { players: playersArr };
+        docRef.set(obj, { merge: true });
     }
 
     saveSinglePlayerToFirebaseOld(player: Player) {
