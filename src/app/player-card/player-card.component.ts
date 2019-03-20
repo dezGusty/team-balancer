@@ -10,12 +10,13 @@ export class PlayerCardComponent implements OnInit {
   @Input() player: Player;
   @Output() playerSelected = new EventEmitter<Player>();
 
-  localDisplayName: string;
-
   constructor() { }
 
   ngOnInit() {
-    this.localDisplayName = getDisplayName(this.player);
+  }
+
+  public playerDisplayName(): string {
+    return getDisplayName(this.player);
   }
 
   onClicked($event) {

@@ -1,7 +1,7 @@
 .player-card {
     cursor: pointer;
-    margin: 0.25em 0 0.25em 0;
-    padding: 0.25em;
+    margin: 0.5em 0 0.5em 0;
+    padding: 0.5em;
 }
 
 .player-card img {
@@ -16,8 +16,15 @@
 
 .player-card-internalid {
     font-size: x-small;
+    padding-left: 0.5em;
+    padding-right: 0.5em;
 }
 
+.player-card-name {
+    font-weight: 700;
+    padding-left: 0.5em;
+    padding-right: 0.5em;
+}
 .player-card-namesubtext {
     font-size: xx-small;
     vertical-align: bottom;

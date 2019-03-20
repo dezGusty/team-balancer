@@ -16,4 +16,18 @@
 
 .player-card-internalid {
     font-size: x-small;
+    padding-left: 0.5em;
+    padding-right: 0.5em;
+}
+
+.player-card-name {
+    font-weight: 700;
+    padding-left: 0.5em;
+    padding-right: 0.5em;
+}
+
+.player-card-namesubtext {
+    font-size: xx-small;
+    vertical-align: bottom;
+    text-align: right;
 }
