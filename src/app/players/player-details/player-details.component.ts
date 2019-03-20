@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, Params, Router } from '@angular/router';
 
-import { Player } from '../../shared/player.model';
+import { Player, getDisplayName } from '../../shared/player.model';
 import { PlayersService } from '../../shared/players.service';
 import { AuthService } from 'src/app/auth/auth.service';
 
@@ -45,5 +45,9 @@ export class PlayerDetailsComponent implements OnInit {
 
   public onEditPlayerClicked($event): void {
     this.router.navigate(['edit'], { relativeTo: this.route });
+  }
+
+  public playerDisplayName(): string {
+    return getDisplayName(this.player);
   }
 }

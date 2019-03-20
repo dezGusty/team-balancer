@@ -1,9 +1,16 @@
-<div class="border rounded player-details row">
-  <div class="col-6 pull-left">
-    <p>ID: {{ player.id }}</p>
-    <p>Rating: {{ player.rating }}</p>
-    <h5>{{ player.name }}</h5>
+<div class="border rounded player-card row">
+  <div class="col-12 player-card-internalid">
+    ID: {{ player.id }}
   </div>
+  <br>
+  <div class="col-12 pull-left">
+    Rating: {{ player.rating }}
+  </div>
+  <div class="col-12 player-card-name pull-left">
+    {{ playerDisplayName() }}
+  </div>
+  <div class="col-12 player-card">({{ player.name }})</div>
+
   <div class="col-6 pull-right">
     <img src="./../../../assets/default_user_pic.svg" alt="pic" height="96em">
   </div>
