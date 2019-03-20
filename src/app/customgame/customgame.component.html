@@ -1,15 +1,13 @@
 <div *ngIf="!showCombinations">
   <div class="row justify-content-center">
-    <div class="col-6 offset-3">
+    <div class="col-6 col-sm-6 col-md-5 col-lg-4">
+      <button type="button" class="btn btn-primary" (click)="onMakeTeamsClicked()">Make teams...</button>
+    </div>
+    <div class="col-6 col-sm-6 col-md-5 col-lg-4">
       <div class="border-bottom">
         <input class="form-control border-0" type="text" [(ngModel)]="searchedName"
           (keyup)="onSearchContentChange($event)" placeholder="Search..." aria-label="Search" #srcNameArea autofocus>
       </div>
-    </div>
-  </div>
-  <div class="row justify-content-center">
-    <div class="col-6">
-      <button type="button" class="btn btn-primary" (click)="onMakeTeamsClicked()">Make teams...</button>
     </div>
   </div>
   <div class="row justify-content-center">
