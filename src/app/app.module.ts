@@ -11,7 +11,7 @@ import { AppComponent } from './app.component';
 import { HeaderComponent } from './header/header.component';
 import { MatchesComponent } from './matches/matches.component';
 import { PlayersComponent } from './players/players.component';
-import { PlayerRoutedCardComponent } from './players/player/player.component';
+import { PlayerRoutedCardComponent } from './players/player/player-routed-card.component';
 import { PlayerDetailsComponent } from './players/player-details/player-details.component';
 import { PlayerEditComponent } from './players/player-edit/player-edit.component';
 import { RecentMatchesComponent } from './matches/previous-matches/recent-matches.component';

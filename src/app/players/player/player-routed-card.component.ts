@@ -3,7 +3,7 @@ import { Player } from '../../shared/player.model';
 
 @Component({
   selector: 'app-player-routed-card',
-  templateUrl: './player.component.html',
+  templateUrl: './player-routed-card.component.html',
   styles: ['']
 })
 export class PlayerRoutedCardComponent implements OnInit {
