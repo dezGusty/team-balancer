@@ -1,4 +1,4 @@
-import { Component, OnInit, Input } from '@angular/core';
+import { Component, OnInit, Input, Output, EventEmitter } from '@angular/core';
 import { Player, getDisplayName } from '../../shared/player.model';
 import { PlayersService } from '../../shared/players.service';
 
@@ -10,18 +10,15 @@ import { PlayersService } from '../../shared/players.service';
 export class PlayerComponent implements OnInit {
   @Input() player: Player;
   @Input() id: number;
+  @Output() playerSelected = new EventEmitter<Player>();
 
-  constructor(private playersSvc: PlayersService) {
+  constructor() {
   }
 
   ngOnInit() {
   }
 
-  // public playerDisplayName(): string {
-  //   return getDisplayName(this.player);
-  // }
-
   onSelected() {
-    this.playersSvc.playerSelectedEvent.emit(this.player);
+    this.playerSelected.emit(this.player);
   }
 }

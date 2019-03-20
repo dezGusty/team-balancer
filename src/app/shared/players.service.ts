@@ -44,7 +44,6 @@ export class PlayersService {
 
     private playerList: Player[] = [];
 
-    playerSelectedEvent = new EventEmitter<Player>();
     playerDataChangeEvent = new EventEmitter<Player>();
 
     subscribeToDataSources() {
@@ -120,18 +119,6 @@ export class PlayersService {
         return result;
     }
 
-    /**
-     * @deprecated
-     */
-    saveAllPlayersOld() {
-        const playersRef = this.db.collection('/players').ref;
-        this.playerList.forEach((player) => {
-            let obj = {};
-            obj = { ...player };
-            playersRef.doc(player.id.toString()).set(obj);
-        });
-    }
-
     saveAllPlayers() {
         this.savePlayersToList(this.playerList, 'current');
     }
@@ -142,17 +129,6 @@ export class PlayersService {
         docRef.set(obj, { merge: true });
     }
 
-    saveSinglePlayerToFirebaseOld(player: Player) {
-        const playersRef = this.db.collection('/players').ref;
-        const obj = { ...player };
-        playersRef.doc(player.id.toString()).set(obj);
-    }
-
-    updateSinglePlayerToFirebaseOld(player: Player) {
-        const playersRef = this.db.collection('/players').ref;
-        const obj = { ...player };
-        playersRef.doc(player.id.toString()).update(obj);
-    }
     saveSinglePlayerToFirebase(player: Player) {
         this.saveAllPlayers();
     }

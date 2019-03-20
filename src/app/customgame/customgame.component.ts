@@ -16,7 +16,6 @@ export class CustomgameComponent implements OnInit, OnDestroy {
 
   public matchData = new Match(new Date(Date.now()));
   public selectedPlayer: Player;
-  private playerSelectSubscription: Subscription;
   private playerDataChangeSubscription: Subscription;
   makeTeamsSubject: Subject<void> = new Subject<void>();
 
@@ -29,13 +28,6 @@ export class CustomgameComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit() {
-    this.playerSelectSubscription = this.playersSvc.playerSelectedEvent
-      .subscribe(
-        (player: Player) => {
-          this.matchData.movePlayerToDraft(player);
-        }
-      );
-
     this.playerDataChangeSubscription = this.playersSvc.playerDataChangeEvent
       .subscribe(
         (player: Player) => {
@@ -52,9 +44,6 @@ export class CustomgameComponent implements OnInit, OnDestroy {
   }
 
   ngOnDestroy() {
-    if (this.playerSelectSubscription) {
-      this.playerSelectSubscription.unsubscribe();
-    }
     if (this.playerDataChangeSubscription) {
       this.playerDataChangeSubscription.unsubscribe();
     }

@@ -8,3 +8,5 @@
     <img src="./../../../assets/default_user_pic.svg" alt="pic" height="96em">
   </div>
 </div>
+<button class="btn btn-outline-secondary" *ngIf="canEditPlayers()" (click)='onEditPlayerClicked($event)'>Edit
+  Player</button>

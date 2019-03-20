@@ -3,6 +3,7 @@ import { ActivatedRoute, Params, Router } from '@angular/router';
 
 import { Player } from '../../shared/player.model';
 import { PlayersService } from '../../shared/players.service';
+import { AuthService } from 'src/app/auth/auth.service';
 
 @Component({
   selector: 'app-player-details',
@@ -14,6 +15,7 @@ export class PlayerDetailsComponent implements OnInit {
   id: number;
 
   constructor(
+    private authSvc: AuthService,
     private playersSvc: PlayersService,
     private router: Router,
     private route: ActivatedRoute) {
@@ -37,8 +39,11 @@ export class PlayerDetailsComponent implements OnInit {
     );
   }
 
-  public canEditPlayer(): boolean {
-    return true;
+  public canEditPlayers(): boolean {
+    return this.authSvc.isAuthenticatedAsOrganizer();
   }
 
+  public onEditPlayerClicked($event): void {
+    this.router.navigate(['edit'], { relativeTo: this.route });
+  }
 }

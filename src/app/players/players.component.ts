@@ -29,13 +29,6 @@ export class PlayersComponent implements OnInit, OnDestroy {
 
   ngOnInit() {
     this.players = this.playersSvc.getPlayers();
-    this.playerSelectSubscription = this.playersSvc.playerSelectedEvent
-      .subscribe(
-        (player: Player) => {
-          console.log('selected: ' + player.name);
-          this.selectedPlayer = player;
-        }
-      );
 
     this.playerDataChangeSubscription = this.playersSvc.playerDataChangeEvent
       .subscribe(
@@ -52,6 +45,16 @@ export class PlayersComponent implements OnInit, OnDestroy {
       );
   }
 
+  onPlayerSelected($event) {
+    const recvdPlayer: Player = $event;
+    if (null == recvdPlayer) {
+      return;
+    }
+
+    console.log('selected: ' + recvdPlayer.name);
+    this.selectedPlayer = recvdPlayer;
+  }
+
   ngOnDestroy() {
     if (this.playerSelectSubscription) {
       this.playerSelectSubscription.unsubscribe();
@@ -65,24 +68,13 @@ export class PlayersComponent implements OnInit, OnDestroy {
     return this.authSvc.isAuthenticatedAsOrganizer();
   }
 
-  public canEditPlayers(): boolean {
-    return this.authSvc.isAuthenticatedAsOrganizer();
-  }
-
   public playerIsSelected(): boolean {
     return this.selectedPlayer != null;
   }
 
-
   public onNewPlayerClicked($event): void {
     console.log('new player clicked', $event);
     this.router.navigate(['new'], { relativeTo: this.route });
-  }
-
-  public onEditPlayerClicked($event): void {
-    console.log('edit player clicked', $event);
-    // this.editMode = true;
-    this.router.navigate([this.selectedPlayer.id, 'edit'], { relativeTo: this.route });
   }
 
   public onSavePlayerClicked($event): void {

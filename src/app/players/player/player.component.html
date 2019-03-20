@@ -1,21 +1,4 @@
-<a class="list-group-item list-group-item-action player-card clearfix" (click)="onSelected()"
-    routerLinkActive="active"
+<a class="list-group-item list-group-item-action player-card clearfix" (click)="onSelected()" routerLinkActive="active"
     [routerLink]="[id]">
     <app-player-mini-card [player]="this.player"></app-player-mini-card>
-    <!-- <span class="col-2 border-right player-card-internalid">
-        {{ player.id }}
-    </span>
-    <span class="col-3 float-right">
-        <img src="./../../../assets/default_user_pic.svg" alt="pic" height="19em">
-    </span>
-    <span class="col-auto col-6 player-card-name">
-        {{ playerDisplayName() }}
-    </span>
-    <br>
-    <span class="col-auto col-8 player-card-internalid">
-        {{ player.name }}
-    </span>
-    <span class="col-3 float-right">
-        {{ player.rating | number:'1.1-2' }}
-    </span> -->
 </a>

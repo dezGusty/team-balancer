@@ -22,8 +22,5 @@
     <div class="col-6 col-sm-6 col-md-5 col-lg-4">
         <button class="btn btn-outline-secondary" *ngIf='canAddPlayers()' (click)='onNewPlayerClicked($event)'>New
             Player</button>
-        <button class="btn btn-outline-secondary" *ngIf="playerIsSelected() && canEditPlayers()"
-            (click)='onEditPlayerClicked($event)'>Edit
-            Player</button>
     </div>
 </div>
