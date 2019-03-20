@@ -1,20 +1,20 @@
 <div *ngIf="!showCombinations">
-  <div class="row justify-content-end">
-    <div class="col-md-6">
+  <div class="row justify-content-center">
+    <div class="col-6 offset-3">
       <div class="border-bottom">
         <input class="form-control border-0" type="text" [(ngModel)]="searchedName"
           (keyup)="onSearchContentChange($event)" placeholder="Search..." aria-label="Search" #srcNameArea autofocus>
       </div>
     </div>
   </div>
-  <div class="row">
+  <div class="row justify-content-center">
     <div class="col-6">
       <button type="button" class="btn btn-primary" (click)="onMakeTeamsClicked()">Make teams...</button>
     </div>
   </div>
-  <div class="row">
+  <div class="row justify-content-center">
     <!-- show the list of players on the left side -->
-    <div class="col-6 left-player-list">
+    <div class="col-6 col-sm-6 col-md-5 col-lg-4 left-player-list">
       <h5>Selected players</h5>
       <p>{{ matchData.draftPlayers.length }} players</p>
       <div>
@@ -23,7 +23,7 @@
       </div>
     </div>
     <!-- show the list of players on the right side -->
-    <div class="col-6 right-player-list">
+    <div class="col-6 col-sm-6 col-md-5 col-lg-4 right-player-list">
       <h5>Available players</h5>
       <p>{{ matchData.availablePlayersPool.length }} players</p>
       <app-player-card *ngFor='let playerItem of this.matchData.availablePlayersPool | playerFilter: searchedName'
@@ -32,6 +32,8 @@
     </div>
   </div>
 </div>
-<div *ngIf="showCombinations">
-  <app-match-combos [playerList]="matchData.draftPlayers" [makeTeamsEvent]="this.makeTeamsSubject"></app-match-combos>
+<div class="row justify-content-center" *ngIf="showCombinations">
+  <div class="col-12 col-sm-12 col-md-10 col-lg-8">
+    <app-match-combos [playerList]="matchData.draftPlayers" [makeTeamsEvent]="this.makeTeamsSubject"></app-match-combos>
+  </div>
 </div>
