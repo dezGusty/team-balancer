@@ -88,15 +88,27 @@ export class PrevMatchDetailComponent implements OnInit, OnDestroy {
     this.matchSvc.saveCustomPrevMatch(this.matchSearchKey, this.customGame);
   }
 
+  /**
+   * Updates the ratings of the user for the loaded match.
+   * The old player ratings are stored to an old entry. E.g.
+   *    'ratings/2018-04-02'
+   * The current player ratings are stored in the standard entry. E.g.
+   *    'ratings/current'
+   */
   onUpdateRatingsClick() {
     const newPlayers = this.playersSvc.updateRatingsForGame(
       this.playersSvc.getPlayers(), this.customGame
     );
-    console.log('------ old players ----------');
-    console.log(this.playersSvc.getPlayers());
 
-    console.log('------ new players ----------');
-    console.log(newPlayers);
+    // Store the 'old' ratings under a different entry.
+    this.playersSvc.savePlayersToList(this.playersSvc.getPlayers(), this.matchSearchKey);
 
+    // Store the 'new' ratings under the 'current' entry.
+    this.playersSvc.savePlayersToList(newPlayers, 'current');
+
+    // Store the new data for the match.
+    this.customGame.appliedResults = true;
+    this.matchResultsAppliedToRatings = true;
+    this.matchSvc.saveCustomPrevMatch(this.matchSearchKey, this.customGame);
   }
 }
