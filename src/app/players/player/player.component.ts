@@ -1,5 +1,5 @@
 import { Component, OnInit, Input } from '@angular/core';
-import { Player } from '../../shared/player.model';
+import { Player, getDisplayName } from '../../shared/player.model';
 import { PlayersService } from '../../shared/players.service';
 
 @Component({
@@ -17,6 +17,9 @@ export class PlayerComponent implements OnInit {
   ngOnInit() {
   }
 
+  public playerDisplayName(): string {
+    return getDisplayName(this.player);
+  }
 
   onSelected() {
     this.playersSvc.playerSelectedEvent.emit(this.player);
