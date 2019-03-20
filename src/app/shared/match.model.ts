@@ -16,6 +16,8 @@ export class Match {
         const existingPos = this.availablePlayersPool.indexOf(newPlayer);
         if (existingPos !== -1) {
             this.availablePlayersPool.splice(existingPos, 1);
+            // Also reassign to force Angular to identify that the object
+            // was modified and a refresh of the bound data is issued.
             this.availablePlayersPool = [...this.availablePlayersPool];
         } else {
             console.log('[match] failed to remove player from pool', newPlayer);
@@ -26,7 +28,11 @@ export class Match {
         const existingPos = this.draftPlayers.indexOf(newPlayer);
         if (existingPos !== -1) {
             this.draftPlayers.splice(existingPos, 1);
+            // Also reassign to force Angular to identify that the object
+            // was modified and a refresh of the bound data is issued.
             this.draftPlayers = [...this.draftPlayers];
+        } else {
+            console.log('[match] failed to remove player from draft', newPlayer);
         }
     }
 
@@ -48,8 +54,12 @@ export class Match {
             return false;
         }
 
+        console.log('moving player[' + player.name + '] back to the pool');
         this.removePlayerFromDraft(player);
         this.availablePlayersPool.push(player);
+        // Also reassign to force Angular to identify that the object
+        // was modified and a refresh of the bound data is issued.
+        this.availablePlayersPool = [...this.availablePlayersPool];
         return true;
     }
 }
