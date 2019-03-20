@@ -10,7 +10,6 @@ import { MatchService } from './shared/match.service';
 import { AppComponent } from './app.component';
 import { HeaderComponent } from './header/header.component';
 import { MatchesComponent } from './matches/matches.component';
-import { NextMatchComponent } from './matches/next-match/next-match.component';
 import { PlayersComponent } from './players/players.component';
 import { PlayerComponent } from './players/player/player.component';
 import { PlayerDetailsComponent } from './players/player-details/player-details.component';
@@ -21,7 +20,6 @@ import { AppRoutingModule } from './app-routing.module';
 import { PlayerStartComponent } from './players/player-start/player-start.component';
 import { PlayerNewComponent } from './players/player-new/player-new.component';
 import { PlayerFilterPipe } from './matches/player-filter.pipe';
-import { MatchPlayerComponent } from './players/match-player/match-player.component';
 import { SigninComponent } from './auth/signin/signin.component';
 import { SignupComponent } from './auth/signup/signup.component';
 
@@ -38,6 +36,7 @@ import { MatchVersusComponent } from './matches/match-versus/match-versus.compon
 import { MatchStorageComponent } from './matches/match-storage/match-storage.component';
 import { CopyClipboardDirective } from './shared/copy-clipboard.directive';
 import { PrevMatchDetailComponent } from './matches/prev-match-detail/prev-match-detail.component';
+import { PlayerMiniCardComponent } from './players/player-mini-card/player-mini-card.component';
 
 
 @NgModule({
@@ -45,7 +44,6 @@ import { PrevMatchDetailComponent } from './matches/prev-match-detail/prev-match
     AppComponent,
     HeaderComponent,
     MatchesComponent,
-    NextMatchComponent,
     PlayersComponent,
     PlayerComponent,
     PlayerDetailsComponent,
@@ -55,7 +53,6 @@ import { PrevMatchDetailComponent } from './matches/prev-match-detail/prev-match
     PlayerStartComponent,
     PlayerNewComponent,
     PlayerFilterPipe,
-    MatchPlayerComponent,
     SigninComponent,
     SignupComponent,
     CustomgameComponent,
@@ -64,7 +61,8 @@ import { PrevMatchDetailComponent } from './matches/prev-match-detail/prev-match
     MatchVersusComponent,
     MatchStorageComponent,
     CopyClipboardDirective,
-    PrevMatchDetailComponent
+    PrevMatchDetailComponent,
+    PlayerMiniCardComponent
   ],
   imports: [
     AngularFireModule.initializeApp(environment.firebase),

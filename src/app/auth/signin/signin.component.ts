@@ -10,16 +10,9 @@ import { Router } from '@angular/router';
 export class SigninComponent implements OnInit {
 
   constructor(private authSvc: AuthService, private router: Router) {
-    console.log('[signin] ctor');
-
   }
 
   ngOnInit() {
-    console.log('[signin] init');
-
-    if (this.authSvc.isAuthenticated()) {
-      // this.router.navigate(['/custom']);
-    }
   }
 
   tryGoogleLogin() {

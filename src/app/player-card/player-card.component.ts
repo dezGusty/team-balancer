@@ -15,9 +15,9 @@ export class PlayerCardComponent implements OnInit {
   ngOnInit() {
   }
 
-  public playerDisplayName(): string {
-    return getDisplayName(this.player);
-  }
+  // public playerDisplayName(): string {
+  //   return getDisplayName(this.player);
+  // }
 
   onClicked($event) {
     this.playerSelected.emit(this.player);

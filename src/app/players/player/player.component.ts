@@ -17,9 +17,9 @@ export class PlayerComponent implements OnInit {
   ngOnInit() {
   }
 
-  public playerDisplayName(): string {
-    return getDisplayName(this.player);
-  }
+  // public playerDisplayName(): string {
+  //   return getDisplayName(this.player);
+  // }
 
   onSelected() {
     this.playersSvc.playerSelectedEvent.emit(this.player);
