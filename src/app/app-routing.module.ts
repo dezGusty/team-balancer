@@ -17,14 +17,14 @@ import { PrevMatchDetailComponent } from './matches/prev-match-detail/prev-match
 const appRoutes: Routes = [
     { path: '', redirectTo: '/about', pathMatch: 'full' },
     {
-        path: 'players', canActivate: [AuthGuard, OrganizerGuard], component: PlayersComponent, children: [
+        path: 'players', canActivate: [AuthGuard], component: PlayersComponent, children: [
             { path: '', component: PlayerStartComponent },
-            { path: 'new', component: PlayerEditComponent },
+            { path: 'new', canActivate: [AuthGuard, OrganizerGuard], component: PlayerEditComponent },
             { path: ':id', component: PlayerDetailsComponent },
-            { path: ':id/edit', component: PlayerEditComponent }
+            { path: ':id/edit', canActivate: [AuthGuard, OrganizerGuard], component: PlayerEditComponent }
         ]
     },
-    { path: 'matches', canActivate: [AuthGuard], component: MatchesComponent },
+    // { path: 'matches', canActivate: [AuthGuard], component: MatchesComponent },
     { path: 'recent', canActivate: [AuthGuard, OrganizerGuard], component: RecentMatchesComponent, children: [
         { path: ':id', component: PrevMatchDetailComponent}
     ] },
