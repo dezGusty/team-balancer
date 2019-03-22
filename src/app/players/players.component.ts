@@ -73,12 +73,10 @@ export class PlayersComponent implements OnInit, OnDestroy {
   }
 
   public onNewPlayerClicked($event): void {
-    console.log('new player clicked', $event);
     this.router.navigate(['new'], { relativeTo: this.route });
   }
 
   public onSavePlayerClicked($event): void {
-    console.log('save player clicked');
     this.playersSvc.saveAllPlayers();
   }
 

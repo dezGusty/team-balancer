@@ -1,37 +1,44 @@
 <form (submit)="onMatchSaveCliked()">
   <div class="row">
     <div class="col-12">
-      Date:
-
+      Date: {{matchSearchKey}}
     </div>
     <div class="col-6 border-right">
       team one
-      <ul>
+      <ul class="gus-list">
         <li *ngFor="let leftItem of this.extractedTeam1">
           {{ this.getDisplayNameForPlayer(leftItem) }}
         </li>
       </ul>
       <!-- <div class="score">{{team1Score}}</div> -->
-      <input type="number" class="form-control" name="team1Score" id="team1Score" [(ngModel)]="this.team1Score"
-        #team1ScoreEntry="ngModel">
 
     </div>
     <div class="col-6">
       team two
-      <ul>
+      <ul class="gus-list">
         <li *ngFor="let rightItem of this.extractedTeam2">
           {{ this.getDisplayNameForPlayer(rightItem) }}
         </li>
       </ul>
       <!-- <div class="score">{{team2Score}}</div> -->
+    </div>
+  </div>
+
+  <div class="row">
+    <div class="col-6 border-right">
+      <input type="number" class="form-control" name="team1Score" id="team1Score" [(ngModel)]="this.team1Score"
+        #team1ScoreEntry="ngModel">
+    </div>
+    <div class="col-6">
       <input type="number" class="form-control" name="team2Score" id="team2Score" [(ngModel)]="this.team2Score"
         #team2ScoreEntry="ngModel">
     </div>
   </div>
+
   <div class="row">
     <button *ngIf='!this.matchResultsStored' class="btn btn-sm btn-primary" (click)="onStoreResultClick()">Store
       Result</button>
     <button *ngIf='!this.matchResultsAppliedToRatings' class="btn btn-sm btn-secondary"
-    (click)="onUpdateRatingsClick()">Update ratings</button>
+      (click)="onUpdateRatingsClick()">Update ratings</button>
   </div>
 </form>

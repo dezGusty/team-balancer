@@ -5,6 +5,10 @@
     padding: 0.5em;
 }
 
+.gus-search-box {
+    padding: 0.5em;
+}
+
 .player-card img {
     vertical-align: bottom;
 }
@@ -31,4 +35,42 @@
     font-size: xx-small;
     vertical-align: bottom;
     text-align: right;
+}
+
+.btn-grad-gusty:hover {
+    background: linear-gradient(135deg, #8A2Be2 0%,#8A2Be2 67%,rgb(181, 55, 242) 95%,#120052 100%);
+    animation: GradAnim 2s ease infinite;
+    color: white;
+}
+
+.btn-outline-gus {
+    border-color: #8A2Be2;
+    border-width: 1px;
+}
+
+@keyframes GradAnim {
+    0%{background-position:0% 50%}
+    50%{background-position:100% 50%}
+    100%{background-position:0% 50%}
+}
+
+.player-card-grad {
+    border-color: rgba(18, 0, 82, 0.25);
+}
+
+.player-card-grad:hover {
+    background: linear-gradient(135deg, #8A2Be2 0%,#8A2Be2 67%,rgb(181, 55, 242) 100%);
+    color: white;
+}
+
+a.player-card-grad:hover {
+    color: white;
+}
+
+.left-player-list {
+    padding: 0.5em;
+}
+
+.right-player-list {
+    padding: 0.5em;
 }

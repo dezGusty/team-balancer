@@ -16,7 +16,7 @@ export class RecentMatchesComponent implements OnInit {
 
   }
 
-  private selectedMatch = '';
+  public selectedIndex = 0;
   private recentMatchNames: string[] = [];
   private recentMatches: CustomGame[] = [];
 
@@ -30,16 +30,13 @@ export class RecentMatchesComponent implements OnInit {
   }
 
   ngOnInit() {
-    this.selectedMatch = '';
   }
 
   getSelectedMatch(index: number) {
     return this.recentMatchNames[index];
   }
   onMatchEntryClicked($event) {
-    console.log('match clicked: ', $event);
-    const clickedIndex = +$event;
-    this.selectedMatch = this.recentMatchNames[clickedIndex];
+    this.selectedIndex = +$event;
   }
 
 }

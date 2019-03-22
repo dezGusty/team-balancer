@@ -1,16 +1,14 @@
 <div class="row justify-content-center">
-    <div class="col-12 col-sm-12 col-md-10 col-lg-8">
-        <div class="border-bottom">
-            <input class="form-control border-0" type="text" [(ngModel)]="searchedName"
-                (keyup)="onSearchContentChange($event)" placeholder="Search..." aria-label="Search" #srcNameArea
-                autofocus>
-        </div>
+    <div class="col-12 col-sm-12 col-md-10 col-lg-8 align-self-center border-bottom gus-search-box">
+        <input class="form-control border-0" type="text" [(ngModel)]="searchedName"
+            (keyup)="onSearchContentChange($event)" placeholder="Search..." aria-label="Search" #srcNameArea autofocus>
     </div>
 </div>
 <div class="row justify-content-center">
     <!-- show the list of players on the left side -->
     <div class="col-6 col-sm-6 col-md-5 col-lg-4 left-player-list">
-        <app-player-routed-card *ngFor='let playerItem of players | playerFilter: searchedName; let even = even; let odd = odd'
+        <app-player-routed-card
+            *ngFor='let playerItem of players | playerFilter: searchedName; let even = even; let odd = odd'
             [player]="playerItem" [id]="playerItem.id" [ngClass]="{ odd: odd, even: even }"></app-player-routed-card>
     </div>
     <!-- show the details panel on the right side -->
@@ -19,8 +17,8 @@
     </div>
 </div>
 <div class="row justify-content-center">
-    <div class="col-6 col-sm-6 col-md-5 col-lg-4">
-        <button class="btn btn-outline-secondary" *ngIf='canAddPlayers()' (click)='onNewPlayerClicked($event)'>New
+    <div class="col-12 col-sm-12 col-md-10 col-lg-8">
+        <button class="btn btn-outline-gus btn-grad-gusty" *ngIf='canAddPlayers()' (click)='onNewPlayerClicked($event)'>New
             Player</button>
     </div>
 </div>

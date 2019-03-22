@@ -3,7 +3,8 @@
   <div class="col-3 col-sm-3 col-md-3 col-lg-2 left-player-list">
     <ul>
       <li *ngFor='let match of this.getRecentMatchNames(); let idx = index; let even = even; let odd = odd' 
-      (click)="onMatchEntryClicked(idx)"
+      (click)="onMatchEntryClicked(idx)" style="cursor: pointer" class="border match-card player-card-grad"
+      [class.match-card-active]="idx === this.selectedIndex"
       [routerLink]="[getSelectedMatch(idx)]">
         {{match}}
       </li>

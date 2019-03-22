@@ -1,0 +1,21 @@
+.match-card {
+  margin: 1.5em 0em;
+  padding: 0.5em 0em;
+  list-style-type: none;
+  text-align: center;
+}
+
+.match-card-active {
+  /* background: linear-gradient(135deg, #3CB9FC 0%,#3CB9FC 67%,rgb(90, 157, 194) 100%); */
+  background: #3CB9FC;
+  color: white;
+}
+
+.match-card-active:hover {
+  background: linear-gradient(135deg, #8A2Be2 0%,#8A2Be2 67%,rgb(181, 55, 242) 100%);
+}
+
+ul {
+  margin: 0em;
+  padding: 0em;
+}
