@@ -14,7 +14,7 @@ export class AuthService {
         private db: AngularFirestore,
         private afAuth: AngularFireAuth) {
 
-        this.token = sessionStorage.getItem('token');
+        this.token = localStorage.getItem('token');
         this.afAuth.authState.subscribe(
             (auth) => {
                 if (auth) {
@@ -22,7 +22,7 @@ export class AuthService {
                         .then(
                             (token: string) => {
                                 this.token = token;
-                                sessionStorage.setItem('token', this.token);
+                                localStorage.setItem('token', this.token);
                             }
                         );
                     this.updateAndCacheUserAfterLogin(this.afAuth.auth.currentUser);
@@ -133,7 +133,7 @@ export class AuthService {
 
     isAuthenticatedAsOrganizer(): boolean {
         if (!this.cachedUser || !this.cachedUser.roles) {
-            const roles: UserRoles = JSON.parse(sessionStorage.getItem('roles'));
+            const roles: UserRoles = JSON.parse(localStorage.getItem('roles'));
             return this.doesRoleContainOrganizer(roles);
         }
 
@@ -163,14 +163,14 @@ export class AuthService {
                     this.db.doc('users/' + userPath).set(obj, { merge: true });
                 }
                 this.cachedUser = obj;
-                sessionStorage.setItem('roles', JSON.stringify(this.cachedUser.roles));
+                localStorage.setItem('roles', JSON.stringify(this.cachedUser.roles));
             } else {
                 // New user. Create the user doc.
                 const obj = { ...userData };
                 console.log('User does not exist. Should create');
                 this.db.doc('users/' + userPath).set(obj);
                 this.cachedUser = obj;
-                sessionStorage.setItem('roles', JSON.stringify(this.cachedUser.roles));
+                localStorage.setItem('roles', JSON.stringify(this.cachedUser.roles));
             }
         });
     }

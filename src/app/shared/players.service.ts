@@ -19,7 +19,7 @@ export class PlayersService {
         }
 
         // Load the cached players from the session storage.
-        const cachedPlayers = sessionStorage.getItem('players');
+        const cachedPlayers = localStorage.getItem('players');
         if (cachedPlayers) {
             this.playerList = JSON.parse(cachedPlayers);
         }
@@ -58,7 +58,7 @@ export class PlayersService {
 
             const playersArray: Player[] = playerListDoc.get('players');
             this.playerList = playersArray;
-            sessionStorage.setItem('players', JSON.stringify(this.playerList));
+            localStorage.setItem('players', JSON.stringify(this.playerList));
             this.playerDataChangeEvent.emit();
         });
     }
