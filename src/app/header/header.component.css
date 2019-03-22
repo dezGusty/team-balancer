@@ -1,12 +1,13 @@
 .nav-grad-gus{
 
 /* Permalink - use to edit and share this gradient: http://colorzilla.com/gradient-editor/#b4ddb4+0,83c783+17,52b152+33,008a00+67,005700+83,002400+100;Green+3D+%231 */
-background: rgb(7, 85, 80); /* Old browsers */
-/* background: linear-gradient(135deg, rgb(7, 85, 80) 0%,rgb(44, 71, 80) 47%,rgb(68, 17, 39) 100%);  */
+background: rgb(7, 85, 80); 
 background: linear-gradient(135deg, #3CB9FC 0%,#8A2Be2 65%,rgb(181, 55, 242) 80%,#8A2Be2 85%,#120052 100%);
-/* background: linear-gradient(135deg, rgba(138, 43, 226, 0.75) 0%, rgba(181, 55, 242, 0.75) 25%,rgba(138, 43, 226, 0.75) 35%,rgba(17, 0, 81, 0.75) 65%,#3CB9FC 90%, #120052 100%);  */
 }
 
 a {
     font-weight: 500;
+    vertical-align: middle;
+    /* padding: 0; */
 }
+
