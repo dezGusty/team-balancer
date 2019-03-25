@@ -5,6 +5,7 @@ import { Router } from '@angular/router';
 import { AngularFirestore } from 'angularfire2/firestore';
 import { User, UserRoles } from '../shared/user.model';
 import { Subscription } from 'rxjs';
+import { getAppStorageItem, setAppStorageItem } from '../shared/app-storage';
 
 @Injectable()
 export class AuthService {
@@ -14,7 +15,7 @@ export class AuthService {
         private db: AngularFirestore,
         private afAuth: AngularFireAuth) {
 
-        this.token = localStorage.getItem('token');
+        this.token = getAppStorageItem('token');
         this.afAuth.authState.subscribe(
             (auth) => {
                 if (auth) {
@@ -22,7 +23,7 @@ export class AuthService {
                         .then(
                             (token: string) => {
                                 this.token = token;
-                                localStorage.setItem('token', this.token);
+                                setAppStorageItem('token', this.token);
                             }
                         );
                     this.updateAndCacheUserAfterLogin(this.afAuth.auth.currentUser);
@@ -133,7 +134,7 @@ export class AuthService {
 
     isAuthenticatedAsOrganizer(): boolean {
         if (!this.cachedUser || !this.cachedUser.roles) {
-            const roles: UserRoles = JSON.parse(localStorage.getItem('roles'));
+            const roles: UserRoles = JSON.parse(getAppStorageItem('roles'));
             return this.doesRoleContainOrganizer(roles);
         }
 
@@ -163,14 +164,14 @@ export class AuthService {
                     this.db.doc('users/' + userPath).set(obj, { merge: true });
                 }
                 this.cachedUser = obj;
-                localStorage.setItem('roles', JSON.stringify(this.cachedUser.roles));
+                setAppStorageItem('roles', JSON.stringify(this.cachedUser.roles));
             } else {
                 // New user. Create the user doc.
                 const obj = { ...userData };
                 console.log('User does not exist. Should create');
                 this.db.doc('users/' + userPath).set(obj);
                 this.cachedUser = obj;
-                localStorage.setItem('roles', JSON.stringify(this.cachedUser.roles));
+                setAppStorageItem('roles', JSON.stringify(this.cachedUser.roles));
             }
         });
     }
