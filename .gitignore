@@ -44,3 +44,6 @@ testem.log
 Thumbs.db
 src/environments/firebase-data.ts
 .firebase/hosting.ZGlzdFx0ZWFtLWJhbGFuY2Vy.cache
+
+# custom ones
+src/assets_src/*
