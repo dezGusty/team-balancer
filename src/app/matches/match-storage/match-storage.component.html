@@ -1,15 +1,15 @@
 <form (submit)="onStoreCliked()">
   <div class="row">
     <div class="col-6 col-sm-6 col-md-5 col-lg-4 btn-toolbar">
-      <button class="btn btn-sm btn-outline-gus btn-grad-gusty" [copy-clipboard]="customClipTextToClip()" (copied)="notifyCpy($event)"
+      <button class="btn btn-sm btn-outline-gus btn-grad-gusty mr-2 mt-2" [copy-clipboard]="customClipTextToClip()" (copied)="notifyCpy($event)"
         (click)="onCopyClicked();"><span class="align-self-center"><img src="./../../../assets/clippy.svg"></span></button>
-      <button class="btn btn-sm btn-outline-gus btn-grad-gusty">Store</button>
+      <button class="btn btn-sm btn-outline-gus btn-grad-gusty mr-2 mt-2">Store</button>
     </div>
     <div class="input-group input-group-sm col-6 col-sm-6 col-md-5 col-lg-4">
       <div class="input-group-prepend">
-        <span class="input-group-text" id="inputGroup-date">Date</span>
+        <span class="input-group-text mt-2" id="inputGroup-date">Date</span>
       </div>
-      <input type="text" class="form-control" [(ngModel)]="targetDate" aria-label="Small"
+      <input type="text" class="form-control mt-2" [(ngModel)]="targetDate" aria-label="Small"
         aria-describedby="inputGroup-date" #targetDateInput name="targetDate" autofocus>
     </div>
   </div>
