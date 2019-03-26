@@ -38,6 +38,8 @@ import { CopyClipboardDirective } from './shared/copy-clipboard.directive';
 import { PrevMatchDetailComponent } from './matches/prev-match-detail/prev-match-detail.component';
 import { PlayerMiniCardComponent } from './players/player-mini-card/player-mini-card.component';
 
+import { DeviceDetectorModule } from 'ngx-device-detector';
+import { AppStorage } from './shared/app-storage';
 
 @NgModule({
   declarations: [
@@ -71,9 +73,10 @@ import { PlayerMiniCardComponent } from './players/player-mini-card/player-mini-
     BrowserModule,
     FormsModule,
     AppRoutingModule,
-    NgbCollapseModule
+    NgbCollapseModule,
+    DeviceDetectorModule.forRoot()
   ],
-  providers: [PlayersService, MatchService, AuthService, AuthGuard, OrganizerGuard],
+  providers: [PlayersService, MatchService, AuthService, AuthGuard, OrganizerGuard, AppStorage],
   bootstrap: [AppComponent]
 })
 export class AppModule { }

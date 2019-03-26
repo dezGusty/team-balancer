@@ -4,7 +4,7 @@ import { AngularFirestore } from 'angularfire2/firestore';
 import { Observable, Subscription } from 'rxjs';
 import { AuthService } from '../auth/auth.service';
 import { CustomPrevGame } from './custom-prev-game.model';
-import { getAppStorageItem, setAppStorageItem } from './app-storage';
+import { AppStorage } from './app-storage';
 
 /**
  * Stores and retrieves player related information.
@@ -14,13 +14,16 @@ export class PlayersService {
     private dataChangeSubscription: Subscription;
 
     // constructor.
-    constructor(private db: AngularFirestore, private authSvc: AuthService) {
+    constructor(
+        private db: AngularFirestore,
+        private authSvc: AuthService,
+        private appStorage: AppStorage) {
         if (!this.authSvc.isAuthenticated()) {
             console.log('[players] waiting for login...');
         }
 
         // Load the cached players from the session storage.
-        const cachedPlayers = getAppStorageItem('players');
+        const cachedPlayers = appStorage.getAppStorageItem('players');
         if (cachedPlayers) {
             this.playerList = JSON.parse(cachedPlayers);
         }
@@ -59,7 +62,7 @@ export class PlayersService {
 
             const playersArray: Player[] = playerListDoc.get('players');
             this.playerList = playersArray;
-            setAppStorageItem('players', JSON.stringify(this.playerList));
+            this.appStorage.setAppStorageItem('players', JSON.stringify(this.playerList));
             this.playerDataChangeEvent.emit();
         });
     }

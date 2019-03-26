@@ -5,7 +5,7 @@ import { Router } from '@angular/router';
 import { AngularFirestore } from 'angularfire2/firestore';
 import { User, UserRoles } from '../shared/user.model';
 import { Subscription } from 'rxjs';
-import { getAppStorageItem, setAppStorageItem } from '../shared/app-storage';
+import { AppStorage } from '../shared/app-storage';
 
 @Injectable()
 export class AuthService {
@@ -13,9 +13,10 @@ export class AuthService {
     constructor(
         private router: Router,
         private db: AngularFirestore,
-        private afAuth: AngularFireAuth) {
+        private afAuth: AngularFireAuth,
+        private appStorage: AppStorage) {
 
-        this.token = getAppStorageItem('token');
+        this.token = this.appStorage.getAppStorageItem('token');
         this.afAuth.authState.subscribe(
             (auth) => {
                 if (auth) {
@@ -23,7 +24,7 @@ export class AuthService {
                         .then(
                             (token: string) => {
                                 this.token = token;
-                                setAppStorageItem('token', this.token);
+                                this.appStorage.setAppStorageItem('token', this.token);
                             }
                         );
                     this.updateAndCacheUserAfterLogin(this.afAuth.auth.currentUser);
@@ -126,7 +127,7 @@ export class AuthService {
     }
 
     public doesRoleContainOrganizer(role: UserRoles) {
-        if (role.organizer) {
+        if (role && role.organizer) {
             return role.organizer;
         }
         return false;
@@ -134,7 +135,11 @@ export class AuthService {
 
     isAuthenticatedAsOrganizer(): boolean {
         if (!this.cachedUser || !this.cachedUser.roles) {
-            const roles: UserRoles = JSON.parse(getAppStorageItem('roles'));
+            const storedValue = this.appStorage.getAppStorageItem('roles');
+            if (!storedValue) {
+                return this.doesRoleContainOrganizer(this.cachedUser.roles);
+            }
+            const roles: UserRoles = JSON.parse(storedValue);
             return this.doesRoleContainOrganizer(roles);
         }
 
@@ -164,14 +169,14 @@ export class AuthService {
                     this.db.doc('users/' + userPath).set(obj, { merge: true });
                 }
                 this.cachedUser = obj;
-                setAppStorageItem('roles', JSON.stringify(this.cachedUser.roles));
+                this.appStorage.setAppStorageItem('roles', JSON.stringify(this.cachedUser.roles));
             } else {
                 // New user. Create the user doc.
                 const obj = { ...userData };
                 console.log('User does not exist. Should create');
                 this.db.doc('users/' + userPath).set(obj);
                 this.cachedUser = obj;
-                setAppStorageItem('roles', JSON.stringify(this.cachedUser.roles));
+                this.appStorage.setAppStorageItem('roles', JSON.stringify(this.cachedUser.roles));
             }
         });
     }
