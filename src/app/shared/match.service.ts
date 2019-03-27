@@ -2,7 +2,8 @@ import { AngularFirestore } from 'angularfire2/firestore';
 import { CustomGame } from './custom-game.model';
 import { Injectable, EventEmitter } from '@angular/core';
 import { AuthService } from '../auth/auth.service';
-import { Subscription } from 'rxjs';
+import { Subscription, Observable } from 'rxjs';
+import { map } from 'rxjs/operators';
 import { CustomPrevGame } from './custom-prev-game.model';
 
 /**
@@ -94,6 +95,18 @@ export class MatchService {
 
     public getRecentMatchList(): string[] {
         return this.recentMatchNames;
+    }
+
+    public getRecentMatchListAsync(): Observable<string[]> {
+        return this.db.doc('matches/recent').get().pipe(
+            map(
+                recentMatchesDoc => {
+                    // this.readRecentMatchesFromDoc(recentMatchesDoc);
+                    const readRecentMatchNames: string[] = recentMatchesDoc.get('items');
+                    return readRecentMatchNames;
+                }
+            )
+        );
     }
 
     /**

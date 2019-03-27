@@ -2,6 +2,7 @@
   <!-- show the list of players on the left side -->
   <div class="col-3 col-sm-3 col-md-3 col-lg-2 left-player-list">
     <ul>
+      <app-loading-spinner *ngIf="showSpinner"></app-loading-spinner>
       <li *ngFor='let match of this.getRecentMatchNames(); let idx = index; let even = even; let odd = odd' 
       (click)="onMatchEntryClicked(idx)" style="cursor: pointer" class="border match-card player-card-grad"
       [class.match-card-active]="idx === this.selectedIndex"

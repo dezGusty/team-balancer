@@ -40,6 +40,7 @@ import { PlayerMiniCardComponent } from './players/player-mini-card/player-mini-
 
 import { DeviceDetectorModule } from 'ngx-device-detector';
 import { AppStorage } from './shared/app-storage';
+import { LoadingSpinnerComponent } from './ui/loading-spinner/loading-spinner.component';
 
 @NgModule({
   declarations: [
@@ -64,7 +65,8 @@ import { AppStorage } from './shared/app-storage';
     MatchStorageComponent,
     CopyClipboardDirective,
     PrevMatchDetailComponent,
-    PlayerMiniCardComponent
+    PlayerMiniCardComponent,
+    LoadingSpinnerComponent
   ],
   imports: [
     AngularFireModule.initializeApp(environment.firebase),
