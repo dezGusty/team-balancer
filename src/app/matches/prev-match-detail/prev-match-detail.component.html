@@ -1,44 +1,44 @@
 <form (submit)="onMatchSaveCliked()">
-  <div class="row">
-    <div class="col-12">
-      Date: {{matchSearchKey}}
+  <app-loading-spinner *ngIf="showSpinner"></app-loading-spinner>
+  <div *ngIf="!showSpinner">
+    <div class="row">
+      <div class="col-12">
+        Date: {{matchSearchKey}}
+      </div>
+      <div class="col-6 border-right">
+        Team one
+        <ul class="gus-list">
+          <li *ngFor="let leftItem of this.extractedTeam1">
+            {{ this.getDisplayNameForPlayer(leftItem) }}
+          </li>
+        </ul>
+      </div>
+      <div class="col-6">
+        Team two
+        <ul class="gus-list">
+          <li *ngFor="let rightItem of this.extractedTeam2">
+            {{ this.getDisplayNameForPlayer(rightItem) }}
+          </li>
+        </ul>
+      </div>
     </div>
-    <div class="col-6 border-right">
-      team one
-      <ul class="gus-list">
-        <li *ngFor="let leftItem of this.extractedTeam1">
-          {{ this.getDisplayNameForPlayer(leftItem) }}
-        </li>
-      </ul>
-      <!-- <div class="score">{{team1Score}}</div> -->
 
+    <div class="row">
+      <div class="col-6 border-right">
+        <input type="number" class="form-control" name="team1Score" id="team1Score" [(ngModel)]="this.team1Score"
+          #team1ScoreEntry="ngModel">
+      </div>
+      <div class="col-6">
+        <input type="number" class="form-control" name="team2Score" id="team2Score" [(ngModel)]="this.team2Score"
+          #team2ScoreEntry="ngModel">
+      </div>
     </div>
-    <div class="col-6">
-      team two
-      <ul class="gus-list">
-        <li *ngFor="let rightItem of this.extractedTeam2">
-          {{ this.getDisplayNameForPlayer(rightItem) }}
-        </li>
-      </ul>
-      <!-- <div class="score">{{team2Score}}</div> -->
-    </div>
-  </div>
 
-  <div class="row">
-    <div class="col-6 border-right">
-      <input type="number" class="form-control" name="team1Score" id="team1Score" [(ngModel)]="this.team1Score"
-        #team1ScoreEntry="ngModel">
+    <div class="row mt-2">
+      <button *ngIf='!this.matchResultsStored' class="btn btn-sm btn-outline-gus btn-grad-gusty ml-2" (click)="onStoreResultClick()">Store
+        Result</button>
+      <button *ngIf='!this.matchResultsAppliedToRatings' class="btn btn-sm btn-outline-gus btn-grad-gusty ml-2"
+        (click)="onUpdateRatingsClick()">Update ratings</button>
     </div>
-    <div class="col-6">
-      <input type="number" class="form-control" name="team2Score" id="team2Score" [(ngModel)]="this.team2Score"
-        #team2ScoreEntry="ngModel">
-    </div>
-  </div>
-
-  <div class="row">
-    <button *ngIf='!this.matchResultsStored' class="btn btn-sm btn-primary" (click)="onStoreResultClick()">Store
-      Result</button>
-    <button *ngIf='!this.matchResultsAppliedToRatings' class="btn btn-sm btn-secondary"
-      (click)="onUpdateRatingsClick()">Update ratings</button>
   </div>
 </form>
