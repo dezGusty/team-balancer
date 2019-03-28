@@ -13,6 +13,8 @@ import { PlayersService } from 'src/app/shared/players.service';
 })
 export class PrevMatchDetailComponent implements OnInit, OnDestroy {
 
+  public showSpinner = true;
+
   customGame: CustomPrevGame;
   private subscriptions: Subscription[] = [];
 
@@ -39,41 +41,46 @@ export class PrevMatchDetailComponent implements OnInit, OnDestroy {
         this.loadCustomGameForKey(this.matchSearchKey);
       }
     ));
-
-    this.subscriptions.push(
-      this.matchSvc.matchRetrievedEvent.subscribe((customGame: CustomPrevGame) => {
-        this.customGame = customGame;
-        this.extractedTeam1 = customGame.team1;
-        this.extractedTeam2 = customGame.team2;
-        this.matchResultsStored = true;
-        if (customGame.scoreTeam1 != null) {
-          this.team1Score = customGame.scoreTeam1;
-        } else {
-          this.team1Score = 0;
-          this.matchResultsStored = false;
-        }
-        if (customGame.scoreTeam2 != null) {
-          this.team2Score = customGame.scoreTeam2;
-        } else {
-          this.team2Score = 0;
-          this.matchResultsStored = false;
-        }
-        this.matchResultsAppliedToRatings = customGame.appliedResults;
-      }
-      ));
   }
+
   ngOnDestroy(): void {
     this.subscriptions.forEach(subscription => {
       subscription.unsubscribe();
     });
   }
 
+
   loadCustomGameForKey(matchSearchKey: string) {
     this.customGame = null;
-    this.matchSvc.issueMatchRetrievalForDate(matchSearchKey);
+    this.showSpinner = true;
+
+    this.matchSvc.getMatchForDateAsync(matchSearchKey).subscribe((customGame: CustomPrevGame) => {
+      this.customGame = customGame;
+      this.extractedTeam1 = customGame.team1;
+      this.extractedTeam2 = customGame.team2;
+      this.showSpinner = false;
+      this.matchResultsStored = true;
+      if (customGame.scoreTeam1 != null) {
+        this.team1Score = customGame.scoreTeam1;
+      } else {
+        this.team1Score = 0;
+        this.matchResultsStored = false;
+      }
+
+      if (customGame.scoreTeam2 != null) {
+        this.team2Score = customGame.scoreTeam2;
+      } else {
+        this.team2Score = 0;
+        this.matchResultsStored = false;
+      }
+      this.matchResultsAppliedToRatings = customGame.appliedResults;
+    });
   }
 
-
+  /**
+   * Wrapper function for retrieving the player display name.
+   * @param player Player object to display the name for.
+   */
   getDisplayNameForPlayer(player: Player): string {
     return getDisplayName(player);
   }

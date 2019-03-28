@@ -5,6 +5,7 @@ import { AuthService } from '../auth/auth.service';
 import { Subscription, Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
 import { CustomPrevGame } from './custom-prev-game.model';
+import { Player } from './player.model';
 
 /**
  * Stores and retrieves match related information.
@@ -13,13 +14,17 @@ import { CustomPrevGame } from './custom-prev-game.model';
 export class MatchService {
     private dataChangeSubscription: Subscription;
     private recentMatchNames: string[];
-    recentMatchesChangeEvent = new EventEmitter<string>();
-    matchRetrievedEvent = new EventEmitter<CustomPrevGame>();
+    private recentMatchesChangeEvent = new EventEmitter<string[]>();
 
     private individualMatchRetrieval: Subscription[] = [];
 
     public maxNumberOfRecentMatches = 5;
 
+    /**
+     * Constructor.
+     * @param db Database service.
+     * @param authSvc The authentication service.
+     */
     public constructor(private db: AngularFirestore, private authSvc: AuthService) {
         if (!this.authSvc.isAuthenticated()) {
             console.log('[matches] waiting for login...');
@@ -42,48 +47,37 @@ export class MatchService {
         }
     }
 
+    /**
+     * Subscribes to the data sources used by this service.
+     */
     subscribeToDataSources() {
-        console.log('[matches] subscribing to data sources');
-
         // subscribe to firebase collection changes.
         const recentMatches = this.db.doc('matches/recent').get();
         this.dataChangeSubscription = recentMatches.subscribe(
-            recentMatchesDoc => this.readRecentMatchesFromDoc(recentMatchesDoc));
-
+            recentMatchesDoc => this.readRecentMatchesFromDocWithNotif(recentMatchesDoc));
     }
 
-
-    public issueMatchRetrievalForDate(matchName: string) {
-        this.individualMatchRetrieval.push(
-            this.db.doc('matches/' + matchName).get().subscribe(item => {
-                const fbData = item.data();
-                const obj = {
-                    team1: fbData.team1,
-                    team2: fbData.team2,
-                    scoreTeam1: fbData.scoreTeam1,
-                    scoreTeam2: fbData.scoreTeam2,
-                    appliedResults: fbData.appliedResults
-                };
-                const result: CustomPrevGame = obj;
-                this.matchRetrievedEvent.emit(result);
-            }));
-    }
-
-
-
-    readRecentMatchesFromDoc(recentMatchesDoc) {
-        if (!recentMatchesDoc.exists) {
-            return;
-        }
-
-        const readRecentMatchNames: string[] = recentMatchesDoc.get('items');
+    readRecentMatchesFromDocWithNotif(recentMatchesDoc) {
+        const readRecentMatchNames: string[] = this.readRecentMatchesFromDoc(recentMatchesDoc)
 
         if (this.recentMatchNames !== readRecentMatchNames) {
             this.recentMatchNames = readRecentMatchNames;
-            this.recentMatchesChangeEvent.emit();
+            this.recentMatchesChangeEvent.emit(this.recentMatchNames);
         }
     }
 
+    public readRecentMatchesFromDoc(recentMatchesDoc: firebase.firestore.DocumentSnapshot): string[] {
+        if (!recentMatchesDoc.exists) {
+            return [];
+        }
+
+        const readRecentMatchNames: string[] = recentMatchesDoc.get('items');
+        return readRecentMatchNames;
+    }
+
+    /**
+     * Clean-up the data subscriptions.
+     */
     unsubscribeFromDataSources() {
         if (this.dataChangeSubscription) {
             this.dataChangeSubscription.unsubscribe();
@@ -93,19 +87,52 @@ export class MatchService {
         });
     }
 
-    public getRecentMatchList(): string[] {
-        return this.recentMatchNames;
+    /**
+     * Retrieves (asynchronously) a list of recent matches.
+     * @returns the match name collection, as an Observable.
+     */
+    public getRecentMatchListAsync(): Observable<string[]> {
+
+        return this.recentMatchesChangeEvent.asObservable();
+
+        // // Get the firestore document where the recent matches are stored.
+        // // Expected to be stored in [matches/recent]
+        // return this.db.doc('matches/recent').get().pipe(
+        //     // Map each item (expected: only 1) to the read operation: read the contents array.
+        //     map(
+        //         recentMatchesDoc => this.readRecentMatchesFromDoc(recentMatchesDoc)
+        //         // recentMatchesDoc => {
+        //         //     const readRecentMatchNames: string[] = recentMatchesDoc.get('items');
+        //         //     return readRecentMatchNames;
+        //         // }
+        //     )
+        // );
     }
 
-    public getRecentMatchListAsync(): Observable<string[]> {
-        return this.db.doc('matches/recent').get().pipe(
-            map(
-                recentMatchesDoc => {
-                    // this.readRecentMatchesFromDoc(recentMatchesDoc);
-                    const readRecentMatchNames: string[] = recentMatchesDoc.get('items');
-                    return readRecentMatchNames;
-                }
-            )
+    /**
+     * Asynchronously retrieves the match object as an Observable.
+     * @param matchName The name of the match (basically: the date to be used as a key for accessing the match from the DB)
+     * E.g. '2018-03-23'
+     */
+    public getMatchForDateAsync(matchName: string): Observable<CustomPrevGame> {
+        // Get the firestore document where the match details are stored, based on the key.
+        // E.g. stored in [matches/2018-03-23]
+        return this.db.doc('matches/' + matchName).get().pipe(
+            // Map each document (expected: only 1) to the read operation.
+            map(matchDoc => {
+                // Read the document data.
+                // It is expected to consist of serialized data.
+                const fbData = matchDoc.data();
+                const obj = {
+                    team1: fbData.team1,
+                    team2: fbData.team2,
+                    scoreTeam1: fbData.scoreTeam1,
+                    scoreTeam2: fbData.scoreTeam2,
+                    appliedResults: fbData.appliedResults
+                };
+                const result: CustomPrevGame = obj;
+                return result;
+            })
         );
     }
 
@@ -138,7 +165,7 @@ export class MatchService {
         const obj = { items: newRecentMatches };
         recentMatchRef.set(obj, { merge: true });
 
-        this.readRecentMatchesFromDoc(recentMatchRef);
+        this.readRecentMatchesFromDocWithNotif(recentMatchRef);
     }
 
     public saveCustomMatch(matchName: string, customGame: CustomGame) {
@@ -159,7 +186,12 @@ export class MatchService {
             team2: game.team2
         };
 
-        let obj;
+        let obj: {
+            [x: string]: any;
+            appliedResults?: true;
+            team1?: Player[];
+            team2?: Player[];
+        };
 
         if (game.appliedResults) {
             obj = { ...objScore, appliedResults: game.appliedResults };
