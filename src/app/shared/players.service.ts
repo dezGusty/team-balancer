@@ -1,6 +1,6 @@
 import { Player } from './player.model';
 import { EventEmitter, Injectable } from '@angular/core';
-import { AngularFirestore } from 'angularfire2/firestore';
+import { AngularFirestore } from '@angular/fire/firestore';
 import { Observable, Subscription } from 'rxjs';
 import { AuthService } from '../auth/auth.service';
 import { CustomPrevGame } from './custom-prev-game.model';
