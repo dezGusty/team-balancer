@@ -2,7 +2,7 @@ import { AngularFireAuth } from 'angularfire2/auth';
 import * as firebase from 'firebase/app';
 import { Injectable, EventEmitter } from '@angular/core';
 import { Router } from '@angular/router';
-import { AngularFirestore } from 'angularfire2/firestore';
+import { AngularFirestore } from '@angular/fire/firestore';
 import { User, UserRoles } from '../shared/user.model';
 import { Subscription } from 'rxjs';
 import { AppStorage } from '../shared/app-storage';
