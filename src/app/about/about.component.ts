@@ -1,4 +1,5 @@
 import { Component, OnInit } from '@angular/core';
+import { version } from '../../../package.json';
 
 @Component({
   selector: 'app-about',
@@ -11,7 +12,8 @@ export class AboutComponent implements OnInit {
   public releaseDate: Date;
 
   constructor() {
-    this.version = '0.6.3';
+    this.version = version;
+
     this.releaseDate = new Date(2019, 3, 25);
   }
 
