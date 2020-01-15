@@ -5,9 +5,9 @@ export class GameInfo {
   public losingPlayerNames: string[];
 
   public static fromSimpleData(date: string, diff: string, winners: string, losers: string): GameInfo {
-    let game = new GameInfo();
+    const game = new GameInfo();
     game.date = date;
-    game.difference = parseInt(diff);
+    game.difference = parseInt(diff, 10);
     game.winnerPlayerNames = winners.split(',');
     game.losingPlayerNames = losers.split(',');
 
@@ -17,7 +17,7 @@ export class GameInfo {
 
     game.losingPlayerNames = game.losingPlayerNames.map(playerName => {
       return playerName.trim();
-    })
+    });
 
     return game;
   }
