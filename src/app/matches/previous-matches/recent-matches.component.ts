@@ -29,7 +29,6 @@ export class RecentMatchesComponent implements OnInit {
   }
 
   public getRecentMatchNames(): string[] {
-    // this.recentMatchNames = this.matchSvc.getRecentMatchList();
     return this.recentMatchNames;
   }
 
