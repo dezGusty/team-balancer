@@ -7,7 +7,7 @@ import { PlayersService } from '../shared/players.service';
 @Component({
   selector: 'app-customgame',
   templateUrl: './customgame.component.html',
-  styleUrls: ['./customgame.component.css']
+  styles: ['']
 })
 export class CustomgameComponent implements OnInit, OnDestroy {
 
