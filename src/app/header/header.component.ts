@@ -13,7 +13,7 @@ export class HeaderComponent implements OnInit {
   /**
    * Constructor.
    * @param authSvc The authentication service
-   * @param router The router. Used to listen for navigation events 
+   * @param router The router. Used to listen for navigation events
    * and collapse the navbar.
    */
   constructor(private authSvc: AuthService, private router: Router) {
