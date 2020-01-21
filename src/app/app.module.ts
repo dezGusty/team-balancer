@@ -2,7 +2,7 @@ import { BrowserModule } from '@angular/platform-browser';
 import { NgModule } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 
-import { NgbCollapseModule } from '@ng-bootstrap/ng-bootstrap';
+import { NgbCollapseModule, NgbTooltipModule } from '@ng-bootstrap/ng-bootstrap';
 import { AuthService } from './auth/auth.service';
 import { PlayersService } from './shared/players.service';
 import { MatchService } from './shared/match.service';
@@ -76,6 +76,7 @@ import { LoadingSpinnerComponent } from './ui/loading-spinner/loading-spinner.co
     FormsModule,
     AppRoutingModule,
     NgbCollapseModule,
+    NgbTooltipModule,
     DeviceDetectorModule.forRoot()
   ],
   providers: [PlayersService, MatchService, AuthService, AuthGuard, OrganizerGuard, AppStorage],

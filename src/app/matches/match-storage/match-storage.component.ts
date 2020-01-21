@@ -1,4 +1,4 @@
-import { Component, OnInit, Input } from '@angular/core';
+import { Component, OnInit, Input, ElementRef, ViewChild } from '@angular/core';
 import { CustomGame } from '../../shared/custom-game.model';
 import { Player, getDisplayName } from '../../shared/player.model';
 import { MatchService } from '../../shared/match.service';
@@ -6,13 +6,14 @@ import { MatchService } from '../../shared/match.service';
 @Component({
   selector: 'app-match-storage',
   templateUrl: './match-storage.component.html',
-  styleUrls: ['./match-storage.component.css']
+  styles: ['']
 })
 export class MatchStorageComponent implements OnInit {
 
   @Input() customGame: CustomGame;
   public customClipText = '';
   public targetDate = '';
+  @ViewChild('ttip', { static: false }) copyToClipBtn: ElementRef;
   constructor(private matchSvc: MatchService) {
     this.targetDate = new Date().toISOString().slice(0, 10);
   }
@@ -27,7 +28,6 @@ export class MatchStorageComponent implements OnInit {
   onStoreCliked() {
     console.log('[match-storage] click');
 
-    // const dateRegex = '([12]\\d{3}-(0[1-9]|1[0-2])-(0[1-9]|[12]\\d|3[01]))';
     const dateRegex = /([12]\d{3}-(0[1-9]|1[0-2])-(0[1-9]|[12]\d|3[01]))/;
     console.log('target date', this.targetDate);
 
@@ -43,6 +43,17 @@ export class MatchStorageComponent implements OnInit {
     console.log('[match-storage] copy click');
 
     this.customClipText = this.customGame.toPlainTextFormat();
+
+    try {
+      const elem = this.copyToClipBtn.nativeElement;
+      if (elem) {
+        console.log('Try hide...');
+        elem.close();
+      }
+    } catch (error) {
+      console.log('Some error encountered...');
+
+    }
   }
 
   public notifyCpy(payload: string) {

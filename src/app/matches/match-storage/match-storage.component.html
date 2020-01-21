@@ -1,8 +1,17 @@
 <form (submit)="onStoreCliked()">
   <div class="row">
     <div class="col-6 col-sm-6 col-md-5 col-lg-4 btn-toolbar">
-      <button class="btn btn-sm btn-outline-gus btn-grad-gusty mr-2 mt-2" [copy-clipboard]="customClipTextToClip()" (copied)="notifyCpy($event)"
-        (click)="onCopyClicked();"><span class="align-self-center"><img src="./../../../assets/clippy.svg"></span></button>
+      <button type="button" class="btn btn-sm btn-outline-gus btn-grad-gusty mr-2 mt-2" 
+        #copyToClipBtn
+        placement="top"
+        #ttip="ngbTooltip"
+        ngbTooltip="Copied to clipboard..."
+        [autoClose]="true"
+        [closeDelay]="1000"
+        triggers="click:blur"
+        [copy-clipboard]="customClipTextToClip()" (copied)="notifyCpy($event)"
+        (click)="onCopyClicked();"><span class="align-self-center"><img
+            src="./../../../assets/clippy.svg"></span></button>
       <button class="btn btn-sm btn-outline-gus btn-grad-gusty mr-2 mt-2">Store</button>
     </div>
     <div class="input-group input-group-sm col-6 col-sm-6 col-md-5 col-lg-4">
