@@ -13,6 +13,9 @@
           <a class="nav-link" routerLink="/recent">Recent Matches</a>
         </li>
         <li routerLinkActive="active" class="nav-item" *ngIf="this.isAuthenticated()">
+          <a class="nav-link" routerLink="/draft">Draft</a>
+        </li>
+        <li routerLinkActive="active" class="nav-item" *ngIf="this.isAuthenticated()">
           <a class="nav-link" routerLink="/players">Players</a>
         </li>
         <li routerLinkActive="active" class="nav-item" *ngIf="this.isAuthenticated()">

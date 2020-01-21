@@ -13,6 +13,7 @@ import { OrganizerGuard } from './auth/organizer-guard.service';
 import { CustomgameComponent } from './customgame/customgame.component';
 import { RecentMatchesComponent } from './matches/previous-matches/recent-matches.component';
 import { PrevMatchDetailComponent } from './matches/prev-match-detail/prev-match-detail.component';
+import { DraftComponent } from './draft/draft/draft.component';
 
 const appRoutes: Routes = [
     { path: '', redirectTo: '/about', pathMatch: 'full' },
@@ -28,6 +29,7 @@ const appRoutes: Routes = [
     { path: 'recent', canActivate: [AuthGuard, OrganizerGuard], component: RecentMatchesComponent, children: [
         { path: ':id', component: PrevMatchDetailComponent}
     ] },
+    { path: 'draft', canActivate: [AuthGuard], component: DraftComponent },
     { path: 'custom', canActivate: [AuthGuard], component: CustomgameComponent },
     { path: 'about', component: AboutComponent },
     { path: 'signin', component: SigninComponent },

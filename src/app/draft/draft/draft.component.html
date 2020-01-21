@@ -1,0 +1,50 @@
+<div class="row justify-content-center">
+  <div class="col-6 col-sm-6 col-md-5 col-lg-4 align-self-center">
+    <button
+      type="button"
+      class="btn btn-outline-gus btn-grad-gusty"
+      (click)="onSaveSelectionClicked()"
+    >
+      Save...
+    </button>
+  </div>
+  <div class="col-6 col-sm-6 col-md-5 col-lg-4 border-bottom gus-search-box">
+    <input
+      class="form-control border-0"
+      type="text"
+      [(ngModel)]="searchedName"
+      (keyup)="onSearchContentChange($event)"
+      placeholder="Search..."
+      aria-label="Search"
+      #srcNameArea
+      autofocus
+    />
+  </div>
+</div>
+<div class="row justify-content-center">
+  <!-- show the list of players on the left side -->
+  <div class="col-6 col-sm-6 col-md-5 col-lg-4 left-player-list">
+    <h5>Selected players</h5>
+    <p>{{ selectedPlayerList.length }} players</p>
+    <div>
+      <app-player-card
+        *ngFor="let playerItem of this.selectedPlayerList"
+        [player]="playerItem"
+        (playerSelected)="onPlayerSelected($event)"
+      ></app-player-card>
+    </div>
+  </div>
+  <!-- show the list of players on the right side -->
+  <div class="col-6 col-sm-6 col-md-5 col-lg-4 right-player-list">
+    <h5>Available players</h5>
+    <p>{{ availablePlayerList.length }} players</p>
+    <app-player-card
+      *ngFor="
+        let playerItem of this.availablePlayerList | playerFilter: searchedName
+      "
+      [player]="playerItem"
+      (playerSelected)="onPlayerSelected($event)"
+    >
+    </app-player-card>
+  </div>
+</div>
