@@ -122,6 +122,7 @@ export class DraftComponent implements OnInit, OnDestroy {
   }
 
   onSaveSelectionClicked() {
-
+    console.log('[draft] saving player list...');
+    this.selectedPlayerList.splice(existingPos, 1);
   }
 }

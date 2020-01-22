@@ -13,7 +13,7 @@ export class MatchStorageComponent implements OnInit {
   @Input() customGame: CustomGame;
   public customClipText = '';
   public targetDate = '';
-  @ViewChild('ttip', { static: false }) copyToClipBtn: ElementRef;
+  @ViewChild('ttip') copyToClipBtn: ElementRef;
   constructor(private matchSvc: MatchService) {
     this.targetDate = new Date().toISOString().slice(0, 10);
   }
