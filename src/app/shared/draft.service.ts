@@ -34,8 +34,8 @@ export class DraftService {
   }
 
   /**
-     * Subscribes to the data sources used by this service.
-     */
+   * Subscribes to the data sources used by this service.
+   */
   subscribeToDataSources() {
     console.log('[draft-svc] subscribing');
 
@@ -54,8 +54,8 @@ export class DraftService {
   }
 
   /**
-     * Clean-up the data subscriptions.
-     */
+   * Clean-up the data subscriptions.
+   */
   unsubscribeFromDataSources() {
     if (this.dataChangeSubscription) {
       this.dataChangeSubscription.unsubscribe();
