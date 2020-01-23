@@ -3,6 +3,7 @@ import { NgModule } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 
 import { NgbCollapseModule, NgbTooltipModule } from '@ng-bootstrap/ng-bootstrap';
+import { NgcCookieConsentModule, NgcCookieConsentConfig } from 'ngx-cookieconsent';
 import { AuthService } from './auth/auth.service';
 import { PlayersService } from './shared/players.service';
 import { MatchService } from './shared/match.service';
@@ -43,6 +44,22 @@ import { AppStorage } from './shared/app-storage';
 import { LoadingSpinnerComponent } from './ui/loading-spinner/loading-spinner.component';
 import { DraftComponent } from './draft/draft/draft.component';
 
+const cookieConfig: NgcCookieConsentConfig = {
+  cookie: {
+    domain: 'localhost' // or 'your.domain.com' // it is mandatory to set a domain, for cookies to work properly (see https://goo.gl/S2Hy2A)
+  },
+  palette: {
+    popup: {
+      background: '#000'
+    },
+    button: {
+      background: '#f1d600'
+    }
+  },
+  theme: 'edgeless',
+  type: 'opt-out'
+};
+
 @NgModule({
   declarations: [
     AppComponent,
@@ -79,7 +96,8 @@ import { DraftComponent } from './draft/draft/draft.component';
     AppRoutingModule,
     NgbCollapseModule,
     NgbTooltipModule,
-    DeviceDetectorModule.forRoot()
+    DeviceDetectorModule.forRoot(),
+    NgcCookieConsentModule.forRoot(cookieConfig)
   ],
   providers: [PlayersService, MatchService, AuthService, AuthGuard, OrganizerGuard, AppStorage],
   bootstrap: [AppComponent]
