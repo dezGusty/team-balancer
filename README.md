@@ -11,11 +11,16 @@ Firebase is used to store and access the data.
 
 ## Development
 
-## Development server
+### Development server
 
 Run `ng serve` for a dev server. Navigate to `http://localhost:4200/`. The app will automatically reload if you change any of the source files.
 
-## Build
+### Build
 
 Run `ng build` to build the project. The build artifacts will be stored in the `dist/` directory. Use the `--prod` flag for a production build.
 
+### Deployment
+
+Check out the steps to [Configure firebase](./doc/configure-firebase.md)
+
+For updating / releasing a new version, look at the [Release checklist](./doc/release-checklist.md)
