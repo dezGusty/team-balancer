@@ -48,6 +48,17 @@ export class Match {
         return true;
     }
 
+    setMultiPlayersToDraftById(draftedPlayerIDs: number[]): boolean {
+
+        this.draftPlayers = this.availablePlayersPool.filter(
+            player => draftedPlayerIDs.findIndex(item => item === player.id) !== -1
+        );
+        this.availablePlayersPool = this.availablePlayersPool.filter(
+            player => draftedPlayerIDs.findIndex(item => item === player.id) === -1
+        );
+        return true;
+    }
+
     movePlayerBackToPool(player: Player): boolean {
         if (!this.draftPlayers.includes(player)) {
             console.log('[match] cannot pop player [' + player.name + '] ');
