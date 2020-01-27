@@ -3,19 +3,16 @@ import { Injectable, EventEmitter } from '@angular/core';
 import { Subscription, Observable } from 'rxjs';
 import { AuthService } from '../auth/auth.service';
 import { Player } from './player.model';
-import { map } from 'rxjs/internal/operators/map';
 
 @Injectable({
   providedIn: 'root'
 })
 export class DraftService {
   private dataChangeSubscription: Subscription;
-  // private playerIDs: string[] = [];
   selectedDraftPlayers: Player[] = [];
   playerDataChangeEvent = new EventEmitter<Player[]>();
 
   constructor(private db: AngularFirestore, private authSvc: AuthService) {
-    // this.playerIDs = [];
     this.selectedDraftPlayers = [];
     if (!this.authSvc.isAuthenticated()) {
       console.log('[matches] waiting for login...');
@@ -55,17 +52,6 @@ export class DraftService {
       error => console.log('some error encountered', error),
       () => { console.log('[draft-svc]c omplete'); },
     );
-    // // subscribe to firebase collection changes.
-    // this.dataChangeSubscription = this.db.doc('drafts/next').valueChanges().subscribe(
-    //   draftDocContents => {
-    //     const castedItem = draftDocContents as { playersIDs: string[] };
-    //     this.playerIDs = castedItem.playerIDs as string[];
-    //     console.log('[draft-svc] player ids:', this.playerIDs);
-    //   },
-    //   error => console.log('some error encountered', error),
-    //   () => { console.log('[draft-svc]complete'); },
-    // );
-
   }
 
   /**
@@ -91,11 +77,17 @@ export class DraftService {
    * @param players The array of players to store.
    */
   saveSelectedPlayerList(players: Player[]) {
-    //TODO:add code here
-    console.log('[draft] saving players', players);
-
     const draftPlayersListRef = this.db.doc('/drafts/next').ref;
     const obj = { players };
     draftPlayersListRef.set(obj, { merge: true });
+  }
+
+  /**
+   * Store some players only in memory. This will impact other components which use the service,
+   * but will result in no writing to the DB.
+   * @param players The players to store in memory.
+   */
+  storePlayersInMemoryOnly(players: Player[]) {
+    this.selectedDraftPlayers = [...players];
   }
 }
