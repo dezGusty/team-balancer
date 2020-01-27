@@ -26,11 +26,15 @@ const appRoutes: Routes = [
         ]
     },
     // { path: 'matches', canActivate: [AuthGuard], component: MatchesComponent },
-    { path: 'recent', canActivate: [AuthGuard, OrganizerGuard], component: RecentMatchesComponent, children: [
-        { path: ':id', component: PrevMatchDetailComponent}
-    ] },
+    {
+        path: 'recent', canActivate: [AuthGuard, OrganizerGuard], component: RecentMatchesComponent, children: [
+            { path: ':id', component: PrevMatchDetailComponent }
+        ]
+    },
     { path: 'draft', canActivate: [AuthGuard], component: DraftComponent },
-    { path: 'custom', canActivate: [AuthGuard], component: CustomgameComponent },
+    {
+        path: 'custom', canActivate: [AuthGuard], component: CustomgameComponent
+    },
     { path: 'about', component: AboutComponent },
     { path: 'signin', component: SigninComponent },
     { path: 'signup', component: SignupComponent }
