@@ -3,6 +3,7 @@ import { PlayersService } from 'src/app/shared/players.service';
 import { Player, filterPlayerArray } from 'src/app/shared/player.model';
 import { Subscription } from 'rxjs';
 import { DraftService } from 'src/app/shared/draft.service';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-draft',
@@ -16,8 +17,10 @@ export class DraftComponent implements OnInit, OnDestroy {
   selectedPlayerList: Player[] = [];
   private playerDataChangeSubscription: Subscription;
 
-  constructor(private playersSvc: PlayersService, private draftSvc: DraftService) {
-    console.log('[draft] ctor');
+  constructor(
+    private playersSvc: PlayersService,
+    private draftSvc: DraftService,
+    private router: Router) {
   }
 
   ngOnInit() {
@@ -138,9 +141,12 @@ export class DraftComponent implements OnInit, OnDestroy {
   }
 
   onSaveSelectionClicked() {
-    console.log('[draft] saving player list...');
     this.draftSvc.saveSelectedPlayerList(this.selectedPlayerList);
-    //TODO:add code here
-    // this.selectedPlayerList.splice(existingPos, 1);
+  }
+
+  onMatchUpClicked() {
+    console.log('[draft] creating match from draft ...');
+    this.draftSvc.storePlayersInMemoryOnly(this.selectedPlayerList);
+    this.router.navigate(['/custom'], { queryParams: { draft: true } });
   }
 }
