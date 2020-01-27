@@ -26,5 +26,4 @@ export class AuthGuard implements CanActivate {
         }
         return this.authSvc.isAuthenticated();
     }
-
 }
