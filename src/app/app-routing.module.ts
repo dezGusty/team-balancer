@@ -1,7 +1,6 @@
 import { NgModule } from '@angular/core';
 import { Routes, RouterModule } from '@angular/router';
 import { PlayersComponent } from './players/players.component';
-import { MatchesComponent } from './matches/matches.component';
 import { AboutComponent } from './about/about.component';
 import { PlayerDetailsComponent } from './players/player-details/player-details.component';
 import { PlayerStartComponent } from './players/player-start/player-start.component';
@@ -25,7 +24,6 @@ const appRoutes: Routes = [
             { path: ':id/edit', canActivate: [AuthGuard, OrganizerGuard], component: PlayerEditComponent }
         ]
     },
-    // { path: 'matches', canActivate: [AuthGuard], component: MatchesComponent },
     {
         path: 'recent', canActivate: [AuthGuard, OrganizerGuard], component: RecentMatchesComponent, children: [
             { path: ':id', component: PrevMatchDetailComponent }

@@ -10,7 +10,6 @@ import { MatchService } from './shared/match.service';
 
 import { AppComponent } from './app.component';
 import { HeaderComponent } from './header/header.component';
-import { MatchesComponent } from './matches/matches.component';
 import { PlayersComponent } from './players/players.component';
 import { PlayerRoutedCardComponent } from './players/player/player-routed-card.component';
 import { PlayerDetailsComponent } from './players/player-details/player-details.component';
@@ -43,6 +42,7 @@ import { DeviceDetectorModule } from 'ngx-device-detector';
 import { AppStorage } from './shared/app-storage';
 import { LoadingSpinnerComponent } from './ui/loading-spinner/loading-spinner.component';
 import { DraftComponent } from './draft/draft/draft.component';
+import { PlayerCardPrefComponent } from './player-card-pref/player-card-pref.component';
 
 // types: opt-out, opt-in, info
 const cookieConfig: NgcCookieConsentConfig = {
@@ -65,7 +65,6 @@ const cookieConfig: NgcCookieConsentConfig = {
   declarations: [
     AppComponent,
     HeaderComponent,
-    MatchesComponent,
     PlayersComponent,
     PlayerRoutedCardComponent,
     PlayerDetailsComponent,
@@ -86,7 +85,8 @@ const cookieConfig: NgcCookieConsentConfig = {
     PrevMatchDetailComponent,
     PlayerMiniCardComponent,
     LoadingSpinnerComponent,
-    DraftComponent
+    DraftComponent,
+    PlayerCardPrefComponent
   ],
   imports: [
     AngularFireModule.initializeApp(environment.firebase),
