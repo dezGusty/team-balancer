@@ -10,8 +10,10 @@ export class AboutComponent implements OnInit {
 
   public version: string;
   public releaseDate: Date;
+  public author: string;
 
   constructor() {
+    this.author = 'Gusti';
     this.version = version;
 
     this.releaseDate = new Date(2020, 1, 24);

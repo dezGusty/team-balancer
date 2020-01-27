@@ -8,6 +8,7 @@ It should be applicable to other scenarios where the individuals taking part in 
 
 This project uses Angular as the main development framework.
 Firebase is used to store and access the data.
+The [Cookie Consent](https://www.osano.com/cookieconsent) library is used via [ngx-cookieconsent](https://www.npmjs.com/package/ngx-cookieconsent).
 
 ## Development
 
@@ -24,3 +25,10 @@ Run `ng build` to build the project. The build artifacts will be stored in the `
 Check out the steps to [Configure firebase](./doc/configure-firebase.md)
 
 For updating / releasing a new version, look at the [Release checklist](./doc/release-checklist.md)
+
+The Cookie Consent functionality will not work properly if you don't configure it correctly.
+To configure it, look at the files in the environments directory (`environments.ts` and `environments.prod.ts`) and update the deployment domain.
+
+```ts
+const deploymentDomain = "localhost";
+```

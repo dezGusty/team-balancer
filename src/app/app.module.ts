@@ -44,20 +44,21 @@ import { AppStorage } from './shared/app-storage';
 import { LoadingSpinnerComponent } from './ui/loading-spinner/loading-spinner.component';
 import { DraftComponent } from './draft/draft/draft.component';
 
+// types: opt-out, opt-in, info
 const cookieConfig: NgcCookieConsentConfig = {
   cookie: {
-    domain: 'localhost' // or 'your.domain.com' // it is mandatory to set a domain, for cookies to work properly (see https://goo.gl/S2Hy2A)
+    domain: environment.cookieConsentDomain // it is mandatory to set a domain, for cookies to work properly (see https://goo.gl/S2Hy2A)
   },
   palette: {
     popup: {
       background: '#000'
     },
     button: {
-      background: '#f1d600'
+      background: '#3CB9FC'
     }
   },
   theme: 'edgeless',
-  type: 'opt-out'
+  type: 'info'
 };
 
 @NgModule({
