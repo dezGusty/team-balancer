@@ -17,27 +17,31 @@ export class DraftComponent implements OnInit, OnDestroy {
   private playerDataChangeSubscription: Subscription;
 
   constructor(private playersSvc: PlayersService, private draftSvc: DraftService) {
-    // this.availablePlayerList = this.playersSvc.getPlayers();
+    console.log('[draft] ctor');
   }
 
   ngOnInit() {
+    console.log('[draft] init');
+    this.availablePlayerList = [...this.playersSvc.getPlayers()];
+    this.selectedPlayerList = [...this.draftSvc.getDraftedPlayers()];
+    this.availablePlayerList = this.availablePlayerList.filter(
+      player => !this.selectedPlayerList.find(item => player.id === item.id)
+    );
+
     this.playerDataChangeSubscription = this.draftSvc.playerDataChangeEvent
       .subscribe(
         (players: Player[]) => {
-          console.log('[draft] init');
-          //TODO:add code here
           this.availablePlayerList = [...this.playersSvc.getPlayers()];
-          this.selectedPlayerList = [...players]; //[...this.draftSvc.getDraftedPlayers()];
-          // this.selectedPlayerList =this.draftSvc.getDraftedPlayers();
-
-          this.availablePlayerList.filter(player => this.selectedPlayerList.find(item => player === item))
-          // this.selectedPlayerList.forEach(draftedPlayer => { this.removePlayerFromPool(draftedPlayer) });
-          console.log('[draft] init done');
+          this.selectedPlayerList = [...players];
+          this.availablePlayerList = this.availablePlayerList.filter(
+            player => !this.selectedPlayerList.find(item => player.id === item.id)
+          );
         }
       );
   }
 
   ngOnDestroy() {
+    console.log('[draft] destroy');
     if (this.playerDataChangeSubscription) {
       this.playerDataChangeSubscription.unsubscribe();
     }
@@ -130,6 +134,7 @@ export class DraftComponent implements OnInit, OnDestroy {
 
   onClearListClicked() {
     this.selectedPlayerList = [];
+    this.availablePlayerList = [...this.playersSvc.getPlayers()];
   }
 
   onSaveSelectionClicked() {
