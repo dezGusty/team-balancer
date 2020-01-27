@@ -15,8 +15,14 @@
       <h5>Selected players</h5>
       <p>{{ matchData.draftPlayers.length }} players</p>
       <div>
-        <app-player-card *ngFor='let playerItem of this.matchData.draftPlayers' [player]="playerItem"
-          (playerSelected)="onPlayerSelected($event)"></app-player-card>
+        <app-player-card-pref
+          *ngFor='let playerItem of this.matchData.draftPlayers' 
+          [player]="playerItem"
+          (playerSelected)="onPlayerSelected($event)"
+          (lockTeam1Selected)="onPlayerLockTeam1($event)"
+          (lockTeam2Selected)="onPlayerLockTeam2($event)"
+          >
+        </app-player-card-pref>
       </div>
     </div>
     <!-- show the list of players on the right side -->

@@ -104,7 +104,7 @@ export class MatchCombosComponent implements OnInit, OnDestroy {
     });
   }
 
-  getAllCombinations(players: Player[]) {
+  getAllCombinations(players: Player[], useAffinity: boolean = true) {
     // Create 2 teams; use combinations.
     // Basically: choose 6 players from a list of 12.
     // C(n, k) = n! / (n-k)! * k!
@@ -120,6 +120,9 @@ export class MatchCombosComponent implements OnInit, OnDestroy {
     // 001001
     // 001010
     // 001011
+
+    console.log('allcombos', players);
+
     this.listOfOptions = new Array<{ value: number, diff: number, combination: string }>();
     const totalNumberOfPlayers = players.length;
     const idealNumberOfPlayers = players.length / 2;
@@ -139,6 +142,28 @@ export class MatchCombosComponent implements OnInit, OnDestroy {
       }
 
       stringifiedBinary = stringifiedBinary.padStart(totalNumberOfPlayers, '0');
+      let affinityFine = true;
+
+      if (useAffinity) {
+        stringifiedBinary.split('').forEach((value, index, array) => {
+          if (players[index].affinity !== undefined && players[index].affinity !== 0) {
+            const numericalAffinity = players[index].affinity - 1;
+            const castedAffinity: string = '' + numericalAffinity;
+            console.log('affinity for ' + players[index].name, castedAffinity);
+
+            if (castedAffinity !== value) {
+              affinityFine = false;
+            }
+            //   // affinity == 1 => expect team 0.
+            //   // affinity == 2 => expect team 1
+          }
+        });
+      }
+
+      if (!affinityFine) {
+        continue;
+      }
+
       let sum = 0;
       stringifiedBinary.split('').forEach((value, index, array) => {
         if (value === '1') {
@@ -152,7 +177,6 @@ export class MatchCombosComponent implements OnInit, OnDestroy {
         diff = -diff;
       }
       this.listOfOptions.push({ value: sum, diff, combination: stringifiedBinary });
-      // console.log(++numOptions + ')' + stringifiedBinary + ' - sum: ' + sum + ' - diff: ' + diff);
     }
 
     // sort the list according to the difference

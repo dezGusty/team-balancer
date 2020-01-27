@@ -37,6 +37,43 @@
     text-align: right;
 }
 
+.player-card-team-selector {
+    font-weight: 900;
+    padding-left: 1em;
+    padding-right: 1em;
+    border-color: #4A1A77;
+    border-width: 2px;
+}
+
+.player-card-team-selector-active {
+    font-weight: 900;
+    padding-left: 1em;
+    padding-right: 1em;
+    background: #120052;
+    border-color: #4A1A77;
+    border-width: 2px;
+}
+
+.player-card-team-selector-hover {
+    color: white;
+    font-weight: 900;
+    padding-left: 1em;
+    padding-right: 1em;
+    background: #120052;
+    border-color: #4A1A77;
+    border-width: 2px;
+}
+
+.player-card-team-selector:hover {
+    font-weight: 900;
+    padding-left: 1em;
+    padding-right: 1em;
+    border-color: #4A1A77;
+    border-width: 2px;
+    background: linear-gradient(135deg, #8A2Be2 0%,#8A2Be2 67%,rgb(181, 55, 242) 95%,#120052 100%);
+    color: white;
+}
+
 .btn-grad-gusty:hover {
     background: linear-gradient(135deg, #8A2Be2 0%,#8A2Be2 67%,rgb(181, 55, 242) 95%,#120052 100%);
     animation: GradAnim 2s ease infinite;

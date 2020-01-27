@@ -21,6 +21,7 @@ export class CustomgameComponent implements OnInit, OnDestroy {
   public matchData = new Match(new Date(Date.now()));
   public selectedPlayer: Player;
   private playerDataChangeSubscription: Subscription;
+  private routeQuerySubscription: Subscription;
   makeTeamsSubject: Subject<void> = new Subject<void>();
 
   /**
@@ -48,7 +49,7 @@ export class CustomgameComponent implements OnInit, OnDestroy {
           this.reloadInternal();
         }
       );
-    this.route.queryParams
+    this.routeQuerySubscription = this.route.queryParams
       .subscribe(params => {
         console.log('[custom] qparams:', params);
         this.useDraftPlayersAsInput = params.draft;
@@ -59,6 +60,9 @@ export class CustomgameComponent implements OnInit, OnDestroy {
   ngOnDestroy() {
     if (this.playerDataChangeSubscription) {
       this.playerDataChangeSubscription.unsubscribe();
+    }
+    if (this.routeQuerySubscription) {
+      this.routeQuerySubscription.unsubscribe();
     }
   }
 
@@ -114,6 +118,43 @@ export class CustomgameComponent implements OnInit, OnDestroy {
       this.matchData.movePlayerToDraft(selectedPlayer);
       this.searchedName = '';
     }
+  }
+
+  onPlayerLockTeam1($event) {
+    const selectedPlayer: Player = $event;
+    if (null == selectedPlayer) {
+      return;
+    }
+
+    console.log('onPlayerLockTeam1');
+    if (selectedPlayer.affinity === 1) {
+      // toggle back
+      selectedPlayer.affinity = 0;
+      return;
+    }
+
+    selectedPlayer.affinity = 1;
+    return;
+
+    const currentPosition = this.matchData.draftPlayers.indexOf(selectedPlayer);
+  }
+
+  onPlayerLockTeam2($event) {
+    const selectedPlayer: Player = $event;
+    if (null == selectedPlayer) {
+      return;
+    }
+
+    console.log('onPlayerLockTeam2');
+    if (selectedPlayer.affinity === 2) {
+      // toggle back
+      selectedPlayer.affinity = 0;
+      return;
+    }
+
+    selectedPlayer.affinity = 2;
+    return;
+    const currentPosition = this.matchData.draftPlayers.indexOf(selectedPlayer);
   }
 
   onMakeTeamsClicked() {
