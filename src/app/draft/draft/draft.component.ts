@@ -2,6 +2,7 @@ import { Component, OnInit, OnDestroy } from '@angular/core';
 import { PlayersService } from 'src/app/shared/players.service';
 import { Player, filterPlayerArray } from 'src/app/shared/player.model';
 import { Subscription } from 'rxjs';
+import { DraftService } from 'src/app/shared/draft.service';
 
 @Component({
   selector: 'app-draft',
@@ -15,17 +16,23 @@ export class DraftComponent implements OnInit, OnDestroy {
   selectedPlayerList: Player[] = [];
   private playerDataChangeSubscription: Subscription;
 
-  constructor(private playersSvc: PlayersService) {
+  constructor(private playersSvc: PlayersService, private draftSvc: DraftService) {
     // this.availablePlayerList = this.playersSvc.getPlayers();
   }
 
   ngOnInit() {
-    this.playerDataChangeSubscription = this.playersSvc.playerDataChangeEvent
+    this.playerDataChangeSubscription = this.draftSvc.playerDataChangeEvent
       .subscribe(
-        (player: Player) => {
+        (players: Player[]) => {
           console.log('[draft] init');
-          this.availablePlayerList = this.playersSvc.getPlayers();
-          this.selectedPlayerList = [];
+          //TODO:add code here
+          this.availablePlayerList = [...this.playersSvc.getPlayers()];
+          this.selectedPlayerList = [...players]; //[...this.draftSvc.getDraftedPlayers()];
+          // this.selectedPlayerList =this.draftSvc.getDraftedPlayers();
+
+          this.availablePlayerList.filter(player => this.selectedPlayerList.find(item => player === item))
+          // this.selectedPlayerList.forEach(draftedPlayer => { this.removePlayerFromPool(draftedPlayer) });
+          console.log('[draft] init done');
         }
       );
   }
@@ -121,8 +128,14 @@ export class DraftComponent implements OnInit, OnDestroy {
     return true;
   }
 
+  onClearListClicked() {
+    this.selectedPlayerList = [];
+  }
+
   onSaveSelectionClicked() {
     console.log('[draft] saving player list...');
+    this.draftSvc.saveSelectedPlayerList(this.selectedPlayerList);
+    //TODO:add code here
     // this.selectedPlayerList.splice(existingPos, 1);
   }
 }
