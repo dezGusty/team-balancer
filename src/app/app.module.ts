@@ -1,6 +1,7 @@
 import { BrowserModule } from '@angular/platform-browser';
 import { NgModule } from '@angular/core';
 import { FormsModule } from '@angular/forms';
+import { AsyncPipe } from '@angular/common';
 
 import { NgbCollapseModule, NgbTooltipModule } from '@ng-bootstrap/ng-bootstrap';
 import { NgcCookieConsentModule, NgcCookieConsentConfig } from 'ngx-cookieconsent';
@@ -26,6 +27,8 @@ import { SignupComponent } from './auth/signup/signup.component';
 import { AngularFireModule } from 'angularfire2';
 import { AngularFirestoreModule } from '@angular/fire/firestore';
 import { AngularFireAuthModule } from '@angular/fire/auth';
+import { AngularFireMessagingModule } from '@angular/fire/messaging';
+import { AngularFireFunctionsModule } from '@angular/fire/functions';
 import { environment } from '../environments/environment';
 import { AuthGuard } from './auth/auth-guard.service';
 import { OrganizerGuard } from './auth/organizer-guard.service';
@@ -43,6 +46,7 @@ import { AppStorage } from './shared/app-storage';
 import { LoadingSpinnerComponent } from './ui/loading-spinner/loading-spinner.component';
 import { DraftComponent } from './draft/draft/draft.component';
 import { PlayerCardPrefComponent } from './player-card-pref/player-card-pref.component';
+import { MessagingService } from './shared/messaging.service';
 
 // types: opt-out, opt-in, info
 const cookieConfig: NgcCookieConsentConfig = {
@@ -92,6 +96,8 @@ const cookieConfig: NgcCookieConsentConfig = {
     AngularFireModule.initializeApp(environment.firebase),
     AngularFirestoreModule, // imports firebase/firestore, only needed for database features
     AngularFireAuthModule, // imports firebase/auth, only needed for auth features
+    AngularFireMessagingModule,
+    AngularFireFunctionsModule,
     BrowserModule,
     FormsModule,
     AppRoutingModule,
@@ -100,7 +106,16 @@ const cookieConfig: NgcCookieConsentConfig = {
     DeviceDetectorModule.forRoot(),
     NgcCookieConsentModule.forRoot(cookieConfig)
   ],
-  providers: [PlayersService, MatchService, AuthService, AuthGuard, OrganizerGuard, AppStorage],
+  providers: [
+    PlayersService,
+    MatchService,
+    MessagingService,
+    AuthService,
+    AuthGuard,
+    OrganizerGuard,
+    AppStorage,
+    AsyncPipe
+  ],
   bootstrap: [AppComponent]
 })
 export class AppModule { }

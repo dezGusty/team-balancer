@@ -1,11 +1,15 @@
 import { Injectable } from '@angular/core';
 import { AngularFireMessaging } from '@angular/fire/messaging';
-import { BehaviorSubject } from 'rxjs';
+import { AngularFireFunctions } from '@angular/fire/functions';
+import { BehaviorSubject, Observable } from 'rxjs';
 
 import 'firebase/messaging';
+import { tap } from 'rxjs/operators';
 
 @Injectable()
 export class MessagingService {
+
+  token;
 
   // private messaging = firebase.messaging();
   // private messageSource = new Subject();
@@ -13,11 +17,17 @@ export class MessagingService {
   // message observable to show in Angular component
   currentMessage = new BehaviorSubject(null);
 
+
   constructor(
-    private msg: AngularFireMessaging
+    private msg: AngularFireMessaging,
+    private fun: AngularFireFunctions,
   ) {
+    console.log('[msg] service created');
+
     this.msg.messaging.subscribe(
       (messaging) => {
+        // Bind methods to fix temporary bug in AngularFire
+        console.log('[msg] subscribed', messaging);
         messaging.onMessage = messaging.onMessage.bind(messaging);
         messaging.onTokenRefresh = messaging.onTokenRefresh.bind(messaging);
       }
@@ -44,6 +54,35 @@ export class MessagingService {
         this.currentMessage.next(payload);
       }
     );
+  }
+
+  getPermission(): Observable<any> {
+    return this.msg.requestToken.pipe(
+      tap(token => (this.token = token))
+    )
+  }
+
+  showMessages(): Observable<any> {
+    return this.msg.messages.pipe(
+      tap(msg => {
+        const body: any = (msg as any).notification.body;
+        // this.makeToast(body);
+        console.log('[msg]', body);
+
+      })
+    );
+  }
+
+  async makeToast(message) {
+    // const toast = await this.toastController.create({
+    //   message,
+    //   duration: 5000,
+    //   position: 'top',
+    //   showCloseButton: true,
+    //   closeButtonText: 'dismiss'
+    // });
+    // toast.present();
+    console.log('makeToast', message);
   }
 
   // // get permission to send messages

@@ -1,6 +1,8 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
 import { NgcCookieConsentService, NgcInitializeEvent, NgcStatusChangeEvent, NgcNoCookieLawEvent } from 'ngx-cookieconsent';
 import { Subscription } from 'rxjs';
+import { MessagingService } from './shared/messaging.service';
+import { AuthService } from './auth/auth.service';
 
 @Component({
   selector: 'app-root',
@@ -17,8 +19,13 @@ export class AppComponent implements OnInit, OnDestroy {
   private noCookieLawSubscription: Subscription;
 
   title = 'team-balancer';
+  message;
 
-  constructor(private ccService: NgcCookieConsentService) {
+  constructor(
+    private ccService: NgcCookieConsentService,
+    private msgSvc: MessagingService,
+    private auth: AuthService
+  ) {
 
   }
 
@@ -53,6 +60,20 @@ export class AppComponent implements OnInit, OnDestroy {
       (event: NgcNoCookieLawEvent) => {
         // you can use this.ccService.getConfig() to do stuff...
       });
+
+    // const tempUser: User = this.auth.getCachedUser();
+    // if (tempUser) {
+    //   this.msgSvc.getPermission(tempUser);
+    //   this.msgSvc.monitorRefresh(tempUser);
+    //   this.msgSvc.receiveMessages();
+    // } else {
+    //   console.log('[app] no cached user');
+    // }
+
+    // this.msgSvc.requestPermission();
+    // this.msgSvc.receiveMessage();
+    // this.message = this.msgSvc.currentMessage;
+    this.msgSvc.showMessages().subscribe();
   }
 
   ngOnDestroy() {
