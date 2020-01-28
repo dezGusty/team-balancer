@@ -127,8 +127,6 @@ export class MatchCombosComponent implements OnInit, OnDestroy {
     // 001010
     // 001011
 
-    console.log('allcombos', players);
-
     this.listOfOptions = new Array<{ value: number, diff: number, combination: string }>();
     const totalNumberOfPlayers = players.length;
     const idealNumberOfPlayers = players.length / 2;

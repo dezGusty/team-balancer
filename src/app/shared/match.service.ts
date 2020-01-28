@@ -26,6 +26,7 @@ export class MatchService {
      * @param authSvc The authentication service.
      */
     public constructor(private db: AngularFirestore, private authSvc: AuthService) {
+        this.recentMatchNames = [];
         if (!this.authSvc.isAuthenticated()) {
             console.log('[matches] waiting for login...');
         }
@@ -53,11 +54,14 @@ export class MatchService {
     subscribeToDataSources() {
         console.log('[match-svc] subscribing');
 
+        this.recentMatchNames = [...this.recentMatchNames];
+        this.recentMatchesChangeEvent.emit(this.recentMatchNames);
+
         // subscribe to firebase collection changes.
         this.dataChangeSubscription = this.db.doc('matches/recent').valueChanges().subscribe(
             recentMatchesDocContents => {
                 const castedItem = recentMatchesDocContents as { items: string[] };
-                this.recentMatchNames = castedItem.items as string[];
+                this.recentMatchNames = [...castedItem.items];
                 this.recentMatchesChangeEvent.emit(this.recentMatchNames);
                 console.log('xxx', this.recentMatchNames);
             },
@@ -103,6 +107,9 @@ export class MatchService {
         });
     }
 
+    public getRecentMatchListCached(): string[] {
+        return this.recentMatchNames;
+    }
     /**
      * Retrieves (asynchronously) a list of recent matches.
      * @returns the match name collection, as an Observable.

@@ -18,34 +18,33 @@ export class RecentMatchesComponent implements OnInit, OnDestroy {
 
   }
 
-  public showSpinner = true;
-  public selectedIndex = 0;
+  // public showSpinner = true;
+  public selectedIndex = -1;
   private recentMatchNames: string[] = [];
-  // private recentMatches: CustomGame[] = [];
 
   private recentAsyncMatches: Observable<string[]>;
 
-  // public getRecentMatches(): CustomGame[] {
-  //   return this.recentMatches;
-  // }
 
   public getRecentMatchNames(): string[] {
-    console.log('recent-matches', this.recentMatchNames);
-
     return this.recentMatchNames;
   }
 
   ngOnInit() {
     console.log('ngOnInit');
-    this.showSpinner = true;
+    // this.showSpinner = true;
+    this.recentMatchNames = [...this.matchSvc.getRecentMatchListCached()];
+    console.log('matches:', this.recentMatchNames);
 
     // TODO:Add to subscriptions list and release
     this.recentAsyncMatches = this.matchSvc.getRecentMatchListAsync();
     // TODO: make sure that it's possible to receive event after reentering component
     this.subscription = this.recentAsyncMatches.subscribe((matchNames: string[]) => {
 
-      this.recentMatchNames = matchNames;
-      this.showSpinner = false;
+      this.recentMatchNames = [...matchNames];
+      this.selectedIndex = -1;
+      // this.showSpinner = false;
+
+      // TODO: show current selection.
     });
   }
 
