@@ -14,9 +14,17 @@ export class AuthService {
         private router: Router,
         private db: AngularFirestore,
         private afAuth: AngularFireAuth,
-        private appStorage: AppStorage) {
+        private appStorage: AppStorage,
+        private cacheUserData = false) {
 
         this.token = this.appStorage.getAppStorageItem('token');
+        if (this.cacheUserData) {
+            const tempCacheData = this.appStorage.getAppStorageItem('user');
+            if (tempCacheData !== undefined) {
+                this.cachedUser = JSON.parse(tempCacheData);
+            }
+        }
+
         this.afAuth.authState.subscribe(
             (auth) => {
                 if (auth) {
@@ -45,6 +53,10 @@ export class AuthService {
     private cachedUser: User;
     private token: string;
     private subscription: Subscription;
+
+    public getCachedUser(): User {
+        return this.cachedUser;
+    }
 
     /**
      * Use this event emitter to inform subscribers that a sign-in event took place or sign-out event
@@ -170,6 +182,9 @@ export class AuthService {
                 }
                 this.cachedUser = obj;
                 this.appStorage.setAppStorageItem('roles', JSON.stringify(this.cachedUser.roles));
+                if (this.cacheUserData) {
+                    this.appStorage.setAppStorageItem('user', JSON.stringify(this.cachedUser));
+                }
             } else {
                 // New user. Create the user doc.
                 const obj = { ...userData };
@@ -177,6 +192,9 @@ export class AuthService {
                 this.db.doc('users/' + userPath).set(obj);
                 this.cachedUser = obj;
                 this.appStorage.setAppStorageItem('roles', JSON.stringify(this.cachedUser.roles));
+                if (this.cacheUserData) {
+                    this.appStorage.setAppStorageItem('user', JSON.stringify(this.cachedUser));
+                }
             }
         });
     }
