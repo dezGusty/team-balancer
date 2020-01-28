@@ -52,11 +52,11 @@ export class MatchStorageComponent implements OnInit {
       }
     } catch (error) {
       console.log('Some error encountered...');
-
     }
   }
 
   public notifyCpy(payload: string) {
+    // TODO: remove ??
     // Might want to notify the user that something has been pushed to the clipboard
     console.log(`'${payload}' has been copied to clipboard`);
   }

@@ -1,6 +1,6 @@
-import { Component, OnInit, OnDestroy } from '@angular/core';
+import { Component, OnInit, OnDestroy, ViewChild, ElementRef } from '@angular/core';
 import { PlayersService } from 'src/app/shared/players.service';
-import { Player, filterPlayerArray } from 'src/app/shared/player.model';
+import { Player, filterPlayerArray, getDisplayName } from 'src/app/shared/player.model';
 import { Subscription } from 'rxjs';
 import { DraftService } from 'src/app/shared/draft.service';
 import { Router } from '@angular/router';
@@ -12,10 +12,11 @@ import { Router } from '@angular/router';
 })
 export class DraftComponent implements OnInit, OnDestroy {
   searchedName: string;
-
+  public customClipText = '';
   availablePlayerList: Player[] = [];
   selectedPlayerList: Player[] = [];
   private playerDataChangeSubscription: Subscription;
+  @ViewChild('ttip') copyToClipBtn: ElementRef;
 
   constructor(
     private playersSvc: PlayersService,
@@ -148,5 +149,32 @@ export class DraftComponent implements OnInit, OnDestroy {
     console.log('[draft] creating match from draft ...');
     this.draftSvc.storePlayersInMemoryOnly(this.selectedPlayerList);
     this.router.navigate(['/custom'], { queryParams: { draft: true } });
+  }
+
+  onCopyClicked() {
+    this.customClipText = this.getDraftPlainTextFormat();
+
+    try {
+      const elem = this.copyToClipBtn.nativeElement;
+      if (elem) {
+        console.log('Try hide...');
+        elem.close();
+      }
+    } catch (error) {
+      console.log('Some error encountered...');
+    }
+  }
+
+  getDraftPlainTextFormat(): string {
+    let plainText = '';
+    this.selectedPlayerList.forEach((player, index) => {
+      plainText += '' + (index + 1) + '. ' + getDisplayName(player) + '\n';
+    });
+    return plainText;
+  }
+
+  customClipTextToClip(): string {
+    this.customClipText = this.getDraftPlainTextFormat();
+    return this.customClipText;
   }
 }

@@ -16,10 +16,26 @@
     </button>
     <button
       type="button"
-      class="btn btn-outline-gus btn-grad-gusty"
+      class="btn btn-outline-gus btn-grad-gusty mr-2"
       (click)="onMatchUpClicked()"
     >
       Match-up
+    </button>
+    <!-- btn-sm  mr-2 mt-2 -->
+    <button 
+      type="button"
+      class="btn btn-outline-gus btn-grad-gusty" 
+        #copyToClipBtn
+        placement="top"
+        #ttip="ngbTooltip"
+        ngbTooltip="Copied to clipboard..."
+        [autoClose]="true"
+        [closeDelay]="1000"
+        triggers="click:blur"
+        [copy-clipboard]="customClipTextToClip()"
+        (click)="onCopyClicked();">
+        <span class="align-self-center"><img
+            src="./../../../assets/clippy.svg"></span>
     </button>
   </div>
   <div class="col-6 col-sm-6 col-md-5 col-lg-4 border-bottom gus-search-box">
