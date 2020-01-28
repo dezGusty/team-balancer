@@ -14,11 +14,10 @@ export class AuthService {
         private router: Router,
         private db: AngularFirestore,
         private afAuth: AngularFireAuth,
-        private appStorage: AppStorage,
-        private cacheUserData = false) {
+        private appStorage: AppStorage) {
 
         this.token = this.appStorage.getAppStorageItem('token');
-        if (this.cacheUserData) {
+        if (this.appStorage.cacheUserData) {
             const tempCacheData = this.appStorage.getAppStorageItem('user');
             if (tempCacheData !== undefined) {
                 this.cachedUser = JSON.parse(tempCacheData);
@@ -182,7 +181,7 @@ export class AuthService {
                 }
                 this.cachedUser = obj;
                 this.appStorage.setAppStorageItem('roles', JSON.stringify(this.cachedUser.roles));
-                if (this.cacheUserData) {
+                if (this.appStorage.cacheUserData) {
                     this.appStorage.setAppStorageItem('user', JSON.stringify(this.cachedUser));
                 }
             } else {
@@ -192,7 +191,7 @@ export class AuthService {
                 this.db.doc('users/' + userPath).set(obj);
                 this.cachedUser = obj;
                 this.appStorage.setAppStorageItem('roles', JSON.stringify(this.cachedUser.roles));
-                if (this.cacheUserData) {
+                if (this.appStorage.cacheUserData) {
                     this.appStorage.setAppStorageItem('user', JSON.stringify(this.cachedUser));
                 }
             }
