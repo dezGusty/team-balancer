@@ -1,8 +1,10 @@
 <div *ngIf="!showCombinations">
   <div class="row justify-content-center">
     <div class="col-6 col-sm-6 col-md-5 col-lg-4 align-self-center">
-      <button type="button" class="btn btn-outline-gus btn-grad-gusty" (click)="onMakeTeamsClicked()">Make
-        teams...</button>
+      <button type="button" class="btn btn-outline-gus btn-grad-gusty" (click)="onMakeTeamsClicked()">
+        <span><img  rel="preload" class="align-self-center" src="./../../assets/tshirt.svg" height="40rem" alt=""></span>
+        Make teams...
+      </button>
     </div>
     <div class="col-6 col-sm-6 col-md-5 col-lg-4 border-bottom gus-search-box">
       <input class="form-control border-0" type="text" [(ngModel)]="searchedName"
