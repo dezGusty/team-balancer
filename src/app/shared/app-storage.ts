@@ -1,15 +1,11 @@
-import { DeviceDetectorService } from 'ngx-device-detector';
 import { Injectable } from '@angular/core';
 @Injectable()
 export class AppStorage {
-    constructor(private deviceService: DeviceDetectorService) { }
+
+    public cacheUserData = false;
+    constructor() { }
 
     public getAppStorageItem(key: string): string {
-        // disable for firefox for now?
-        if ('Firefox' === this.deviceService.browser) {
-            // return null;
-        }
-
         if (localStorage) {
             return localStorage.getItem(key);
         }
@@ -19,11 +15,6 @@ export class AppStorage {
     }
 
     public setAppStorageItem(key: string, value: string): void {
-        // disable for firefox for now?
-        if ('Firefox' === this.deviceService.browser) {
-            // return;
-        }
-
         if (localStorage) {
             localStorage.setItem(key, value);
             return;
