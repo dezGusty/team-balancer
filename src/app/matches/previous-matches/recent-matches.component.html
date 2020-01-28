@@ -1,12 +1,23 @@
 <div class="row justify-content-center">
   <!-- show the list of players on the left side -->
   <div class="col-3 col-sm-3 col-md-3 col-lg-2 left-player-list">
-    <app-loading-spinner *ngIf="showSpinner"></app-loading-spinner>
-    <ul *ngIf="!showSpinner">
-      <li *ngFor='let match of this.getRecentMatchNames(); let idx = index; let even = even; let odd = odd'
-        (click)="onMatchEntryClicked(idx)" style="cursor: pointer" class="border match-card player-card-grad"
-        [class.match-card-active]="idx === this.selectedIndex" [routerLink]="[getSelectedMatch(idx)]">
-        {{match}}
+    <!-- <app-loading-spinner *ngIf="showSpinner"></app-loading-spinner> -->
+    <!-- <ul *ngIf="!showSpinner"> -->
+    <ul>
+      <li
+        *ngFor="
+          let match of this.getRecentMatchNames();
+          let idx = index;
+          let even = even;
+          let odd = odd
+        "
+        (click)="onMatchEntryClicked(idx)"
+        style="cursor: pointer"
+        class="border match-card player-card-grad"
+        [class.match-card-active]="idx === this.selectedIndex"
+        [routerLink]="[getSelectedMatch(idx)]"
+      >
+        {{ match }}
       </li>
     </ul>
   </div>
