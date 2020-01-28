@@ -56,7 +56,7 @@ export class MatchCombosComponent implements OnInit, OnDestroy {
     console.log('match selected', data);
   }
 
-  prepareTeams() {
+  prepareTeams(numberOfCombinationsLimit = 20) {
     console.log('preparing teams');
 
     // sort the players.
@@ -71,8 +71,8 @@ export class MatchCombosComponent implements OnInit, OnDestroy {
 
     this.getAllCombinations(this.playerList);
 
-    const displayedLength = this.listOfOptions.length > 10
-      ? 10
+    const displayedLength = this.listOfOptions.length > numberOfCombinationsLimit
+      ? numberOfCombinationsLimit
       : this.listOfOptions.length;
 
     this.displayedMatchCombos = this.listOfOptions.slice(0, displayedLength);
@@ -104,6 +104,12 @@ export class MatchCombosComponent implements OnInit, OnDestroy {
     });
   }
 
+  /**
+   * Obtains all player combinations.
+   * @param players The list of players to use to make combinations for.
+   * @param useAffinity Specify whether to take the player's affinity property into account or not.
+   * This basically allows the players to be pre-assigned to one team or another.
+   */
   getAllCombinations(players: Player[], useAffinity: boolean = true) {
     // Create 2 teams; use combinations.
     // Basically: choose 6 players from a list of 12.
@@ -134,6 +140,22 @@ export class MatchCombosComponent implements OnInit, OnDestroy {
     let customCounter = Math.pow(2, idealNumberOfPlayers) - 2;
     const maxValue = Math.pow(2, players.length - 1) - 1;
     console.log('maxval:', maxValue);
+
+    // Check the user specified affinities
+    // affinity == null => no team expectation
+    // affinity == 1 => expect team 0.
+    // affinity == 2 => expect team 1
+    let affinityFilter = '';
+    const AFFINITY_NONE = '-';
+    for (let index = 0; index < totalNumberOfPlayers; index++) {
+      if (players[index].affinity !== undefined && players[index].affinity !== 0) {
+        const numericalAffinity = players[index].affinity - 1;
+        affinityFilter += '' + numericalAffinity;
+      } else {
+        affinityFilter += AFFINITY_NONE;
+      }
+    }
+
     while (customCounter < maxValue) {
       customCounter++;
       let stringifiedBinary = customCounter.toString(2);
@@ -142,20 +164,14 @@ export class MatchCombosComponent implements OnInit, OnDestroy {
       }
 
       stringifiedBinary = stringifiedBinary.padStart(totalNumberOfPlayers, '0');
+      const splitBinaryArray = stringifiedBinary.split('');
       let affinityFine = true;
 
       if (useAffinity) {
-        stringifiedBinary.split('').forEach((value, index, array) => {
-          if (players[index].affinity !== undefined && players[index].affinity !== 0) {
-            const numericalAffinity = players[index].affinity - 1;
-            const castedAffinity: string = '' + numericalAffinity;
-            console.log('affinity for ' + players[index].name, castedAffinity);
-
-            if (castedAffinity !== value) {
-              affinityFine = false;
-            }
-            //   // affinity == 1 => expect team 0.
-            //   // affinity == 2 => expect team 1
+        // Assume that the split binary array has the correct length to also use affinityFilter.
+        splitBinaryArray.forEach((value, index, array) => {
+          if (AFFINITY_NONE !== affinityFilter[index] && value !== affinityFilter[index]) {
+            affinityFine = false;
           }
         });
       }
@@ -165,7 +181,7 @@ export class MatchCombosComponent implements OnInit, OnDestroy {
       }
 
       let sum = 0;
-      stringifiedBinary.split('').forEach((value, index, array) => {
+      splitBinaryArray.forEach((value, index, array) => {
         if (value === '1') {
           sum += players[index].rating;
         }
@@ -218,15 +234,8 @@ export class MatchCombosComponent implements OnInit, OnDestroy {
     this.showDetailedSelection = true;
     this.showDetailedSelectionIndex = i;
 
-    // show the selection details...
-    console.log('game option selected', selectedOption, i);
-
-    console.log('1', this.displayedMatchDetails[i].team1);
-    console.log('2', this.displayedMatchDetails[i].team2);
-
     // TODO: Augustin Preda, 2019-03-07: move to separate display, allow to store the selected match?
     // create next component.
     this.selectionData = new CustomGame(this.displayedMatchDetails[i].team1, this.displayedMatchDetails[i].team2);
-
   }
 }
