@@ -8,7 +8,7 @@ import { AuthService } from '../auth/auth.service';
 @Component({
   selector: 'app-players',
   templateUrl: './players.component.html',
-  styleUrls: ['./players.component.css']
+  styles: ['']
 })
 export class PlayersComponent implements OnInit, OnDestroy {
   players: Player[];
