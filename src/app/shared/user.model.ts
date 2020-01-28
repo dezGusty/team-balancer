@@ -9,6 +9,8 @@ export class User {
     photoURL: string;
     roles: UserRoles;
 
+    fcmTokens?: { [token: string]: true };
+
     constructor(authData: { email: string, photoURL: string }) {
         this.email = authData.email;
         this.photoURL = authData.photoURL;
