@@ -8,7 +8,7 @@ import { AuthService } from 'src/app/auth/auth.service';
 @Component({
   selector: 'app-player-details',
   templateUrl: './player-details.component.html',
-  styleUrls: ['./player-details.component.css']
+  styles: ['']
 })
 export class PlayerDetailsComponent implements OnInit {
   player: Player;
