@@ -4,7 +4,7 @@ import { Player, getDisplayName } from 'src/app/shared/player.model';
 @Component({
   selector: 'app-match-versus',
   templateUrl: './match-versus.component.html',
-  styleUrls: ['./match-versus.component.css']
+  styles: ['']
 })
 export class MatchVersusComponent implements OnInit {
 
