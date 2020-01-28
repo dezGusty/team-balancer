@@ -154,6 +154,16 @@ export class MatchCombosComponent implements OnInit, OnDestroy {
       }
     }
 
+    let affinityFilterRev = '';
+    for (let index = 0; index < totalNumberOfPlayers; index++) {
+      if (players[index].affinity !== undefined && players[index].affinity !== 0) {
+        const numericalAffinity = 2 - players[index].affinity;
+        affinityFilterRev += '' + numericalAffinity;
+      } else {
+        affinityFilterRev += AFFINITY_NONE;
+      }
+    }
+
     while (customCounter < maxValue) {
       customCounter++;
       let stringifiedBinary = customCounter.toString(2);
@@ -163,20 +173,26 @@ export class MatchCombosComponent implements OnInit, OnDestroy {
 
       stringifiedBinary = stringifiedBinary.padStart(totalNumberOfPlayers, '0');
       const splitBinaryArray = stringifiedBinary.split('');
-      let affinityFine = true;
 
       if (useAffinity) {
+        let affinityFine = true;
+        let affinityFineRev = true;
         // Assume that the split binary array has the correct length to also use affinityFilter.
-        splitBinaryArray.forEach((value, index, array) => {
-          if (AFFINITY_NONE !== affinityFilter[index] && value !== affinityFilter[index]) {
+        splitBinaryArray.forEach((value, index) => {
+          if (AFFINITY_NONE !== affinityFilter[index] && value === affinityFilter[index]) {
             affinityFine = false;
           }
         });
+        splitBinaryArray.forEach((value, index) => {
+          if (AFFINITY_NONE !== affinityFilterRev[index] && value !== affinityFilterRev[index]) {
+            affinityFineRev = false;
+          }
+        });
+        if (!affinityFine && !affinityFineRev) {
+          continue;
+        }
       }
 
-      if (!affinityFine) {
-        continue;
-      }
 
       let sum = 0;
       splitBinaryArray.forEach((value, index, array) => {
