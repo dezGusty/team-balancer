@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { version } from '../../../package.json';
+import { MessagingService } from '../shared/messaging.service';
 
 @Component({
   selector: 'app-about',
@@ -12,7 +13,9 @@ export class AboutComponent implements OnInit {
   public releaseDate: Date;
   public author: string;
 
-  constructor() {
+  constructor(
+    private msgSvc: MessagingService
+  ) {
     this.author = 'Gusti';
     this.version = version;
 
@@ -20,6 +23,14 @@ export class AboutComponent implements OnInit {
   }
 
   ngOnInit() {
+  }
+
+  subscribeToNotifications() {
+    this.msgSvc.sub('drafts');
+  }
+
+  subscribeToPermission() {
+    this.msgSvc.getPermission().subscribe();
   }
 
 }
