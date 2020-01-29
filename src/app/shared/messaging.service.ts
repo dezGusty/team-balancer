@@ -11,12 +11,8 @@ export class MessagingService {
 
   token;
 
-  // private messaging = firebase.messaging();
-  // private messageSource = new Subject();
-
   // message observable to show in Angular component
   currentMessage = new BehaviorSubject(null);
-
 
   constructor(
     private msg: AngularFireMessaging,
@@ -59,16 +55,15 @@ export class MessagingService {
   getPermission(): Observable<any> {
     return this.msg.requestToken.pipe(
       tap(token => (this.token = token))
-    )
+    );
   }
 
   showMessages(): Observable<any> {
     return this.msg.messages.pipe(
       tap(msg => {
         const body: any = (msg as any).notification.body;
-        // this.makeToast(body);
+        this.makeToast(body);
         console.log('[msg]', body);
-
       })
     );
   }
@@ -83,6 +78,22 @@ export class MessagingService {
     // });
     // toast.present();
     console.log('makeToast', message);
+  }
+
+  sub(topic) {
+    console.log('subscribing to topic', topic);
+    this.fun
+      .httpsCallable('subscribeToTopic')({ topic, token: this.token })
+      .pipe(tap(_ => this.makeToast('subscribed to ${topic}')))
+      .subscribe();
+  }
+
+  unsub(topic) {
+    console.log('UNsubscribing from topic', topic);
+    this.fun
+      .httpsCallable('unsubscribeFromTopic')({ topic, token: this.token })
+      .pipe(tap(_ => this.makeToast('unsubscribed from ${topic}')))
+      .subscribe();
   }
 
   // // get permission to send messages
