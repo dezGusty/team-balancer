@@ -24,8 +24,8 @@ export class MessagingService {
       (messaging) => {
         // Bind methods to fix temporary bug in AngularFire
         console.log('[msg] subscribed', messaging);
-        messaging.onMessage = messaging.onMessage.bind(messaging);
-        messaging.onTokenRefresh = messaging.onTokenRefresh.bind(messaging);
+        // messaging.onMessage = messaging.onMessage.bind(messaging);
+        // messaging.onTokenRefresh = messaging.onTokenRefresh.bind(messaging);
       }
     );
   }
@@ -53,8 +53,13 @@ export class MessagingService {
   }
 
   getPermission(): Observable<any> {
+    console.log('[mess] Requesting user permission');
+
     return this.msg.requestToken.pipe(
-      tap(token => (this.token = token))
+      tap(token => {
+        this.token = token;
+        console.log('[mess] stored token', token);
+      })
     );
   }
 
@@ -81,10 +86,10 @@ export class MessagingService {
   }
 
   sub(topic) {
-    console.log('subscribing to topic', topic);
+    console.log('subscribing to topic', topic, 'token is', this.token);
     this.fun
       .httpsCallable('subscribeToTopic')({ topic, token: this.token })
-      .pipe(tap(_ => this.makeToast('subscribed to ${topic}')))
+      .pipe(tap(_ => this.makeToast('subscribed to ' + topic)))
       .subscribe();
   }
 
@@ -92,7 +97,7 @@ export class MessagingService {
     console.log('UNsubscribing from topic', topic);
     this.fun
       .httpsCallable('unsubscribeFromTopic')({ topic, token: this.token })
-      .pipe(tap(_ => this.makeToast('unsubscribed from ${topic}')))
+      .pipe(tap(_ => this.makeToast('unsubscribed from ' + topic)))
       .subscribe();
   }
 

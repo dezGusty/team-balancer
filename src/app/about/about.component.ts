@@ -19,7 +19,7 @@ export class AboutComponent implements OnInit {
     this.author = 'Gusti';
     this.version = version;
 
-    this.releaseDate = new Date(2020, 1, 28);
+    this.releaseDate = new Date(2020, 1, 31);
   }
 
   ngOnInit() {
@@ -27,6 +27,7 @@ export class AboutComponent implements OnInit {
 
   subscribeToNotifications() {
     this.msgSvc.sub('drafts');
+    this.msgSvc.sub('matches');
   }
 
   subscribeToPermission() {
