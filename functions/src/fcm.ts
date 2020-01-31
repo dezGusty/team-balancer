@@ -31,22 +31,25 @@ export const unsubscribeFromTopic = functions.https.onCall(
 
 export const sendOnFirestoreCreate = functions.firestore
     .document('matches/{matchId}')
-    .onCreate(async snapshot => {
+    .onCreate(async (snapshot, context) => {
         const matchData = snapshot.data();
+
+        const matchDate = context?.params?.matchId || '';
+        const linkToUse = 'https://teams-balancer.firebaseapp.com/recent/' + matchDate;
 
         const team1Count = matchData?.team1?.length;
         const team2Count = matchData?.team2?.length;
         const optionalMessagePart = '(' + team1Count + ' vs ' + team2Count + ')';
         const notification: admin.messaging.Notification = {
             title: 'New Match Created!',
-            body: 'Match ID: [' + matchData?.headline + ']' + optionalMessagePart
+            body: 'Match ID: [' + matchDate + ']' + optionalMessagePart
         };
 
         const payload: admin.messaging.Message = {
             notification,
             webpush: {
                 notification: {
-                    vibrate: [200, 200, 200],
+                    vibrate: [100, 100, 200, 200, 300],
                     icon: 'assets/ball_128.png',
                     actions: [
                         {
@@ -56,7 +59,7 @@ export const sendOnFirestoreCreate = functions.firestore
                     ]
                 },
                 fcmOptions: {
-                    link: 'https://teams-balancer.firebaseapp.com/recent'
+                    link: linkToUse
                 }
             },
             topic: 'matches'
