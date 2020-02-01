@@ -48,3 +48,4 @@ src/environments/firebase-data.ts
 # custom ones
 src/assets_src/*
 functions/package-lock.json
+src/firebase-messaging-sw.js
