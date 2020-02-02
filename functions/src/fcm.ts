@@ -1,12 +1,12 @@
 import * as functions from 'firebase-functions';
 import * as admin from 'firebase-admin';
 
-// // Start writing Firebase Functions
-// // https://firebase.google.com/docs/functions/typescript
-//
-// export const helloWorld = functions.https.onRequest((request, response) => {
-//  response.send("Hello from Firebase!");
-// });
+admin.initializeApp();
+
+// Note (Augustin Preda, 2020.01.31): This was started from a tutorial on
+// https://angularfirebase.com/lessons/fcm-topic-notifications-angularfire-and-callable-functions/
+
+// The functions contained here are for the tfl/team-balancer web app
 
 async function makeSubScription(data: any): Promise<string> {
     await admin.messaging().subscribeToTopic(data.token, data.topic);
@@ -30,30 +30,39 @@ export const unsubscribeFromTopic = functions.https.onCall(
 );
 
 export const sendOnFirestoreCreate = functions.firestore
-    .document('discounts/{discountId}')
-    .onCreate(async snapshot => {
-        const discount = snapshot.data();
+    .document('matches/{matchId}')
+    .onCreate(async (snapshot, context) => {
+        const matchData = snapshot.data();
 
+        const matchDate = context?.params?.matchId || '';
+        const linkToUse = 'https://teams-balancer.firebaseapp.com/recent/' + matchDate;
+
+        const team1Count = matchData?.team1?.length;
+        const team2Count = matchData?.team2?.length;
+        const optionalMessagePart = '(' + team1Count + ' vs ' + team2Count + ')';
         const notification: admin.messaging.Notification = {
-            title: 'New Discount Available!',
-            body: discount?.headline
+            title: 'New Match Created!',
+            body: 'Match ID: [' + matchDate + ']' + optionalMessagePart
         };
 
         const payload: admin.messaging.Message = {
             notification,
             webpush: {
                 notification: {
-                    vibrate: [200, 100, 200],
+                    vibrate: [100, 100, 200, 200, 300],
                     icon: 'assets/ball_128.png',
                     actions: [
                         {
                             action: 'ok',
-                            title: 'fine'
+                            title: 'ok'
                         }
                     ]
+                },
+                fcmOptions: {
+                    link: linkToUse
                 }
             },
-            topic: 'discounts'
+            topic: 'matches'
         };
 
         return admin.messaging().send(payload);
@@ -64,24 +73,31 @@ export const sendOnDraftWrite = functions.firestore
     .onWrite(async snapshot => {
         const draftDoc = snapshot.after;
         const readPlayerEntries = draftDoc.get('players');
+        const readReserveEntries = draftDoc.get('reserves');
         const numPlayers = readPlayerEntries?.length;
+        const numReserves = readReserveEntries?.length || 0;
         const notification: admin.messaging.Notification = {
             title: 'Draft changes.',
-            body: 'There are currently ' + numPlayers + ' players.'
+            body: 'There are currently ' + numPlayers + ' players'
+                + (numReserves !== 0 ? '(' + numReserves + ' reserves)' : '')
+                + '.'
         };
 
         const payload: admin.messaging.Message = {
             notification,
             webpush: {
                 notification: {
-                    vibrate: [200, 100, 200],
+                    vibrate: [100, 100, 200],
                     icon: 'assets/ball_128.png',
                     actions: [
                         {
                             action: 'ok',
-                            title: 'fine'
+                            title: 'ok'
                         }
                     ]
+                },
+                fcmOptions: {
+                    link: 'https://teams-balancer.firebaseapp.com/draft'
                 }
             },
             topic: 'drafts'
