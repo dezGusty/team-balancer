@@ -1,16 +1,60 @@
-<span class="col-2 border-right player-card-internalid">
-  {{ player.id }}
-</span>
-<span class="col-3 float-right">
-  <img src="./../../../assets/default_user_pic.svg" alt="pic" height="19em">
-</span>
-<span class="col-auto col-6 player-card-name">
+<div class="turbo-card">
+  <div class="turbo-card-pic"><!-- class="img-fluid player-card-img"  height="24rem"-->
+    {{ player.id }}
+  </div>
+  <div class="turbo-card-displayname">
+    {{ playerDisplayName() }}
+  </div>
+  <span class="turbo-card-fullname">
+    {{ player.name }}
+  </span>
+  <span class="turbo-card-rating">
+    {{ player.rating | number:'1.1-2' }}
+  </span>
+</div>
+
+<!-- <div class="row player-card-container">
+  <div class="col-3">
+    <img src="assets/tshirt.svg" alt="pic here" class="img-fluid player-card-img" height="32rem">
+    <span class="player-card-shirt">{{ player.id }}</span>
+  </div>
+  <span class="col-auto col-9 align-self-start player-card-panel">
+    <div class="player-card-name">
+      {{ playerDisplayName() }}
+    </div>
+    <span class="player-card-internalid">
+      {{ player.name }}
+    </span>
+    <span class="float-right player-card-rating">
+      {{ player.rating | number:'1.1-2' }}
+    </span>
+  </span>
+</div> -->
+
+<!-- <div class="card">
+  <div class="row">
+    <div class="col-3">
+      <img src="assets/tshirt.svg" alt="pic here" class="img-fluid" height="32em">
+    </div>
+    <div class="col">
+      {{ playerDisplayName() }}
+    </div>
+    <div class="col">
+      {{ player.name }}
+    </div>
+    <div class="col">
+      {{ player.rating | number:'1.1-2' }}
+    </div>
+  </div>
+</div> -->
+<!-- <span class="col-3 player-card-shirt">{{ player.id }}</span>
+<span class="col-auto col-9 align-self-start player-card-name">
   {{ playerDisplayName() }}
 </span>
 <br>
-<span class="col-auto col-8 player-card-internalid">
+<span class="col-auto col-9 offset-3 player-card-internalid">
   {{ player.name }}
 </span>
 <span class="col-3 float-right">
   {{ player.rating | number:'1.1-2' }}
-</span>
+</span> -->
