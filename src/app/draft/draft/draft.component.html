@@ -1,30 +1,24 @@
 <div class="row justify-content-center">
-  <div class="col-6 col-sm-6 col-md-5 col-lg-4 align-self-center">
+  <div class="col-6 col-sm-6 col-md-5 col-lg-4 align-self-center panel-draft-icons">
     <button
       type="button"
-      class="btn btn-outline-gus btn-grad-gusty mr-2" 
+      class="btn btn-outline-gus btn-grad-gusty btn-icon-gus mr-2" 
       (click)="onSaveSelectionClicked()"
     >
-      Save
+    <span class="align-self-center"><img
+      src="./../../../assets/save.svg" rel="preload" alt="Save" height="24rem" class ="btn-clear-all-img"></span>
     </button>
     <button
       type="button"
-      class="btn btn-outline-gus btn-grad-gusty mr-2"
+      class="btn btn-outline-gus btn-grad-gusty btn-icon-gus mr-2"
       (click)="onClearListClicked()"
     >
-      Clear
+    <span class="align-self-center"><img
+      src="./../../../assets/cross.svg" rel="preload" alt="Clear" height="24rem" class ="btn-clear-all-img"></span>
     </button>
-    <button
-      type="button"
-      class="btn btn-outline-gus btn-grad-gusty mr-2"
-      (click)="onMatchUpClicked()"
-    >
-      Match-up
-    </button>
-    <!-- btn-sm  mr-2 mt-2 -->
     <button 
       type="button"
-      class="btn btn-outline-gus btn-grad-gusty" 
+      class="btn btn-outline-gus btn-grad-gusty btn-icon-gus mr-2" 
         #copyToClipBtn
         placement="top"
         #ttip="ngbTooltip"
@@ -35,8 +29,17 @@
         [copy-clipboard]="customClipTextToClip()"
         (click)="onCopyClicked();">
         <span class="align-self-center"><img
-            src="./../../../assets/clippy.svg"></span>
+            src="./../../../assets/copy.svg" rel="preload" alt="Copy-to-clip" height="24rem" class ="btn-clear-all-img"></span>
     </button>
+    <button
+      type="button"
+      class="btn btn-outline-gus btn-grad-gusty btn-icon-gus"
+      (click)="onMatchUpClicked()"
+    >
+    <span class="align-self-center"><img
+      src="./../../../assets/tshirt2.svg" rel="preload" alt="Match-up" height="24rem" class ="btn-clear-all-img"></span>
+    </button>
+    
   </div>
   <div class="col-6 col-sm-6 col-md-5 col-lg-4 border-bottom gus-search-box">
     <input

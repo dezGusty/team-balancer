@@ -1,5 +1,5 @@
-<div class="turbo-card">
-  <div class="turbo-card-pic"><!-- class="img-fluid player-card-img"  height="24rem"-->
+<!-- <div class="turbo-card">
+  <div class="turbo-card-pic">
     {{ player.id }}
   </div>
   <div class="turbo-card-displayname">
@@ -11,14 +11,14 @@
   <span class="turbo-card-rating">
     {{ player.rating | number:'1.1-2' }}
   </span>
-</div>
+</div> -->
 
-<!-- <div class="row player-card-container">
-  <div class="col-3">
-    <img src="assets/tshirt.svg" alt="pic here" class="img-fluid player-card-img" height="32rem">
+<div class="row player-card-container">
+  <div class="col-3 col-sm-2 player-card-panel">
+    <img src="assets/tshirt.svg" alt="pic here" class="player-card-img" >
     <span class="player-card-shirt">{{ player.id }}</span>
   </div>
-  <span class="col-auto col-9 align-self-start player-card-panel">
+  <span class="col-auto col-9 col-sm-10 align-self-start player-card-panel">
     <div class="player-card-name">
       {{ playerDisplayName() }}
     </div>
@@ -29,7 +29,7 @@
       {{ player.rating | number:'1.1-2' }}
     </span>
   </span>
-</div> -->
+</div>
 
 <!-- <div class="card">
   <div class="row">
