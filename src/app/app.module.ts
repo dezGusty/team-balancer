@@ -41,7 +41,6 @@ import { CopyClipboardDirective } from './shared/copy-clipboard.directive';
 import { PrevMatchDetailComponent } from './matches/prev-match-detail/prev-match-detail.component';
 import { PlayerMiniCardComponent } from './players/player-mini-card/player-mini-card.component';
 
-import { DeviceDetectorModule } from 'ngx-device-detector';
 import { AppStorage } from './shared/app-storage';
 import { LoadingSpinnerComponent } from './ui/loading-spinner/loading-spinner.component';
 import { DraftComponent } from './draft/draft/draft.component';
@@ -103,7 +102,6 @@ const cookieConfig: NgcCookieConsentConfig = {
     AppRoutingModule,
     NgbCollapseModule,
     NgbTooltipModule,
-    DeviceDetectorModule.forRoot(),
     NgcCookieConsentModule.forRoot(cookieConfig)
   ],
   providers: [

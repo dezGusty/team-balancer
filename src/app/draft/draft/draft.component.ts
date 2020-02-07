@@ -153,16 +153,6 @@ export class DraftComponent implements OnInit, OnDestroy {
 
   onCopyClicked() {
     this.customClipText = this.getDraftPlainTextFormat();
-
-    try {
-      const elem = this.copyToClipBtn.nativeElement;
-      if (elem) {
-        console.log('Try hide...');
-        elem.close();
-      }
-    } catch (error) {
-      console.log('Some error encountered...');
-    }
   }
 
   getDraftPlainTextFormat(): string {
