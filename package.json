@@ -24,7 +24,7 @@
     "@angular/router": "^9.0.0",
     "@angular/service-worker": "^9.0.0",
     "@ng-bootstrap/ng-bootstrap": "^5.2.1",
-    "angularfire2": "^5.4.0",
+    "angularfire2": "^5.4.2",
     "bootstrap": "^4.4.1",
     "cookieconsent": "^3.1.1",
     "core-js": "^2.6.11",
