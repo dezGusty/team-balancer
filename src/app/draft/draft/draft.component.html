@@ -3,19 +3,23 @@
     <button
       type="button"
       class="btn btn-outline-gus btn-grad-gusty btn-icon-gus mr-2" 
-      (click)="onSaveSelectionClicked()"
+      ngbTooltip="Save"
+    (click)="onSaveSelectionClicked()"
     >
     <span class="align-self-center"><img
       src="./../../../assets/save.svg" rel="preload" alt="Save" height="24rem" class ="btn-clear-all-img"></span>
     </button>
+
     <button
       type="button"
       class="btn btn-outline-gus btn-grad-gusty btn-icon-gus mr-2"
+      ngbTooltip="Clear list (does not save)."
       (click)="onClearListClicked()"
     >
     <span class="align-self-center"><img
       src="./../../../assets/cross.svg" rel="preload" alt="Clear" height="24rem" class ="btn-clear-all-img"></span>
     </button>
+
     <button 
       type="button"
       class="btn btn-outline-gus btn-grad-gusty btn-icon-gus mr-2" 
@@ -34,6 +38,7 @@
     <button
       type="button"
       class="btn btn-outline-gus btn-grad-gusty btn-icon-gus"
+      ngbTooltip="Create match from draft."
       (click)="onMatchUpClicked()"
     >
     <span class="align-self-center"><img
