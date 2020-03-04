@@ -27,22 +27,60 @@
       </p>
     </div>
     <div>
-      <button
-        type="button"
-        class="btn btn-danger btn-lg mb-2"
-        role="button"
-        (click)="subscribeToPermission()"
-      >
-        Get Permissions
-      </button>
-      <button
-        type="button"
-        class="btn btn-danger btn-lg mb-2"
-        role="button"
-        (click)="subscribeToNotifications()"
-      >
-        Get Notifications
-      </button>
+      <div class="card">
+        <div class="card-header">
+          Allow browser notifications
+        </div>
+        <div class="card-body">
+          <p class="card-text">Enable the app to notify you in the browser.</p>
+          <p class="card-text" *ngIf="isAllowedToNotify()">Notifications are currently enabled.</p>
+          <button
+            type="button"
+            class="btn btn-danger btn-lg mb-2"
+            role="button"
+            (click)="subscribeToPermission()"
+          >
+            Get Notifications
+          </button>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-header">
+          Draft notifications
+        </div>
+        <div class="card-body">
+          <p class="card-text">
+            Get notified when the list of drafted players changes (E.g. a new
+            player joins the match)
+          </p>
+          <button
+            type="button"
+            class="btn btn-danger btn-lg mb-2"
+            role="button"
+            (click)="subscribeToDraftsTopic()"
+          >
+            Get Notifications
+          </button>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-header">
+          Match notifications
+        </div>
+        <div class="card-body">
+          <p class="card-text">Get notified when a new match is created.</p>
+          <button
+            type="button"
+            class="btn btn-danger btn-lg mb-2"
+            role="button"
+            (click)="subscribeToMatchesTopic()"
+          >
+            Get Notifications
+          </button>
+        </div>
+      </div>
     </div>
   </div>
 </div>

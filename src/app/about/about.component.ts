@@ -25,9 +25,30 @@ export class AboutComponent implements OnInit {
   ngOnInit() {
   }
 
-  subscribeToNotifications() {
+  isAllowedToNotify(): boolean {
+    return window.Notification.permission === 'granted';
+  }
+
+  isSubscribedToDrafts(): boolean {
+    return false;
+  }
+  isSubscribedToMatches(): boolean {
+    return false;
+  }
+
+  subscribeToDraftsTopic() {
     this.msgSvc.sub('drafts');
+
+    console.log('***', window.Notification.permission);
+  }
+
+  subscribeToMatchesTopic() {
     this.msgSvc.sub('matches');
+  }
+
+  subscribeToNotifications() {
+    this.subscribeToDraftsTopic();
+    this.subscribeToMatchesTopic();
   }
 
   subscribeToPermission() {
