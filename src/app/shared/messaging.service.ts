@@ -5,6 +5,7 @@ import { BehaviorSubject, Observable } from 'rxjs';
 
 import 'firebase/messaging';
 import { tap } from 'rxjs/operators';
+import { AppStorage } from './app-storage';
 
 @Injectable()
 export class MessagingService {
@@ -13,12 +14,20 @@ export class MessagingService {
 
   // message observable to show in Angular component
   currentMessage = new BehaviorSubject(null);
+  subscribedTopics: string[] = [];
 
   constructor(
     private msg: AngularFireMessaging,
     private fun: AngularFireFunctions,
+    private stor: AppStorage
   ) {
     console.log('[msg] service created');
+
+    this.token = stor.getAppStorageItem('ftoken');
+    const parsedTopics = JSON.parse(this.stor.getAppStorageItem('fmsgtopics'));
+    if (null !== parsedTopics) {
+      this.subscribedTopics = parsedTopics.topics;
+    }
 
     this.msg.messaging.subscribe(
       (messaging) => {
@@ -59,6 +68,10 @@ export class MessagingService {
       tap(token => {
         this.token = token;
         console.log('[mess] stored token', token);
+        this.stor.setAppStorageItem('ftoken', token);
+        //clear perms
+        this.subscribedTopics = [];
+        this.saveSubscribedTopicsToCache();
       })
     );
   }
@@ -73,6 +86,10 @@ export class MessagingService {
     );
   }
 
+  getSubscribedTopics(): string[] {
+    return this.subscribedTopics;
+  }
+
   async makeToast(message) {
     // const toast = await this.toastController.create({
     //   message,
@@ -85,11 +102,34 @@ export class MessagingService {
     console.log('makeToast', message);
   }
 
+  saveSubscribedTopicsToCache(){
+    this.stor.setAppStorageItem('fmsgtopics', JSON.stringify({ topics: this.subscribedTopics }));
+  }
+
+  async onTopicSubscriptionAdded(topic: string) {
+    this.makeToast('subscribed to ' + topic);
+    if (this.subscribedTopics.indexOf(topic) < 0) {
+      this.subscribedTopics = [...this.subscribedTopics, topic];
+      this.saveSubscribedTopicsToCache();
+      console.log('[topics]', this.subscribedTopics);
+    }
+  }
+
+  async onTopicSubscriptionRemoved(topic: string) {
+    this.makeToast('unsubscribed from ' + topic);
+    const existingPos = this.subscribedTopics.indexOf(topic);
+    if (existingPos >= 0) {
+      this.subscribedTopics.splice(existingPos, 1);
+      this.saveSubscribedTopicsToCache();
+      console.log('[topics]', this.subscribedTopics);
+    }
+  }
+
   sub(topic) {
     console.log('subscribing to topic', topic, 'token is', this.token);
     this.fun
       .httpsCallable('subscribeToTopic')({ topic, token: this.token })
-      .pipe(tap(_ => this.makeToast('subscribed to ' + topic)))
+      .pipe(tap(_ => this.onTopicSubscriptionAdded(topic)))
       .subscribe();
   }
 
@@ -97,7 +137,7 @@ export class MessagingService {
     console.log('UNsubscribing from topic', topic);
     this.fun
       .httpsCallable('unsubscribeFromTopic')({ topic, token: this.token })
-      .pipe(tap(_ => this.makeToast('unsubscribed from ' + topic)))
+      .pipe(tap(_ => this.onTopicSubscriptionRemoved(topic)))
       .subscribe();
   }
 

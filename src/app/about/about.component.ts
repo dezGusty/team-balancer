@@ -13,13 +13,14 @@ export class AboutComponent implements OnInit {
   public releaseDate: Date;
   public author: string;
 
+  private topics: string[] = [];
   constructor(
     private msgSvc: MessagingService
   ) {
     this.author = 'Gusti';
     this.version = version;
 
-    this.releaseDate = new Date(2020, 3, 4);
+    this.releaseDate = new Date(2020, 3, 5);
   }
 
   ngOnInit() {
@@ -29,11 +30,16 @@ export class AboutComponent implements OnInit {
     return window.Notification.permission === 'granted';
   }
 
+  isSubscribedToTopic(topic: string): boolean {
+    const topics: string[] = this.msgSvc.getSubscribedTopics();
+    return topics.indexOf(topic) >= 0;
+  }
+
   isSubscribedToDrafts(): boolean {
-    return false;
+    return this.isSubscribedToTopic('drafts') && this.isAllowedToNotify();
   }
   isSubscribedToMatches(): boolean {
-    return false;
+    return this.isSubscribedToTopic('matches') && this.isAllowedToNotify();
   }
 
   subscribeToDraftsTopic() {

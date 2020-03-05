@@ -26,22 +26,26 @@
         or through a single contact. This is a private site in the end.
       </p>
     </div>
-    <div>
+    <div class="card-deck">
       <div class="card">
         <div class="card-header">
           Allow browser notifications
         </div>
         <div class="card-body">
-          <p class="card-text">Enable the app to notify you in the browser.</p>
-          <p class="card-text" *ngIf="isAllowedToNotify()">Notifications are currently enabled.</p>
           <button
             type="button"
-            class="btn btn-danger btn-lg mb-2"
+            class="btn btn-info btn-lg mb-2"
             role="button"
             (click)="subscribeToPermission()"
           >
             Get Notifications
           </button>
+          <p class="card-text">Enable the app to notify you in the browser.</p>
+        </div>
+        <div class="card-footer">
+          <p class="card-text" *ngIf="isAllowedToNotify()">
+            Notifications are currently enabled.
+          </p>
         </div>
       </div>
 
@@ -50,18 +54,23 @@
           Draft notifications
         </div>
         <div class="card-body">
-          <p class="card-text">
-            Get notified when the list of drafted players changes (E.g. a new
-            player joins the match)
-          </p>
           <button
             type="button"
-            class="btn btn-danger btn-lg mb-2"
+            class="btn btn-info btn-lg mb-2"
             role="button"
             (click)="subscribeToDraftsTopic()"
           >
             Get Notifications
           </button>
+          <p class="card-text">
+            Get notified when the list of drafted players changes (E.g. a new
+            player joins the match)
+          </p>
+        </div>
+        <div class="card-footer">
+          <p class="card-text" *ngIf="isSubscribedToDrafts()">
+            Notifications are currently enabled.
+          </p>
         </div>
       </div>
 
@@ -70,15 +79,20 @@
           Match notifications
         </div>
         <div class="card-body">
-          <p class="card-text">Get notified when a new match is created.</p>
           <button
             type="button"
-            class="btn btn-danger btn-lg mb-2"
+            class="btn btn-info btn-lg mb-2"
             role="button"
             (click)="subscribeToMatchesTopic()"
           >
             Get Notifications
           </button>
+          <p class="card-text">Get notified when a new match is created.</p>
+        </div>
+        <div class="card-footer">
+          <p class="card-text" *ngIf="isSubscribedToMatches()">
+            Notifications are currently enabled.
+          </p>
         </div>
       </div>
     </div>
