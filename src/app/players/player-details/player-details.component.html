@@ -1,19 +1,29 @@
-<div class="border rounded player-card row">
-  <div class="col-12 player-card-internalid">
-    ID: {{ player.id }}
-  </div>
-  <br>
-  <div class="col-12 pull-left">
-    Rating: {{ player.rating }}
-  </div>
-  <div class="col-12 player-card-name pull-left">
-    {{ playerDisplayName() }}
-  </div>
-  <div class="col-12 player-card">({{ player.name }})</div>
+<div class="container">
+  <div class="row border rounded">
+    <div class="player-card">
+      <div class="col-12 player-card-internalid">
+        ID: {{ player.id }}
+      </div>
+      <br>
+      <div class="col-12 pull-left">
+        Rating: {{ player.rating }}
+      </div>
+      <div class="col-12 player-card-name pull-left">
+        {{ playerDisplayName() }}
+      </div>
+      <div class="col-12 player-card">({{ player.name }})</div>
 
-  <div class="col-6 pull-right">
-    <img src="./../../../assets/default_user_pic.svg" alt="pic" height="96em">
+      <div class="col-6 pull-right">
+        <img src="./../../../assets/default_user_pic.svg" alt="pic" height="96em">
+      </div>
+    </div>
   </div>
+  <div class="row mt-2">
+    <div class="col-12">
+      <button class="btn btn-outline-gus btn-grad-gusty" *ngIf="canEditPlayers()"
+        (click)='onEditPlayerClicked($event)'>Edit Player</button>
+    </div>
+
+  </div>
+
 </div>
-<button class="btn btn-outline-gus btn-grad-gusty" *ngIf="canEditPlayers()" (click)='onEditPlayerClicked($event)'>Edit
-  Player</button>

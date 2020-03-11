@@ -17,7 +17,9 @@ export class PlayerRoutedCardComponent implements OnInit {
   ngOnInit() {
   }
 
-  onSelected() {
+  onPlayerRoutedCardSelected() {
+    console.log('[pcr] selected', this.player);
+
     this.playerSelected.emit(this.player);
   }
 }
