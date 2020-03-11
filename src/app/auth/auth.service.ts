@@ -63,10 +63,6 @@ export class AuthService {
      */
     public onSignInOut: EventEmitter<string> = new EventEmitter<string>();
 
-    signupUser() {
-        //
-    }
-
     /**
      * Perform the login into the application via Google.
      * @param postNavi: navigation route to be applied upon a successful log-in.
