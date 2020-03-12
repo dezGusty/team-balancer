@@ -128,7 +128,7 @@ export class AuthService {
                     this.token = token;
                 }
             ).catch((error) => {
-                console.warn('[guard] Failed to retrieve token', error);
+                console.warn('[auth] Failed to retrieve token', error);
             });
     }
 
