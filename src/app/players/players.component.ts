@@ -45,16 +45,6 @@ export class PlayersComponent implements OnInit, OnDestroy {
       );
   }
 
-  onPlayerSelected($event) {
-    const recvdPlayer: Player = $event;
-    if (null == recvdPlayer) {
-      return;
-    }
-
-    console.log('selected: ' + recvdPlayer.name);
-    this.selectedPlayer = recvdPlayer;
-  }
-
   ngOnDestroy() {
     if (this.playerSelectSubscription) {
       this.playerSelectSubscription.unsubscribe();

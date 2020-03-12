@@ -1,4 +1,3 @@
-
 /* .turbo-card {
     display: grid;
     grid-gap: 0.1rem;
@@ -47,167 +46,190 @@
 
 /* You can add global styles to this file, and also import other style files */
 .player-card {
-    cursor: pointer;
-    margin: 0.2rem 0 0.2rem 0;
-    padding: 0.2rem;
+  cursor: pointer;
+  margin: 0.2rem 0 0.2rem 0;
+  padding: 0.2rem;
 }
 
 .gus-search-box {
-    padding: 0.5rem;
+  padding: 0.5rem;
 }
 
 .player-card-rating {
-    text-align: right;
-    vertical-align: bottom;
-    float: right;
-    padding-right: 1rem;
-    font-size: medium;
+  text-align: right;
+  vertical-align: bottom;
+  float: right;
+  padding-right: 1rem;
+  font-size: medium;
 }
 
 .player-card-rating::before {
-    content: "";
-    background-image:url('assets/star_32.png');
-    background-size: 100% 100%;
-    display: inline-block;
-    height: 1ch;
-    width:  1ch; 
-    position:relative;
-} 
+  content: "";
+  background-image: url("assets/star_32.png");
+  background-size: 100% 100%;
+  display: inline-block;
+  height: 1ch;
+  width: 1ch;
+  position: relative;
+}
 
 .player-card-container {
-    position: relative;
-    align-content: center;
+  position: relative;
+  align-content: center;
 }
 
 .player-card-img {
-    display: inline-block;
-    width: 100%;
-    padding-left: 0.75rem;
+  display: inline-block;
+  width: 100%;
+  padding-left: 0.75rem;
 }
 
 .player-card-shirt {
-    display: inline-block;
-    color: #dae0e8;
-    font-size: large;
-    font-weight: 600;
-    text-align: center;
-    position: absolute;
-    padding-left: 0.75rem;
-    top: 30%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    width: 100%;
+  display: inline-block;
+  color: #dae0e8;
+  font-size: large;
+  font-weight: 600;
+  text-align: center;
+  position: absolute;
+  padding-left: 0.75rem;
+  top: 30%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 100%;
 }
 
 .player-card-panel {
-    padding: 0;
+  padding: 0;
 }
 
 .player-card-internalid {
-    font-size: x-small;
-    padding: 0;
+  font-size: x-small;
+  padding: 0;
 }
 
 .player-card-name {
-    font-size: medium;
-    font-weight: 700;
-    padding-left: 0.5rem;
-    padding-right: 0.5rem;
+  font-size: medium;
+  font-weight: 700;
+  padding-left: 0.5rem;
+  padding-right: 0.5rem;
 }
 
 .player-card-namesubtext {
-    font-size: xx-small;
-    vertical-align: bottom;
-    text-align: right;
+  font-size: xx-small;
+  vertical-align: bottom;
+  text-align: right;
 }
 
 .player-card-team-selector {
-    font-weight: 900;
-    padding-left: 1rem;
-    padding-right: 1rem;
-    border-color: #4A1A77;
-    border-width: 2px;
+  font-weight: 900;
+  padding-left: 1rem;
+  padding-right: 1rem;
+  border-color: #4a1a77;
+  border-width: 2px;
 }
 
 .player-card-team-selector-active {
-    font-weight: 900;
-    padding-left: 1rem;
-    padding-right: 1rem;
-    background: #120052;
-    border-color: #4A1A77;
-    border-width: 2px;
+  font-weight: 900;
+  padding-left: 1rem;
+  padding-right: 1rem;
+  background: #120052;
+  border-color: #4a1a77;
+  border-width: 2px;
 }
 
 .player-card-team-selector-hover {
-    color: white;
-    font-weight: 900;
-    padding-left: 1rem;
-    padding-right: 1rem;
-    background: #120052;
-    border-color: #4A1A77;
-    border-width: 2px;
+  color: white;
+  font-weight: 900;
+  padding-left: 1rem;
+  padding-right: 1rem;
+  background: #120052;
+  border-color: #4a1a77;
+  border-width: 2px;
 }
 
 .player-card-team-selector:hover {
-    font-weight: 900;
-    padding-left: 1rem;
-    padding-right: 1rem;
-    border-color: #4A1A77;
-    border-width: 2px;
-    background: linear-gradient(135deg, #2bb7e2 0%,#217892 67%,#113844 95%,#040f13 100%);
-    color: white;
+  font-weight: 900;
+  padding-left: 1rem;
+  padding-right: 1rem;
+  border-color: #4a1a77;
+  border-width: 2px;
+  background: linear-gradient(
+    135deg,
+    #2bb7e2 0%,
+    #217892 67%,
+    #113844 95%,
+    #040f13 100%
+  );
+  color: white;
 }
 
 .btn-grad-gusty:hover {
-    background: linear-gradient(135deg, #8A2Be2 0%,#8A2Be2 67%,rgb(181, 55, 242) 95%,#120052 100%);
-    animation: GradAnim 2s ease infinite;
-    color: white;
+  background: linear-gradient(
+    135deg,
+    #8a2be2 0%,
+    #8a2be2 67%,
+    rgb(181, 55, 242) 95%,
+    #120052 100%
+  );
+  animation: GradAnim 2s ease infinite;
+  color: white;
 }
 
 .btn-outline-gus {
-    border-color: #8A2Be2;
-    border-width: 1px;
+  border-color: #8a2be2;
+  border-width: 1px;
 }
 
 @keyframes GradAnim {
-    0%{background-position:0% 50%}
-    50%{background-position:100% 50%}
-    100%{background-position:0% 50%}
+  0% {
+    background-position: 0% 50%;
+  }
+  50% {
+    background-position: 100% 50%;
+  }
+  100% {
+    background-position: 0% 50%;
+  }
 }
 
 .player-card-grad {
-    border-color: rgba(18, 0, 82, 0.25);
+  border-color: rgba(18, 0, 82, 0.25);
 }
 
 .player-card-grad:hover {
-    background: linear-gradient(135deg, #8A2Be2 0%,#8A2Be2 67%,rgb(181, 55, 242) 100%);
-    color: white;
+  background: linear-gradient(
+    135deg,
+    #8a2be2 0%,
+    #8a2be2 67%,
+    rgb(181, 55, 242) 100%
+  );
+  color: white;
 }
 
 a.player-card-grad:hover {
-    color: white;
+  color: white;
 }
 
 .left-player-list {
-    padding-right: 0.1rem;
-    padding-left: 0;
+  padding-right: 0.1rem;
+  padding-left: 0;
 }
 
 .right-player-list {
-    padding-left: 0.1rem;
-    padding-right: 0;
+  padding-left: 0.1rem;
+  padding-right: 0;
 }
 
 .btn-clear-all-img {
-    display: inline-block;
-    text-align: center;
-    z-index: 10;
+  display: inline-block;
+  text-align: center;
+  z-index: 10;
 }
 
 .panel-draft-icons {
-    padding: 0.25rem 0.25rem;
+  padding: 0.25rem 0.25rem;
 }
 
 .btn-icon-gus {
-    padding: 0.1rem 0.2rem;
+  padding: 0.1rem 0.2rem;
 }

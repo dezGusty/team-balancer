@@ -15,7 +15,8 @@ export class PlayerCardComponent implements OnInit {
   ngOnInit() {
   }
 
-  onSelected() {
+  onPlayerCardSelected() {
     this.playerSelected.emit(this.player);
+    console.log('[pcard] player selected:', this.player);
   }
 }
