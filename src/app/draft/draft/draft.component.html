@@ -1,96 +1,57 @@
 <div class="row justify-content-center">
-  <div class="col-6 col-sm-6 col-md-4 col-lg-3 align-self-center panel-draft-icons">
-    <button
-      type="button"
-      class="btn btn-outline-gus btn-grad-gusty btn-icon-gus mr-2" 
-      ngbTooltip="Save"
-    (click)="onSaveSelectionClicked()"
-    >
-    <span class="align-self-center"><img
-      src="./../../../assets/save.svg" rel="preload" alt="Save" height="24rem" class ="btn-clear-all-img"></span>
+  <div class="col-6 col-sm-6 col-md-5 col-lg-4 col-xl-3 align-self-center panel-draft-icons">
+    <button type="button" class="btn btn-outline-gus btn-grad-gusty btn-icon-gus mr-2" ngbTooltip="Save"
+      (click)="onSaveSelectionClicked()">
+      <span class="align-self-center"><img src="./../../../assets/save.svg" rel="preload" alt="Save" height="24rem"
+          class="btn-clear-all-img"></span>
     </button>
 
-    <button
-      type="button"
-      class="btn btn-outline-gus btn-grad-gusty btn-icon-gus mr-2"
-      ngbTooltip="Clear list (does not save)."
-      (click)="onClearListClicked()"
-    >
-    <span class="align-self-center"><img
-      src="./../../../assets/cross.svg" rel="preload" alt="Clear" height="24rem" class ="btn-clear-all-img"></span>
+    <button type="button" class="btn btn-outline-gus btn-grad-gusty btn-icon-gus mr-2"
+      ngbTooltip="Clear list (does not save)." (click)="onClearListClicked()">
+      <span class="align-self-center"><img src="./../../../assets/cross.svg" rel="preload" alt="Clear" height="24rem"
+          class="btn-clear-all-img"></span>
     </button>
 
-    <button 
-      type="button"
-      class="btn btn-outline-gus btn-grad-gusty btn-icon-gus mr-2" 
-        #copyToClipBtn
-        placement="top"
-        #ttip="ngbTooltip"
-        ngbTooltip="Copied to clipboard..."
-        [autoClose]="true"
-        [closeDelay]="1000"
-        triggers="click:blur"
-        [copy-clipboard]="customClipTextToClip()"
-        (click)="onCopyClicked();">
-        <span class="align-self-center"><img
-            src="./../../../assets/copy.svg" rel="preload" alt="Copy-to-clip" height="24rem" class ="btn-clear-all-img"></span>
+    <button type="button" class="btn btn-outline-gus btn-grad-gusty btn-icon-gus mr-2" #copyToClipBtn placement="top"
+      #ttip="ngbTooltip" ngbTooltip="Copied to clipboard..." [autoClose]="true" [closeDelay]="1000"
+      triggers="click:blur" [copy-clipboard]="customClipTextToClip()" (click)="onCopyClicked();">
+      <span class="align-self-center"><img src="./../../../assets/copy.svg" rel="preload" alt="Copy-to-clip"
+          height="24rem" class="btn-clear-all-img"></span>
     </button>
-    <button
-      type="button"
-      class="btn btn-outline-gus btn-grad-gusty btn-icon-gus"
-      ngbTooltip="Create match from draft."
-      (click)="onMatchUpClicked()"
-    >
-    <span class="align-self-center"><img
-      src="./../../../assets/tshirt2.svg" rel="preload" alt="Match-up" height="24rem" class ="btn-clear-all-img"></span>
+    <button type="button" class="btn btn-outline-gus btn-grad-gusty btn-icon-gus" ngbTooltip="Create match from draft."
+      (click)="onMatchUpClicked()">
+      <span class="align-self-center"><img src="./../../../assets/tshirt2.svg" rel="preload" alt="Match-up"
+          height="24rem" class="btn-clear-all-img"></span>
     </button>
-    
+
   </div>
-  <div class="col-6 col-sm-6 col-md-4 col-lg-3 border-bottom gus-search-box">
-    <input
-      class="form-control border-0"
-      type="text"
-      [(ngModel)]="searchedName"
-      (keyup)="onSearchContentChange($event)"
-      placeholder="Search..."
-      aria-label="Search"
-      #srcNameArea
-      autofocus
-    />
+  <div class="col-6 col-sm-6 col-md-5 col-lg-4 col-xl-3 border-bottom gus-search-box">
+    <input class="form-control border-0" type="text" [(ngModel)]="searchedName" (keyup)="onSearchContentChange($event)"
+      placeholder="Search..." aria-label="Search" #srcNameArea autofocus />
   </div>
 </div>
 <div class="row justify-content-center">
   <!-- show the list of players on the left side -->
-  <div class="col-6 col-sm-6 col-md-5 col-lg-3 left-player-list">
+  <div class="col-6 col-sm-6 col-md-5 col-lg-4 col-xl-3 left-player-list">
     <h5>Selected players</h5>
     <p>{{ selectedPlayerList.length }} players</p>
     <div>
-      <app-player-card
-        *ngFor="let playerItem of this.getDraftedPlayersMainList()"
-        [player]="playerItem"
-        (playerSelected)="onPlayerSelected($event)"
-      ></app-player-card>
+      <app-player-card *ngFor="let playerItem of this.getDraftedPlayersMainList()" [player]="playerItem"
+        (playerSelected)="onPlayerSelected($event)"></app-player-card>
     </div>
     <p>Reserves</p>
     <div>
-      <app-player-card
-        *ngFor="let playerItem of this.getDraftedPlayersReservesList()"
-        [player]="playerItem"
-        (playerSelected)="onPlayerSelected($event)"
-      ></app-player-card>
+      <app-player-card *ngFor="let playerItem of this.getDraftedPlayersReservesList()" [player]="playerItem"
+        (playerSelected)="onPlayerSelected($event)"></app-player-card>
     </div>
   </div>
   <!-- show the list of players on the right side -->
-  <div class="col-6 col-sm-6 col-md-4 col-lg-3 right-player-list">
+  <div class="col-6 col-sm-6 col-md-5 col-lg-4 col-xl-3 right-player-list">
     <h5>Available players</h5>
     <p>{{ availablePlayerList.length }} players</p>
-    <app-player-card
-      *ngFor="
+    <app-player-card *ngFor="
         let playerItem of this.availablePlayerList | playerFilter: searchedName
-      "
-      [player]="playerItem"
-      (playerSelected)="onPlayerSelected($event)"
-    >
+      " [player]="playerItem" (playerSelected)="onPlayerSelected($event)">
     </app-player-card>
   </div>
 </div>

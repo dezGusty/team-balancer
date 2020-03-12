@@ -163,6 +163,18 @@
   color: white;
 }
 
+.btn-cmd-float {
+  position: fixed;
+  width: 4.5rem;
+  height: 4.5rem;
+
+  bottom: 0rem;
+  right: 0rem;
+
+  border-radius:2.25rem;
+  margin: 1rem;
+}
+
 .btn-grad-gusty:hover {
   background: linear-gradient(
     135deg,
