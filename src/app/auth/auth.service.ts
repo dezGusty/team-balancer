@@ -53,15 +53,15 @@ export class AuthService {
     private token: string;
     private subscription: Subscription;
 
-    public getCachedUser(): User {
-        return this.cachedUser;
-    }
-
     /**
      * Use this event emitter to inform subscribers that a sign-in event took place or sign-out event
      * is about to take place.
      */
     public onSignInOut: EventEmitter<string> = new EventEmitter<string>();
+
+    public getCachedUser(): User {
+        return this.cachedUser;
+    }
 
     /**
      * Perform the login into the application via Google.

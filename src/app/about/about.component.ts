@@ -26,7 +26,7 @@ export class AboutComponent implements OnInit {
   ngOnInit() {
   }
 
-  isAllowedToNotify(): boolean {
+  public isAllowedToNotify(): boolean {
     return window.Notification.permission === 'granted';
   }
 

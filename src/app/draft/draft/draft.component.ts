@@ -51,6 +51,14 @@ export class DraftComponent implements OnInit, OnDestroy {
     }
   }
 
+
+  public getDraftedPlayersMainList(): Player[] {
+    return [...this.selectedPlayerList].splice(0, 12);
+  }
+  public getDraftedPlayersReservesList(): Player[] {
+    return [...this.selectedPlayerList].splice(12);
+  }
+
   onSearchContentChange($event) {
     if ($event.code === 'Enter') {
       // try to apply the target value.

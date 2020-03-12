@@ -69,7 +69,8 @@ export class MessagingService {
         this.token = token;
         console.log('[mess] stored token', token);
         this.stor.setAppStorageItem('ftoken', token);
-        //clear perms
+
+        // clear permsissions
         this.subscribedTopics = [];
         this.saveSubscribedTopicsToCache();
       })
@@ -102,7 +103,7 @@ export class MessagingService {
     console.log('makeToast', message);
   }
 
-  saveSubscribedTopicsToCache(){
+  saveSubscribedTopicsToCache() {
     this.stor.setAppStorageItem('fmsgtopics', JSON.stringify({ topics: this.subscribedTopics }));
   }
 

@@ -1,14 +1,33 @@
 <div *ngIf="!showCombinations">
   <div class="row justify-content-center">
     <div class="col-6 col-sm-6 col-md-5 col-lg-4 align-self-center">
-      <button type="button" class="btn btn-outline-gus btn-grad-gusty" (click)="onMakeTeamsClicked()">
-        <span><img  rel="preload" class="align-self-center" src="./../../assets/tshirt.svg" height="40rem" alt=""></span>
+      <button
+        type="button"
+        class="btn btn-outline-gus btn-grad-gusty"
+        (click)="onMakeTeamsClicked()"
+      >
+        <span
+          ><img
+            rel="preload"
+            class="align-self-center"
+            src="./../../assets/tshirt.svg"
+            height="40rem"
+            alt=""
+        /></span>
         Make teams...
       </button>
     </div>
     <div class="col-6 col-sm-6 col-md-5 col-lg-4 border-bottom gus-search-box">
-      <input class="form-control border-0" type="text" [(ngModel)]="searchedName"
-        (keyup)="onSearchContentChange($event)" placeholder="Search..." aria-label="Search" #srcNameArea autofocus>
+      <input
+        class="form-control border-0"
+        type="text"
+        [(ngModel)]="searchedName"
+        (keyup)="onSearchContentChange($event)"
+        placeholder="Search..."
+        aria-label="Search"
+        #srcNameArea
+        autofocus
+      />
     </div>
   </div>
   <div class="row justify-content-center">
@@ -18,12 +37,12 @@
       <p>{{ matchData.draftPlayers.length }} players</p>
       <div>
         <app-player-card-pref
-          *ngFor='let playerItem of this.matchData.draftPlayers' 
+          *ngFor="let playerItem of this.matchData.draftPlayers"
           [player]="playerItem"
           (playerSelected)="onPlayerSelected($event)"
           (lockTeam1Selected)="onPlayerLockTeam1($event)"
           (lockTeam2Selected)="onPlayerLockTeam2($event)"
-          >
+        >
         </app-player-card-pref>
       </div>
     </div>
@@ -31,14 +50,23 @@
     <div class="col-6 col-sm-6 col-md-5 col-lg-4 right-player-list">
       <h5>Available players</h5>
       <p>{{ matchData.availablePlayersPool.length }} players</p>
-      <app-player-card *ngFor='let playerItem of this.matchData.availablePlayersPool | playerFilter: searchedName'
-        [player]="playerItem" (playerSelected)="onPlayerSelected($event)">
+      <app-player-card
+        *ngFor="
+          let playerItem of this.matchData.availablePlayersPool
+            | playerFilter: searchedName
+        "
+        [player]="playerItem"
+        (playerSelected)="onPlayerSelected($event)"
+      >
       </app-player-card>
     </div>
   </div>
 </div>
 <div class="row justify-content-center" *ngIf="showCombinations">
   <div class="col-12 col-sm-12 col-md-10 col-lg-8">
-    <app-match-combos [playerList]="matchData.draftPlayers" [makeTeamsEvent]="this.makeTeamsSubject"></app-match-combos>
+    <app-match-combos
+      [playerList]="matchData.draftPlayers"
+      [makeTeamsEvent]="this.makeTeamsSubject"
+    ></app-match-combos>
   </div>
 </div>
