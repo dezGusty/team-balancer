@@ -1,3 +1,17 @@
+@media (prefers-color-scheme: dark) {
+  :root {
+    --btn-active-color: #4a1a77;
+    --btn-back-color: #120052;
+  }
+}
+
+@media (prefers-color-scheme: light) {
+  :root {
+    --btn-active-color: #4a1a77;
+    --btn-back-color: #120052;
+  }
+}
+
 /* .turbo-card {
     display: grid;
     grid-gap: 0.1rem;
@@ -124,7 +138,7 @@
   font-weight: 900;
   padding-left: 1rem;
   padding-right: 1rem;
-  border-color: #4a1a77;
+  border-color: var(--btn-active-color, black);
   border-width: 2px;
 }
 
@@ -132,8 +146,8 @@
   font-weight: 900;
   padding-left: 1rem;
   padding-right: 1rem;
-  background: #120052;
-  border-color: #4a1a77;
+  background: var(--btn-back-color, teal);
+  border-color: var(--btn-active-color, black);
   border-width: 2px;
 }
 
@@ -142,8 +156,8 @@
   font-weight: 900;
   padding-left: 1rem;
   padding-right: 1rem;
-  background: #120052;
-  border-color: #4a1a77;
+  background: var(--btn-back-color, teal);;
+  border-color: var(--btn-active-color, black);
   border-width: 2px;
 }
 
@@ -151,7 +165,7 @@
   font-weight: 900;
   padding-left: 1rem;
   padding-right: 1rem;
-  border-color: #4a1a77;
+  border-color: var(--btn-active-color, black);
   border-width: 2px;
   background: linear-gradient(
     135deg,
@@ -171,7 +185,7 @@
   bottom: 0rem;
   right: 0rem;
 
-  border-radius:2.25rem;
+  border-radius: 2.25rem;
   margin: 1rem;
 }
 
