@@ -1,5 +1,5 @@
 let fs = require('fs');
-let gitsvg = require('../bin/git-branch-to-favicon.js');
+let gitsvg = require('./git-branch-to-favicon.js');
 const targetFile = 'src/favicon.svg';
 fs.writeFile(targetFile, gitsvg.getFullSVG(), function (err) {
     if (err) {

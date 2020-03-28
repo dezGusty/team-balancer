@@ -4,7 +4,7 @@
   "scripts": {
     "ng": "ng",
     "start": "npm run icon && ng serve",
-    "icon": "node src/icon-updater.js",
+    "icon": "node bin/icon-updater.js",
     "build": "ng build",
     "test": "ng test",
     "lint": "ng lint",
