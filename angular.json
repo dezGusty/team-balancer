@@ -21,6 +21,7 @@
             "tsConfig": "src/tsconfig.app.json",
             "assets": [
               "src/favicon.ico",
+              "src/favicon.svg",
               "src/assets",
               "src/firebase-messaging-sw.js",
               "src/manifest.json"
@@ -41,7 +42,12 @@
                 {
                   "replace": "src/environments/environment.ts",
                   "with": "src/environments/environment.prod.ts"
+                },
+                {
+                  "replace": "src/favicon.svg",
+                  "with": "src/favicon.prod.svg"
                 }
+
               ],
               "optimization": true,
               "outputHashing": "all",
@@ -100,6 +106,7 @@
             ],
             "assets": [
               "src/favicon.ico",
+              "src/favicon.svg",
               "src/assets",
               "src/firebase-messaging-sw.js",
               "src/manifest.json"
