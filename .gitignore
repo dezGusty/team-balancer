@@ -49,3 +49,4 @@ src/environments/firebase-data.ts
 src/assets_src/*
 functions/package-lock.json
 src/firebase-messaging-sw.js
+src/favicon.svg
