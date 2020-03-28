@@ -3,9 +3,9 @@
   "version": "0.7.7",
   "scripts": {
     "ng": "ng",
-    "start": "ng serve",
+    "start": "npm run icon && ng serve",
     "icon": "node src/icon-updater.js",
-    "build": "ng build && start icon",
+    "build": "ng build",
     "test": "ng test",
     "lint": "ng lint",
     "e2e": "ng e2e",
