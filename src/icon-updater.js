@@ -1,9 +1,9 @@
 let fs = require('fs');
-let svgdata = require('./git-branch-to-favicon.js');
+let gitsvg = require('../bin/git-branch-to-favicon.js');
 const targetFile = 'src/favicon.svg';
-fs.writeFile(targetFile, svgdata, function (err) {
+fs.writeFile(targetFile, gitsvg.getFullSVG(), function (err) {
     if (err) {
         throw err;
     }
-    console.log('Saved branch icon to [' + targetFile + ']!');
+    console.log(`Saved [${gitsvg.branchName}] branch icon to [${targetFile}]!`);
 }); 
