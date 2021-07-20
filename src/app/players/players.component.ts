@@ -58,12 +58,24 @@ export class PlayersComponent implements OnInit, OnDestroy {
     return this.authSvc.isAuthenticatedAsOrganizer();
   }
 
+  public canExportPlayers(): boolean {
+    return this.authSvc.isAuthenticatedAsOrganizer();
+  }
+
   public playerIsSelected(): boolean {
     return this.selectedPlayer != null;
   }
 
   public onNewPlayerClicked($event): void {
     this.router.navigate(['new'], { relativeTo: this.route });
+  }
+
+  public onExportPlayerClicked($event): void {
+    // export data as json
+    const content: string = JSON.stringify(this.playersSvc.getPlayers(), null, 2);
+    const blob = new Blob([content], { type: 'application/json' });
+    const url = window.URL.createObjectURL(blob);
+    window.open(url);
   }
 
   public onSavePlayerClicked($event): void {

@@ -11,13 +11,18 @@
             *ngFor="let playerItem of players | playerFilter: searchedName; let even = even; let odd = odd"
             [player]="playerItem" [id]="playerItem.id" [ngClass]="{ odd: odd, even: even }">
         </app-player-routed-card>
+
+        <button class="btn btn-outline-gus btn-grad-gusty" *ngIf='canExportPlayers()'
+        (click)='onExportPlayerClicked($event)'
+        download="download.json">Export...</button>
     </div>
     <!-- show the details panel on the right side -->
     <div class="col-6 col-sm-6 col-md-5 col-lg-4 col-xl-3 right-player-list">
         <button class="btn btn-outline-gus btn-grad-gusty btn-cmd-float float-right" *ngIf='canAddPlayers()'
             (click)='onNewPlayerClicked($event)'>New Player</button>
+            
         <!-- <div class="float-right "> -->
-            <router-outlet></router-outlet>
+        <router-outlet></router-outlet>
         <!-- </div> -->
     </div>
 </div>
