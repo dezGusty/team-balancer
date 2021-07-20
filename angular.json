@@ -33,8 +33,7 @@
             ],
             "scripts": [
               "node_modules/cookieconsent/build/cookieconsent.min.js"
-            ],
-            "es5BrowserSupport": true
+            ]
           },
           "configurations": {
             "production": {
@@ -47,7 +46,6 @@
                   "replace": "src/favicon.svg",
                   "with": "src/favicon.prod.svg"
                 }
-
               ],
               "optimization": true,
               "outputHashing": "all",
@@ -124,6 +122,10 @@
               "**/node_modules/**"
             ]
           }
+        },
+        "deploy": {
+          "builder": "@angular/fire:deploy",
+          "options": {}
         }
       }
     },

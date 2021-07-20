@@ -1,4 +1,4 @@
-import { AngularFireAuth } from 'angularfire2/auth';
+import { AngularFireAuth } from '@angular/fire/auth';
 import * as firebase from 'firebase/app';
 import { Injectable, EventEmitter } from '@angular/core';
 import { Router } from '@angular/router';
@@ -27,15 +27,15 @@ export class AuthService {
         this.afAuth.authState.subscribe(
             (auth) => {
                 if (auth) {
-                    this.afAuth.auth.currentUser.getIdToken()
+                    this.afAuth.currentUser
                         .then(
-                            (token: string) => {
-                                this.token = token;
+                            (usr: firebase.User) => {
+                                this.token = usr.uid;
                                 this.appStorage.setAppStorageItem('token', this.token);
+                                this.updateAndCacheUserAfterLogin(usr);
+                                return this.db.doc('users/' + auth.uid).get();
                             }
                         );
-                    this.updateAndCacheUserAfterLogin(this.afAuth.auth.currentUser);
-                    return this.db.doc('users/' + auth.uid).get();
                 } else {
                     return null;
                 }
@@ -83,7 +83,7 @@ export class AuthService {
             const provider = new firebase.auth.GoogleAuthProvider();
             provider.addScope('profile');
             provider.addScope('email');
-            this.afAuth.auth
+            this.afAuth
                 .signInWithPopup(provider)
                 .then(res => {
                     console.log('[firebase login]');
@@ -117,7 +117,7 @@ export class AuthService {
         if (this.subscription) {
             this.subscription.unsubscribe();
         }
-        this.afAuth.auth
+        this.afAuth
             .signOut()
             .then(() => {
                 this.token = null;
@@ -127,15 +127,15 @@ export class AuthService {
     }
 
     private issueTokenRetrieval() {
-        if (!this.afAuth.auth || !this.afAuth.auth.currentUser) {
+        if (!this.afAuth || !this.afAuth.currentUser) {
             return;
         }
 
         // Request the token. Store it when received.
-        this.afAuth.auth.currentUser.getIdToken()
+        this.afAuth.currentUser
             .then(
-                (token: string) => {
-                    this.token = token;
+                (usr: firebase.User) => {
+                    this.token = usr.uid;
                 }
             ).catch((error) => {
                 console.warn('[auth] Failed to retrieve token', error);

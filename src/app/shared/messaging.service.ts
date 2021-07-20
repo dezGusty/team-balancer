@@ -29,7 +29,7 @@ export class MessagingService {
       this.subscribedTopics = parsedTopics.topics;
     }
 
-    this.msg.messaging.subscribe(
+    this.msg.messages.subscribe(
       (messaging) => {
         // Bind methods to fix temporary bug in AngularFire
         console.log('[msg] subscribed', messaging);

@@ -138,7 +138,7 @@ export class MatchService {
             map(matchDoc => {
                 // Read the document data.
                 // It is expected to consist of serialized data.
-                const fbData = matchDoc.data();
+                const fbData: any = matchDoc.data();
                 const obj = {
                     team1: fbData.team1,
                     team2: fbData.team2,
