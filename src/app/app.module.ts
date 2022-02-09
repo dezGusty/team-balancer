@@ -3,7 +3,7 @@ import { NgModule } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { AsyncPipe } from '@angular/common';
 
-import { NgbCollapseModule, NgbTooltipModule } from '@ng-bootstrap/ng-bootstrap';
+import { NgbCollapseModule, NgbModule, NgbTooltipModule } from '@ng-bootstrap/ng-bootstrap';
 import { NgcCookieConsentModule, NgcCookieConsentConfig } from 'ngx-cookieconsent';
 import { AuthService } from './auth/auth.service';
 import { PlayersService } from './shared/players.service';
@@ -24,7 +24,7 @@ import { PlayerFilterPipe } from './matches/player-filter.pipe';
 import { SigninComponent } from './auth/signin/signin.component';
 import { SignupComponent } from './auth/signup/signup.component';
 
-import { AngularFireModule } from '@angular/fire';
+import { AngularFireModule } from 'angularfire2';
 import { AngularFirestoreModule } from '@angular/fire/firestore';
 import { AngularFireAuthModule } from '@angular/fire/auth';
 import { AngularFireMessagingModule } from '@angular/fire/messaging';
@@ -102,6 +102,7 @@ const cookieConfig: NgcCookieConsentConfig = {
     AppRoutingModule,
     NgbCollapseModule,
     NgbTooltipModule,
+    NgbModule,
     NgcCookieConsentModule.forRoot(cookieConfig)
   ],
   providers: [

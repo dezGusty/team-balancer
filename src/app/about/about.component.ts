@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { version } from '../../../package.json';
+import pkg from '../../../package.json';
 import { MessagingService } from '../shared/messaging.service';
 
 @Component({
@@ -18,9 +18,9 @@ export class AboutComponent implements OnInit {
     private msgSvc: MessagingService
   ) {
     this.author = 'Gusti';
-    this.version = version;
+    this.version = pkg.version;
 
-    this.releaseDate = new Date('2021-07-20');
+    this.releaseDate = new Date('2021-07-07');
   }
 
   ngOnInit() {

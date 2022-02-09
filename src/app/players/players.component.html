@@ -1,3 +1,9 @@
+<ngb-toast style="position: absolute;top: 100; right: 0; z-index:1;"  
+        aria-live = 'assertive' aria-atomic="true" class = 'bg-success text-light' *ngIf="loadingConvert == 0" 
+            header="Rating Conversion" [autohide]="true" (hidden)="true" [delay]=3000>
+    Conversion has completed.
+</ngb-toast>
+
 <div class="row justify-content-center">
     <div class="col-12 col-sm-12 col-md-10 col-lg-8 col-xl-6 align-self-center border-bottom gus-search-box">
         <input class="form-control border-0" type="text" [(ngModel)]="searchedName"
@@ -7,6 +13,35 @@
 <div class="row justify-content-center">
     <!-- show the list of players on the left side -->
     <div class="col-6 col-sm-6 col-md-5 col-lg-4 col-xl-3 left-player-list">
+        <form class="d-flex justify-content-center form-inline">
+            <div class="form-group mb-2">
+                <div ngbDropdown (openChange)="checkDropDown($event)" class="d-inline-block">
+                    <button class="btn btn-outline-primary" id="drodpwonRating" ngbDropdownToggle>Ratings Source</button>
+                    <div ngbDropdownMenu aria-labelledby="dropdownBasic1">
+                        <ng-container *ngFor="let ratings of ratingHistory | keyvalue">
+                            <button (click)="changeAction(ratings)" *ngIf="ratings.key !== 'current'" ngbDropdownItem>{{ratings.key}}</button>
+                        </ng-container>
+                    </div>
+                </div>
+            </div>
+            <div class="form-group mb-2">
+                <input [disabled] = '!ratingChosen' type="text" class="form-control" id="inputBranchName" placeholder="New Label" [(ngModel)] = "newBranchName" name="newBranch">
+            </div>
+            <div class="form-group mb-2">
+                <div ngbDropdown (openChange)="checkDropDown($event)" class="d-inline-block">
+                    <button [disabled] = '!ratingChosen' class="btn btn-outline-primary" id="dropdownScale" ngbDropdownToggle>Rating Scale</button>
+                    <div ngbDropdownMenu aria-labelledby="dropdownBasic1">
+                        <button (click)="changeRatingDropdown(scale)" *ngFor="let scale of ratingSystems" ngbDropdownItem>{{scale}}</button>
+                    </div>
+                </div>
+            </div>
+            <button [disabled] = '!ratingChosen || !ratingScale || loadingConvert === 1' _ngcontent-ueg-c32="" type="button" role="button" class="center btn btn-info mb-2"
+                (click)='onNewBranchClicked($event)' *ngIf='canAddPlayers()'>
+                <span *ngIf='loadingConvert === 1' class="spinner-border" style="width: 1.3rem; height: 1.3rem;" role="status" aria-hidden="true"></span>
+                Switch To Label
+            </button>
+        </form>
+       
         <app-player-routed-card
             *ngFor="let playerItem of players | playerFilter: searchedName; let even = even; let odd = odd"
             [player]="playerItem" [id]="playerItem.id" [ngClass]="{ odd: odd, even: even }">
@@ -20,9 +55,8 @@
     <div class="col-6 col-sm-6 col-md-5 col-lg-4 col-xl-3 right-player-list">
         <button class="btn btn-outline-gus btn-grad-gusty btn-cmd-float float-right" *ngIf='canAddPlayers()'
             (click)='onNewPlayerClicked($event)'>New Player</button>
-            
         <!-- <div class="float-right "> -->
-        <router-outlet></router-outlet>
+            <router-outlet></router-outlet>
         <!-- </div> -->
     </div>
 </div>
