@@ -37,8 +37,19 @@ firebase login
 Configure aliases inside `.firebaserc` according to your firebase project name.
 
 Add the firebase configuration credentials:
-  - create a typescript file name `firebase-data` inside `src\environments` folder
-  - paste the config details from `https://console.firebase.google.com/project/<project-name>/settings/general/`
+
+- create a typescript file name `firebase-data.ts` inside `src\environments` folder
+- paste the config details from `https://console.firebase.google.com/project/<project-name>/settings/general/`
+- add the export keyword in front of it
+
+E.g
+
+```ts
+export const firebaseConfig = {
+  apiKey: 'some data',
+  //...
+}
+```
 
 Run `firebase use default`.
 

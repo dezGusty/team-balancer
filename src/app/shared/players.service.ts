@@ -1,17 +1,13 @@
 import { Player } from './player.model';
 import { EventEmitter, Injectable } from '@angular/core';
-import { AngularFirestore } from '@angular/fire/firestore';
+import { AngularFirestore } from '@angular/fire/compat/firestore';
 import { Observable, Subscription } from 'rxjs';
 import { AuthService } from '../auth/auth.service';
 import { CustomPrevGame } from './custom-prev-game.model';
 import { AppStorage } from './app-storage';
-import firebase from 'firebase';
+import firebase from 'firebase/compat/app';
 import { map } from 'rxjs/operators';
-
-enum RatingSystem {
-    German = 1,
-    Romanian
-};
+import { RatingSystem } from './rating-system';
 
 /**
  * Stores and retrieves player related information.
@@ -82,8 +78,6 @@ export class PlayersService {
     }
 
     getPlayers() {
-        console.log("TEST");
-        console.log(this.playerList);
         return this.playerList.slice();
     }
 
@@ -152,10 +146,10 @@ export class PlayersService {
 
     public removeFieldFromDocument(fieldName: string, documentName: string) {
         const docRef = this.db.doc('ratings/' + documentName);
-        docRef.update({[fieldName] : firebase.firestore.FieldValue.delete()});
+        docRef.update({ [fieldName]: firebase.firestore.FieldValue.delete() });
     }
 
-    public getCurrentRatings() : Observable<any> {
+    public getCurrentRatings(): Observable<any> {
         return this.db.doc('ratings/current').get().pipe(
             map(currentDoc => {
                 return currentDoc.data();
@@ -167,26 +161,26 @@ export class PlayersService {
         const collectionRef = db.collection(collectionPath).ref;
         const query = collectionRef.orderBy('__name__').limit(batchSize);
         return new Promise((resolve, reject) => {
-          this.deleteQueryBatch(db, query, resolve).catch(reject);
+            this.deleteQueryBatch(db, query, resolve).catch(reject);
         });
     }
     async deleteQueryBatch(db, query, resolve) {
         const snapshot = await query.get();
-      
+
         const batchSize = snapshot.size;
         if (batchSize === 0) {
-          resolve();
-          return;
+            resolve();
+            return;
         }
 
         const batch = db.firestore.batch();
         snapshot.docs.forEach((doc) => {
-          batch.delete(doc.ref);
+            batch.delete(doc.ref);
         });
         await batch.commit();
 
         this.deleteQueryBatch(db, query, resolve);
-      }
+    }
 
     async getNumberOfDocumentsInCollection(collectionPath) {
         let snapshot = await this.db.collection(collectionPath).get().toPromise();
@@ -206,14 +200,14 @@ export class PlayersService {
         this.saveAllPlayers();
     }
 
-    public async getRatingHistory() : Promise<Map<string, Player[]>> {
+    public async getRatingHistory(): Promise<Map<string, Player[]>> {
         const ratings = this.db.collection('ratings/');
         const snapshot = await ratings.get();
-        
+
         let history = new Map<string, Player[]>();
         snapshot.forEach(doc => {
             doc.docs.forEach(test => {
-                if(test.id !== 'current') {
+                if (test.id !== 'current') {
                     history.set(test.id, test.data() as Player[]);
                 }
             });
@@ -221,7 +215,7 @@ export class PlayersService {
         return history;
     }
 
-    public updateRatingsForGame(players: Player[], game: CustomPrevGame, ratingSystem = 1 /*Default old German system*/): Player[] {
+    public updateRatingsForGame(players: Player[], game: CustomPrevGame, ratingSystem: RatingSystem = RatingSystem.German): Player[] {
         if (game.scoreTeam1 == null || game.scoreTeam2 == null
             || game.scoreTeam1 === game.scoreTeam2) {
             // nothing to do
@@ -242,7 +236,7 @@ export class PlayersService {
             winners = game.team2.map((player) => player.name);
         }
 
-        switch(ratingSystem) {
+        switch (ratingSystem) {
             case 1:
                 return playersCpy.map(player => {
                     // if the game contains the player name in the winner list
@@ -264,13 +258,13 @@ export class PlayersService {
                 return playersCpy.map(player => {
                     if (winners.includes(player.name)) {
                         player.rating += player.rating * (0.02 + difference * 0.002);
-                        if(player.rating > 10) {
+                        if (player.rating > 10) {
                             player.rating = 10;
                         }
                         return player;
                     } else if (losers.includes(player.name)) {
                         player.rating -= player.rating * (0.02 + difference * 0.002);
-                        if(player.rating < 1) {
+                        if (player.rating < 1) {
                             player.rating = 1;
                         }
                         return player;

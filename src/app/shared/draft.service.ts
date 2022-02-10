@@ -1,4 +1,4 @@
-import { AngularFirestore } from '@angular/fire/firestore';
+import { AngularFirestore } from '@angular/fire/compat/firestore';
 import { Injectable, EventEmitter } from '@angular/core';
 import { Subscription, Observable } from 'rxjs';
 import { AuthService } from '../auth/auth.service';
@@ -77,7 +77,7 @@ export class DraftService {
    * @param players The array of players to store.
    */
   saveSelectedPlayerList(players: Player[]) {
-    const draftPlayersListRef = this.db.doc('/drafts/next').ref;
+    const draftPlayersListRef = this.db.doc<any>('/drafts/next').ref;
     const obj = { players };
     draftPlayersListRef.set(obj, { merge: true });
   }

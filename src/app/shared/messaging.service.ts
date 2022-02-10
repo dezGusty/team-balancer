@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
-import { AngularFireMessaging } from '@angular/fire/messaging';
-import { AngularFireFunctions } from '@angular/fire/functions';
+import { AngularFireMessaging } from '@angular/fire/compat/messaging';
+import { AngularFireFunctions } from '@angular/fire/compat/functions';
 import { BehaviorSubject, Observable } from 'rxjs';
 
 import 'firebase/messaging';
@@ -29,7 +29,7 @@ export class MessagingService {
       this.subscribedTopics = parsedTopics.topics;
     }
 
-    this.msg.messaging.subscribe(
+    this.msg.messages.subscribe(
       (messaging) => {
         // Bind methods to fix temporary bug in AngularFire
         console.log('[msg] subscribed', messaging);

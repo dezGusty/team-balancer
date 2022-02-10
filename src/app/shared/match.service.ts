@@ -1,4 +1,4 @@
-import { AngularFirestore } from '@angular/fire/firestore';
+import { AngularFirestore } from '@angular/fire/compat/firestore';
 import { CustomGame } from './custom-game.model';
 import { Injectable, EventEmitter } from '@angular/core';
 import { AuthService } from '../auth/auth.service';
@@ -148,7 +148,7 @@ export class MatchService {
     public getMatchForDateAsync(matchName: string): Observable<CustomPrevGame> {
         // Get the firestore document where the match details are stored, based on the key.
         // E.g. stored in [matches/2018-03-23]
-        return this.db.doc('matches/' + matchName).get().pipe(
+        return this.db.doc<CustomPrevGame>('matches/' + matchName).get().pipe(
             // Map each document (expected: only 1) to the read operation.
             map(matchDoc => {
                 // Read the document data.
