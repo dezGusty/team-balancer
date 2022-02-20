@@ -13,7 +13,6 @@
         "build": {
           "builder": "@angular-devkit/build-angular:browser",
           "options": {
-            "aot": true,
             "outputPath": "dist/team-balancer",
             "index": "src/index.html",
             "main": "src/main.ts",
@@ -33,26 +32,36 @@
             ],
             "scripts": [
               "node_modules/cookieconsent/build/cookieconsent.min.js"
-            ]
+            ],
+            "vendorChunk": true,
+            "extractLicenses": false,
+            "buildOptimizer": false,
+            "sourceMap": true,
+            "optimization": false,
+            "namedChunks": true
           },
           "configurations": {
             "production": {
+              "assets": [
+                {
+                  "input": "src/prod/",
+                  "glob": "favicon.svg",
+                  "output": "/"
+                },
+                "src/assets",
+                "src/firebase-messaging-sw.js",
+                "src/manifest.json"
+              ],
               "fileReplacements": [
                 {
                   "replace": "src/environments/environment.ts",
                   "with": "src/environments/environment.prod.ts"
-                },
-                {
-                  "replace": "src/favicon.svg",
-                  "with": "src/favicon.prod.svg"
                 }
               ],
               "optimization": true,
               "outputHashing": "all",
               "sourceMap": false,
-              "extractCss": true,
               "namedChunks": false,
-              "aot": true,
               "extractLicenses": true,
               "vendorChunk": false,
               "buildOptimizer": true,
@@ -68,7 +77,8 @@
                 }
               ]
             }
-          }
+          },
+          "defaultConfiguration": ""
         },
         "serve": {
           "builder": "@angular-devkit/build-angular:dev-server",
@@ -122,10 +132,6 @@
               "**/node_modules/**"
             ]
           }
-        },
-        "deploy": {
-          "builder": "@angular/fire:deploy",
-          "options": {}
         }
       }
     },

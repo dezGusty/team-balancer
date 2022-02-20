@@ -3,7 +3,7 @@ import { NgModule } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { AsyncPipe } from '@angular/common';
 
-import { NgbCollapseModule, NgbTooltipModule } from '@ng-bootstrap/ng-bootstrap';
+import { NgbCollapseModule, NgbModule, NgbTooltipModule } from '@ng-bootstrap/ng-bootstrap';
 import { NgcCookieConsentModule, NgcCookieConsentConfig } from 'ngx-cookieconsent';
 import { AuthService } from './auth/auth.service';
 import { PlayersService } from './shared/players.service';
@@ -24,11 +24,11 @@ import { PlayerFilterPipe } from './matches/player-filter.pipe';
 import { SigninComponent } from './auth/signin/signin.component';
 import { SignupComponent } from './auth/signup/signup.component';
 
-import { AngularFireModule } from '@angular/fire';
-import { AngularFirestoreModule } from '@angular/fire/firestore';
-import { AngularFireAuthModule } from '@angular/fire/auth';
-import { AngularFireMessagingModule } from '@angular/fire/messaging';
-import { AngularFireFunctionsModule } from '@angular/fire/functions';
+import { AngularFireModule } from '@angular/fire/compat';
+import { AngularFirestoreModule } from '@angular/fire/compat/firestore';
+import { AngularFireAuthModule } from '@angular/fire/compat/auth';
+import { AngularFireMessagingModule } from '@angular/fire/compat/messaging';
+import { AngularFireFunctionsModule } from '@angular/fire/compat/functions';
 import { environment } from '../environments/environment';
 import { AuthGuard } from './auth/auth-guard.service';
 import { OrganizerGuard } from './auth/organizer-guard.service';
@@ -46,6 +46,9 @@ import { LoadingSpinnerComponent } from './ui/loading-spinner/loading-spinner.co
 import { DraftComponent } from './draft/draft/draft.component';
 import { PlayerCardPrefComponent } from './player-card-pref/player-card-pref.component';
 import { MessagingService } from './shared/messaging.service';
+import { AdminComponent } from './admin/admin.component';
+import { ToastService } from './shared/toasts-service';
+import { ToastsContainer } from './toast/toast-container.component';
 
 // types: opt-out, opt-in, info
 const cookieConfig: NgcCookieConsentConfig = {
@@ -89,7 +92,9 @@ const cookieConfig: NgcCookieConsentConfig = {
     PlayerMiniCardComponent,
     LoadingSpinnerComponent,
     DraftComponent,
-    PlayerCardPrefComponent
+    PlayerCardPrefComponent,
+    AdminComponent,
+    ToastsContainer
   ],
   imports: [
     AngularFireModule.initializeApp(environment.firebase),
@@ -102,6 +107,7 @@ const cookieConfig: NgcCookieConsentConfig = {
     AppRoutingModule,
     NgbCollapseModule,
     NgbTooltipModule,
+    NgbModule,
     NgcCookieConsentModule.forRoot(cookieConfig)
   ],
   providers: [
@@ -109,6 +115,7 @@ const cookieConfig: NgcCookieConsentConfig = {
     MatchService,
     MessagingService,
     AuthService,
+    ToastService,
     AuthGuard,
     OrganizerGuard,
     AppStorage,

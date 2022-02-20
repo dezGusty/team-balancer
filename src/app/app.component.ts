@@ -61,18 +61,7 @@ export class AppComponent implements OnInit, OnDestroy {
         // you can use this.ccService.getConfig() to do stuff...
       });
 
-    // const tempUser: User = this.auth.getCachedUser();
-    // if (tempUser) {
-    //   this.msgSvc.getPermission(tempUser);
-    //   this.msgSvc.monitorRefresh(tempUser);
-    //   this.msgSvc.receiveMessages();
-    // } else {
-    //   console.log('[app] no cached user');
-    // }
 
-    // this.msgSvc.requestPermission();
-    // this.msgSvc.receiveMessage();
-    // this.message = this.msgSvc.currentMessage;
     this.msgSvc.showMessages().subscribe();
   }
 

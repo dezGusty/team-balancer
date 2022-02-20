@@ -102,13 +102,28 @@ export class PrevMatchDetailComponent implements OnInit, OnDestroy {
    * The current player ratings are stored in the standard entry. E.g.
    *    'ratings/current'
    */
-  onUpdateRatingsClick() {
+  async onUpdateRatingsClick() {
+    let currentMatch = await this.playersSvc.getCurrentRatings().toPromise();
+    let version = 1;
+    if(currentMatch) { 
+      if(currentMatch.version) {
+        version = currentMatch.version;
+      } else {
+        version = 1; // German by default for old versions of the app.
+      }
+    }
+
     const newPlayers = this.playersSvc.updateRatingsForGame(
-      this.playersSvc.getPlayers(), this.customGame
+      this.playersSvc.getPlayers(), this.customGame, version
     );
 
     // Store the 'old' ratings under a different entry.
-    this.playersSvc.savePlayersToList(this.playersSvc.getPlayers(), this.matchSearchKey);
+    if(!currentMatch || !currentMatch.label) {
+      this.playersSvc.savePlayersToList(this.playersSvc.getPlayers(), this.matchSearchKey);
+    } else {
+      this.playersSvc.savePlayersToList(this.playersSvc.getPlayers(), this.matchSearchKey + '_' + currentMatch.label);
+      this.playersSvc.addFieldValueToDocument("label", currentMatch.label, "current");
+    }
 
     // Store the 'new' ratings under the 'current' entry.
     this.playersSvc.savePlayersToList(newPlayers, 'current');

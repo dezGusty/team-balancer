@@ -4,6 +4,7 @@ import { Player, filterPlayerArray, getDisplayName } from 'src/app/shared/player
 import { Subscription } from 'rxjs';
 import { DraftService } from 'src/app/shared/draft.service';
 import { Router } from '@angular/router';
+import { ToastService } from 'src/app/shared/toasts-service';
 
 @Component({
   selector: 'app-draft',
@@ -21,7 +22,8 @@ export class DraftComponent implements OnInit, OnDestroy {
   constructor(
     private playersSvc: PlayersService,
     private draftSvc: DraftService,
-    private router: Router) {
+    private router: Router,
+    private toastSvc: ToastService) {
   }
 
   ngOnInit() {
@@ -40,6 +42,7 @@ export class DraftComponent implements OnInit, OnDestroy {
           this.availablePlayerList = this.availablePlayerList.filter(
             player => !this.selectedPlayerList.find(item => player.id === item.id)
           );
+          this.toastSvc.show('Loaded players');
         }
       );
   }

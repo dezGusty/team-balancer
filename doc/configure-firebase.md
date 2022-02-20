@@ -8,6 +8,8 @@ firebase installed
 npm install -g firebase-tools
 ```
 
+A firebase project ([Create Project](https://console.firebase.google.com))
+
 ## Build
 
 Build your application release
@@ -31,6 +33,25 @@ Login with Google account
 ```cmd
 firebase login
 ```
+
+Configure aliases inside `.firebaserc` according to your firebase project name.
+
+Add the firebase configuration credentials:
+
+- create a typescript file name `firebase-data.ts` inside `src\environments` folder
+- paste the config details from `https://console.firebase.google.com/project/<project-name>/settings/general/`
+- add the export keyword in front of it
+
+E.g
+
+```ts
+export const firebaseConfig = {
+  apiKey: 'some data',
+  //...
+}
+```
+
+Run `firebase use default`.
 
 Init the project
 

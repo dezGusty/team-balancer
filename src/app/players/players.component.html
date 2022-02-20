@@ -4,6 +4,7 @@
             (keyup)="onSearchContentChange($event)" placeholder="Search..." aria-label="Search" #srcNameArea autofocus>
     </div>
 </div>
+
 <div class="row justify-content-center">
     <!-- show the list of players on the left side -->
     <div class="col-6 col-sm-6 col-md-5 col-lg-4 col-xl-3 left-player-list">
@@ -12,17 +13,15 @@
             [player]="playerItem" [id]="playerItem.id" [ngClass]="{ odd: odd, even: even }">
         </app-player-routed-card>
 
-        <button class="btn btn-outline-gus btn-grad-gusty" *ngIf='canExportPlayers()'
-        (click)='onExportPlayerClicked($event)'
-        download="download.json">Export...</button>
     </div>
     <!-- show the details panel on the right side -->
     <div class="col-6 col-sm-6 col-md-5 col-lg-4 col-xl-3 right-player-list">
         <button class="btn btn-outline-gus btn-grad-gusty btn-cmd-float float-right" *ngIf='canAddPlayers()'
             (click)='onNewPlayerClicked($event)'>New Player</button>
-            
         <!-- <div class="float-right "> -->
         <router-outlet></router-outlet>
         <!-- </div> -->
     </div>
 </div>
+
+<app-toasts aria-live="polite" aria-atomic="true"></app-toasts>

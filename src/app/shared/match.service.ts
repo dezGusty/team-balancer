@@ -1,4 +1,4 @@
-import { AngularFirestore } from '@angular/fire/firestore';
+import { AngularFirestore } from '@angular/fire/compat/firestore';
 import { CustomGame } from './custom-game.model';
 import { Injectable, EventEmitter } from '@angular/core';
 import { AuthService } from '../auth/auth.service';
@@ -125,6 +125,21 @@ export class MatchService {
         return this.recentMatchesChangeEvent.asObservable();
     }
 
+    public async getMatchList() : Promise<Map<string, CustomPrevGame>> {
+        const matches = this.db.collection('matches/');
+        const snapshot = await matches.get();
+        
+        let matchList = new Map<string, CustomPrevGame>();
+        snapshot.forEach(doc => {
+            doc.docs.forEach(test => {
+                if(test.id !== 'recent') {
+                    matchList.set(test.id, test.data() as CustomPrevGame);
+                }
+            });
+        });
+        return matchList;
+    }
+
     /**
      * Asynchronously retrieves the match object as an Observable.
      * @param matchName The name of the match (basically: the date to be used as a key for accessing the match from the DB)
@@ -133,12 +148,12 @@ export class MatchService {
     public getMatchForDateAsync(matchName: string): Observable<CustomPrevGame> {
         // Get the firestore document where the match details are stored, based on the key.
         // E.g. stored in [matches/2018-03-23]
-        return this.db.doc('matches/' + matchName).get().pipe(
+        return this.db.doc<CustomPrevGame>('matches/' + matchName).get().pipe(
             // Map each document (expected: only 1) to the read operation.
             map(matchDoc => {
                 // Read the document data.
                 // It is expected to consist of serialized data.
-                const fbData: any = matchDoc.data();
+                const fbData = matchDoc.data();
                 const obj = {
                     team1: fbData.team1,
                     team2: fbData.team2,

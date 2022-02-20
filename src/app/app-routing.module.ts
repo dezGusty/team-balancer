@@ -13,6 +13,7 @@ import { CustomgameComponent } from './customgame/customgame.component';
 import { RecentMatchesComponent } from './matches/previous-matches/recent-matches.component';
 import { PrevMatchDetailComponent } from './matches/prev-match-detail/prev-match-detail.component';
 import { DraftComponent } from './draft/draft/draft.component';
+import { AdminComponent } from './admin/admin.component';
 
 const appRoutes: Routes = [
     { path: '', redirectTo: '/about', pathMatch: 'full' },
@@ -34,12 +35,13 @@ const appRoutes: Routes = [
         path: 'custom', canActivate: [AuthGuard], component: CustomgameComponent
     },
     { path: 'about', component: AboutComponent },
+    { path: 'admin', canActivate: [AuthGuard], component: AdminComponent },
     { path: 'signin', component: SigninComponent },
     { path: 'signup', component: SignupComponent }
 ];
 
 @NgModule({
-    imports: [RouterModule.forRoot(appRoutes)],
+    imports: [RouterModule.forRoot(appRoutes, { relativeLinkResolution: 'legacy' })],
     exports: [RouterModule]
 })
 export class AppRoutingModule {

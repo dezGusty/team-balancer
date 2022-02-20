@@ -1,8 +1,8 @@
-import { AngularFireAuth } from '@angular/fire/auth';
-import * as firebase from 'firebase/app';
+import { AngularFireAuth } from '@angular/fire/compat/auth';
+import firebase from 'firebase/compat/app';
 import { Injectable, EventEmitter } from '@angular/core';
 import { Router } from '@angular/router';
-import { AngularFirestore } from '@angular/fire/firestore';
+import { AngularFirestore } from '@angular/fire/compat/firestore';
 import { User, UserRoles } from '../shared/user.model';
 import { Subscription } from 'rxjs';
 import { AppStorage } from '../shared/app-storage';
@@ -33,9 +33,9 @@ export class AuthService {
                                 this.token = usr.uid;
                                 this.appStorage.setAppStorageItem('token', this.token);
                                 this.updateAndCacheUserAfterLogin(usr);
-                                return this.db.doc('users/' + auth.uid).get();
                             }
                         );
+                    return this.db.doc('users/' + auth.uid).get();
                 } else {
                     return null;
                 }

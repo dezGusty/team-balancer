@@ -27,7 +27,7 @@
         </div>
         <div class="form-group col-12">
             <label class="col-form-label" for="playerrating">Rating</label>
-            <input type="number" id="playerrating" class="form-control" [ngModel]="player.rating" name="playerrating"
+            <input type="number" min=1 max=10 id="playerrating" class="form-control" [ngModel]="player.rating" name="playerrating"
                 required #playerrating="ngModel">
         </div>
 

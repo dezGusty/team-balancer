@@ -1,10 +1,14 @@
 import { Player } from './player.model';
 import { EventEmitter, Injectable } from '@angular/core';
-import { AngularFirestore } from '@angular/fire/firestore';
+import { AngularFirestore } from '@angular/fire/compat/firestore';
 import { Observable, Subscription } from 'rxjs';
 import { AuthService } from '../auth/auth.service';
 import { CustomPrevGame } from './custom-prev-game.model';
 import { AppStorage } from './app-storage';
+import firebase from 'firebase/compat/app';
+import { map } from 'rxjs/operators';
+import { RatingSystem, RatingSystemSettings } from './rating-system';
+import { PlayerChangeInfo } from './player-changed-info';
 
 /**
  * Stores and retrieves player related information.
@@ -12,6 +16,8 @@ import { AppStorage } from './app-storage';
 @Injectable()
 export class PlayersService {
     private dataChangeSubscription: Subscription;
+    private currentRatingSystem: RatingSystem;
+    private currentLabel: string;
 
     // constructor.
     constructor(
@@ -48,7 +54,7 @@ export class PlayersService {
 
     private playerList: Player[] = [];
 
-    playerDataChangeEvent = new EventEmitter<Player>();
+    playerDataChangeEvent = new EventEmitter<PlayerChangeInfo>();
 
     subscribeToDataSources() {
         console.log('[players] subscribing to data sources');
@@ -57,13 +63,16 @@ export class PlayersService {
         const currentRatings = this.db.doc('ratings/current').get();
         this.dataChangeSubscription = currentRatings.subscribe(playerListDoc => {
             if (!playerListDoc.exists) {
+                this.playerDataChangeEvent.emit(new PlayerChangeInfo(null, 'error', 'Could not connect to DB'));
                 return;
             }
 
             const playersArray: Player[] = playerListDoc.get('players');
+            this.currentRatingSystem = playerListDoc.get('ratingSystem');
+            this.currentLabel = playerListDoc.get('label');
             this.playerList = playersArray;
             this.appStorage.setAppStorageItem('players', JSON.stringify(this.playerList));
-            this.playerDataChangeEvent.emit();
+            this.playerDataChangeEvent.emit(new PlayerChangeInfo(this.playerList, 'info', 'Players loaded'));
         });
     }
 
@@ -112,10 +121,11 @@ export class PlayersService {
 
     createDefaultPlayer(): Player {
         // get the id.
-        const newID = Math.max.apply(
+        const newID = this.playerList.length ? Math.max.apply(
             Math,
             this.playerList.map((item) => item.id))
-            + 1;
+            + 1 : 0;
+
 
         const newName = 'new_player_' + Date.now().toFixed() + '_' + newID;
         const result = new Player(newID, newName);
@@ -128,9 +138,73 @@ export class PlayersService {
     }
 
     public savePlayersToList(playersArr: Player[], listName: string) {
-        const docRef = this.db.doc('/ratings/' + listName).ref;
+        console.log('save players to list');
+
+        const docPath = 'ratings/' + listName;
+        const docRef = this.db.doc(docPath).ref;
         const obj = { players: playersArr };
-        docRef.set(obj, { merge: true });
+        docRef.set(obj, { merge: true })
+            .then(_ => {
+                this.playerDataChangeEvent.emit(new PlayerChangeInfo(playersArr, 'info', 'Saved players to list ' + docPath));
+            }
+            ).catch(reason =>
+                this.playerDataChangeEvent.emit(new PlayerChangeInfo(playersArr, 'error', 'Failed to save player list because of ' + reason))
+            );
+    }
+
+    public addFieldValueToDocument(fieldName: string, value: any, documentName: string) {
+        const docRef = this.db.doc('ratings/' + documentName);
+        var obj = {};
+        obj[fieldName] = value;
+        docRef.update(obj);
+    }
+
+    public removeFieldFromDocument(fieldName: string, documentName: string) {
+        const docRef = this.db.doc('ratings/' + documentName);
+        docRef.update({ [fieldName]: firebase.firestore.FieldValue.delete() });
+    }
+
+    public getCurrentRatings(): Observable<any> {
+        return this.db.doc('ratings/current').get().pipe(
+            map(currentDoc => {
+                return currentDoc.data();
+            })
+        );
+    }
+
+    async deleteCollection(db, collectionPath, batchSize) {
+        const collectionRef = db.collection(collectionPath).ref;
+        const query = collectionRef.orderBy('__name__').limit(batchSize);
+        return new Promise((resolve, reject) => {
+            this.deleteQueryBatch(db, query, resolve).catch(reject);
+        });
+    }
+    async deleteQueryBatch(db, query, resolve) {
+        const snapshot = await query.get();
+
+        const batchSize = snapshot.size;
+        if (batchSize === 0) {
+            resolve();
+            return;
+        }
+
+        const batch = db.firestore.batch();
+        snapshot.docs.forEach((doc) => {
+            batch.delete(doc.ref);
+        });
+        await batch.commit();
+
+        this.deleteQueryBatch(db, query, resolve);
+    }
+
+    async getNumberOfDocumentsInCollection(collectionPath) {
+        let snapshot = await this.db.collection(collectionPath).get().toPromise();
+        return snapshot.size;
+    }
+
+    public async dropPlayerRatings() {
+        let size = await this.getNumberOfDocumentsInCollection('ratings');
+        await this.deleteCollection(this.db, 'ratings', size);
     }
 
     saveSinglePlayerToFirebase(player: Player) {
@@ -141,7 +215,57 @@ export class PlayersService {
         this.saveAllPlayers();
     }
 
-    public updateRatingsForGame(players: Player[], game: CustomPrevGame): Player[] {
+    public async getRatingHistory(): Promise<Map<string, Player[]>> {
+        const ratings = this.db.collection('ratings/');
+        const snapshot = await ratings.get();
+
+        let history = new Map<string, Player[]>();
+        snapshot.forEach(doc => {
+            doc.docs.forEach(test => {
+                if (test.id !== 'current') {
+                    history.set(test.id, test.data() as Player[]);
+                }
+            });
+        });
+        return history;
+    }
+
+    /**
+     * Updates an individual player according to the result of a game.
+     * @param player The player to update
+     * @param winners The winning team
+     * @param losers  The losing team
+     * @param difference The difference in goals
+     * @param ratingSystem The used rating system
+     * @returns 
+     */
+    private updateIndividualRatingForGame(
+        player: Player,
+        winners: string[],
+        losers: string[],
+        difference: number,
+        ratingSystem: RatingSystem = RatingSystem.German): Player {
+        if (difference === 0) {
+            return player;
+        }
+
+        // Winners earn points and losers lose points in some rating systems.
+        // Or the other way around in other rating systems. Use the sign for this.
+        let sign = 0;
+
+        if (winners.includes(player.name)) {
+            sign = RatingSystemSettings.GetSignMultiplierForWinner(ratingSystem);
+        } else if (losers.includes(player.name)) {
+            sign = RatingSystemSettings.GetSignMultiplierForLoser(ratingSystem);
+        }
+
+        player.rating = player.rating + sign * (
+            RatingSystemSettings.GetFixedMultiplierForMatch(ratingSystem)
+            + difference * RatingSystemSettings.GetGoalMultiplierForMatch(ratingSystem));
+        return player;
+    }
+
+    public updateRatingsForGame(players: Player[], game: CustomPrevGame, ratingSystem: RatingSystem = RatingSystem.German): Player[] {
         if (game.scoreTeam1 == null || game.scoreTeam2 == null
             || game.scoreTeam1 === game.scoreTeam2) {
             // nothing to do
@@ -162,21 +286,45 @@ export class PlayersService {
             winners = game.team2.map((player) => player.name);
         }
 
-        return playersCpy.map(player => {
-            // if the game contains the player name in the winner list
-            // or the loser list modify the rating.
-            // otherwise, just leave it as it is.
-            if (winners.includes(player.name)) {
-                // improve rating (lower numerical value)
-                player.rating -= player.rating * (0.02 + difference * 0.002);
-                return player;
-            } else if (losers.includes(player.name)) {
-                // worsen rating (higher numerical value)
-                player.rating += player.rating * (0.02 + difference * 0.002);
-                return player;
-            } else {
-                return player;
-            }
-        });
+        return playersCpy.map(player => this.updateIndividualRatingForGame(player, winners, losers, difference, ratingSystem));
+
+        // // TODO: separate to subfunction, use RatingSystemSettings 
+        // switch (ratingSystem) {
+        //     case 1:
+        //         return playersCpy.map(player => {
+        //             // if the game contains the player name in the winner list
+        //             // or the loser list modify the rating.
+        //             // otherwise, just leave it as it is.
+        //             if (winners.includes(player.name)) {
+        //                 // improve rating (lower numerical value)
+        //                 player.rating -= player.rating * (0.02 + difference * 0.002);
+        //                 return player;
+        //             } else if (losers.includes(player.name)) {
+        //                 // worsen rating (higher numerical value)
+        //                 player.rating += player.rating * (0.02 + difference * 0.002);
+        //                 return player;
+        //             } else {
+        //                 return player;
+        //             }
+        //         });
+        //     case 2:
+        //         return playersCpy.map(player => {
+        //             if (winners.includes(player.name)) {
+        //                 player.rating += player.rating * (0.02 + difference * 0.002);
+        //                 if (player.rating > 10) {
+        //                     player.rating = 10;
+        //                 }
+        //                 return player;
+        //             } else if (losers.includes(player.name)) {
+        //                 player.rating -= player.rating * (0.02 + difference * 0.002);
+        //                 if (player.rating < 1) {
+        //                     player.rating = 1;
+        //                 }
+        //                 return player;
+        //             } else {
+        //                 return player;
+        //             }
+        //         });
+        // }
     }
 }

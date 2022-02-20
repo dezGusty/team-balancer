@@ -32,3 +32,7 @@ To configure it, look at the files in the environments directory (`environments.
 ```ts
 const deploymentDomain = "localhost";
 ```
+
+# TODO
+- Upgrade firebase to v9
+- Button loading component
