@@ -1,19 +1,25 @@
-.nav-grad-gus{
-
-/* Permalink - use to edit and share this gradient: http://colorzilla.com/gradient-editor/#b4ddb4+0,83c783+17,52b152+33,008a00+67,005700+83,002400+100;Green+3D+%231 */
-background: rgb(7, 85, 80); 
-background: linear-gradient(135deg, rgb(67, 154, 201) 0%,rgb(33, 148, 163)45%,rgb(35, 86, 116) 70%,rgb(42, 60, 61) 85%,#004d52 100%);
-padding: .2rem 1rem;
+.nav-grad-gus {
+  /* Permalink - use to edit and share this gradient: http://colorzilla.com/gradient-editor/#b4ddb4+0,83c783+17,52b152+33,008a00+67,005700+83,002400+100;Green+3D+%231 */
+  background: rgb(7, 85, 80);
+  background: linear-gradient(
+    135deg,
+    rgb(67, 154, 201) 0%,
+    rgb(33, 148, 163) 45%,
+    rgb(35, 86, 116) 70%,
+    rgb(42, 60, 61) 85%,
+    #004d52 100%
+  );
+  padding: 0.5rem;
 }
 
 a {
-    font-weight: 500;
-    vertical-align: middle;
-    /* padding: 0; */
+  font-weight: 500;
+  vertical-align: middle;
+  /* padding: 0; */
 }
 
 .navbar-gus-title {
-    font-size: x-large;
-    padding-top: 0;
-    padding-bottom: 0;
+  font-size: x-large;
+  padding-top: 0;
+  padding-bottom: 0;
 }
