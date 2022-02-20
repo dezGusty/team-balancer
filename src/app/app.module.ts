@@ -46,6 +46,9 @@ import { LoadingSpinnerComponent } from './ui/loading-spinner/loading-spinner.co
 import { DraftComponent } from './draft/draft/draft.component';
 import { PlayerCardPrefComponent } from './player-card-pref/player-card-pref.component';
 import { MessagingService } from './shared/messaging.service';
+import { AdminComponent } from './admin/admin.component';
+import { ToastService } from './shared/toasts-service';
+import { ToastsContainer } from './toast/toast-container.component';
 
 // types: opt-out, opt-in, info
 const cookieConfig: NgcCookieConsentConfig = {
@@ -89,7 +92,9 @@ const cookieConfig: NgcCookieConsentConfig = {
     PlayerMiniCardComponent,
     LoadingSpinnerComponent,
     DraftComponent,
-    PlayerCardPrefComponent
+    PlayerCardPrefComponent,
+    AdminComponent,
+    ToastsContainer
   ],
   imports: [
     AngularFireModule.initializeApp(environment.firebase),
@@ -110,6 +115,7 @@ const cookieConfig: NgcCookieConsentConfig = {
     MatchService,
     MessagingService,
     AuthService,
+    ToastService,
     AuthGuard,
     OrganizerGuard,
     AppStorage,
