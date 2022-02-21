@@ -1,7 +1,27 @@
 @media (prefers-color-scheme: dark) {
   :root {
-    --btn-active-color: #4a1a77;
-    --btn-back-color: #120052;
+    --btn-active-color: #b5a7c2;
+    --btn-back-color: #423e52;
+    --standard-bck-color: #040730;
+    --standard-text-color: #fff;
+
+    --gus-panel-bck: linear-gradient(
+      135deg,
+      #2bb7e2 0%,
+      #217892 67%,
+      #113844 95%,
+      #040f13 100%
+    );
+    --gus-panel-alt-bck: linear-gradient(
+      135deg,
+      #8a2be2 0%,
+      #8a2be2 67%,
+      rgb(181, 55, 242) 95%,
+      #120052 100%
+    );
+    --gus-panel-text: #fda;
+    --gus-contrast-panel-bck: rgb(2, 12, 27);
+    --gus-contrast-panel-alt-bck: #994b0b3d;
   }
 }
 
@@ -9,60 +29,39 @@
   :root {
     --btn-active-color: #4a1a77;
     --btn-back-color: #120052;
+    --standard-bck-color: #ffffff;
+    --standard-text-color: #000;
+
+    --gus-panel-bck: linear-gradient(
+      135deg,
+      #2bb7e2 0%,
+      #217892 67%,
+      #113844 95%,
+      #040f13 100%
+    );
+    --gus-panel-alt-bck: linear-gradient(
+      135deg,
+      #8a2be2 0%,
+      #8a2be2 67%,
+      rgb(181, 55, 242) 95%,
+      #120052 100%
+    );
+    --gus-panel-text: #fff;
+    --gus-contrast-panel-bck: #fff;
+    --gus-contrast-panel-alt-bck: #362b2b08;
   }
 }
 
-/* .turbo-card {
-    display: grid;
-    grid-gap: 0.1rem;
-    grid-template-columns: minmax(2fr, 100px) 4fr 1fr;
-    grid-template-rows: 2fr 1ch 1ch;
+body {
+  background-color: var(--standard-bck-color);
+  color: var(--standard-text-color);
 }
-
-.turbo-card-pic {
-    display: inline-block;
-    background: url('assets/tshirt.svg') top no-repeat;
-    text-align: center;
-    z-index: 10;
-    grid-column: 1 / 2;
-    grid-row: 1 / 3;
-    color: #ddeeea;
-    font-weight: 400;
-    font-size: medium;
-}
-
-.turbo-card-displayname {
-    grid-column: 2 / 4;
-    grid-row: 1;
-
-    font-size: large;
-}
-
-.turbo-card-fullname {
-    grid-column: 2 / 4;
-    grid-row: 2;
-
-    font-size: x-small;
-}
-
-.turbo-card-rating {
-    grid-column: 3 / 4;
-    grid-row: 3;
-
-    font-size: x-small;
-    text-align: right;
-}
-
-.turbo-card-rating::before {
-    display: inline-block;
-    background: url('assets/star_32.png') center no-repeat;
-} */
 
 /* You can add global styles to this file, and also import other style files */
 .player-card {
   cursor: pointer;
   margin: 0.2rem 0 0.2rem 0;
-  padding: 0.2rem;
+  /* padding: 0.2rem; */
 }
 
 .gus-search-box {
@@ -100,16 +99,52 @@
 
 .player-card-shirt {
   display: inline-block;
-  color: #dae0e8;
+  /* color: #dae0e8; */
+  color: #f00;
   font-size: large;
   font-weight: 600;
-  text-align: center;
+  text-align: left;
   position: absolute;
   padding-left: 0.75rem;
   top: 30%;
   left: 50%;
-  transform: translate(-50%, -50%);
+  /* transform: translate(-50%, -50%); */
+  transform: skew(15deg);
   width: 100%;
+}
+
+.square {
+  /* width: 2rem; */
+}
+
+.square:after {
+  content: "";
+  display: block;
+  padding-bottom: 100%;
+}
+
+.player-card-tv {
+  background-image: url("assets/tshirt.svg");
+  background-repeat: no-repeat;
+  background-size: 4rem;
+  background-position: right top;
+  background-clip: border-box;
+
+  /* background-image:
+    linear-gradient(black, #000000dd),
+    url("assets/tshirt.svg"); */
+  background-blend-mode: saturation;
+
+  border-radius: 0.3rem;
+  /* border-style: solid; */
+  /* border-color: var(--btn-active-color, black); */
+  color: #fda;
+  /* filter: grayscale(100%); */
+  font-size: large;
+  font-weight: 600;
+  padding-left: 0.1rem;
+  text-align: center;
+  /* transform: skew(175deg); */
 }
 
 .player-card-panel {
@@ -156,7 +191,7 @@
   font-weight: 900;
   padding-left: 1rem;
   padding-right: 1rem;
-  background: var(--btn-back-color, teal);;
+  background: var(--btn-back-color, teal);
   border-color: var(--btn-active-color, black);
   border-width: 2px;
 }
@@ -190,13 +225,7 @@
 }
 
 .btn-grad-gusty:hover {
-  background: linear-gradient(
-    135deg,
-    #8a2be2 0%,
-    #8a2be2 67%,
-    rgb(181, 55, 242) 95%,
-    #120052 100%
-  );
+  background: var(--gus-panel-alt-bck);
   animation: GradAnim 2s ease infinite;
   color: white;
 }
@@ -204,6 +233,16 @@
 .btn-outline-gus {
   border-color: #8a2be2;
   border-width: 1px;
+}
+
+.card-header {
+  color: #fff;
+  background-color: var(--gus-contrast-panel-alt-bck);
+  border-bottom-color: rgba(0, 0, 0, 0.125);
+}
+
+.card {
+  background-color: var(--gus-contrast-panel-bck);
 }
 
 @keyframes GradAnim {
@@ -219,17 +258,14 @@
 }
 
 .player-card-grad {
-  border-color: rgba(18, 0, 82, 0.25);
+  border-color: var(--btn-active-color);
+  background: var(--standard-bck-color);
+  color: var(--standard-text-color);
 }
 
 .player-card-grad:hover {
-  background: linear-gradient(
-    135deg,
-    #8a2be2 0%,
-    #8a2be2 67%,
-    rgb(181, 55, 242) 100%
-  );
-  color: white;
+  background: var(--gus-panel-alt-bck);
+  color: var(--gus-panel-text);
 }
 
 a.player-card-grad:hover {

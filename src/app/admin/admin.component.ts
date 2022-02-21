@@ -1,6 +1,5 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { Subscription } from 'rxjs/internal/Subscription';
-import { NewLineKind } from 'typescript';
 import { AuthService } from '../auth/auth.service';
 import { CustomPrevGame } from '../shared/custom-prev-game.model';
 import { MatchService } from '../shared/match.service';
@@ -10,7 +9,7 @@ import { PlayersService } from '../shared/players.service';
 import { RatingScaler } from '../shared/rating-scaler';
 import { RatingSystem, RatingSystemSettings } from '../shared/rating-system';
 import { ToastService } from '../shared/toasts-service';
-
+import { getMessaging, getToken } from "firebase/messaging";
 @Component({
   selector: 'app-admin',
   templateUrl: './admin.component.html',
@@ -193,4 +192,47 @@ export class AdminComponent implements OnInit, OnDestroy {
     this.loadingConvert = 0;
   }
 
+  onTestMessageClicked($event) {
+    return;
+    // this.toastSvc.show($event, { delay: 7500 });
+    // console.log($event);
+    // const linkToUse = 'https://teams-balancer.firebaseapp.com/players/';
+    // const notification = {
+    //   title: 'New Match Created!',
+    //   body: 'Match ID: [2022-02-22]' + ' test'
+    // };
+    // const payload = {
+    //   notification,
+    //   webpush: {
+    //     notification: {
+    //       vibrate: [100, 100, 200, 200, 300],
+    //       icon: 'assets/ball_128.png',
+    //       actions: [
+    //         {
+    //           action: 'ok',
+    //           title: 'ok'
+    //         }
+    //       ]
+    //     },
+    //     fcmOptions: {
+    //       link: linkToUse
+    //     }
+    //   },
+    //   topic: 'matches'
+    // };
+
+    // // Get registration token. Initially this makes a network call, once retrieved
+    // // subsequent calls to getToken will return from cache.
+    // const messaging = getMessaging();
+    
+    // messaging.send(payload)
+    // // fadmin.app.messaging().send(payload)
+    //   .then((response) => {
+    //     // Response is a message ID string.
+    //     console.log('Successfully sent message:', response);
+    //   })
+    //   .catch((error) => {
+    //     console.log('Error sending message:', error);
+    //   });
+  }
 }
