@@ -9,3 +9,29 @@ This is a quick list of steps to be performed when performing a new release.
   - `ng build --configuration production`
 - [ ] deploy to firebase
   - `firebase deploy`
+    OR
+  - `firebase deploy --only hosting`
+
+Note: firebase functions are currently disabled. (removed functions section from firebase.json)
+
+```json
+{
+  "hosting": {
+    "public": "dist/team-balancer",
+    "ignore": ["firebase.json", "**/.*", "**/node_modules/**"],
+    "rewrites": [
+      {
+        "source": "**",
+        "destination": "/index.html"
+      }
+    ]
+  },
+  "functions": {
+    "predeploy": [
+      "npm --prefix \"$RESOURCE_DIR\" run lint",
+      "npm --prefix \"$RESOURCE_DIR\" run build"
+    ],
+    "source": "functions"
+  }
+}
+```
