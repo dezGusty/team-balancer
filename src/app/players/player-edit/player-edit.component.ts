@@ -70,7 +70,8 @@ export class PlayerEditComponent implements OnInit {
       this.playersSvc.addPlayer(clonedPlayer);
     }
 
-    this.playersSvc.playerDataChangeEvent.emit(null);
+    // console.log('[player-edit-com] emitting event');
+    // this.playersSvc.playerDataChangeEvent.next(null);
     form.reset();
 
     this.router.navigate(['..'], { relativeTo: this.route });

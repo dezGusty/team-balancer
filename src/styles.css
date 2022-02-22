@@ -22,6 +22,8 @@
     --gus-panel-text: #fda;
     --gus-contrast-panel-bck: rgb(2, 12, 27);
     --gus-contrast-panel-alt-bck: #994b0b3d;
+    --gus-secondary-bck: rgb(28, 29, 28);
+    --gus-secondary-text: rgb(230, 147, 109);
   }
 }
 
@@ -49,7 +51,14 @@
     --gus-panel-text: #fff;
     --gus-contrast-panel-bck: #fff;
     --gus-contrast-panel-alt-bck: #362b2b08;
+    --gus-secondary-bck: #ddd;
+    --gus-secondary-text: #345;
   }
+}
+
+.toast .toast-body {
+  background-color: var(--gus-secondary-bck);
+  color: var(--gus-secondary-text);
 }
 
 body {

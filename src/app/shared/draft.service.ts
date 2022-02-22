@@ -10,7 +10,7 @@ import { Player } from './player.model';
 export class DraftService {
   private dataChangeSubscription: Subscription;
   selectedDraftPlayers: Player[] = [];
-  playerDataChangeEvent = new EventEmitter<Player[]>();
+  playerDraftChangeEvent = new EventEmitter<Player[]>();
 
   constructor(private db: AngularFirestore, private authSvc: AuthService) {
     this.selectedDraftPlayers = [];
@@ -47,7 +47,7 @@ export class DraftService {
         const castedItem = draftDocContents as { players: Player[] };
         this.selectedDraftPlayers = [...castedItem.players];
         console.log('[draft-svc] selected players', this.selectedDraftPlayers);
-        this.playerDataChangeEvent.emit(this.selectedDraftPlayers);
+        this.playerDraftChangeEvent.emit(this.selectedDraftPlayers);
       },
       error => console.log('some error encountered', error),
       () => { console.log('[draft-svc]c omplete'); },

@@ -45,6 +45,10 @@ export class PlayersComponent implements OnInit, OnDestroy {
     this.subscriptions.push(this.playersSvc.playerDataChangeEvent
       .subscribe(
         (playerChangeInfo: PlayerChangeInfo) => {
+          if (null === playerChangeInfo) {
+            console.warn('null playerchange info received');
+            return;
+          }
           this.players = this.playersSvc.getPlayers();
           this.toastSvc.show('Reloaded all players from service. \n'
             + playerChangeInfo.messageType + '\n'

@@ -1,7 +1,7 @@
 import { Player } from './player.model';
-import { EventEmitter, Injectable } from '@angular/core';
+import { Injectable } from '@angular/core';
 import { AngularFirestore } from '@angular/fire/compat/firestore';
-import { Observable, Subscription } from 'rxjs';
+import { BehaviorSubject, Observable, Subscription } from 'rxjs';
 import { AuthService } from '../auth/auth.service';
 import { CustomPrevGame } from './custom-prev-game.model';
 import { AppStorage } from './app-storage';
@@ -54,7 +54,8 @@ export class PlayersService {
 
     private playerList: Player[] = [];
 
-    playerDataChangeEvent = new EventEmitter<PlayerChangeInfo>();
+    // playerDataChangeEvent = new EventEmitter<PlayerChangeInfo>();
+    playerDataChangeEvent = new BehaviorSubject<PlayerChangeInfo>(null);
 
     subscribeToDataSources() {
         console.log('[players] subscribing to data sources');
@@ -62,8 +63,10 @@ export class PlayersService {
         // subscribe to firebase collection changes.
         const currentRatings = this.db.doc('ratings/current').get();
         this.dataChangeSubscription = currentRatings.subscribe(playerListDoc => {
+            console.log('[players] current ratings watcher notified');
+
             if (!playerListDoc.exists) {
-                this.playerDataChangeEvent.emit(new PlayerChangeInfo(null, 'error', 'Could not connect to DB'));
+                this.playerDataChangeEvent.next(new PlayerChangeInfo(null, 'error', 'Could not connect to DB'));
                 return;
             }
 
@@ -72,7 +75,7 @@ export class PlayersService {
             this.currentLabel = playerListDoc.get('label');
             this.playerList = playersArray;
             this.appStorage.setAppStorageItem('players', JSON.stringify(this.playerList));
-            this.playerDataChangeEvent.emit(new PlayerChangeInfo(this.playerList, 'info', 'Players loaded'));
+            this.playerDataChangeEvent.next(new PlayerChangeInfo(this.playerList, 'info', 'Players loaded'));
         });
     }
 
@@ -138,17 +141,20 @@ export class PlayersService {
     }
 
     public savePlayersToList(playersArr: Player[], listName: string) {
-        console.log('save players to list');
-
         const docPath = 'ratings/' + listName;
         const docRef = this.db.doc(docPath).ref;
         const obj = { players: playersArr };
+        console.log('setting data in ' + docPath, obj);
+
         docRef.set(obj, { merge: true })
             .then(_ => {
-                this.playerDataChangeEvent.emit(new PlayerChangeInfo(playersArr, 'info', 'Saved players to list ' + docPath));
+                const playerInfo = new PlayerChangeInfo(playersArr, 'info', 'Saved players to list ' + docPath);
+                console.log('emitting ', playerInfo);
+
+                this.playerDataChangeEvent.next(playerInfo);
             }
             ).catch(reason =>
-                this.playerDataChangeEvent.emit(new PlayerChangeInfo(playersArr, 'error', 'Failed to save player list because of ' + reason))
+                this.playerDataChangeEvent.next(new PlayerChangeInfo(playersArr, 'error', 'Failed to save player list because of ' + reason))
             );
     }
 

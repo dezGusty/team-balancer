@@ -5,6 +5,8 @@ import { Player, filterPlayerArray } from '../shared/player.model';
 import { PlayersService } from '../shared/players.service';
 import { ActivatedRoute } from '@angular/router';
 import { DraftService } from '../shared/draft.service';
+import { ToastService } from '../shared/toasts-service';
+import { PlayerChangeInfo } from '../shared/player-changed-info';
 
 @Component({
   selector: 'app-customgame',
@@ -20,9 +22,10 @@ export class CustomgameComponent implements OnInit, OnDestroy {
 
   public matchData = new Match(new Date(Date.now()));
   public selectedPlayer: Player;
-  private playerDataChangeSubscription: Subscription;
-  private routeQuerySubscription: Subscription;
   makeTeamsSubject: Subject<void> = new Subject<void>();
+
+  private subscriptions: Subscription[] = [];
+
 
   /**
    * Constructor for the Custom game component. Can be instanced in 2 ways:
@@ -34,6 +37,7 @@ export class CustomgameComponent implements OnInit, OnDestroy {
   constructor(
     private playersSvc: PlayersService,
     private draftSvc: DraftService,
+    private toastSvc: ToastService,
     private route: ActivatedRoute) {
     this.matchData.availablePlayersPool = this.playersSvc.getPlayers();
     this.matchData.draftPlayers.forEach(element => {
@@ -42,28 +46,36 @@ export class CustomgameComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit() {
-    this.playerDataChangeSubscription = this.playersSvc.playerDataChangeEvent
+
+    this.subscriptions.push(this.playersSvc.playerDataChangeEvent
       .subscribe(
-        (player: Player) => {
-          // Any player changed: reload all
+        (playerChangeInfo: PlayerChangeInfo) => {
+          if (null === playerChangeInfo) {
+            console.warn('null playerchange info received');
+            return;
+          }
           this.reloadInternal();
+
+          this.toastSvc.show('Reloaded all players from service. \n'
+            + playerChangeInfo.messageType + '\n'
+            + playerChangeInfo.messagePayload);
         }
-      );
-    this.routeQuerySubscription = this.route.queryParams
+      )
+    );
+
+    this.subscriptions.push(this.route.queryParams
       .subscribe(params => {
         console.log('[custom] qparams:', params);
         this.useDraftPlayersAsInput = params.draft;
         this.reloadInternal();
-      });
+      })
+    );
   }
 
   ngOnDestroy() {
-    if (this.playerDataChangeSubscription) {
-      this.playerDataChangeSubscription.unsubscribe();
-    }
-    if (this.routeQuerySubscription) {
-      this.routeQuerySubscription.unsubscribe();
-    }
+    this.subscriptions.forEach(subscription => {
+      subscription.unsubscribe()
+    });
   }
 
   reloadInternal() {

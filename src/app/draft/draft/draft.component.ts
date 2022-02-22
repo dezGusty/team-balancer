@@ -34,7 +34,7 @@ export class DraftComponent implements OnInit, OnDestroy {
       player => !this.selectedPlayerList.find(item => player.id === item.id)
     );
 
-    this.playerDataChangeSubscription = this.draftSvc.playerDataChangeEvent
+    this.playerDataChangeSubscription = this.draftSvc.playerDraftChangeEvent
       .subscribe(
         (players: Player[]) => {
           this.availablePlayerList = [...this.playersSvc.getPlayers()];
