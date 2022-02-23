@@ -99,7 +99,7 @@ export class AdminComponent implements OnInit, OnDestroy {
 
   public onExportPlayerClicked($event): void {
     // export data as json
-    const content: string = JSON.stringify(this.playersSvc.getPlayers(), null, 2);
+    const content: string = JSON.stringify(this.playersSvc.getPlayers(true), null, 2);
     const blob = new Blob([content], { type: 'application/json' });
     const url = window.URL.createObjectURL(blob);
     window.open(url);

@@ -21,6 +21,10 @@
     <div class="col-12">
       <button class="btn btn-outline-gus btn-grad-gusty position-static" *ngIf="canEditPlayers()"
         (click)='onEditPlayerClicked($event)'>Edit Player</button>
+        <button class="btn btn-outline-gus btn-grad-gusty position-static" *ngIf="canArchivePlayer()"
+        (click)='onArchivePlayer($event)'>Archive Player</button>
+        <button class="btn btn-outline-gus btn-grad-gusty position-static" *ngIf="canUnarchivePlayer()"
+        (click)='onUnarchivePlayer($event)'>Edit Player</button>
     </div>
 
   </div>

@@ -1,3 +1,4 @@
+
 /**
  * Defines a player.
  */
@@ -6,9 +7,11 @@ export class Player {
     public keywords = '';
     public displayName = '';
     public affinity = 0;
+    public mostRecentMatches : Array<[string,string]>;
+    public isArchived = false;
 
     constructor(public id: number, public name: string) {
-        this.rating = 2.5;
+        this.rating = 6;
         this.affinity = 0;
     }
 }

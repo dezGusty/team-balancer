@@ -22,6 +22,7 @@ export class PlayersComponent implements OnInit, OnDestroy {
   editMode: boolean;
 
   private subscriptions: Subscription[] = [];
+  public loadArchive: boolean = false;
 
   searchedName = '';
   loadingConvert = -1;
@@ -41,7 +42,7 @@ export class PlayersComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit() {
-    this.players = this.playersSvc.getPlayers();
+    this.players = this.playersSvc.getPlayers(this.loadArchive);
     this.subscriptions.push(this.playersSvc.playerDataChangeEvent
       .subscribe(
         (playerChangeInfo: PlayerChangeInfo) => {
@@ -49,7 +50,7 @@ export class PlayersComponent implements OnInit, OnDestroy {
             console.warn('null playerchange info received');
             return;
           }
-          this.players = this.playersSvc.getPlayers();
+          this.players = this.playersSvc.getPlayers(this.loadArchive);
           this.toastSvc.show('Reloaded all players from service. \n'
             + playerChangeInfo.messageType + '\n'
             + playerChangeInfo.messagePayload);
@@ -87,5 +88,10 @@ export class PlayersComponent implements OnInit, OnDestroy {
     if (filteredPlayers.length === 1) {
       // show special marker?
     }
+  }
+
+  onCheckReload($event) {
+    this.loadArchive = !this.loadArchive;
+    this.players = this.playersSvc.getPlayers(this.loadArchive);
   }
 }

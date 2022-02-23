@@ -1,7 +1,11 @@
 <div class="row justify-content-center">
-    <div class="col-12 col-sm-12 col-md-10 col-lg-8 col-xl-6 align-self-center border-bottom gus-search-box">
+    <div class="col-11 col-sm-11 col-md-10 col-lg-8 col-xl-6 align-self-center border-bottom gus-search-box">
         <input class="form-control border-0" type="text" [(ngModel)]="searchedName"
             (keyup)="onSearchContentChange($event)" placeholder="Search..." aria-label="Search" #srcNameArea autofocus>
+    </div>
+    <div class="btn-group col-1" role="group">
+        <label class="btn-primary btn-sm" ngbButtonLabel>
+            <input type="checkbox" class="btn-check" (click)='onCheckReload($event)' ngbButton [(ngModel)]="loadArchive">arc</label>
     </div>
 </div>
 

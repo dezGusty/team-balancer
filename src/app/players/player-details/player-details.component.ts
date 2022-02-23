@@ -43,8 +43,24 @@ export class PlayerDetailsComponent implements OnInit {
     return this.authSvc.isAuthenticatedAsOrganizer();
   }
 
+  public canArchivePlayer(): boolean {
+    return this.authSvc.isAuthenticatedAsOrganizer() && (!this.player.isArchived);
+  }
+
+  public canUnarchivePlayer(): boolean {
+    return this.authSvc.isAuthenticatedAsOrganizer() && this.player.isArchived;
+  }
+
   public onEditPlayerClicked($event): void {
     this.router.navigate(['edit'], { relativeTo: this.route });
+  }
+
+  public onArchivePlayer($event): void {
+    this.playersSvc.movePlayerToArchive(this.player);
+  }
+
+  public onUnarchivePlayer($event): void {
+    this.playersSvc.pullPlayerFromArchive(this.player);
   }
 
   public playerDisplayName(): string {

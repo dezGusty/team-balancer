@@ -236,12 +236,13 @@ body {
 .btn-grad-gusty:hover {
   background: var(--gus-panel-alt-bck);
   animation: GradAnim 2s ease infinite;
-  color: white;
+  color: var(--standard-text-color);
 }
 
 .btn-outline-gus {
   border-color: #8a2be2;
   border-width: 1px;
+  color: var(--standard-text-color);
 }
 
 .card-header {

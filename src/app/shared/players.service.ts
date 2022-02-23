@@ -9,13 +9,14 @@ import firebase from 'firebase/compat/app';
 import { map } from 'rxjs/operators';
 import { RatingSystem, RatingSystemSettings } from './rating-system';
 import { PlayerChangeInfo } from './player-changed-info';
+import { TemplateLiteral } from '@angular/compiler';
 
 /**
  * Stores and retrieves player related information.
  */
 @Injectable()
 export class PlayersService {
-    private dataChangeSubscription: Subscription;
+    private dataChangeSubscriptions: Subscription[] = [];
     private currentRatingSystem: RatingSystem;
     private currentLabel: string;
 
@@ -31,7 +32,7 @@ export class PlayersService {
         // Load the cached players from the session storage.
         const cachedPlayers = appStorage.getAppStorageItem('players');
         if (cachedPlayers) {
-            this.playerList = JSON.parse(cachedPlayers);
+            this.currentPlayerList = JSON.parse(cachedPlayers);
         }
 
         // Subscribe to the login-logout events.
@@ -52,7 +53,8 @@ export class PlayersService {
         }
     }
 
-    private playerList: Player[] = [];
+    private currentPlayerList: Player[] = [];
+    private archivedPlayerList: Player[] = [];
 
     // playerDataChangeEvent = new EventEmitter<PlayerChangeInfo>();
     playerDataChangeEvent = new BehaviorSubject<PlayerChangeInfo>(null);
@@ -62,7 +64,7 @@ export class PlayersService {
 
         // subscribe to firebase collection changes.
         const currentRatings = this.db.doc('ratings/current').get();
-        this.dataChangeSubscription = currentRatings.subscribe(playerListDoc => {
+        this.dataChangeSubscriptions.push(currentRatings.subscribe(playerListDoc => {
             console.log('[players] current ratings watcher notified');
 
             if (!playerListDoc.exists) {
@@ -73,31 +75,104 @@ export class PlayersService {
             const playersArray: Player[] = playerListDoc.get('players');
             this.currentRatingSystem = playerListDoc.get('ratingSystem');
             this.currentLabel = playerListDoc.get('label');
-            this.playerList = playersArray;
-            this.appStorage.setAppStorageItem('players', JSON.stringify(this.playerList));
-            this.playerDataChangeEvent.next(new PlayerChangeInfo(this.playerList, 'info', 'Players loaded'));
-        });
+            this.currentPlayerList = playersArray;
+            this.appStorage.setAppStorageItem('players', JSON.stringify(this.currentPlayerList));
+            this.playerDataChangeEvent.next(new PlayerChangeInfo(this.currentPlayerList, 'info', 'Players loaded'));
+        }));
+
+        const archivedRatings = this.db.doc('ratings/archive').get();
+        this.dataChangeSubscriptions.push(archivedRatings.subscribe(playerListDoc => {
+            console.log('[players] archived ratings watcher notified');
+
+            if (!playerListDoc.exists) {
+                this.playerDataChangeEvent.next(new PlayerChangeInfo(null, 'error', 'Could not connect to DB'));
+                return;
+            }
+
+            const playersArray: Player[] = playerListDoc.get('players');
+            playersArray.forEach(x => x.isArchived = true);
+            this.archivedPlayerList = playersArray;
+            this.appStorage.setAppStorageItem('archived_players', JSON.stringify(this.archivedPlayerList));
+            this.playerDataChangeEvent.next(new PlayerChangeInfo(this.archivedPlayerList, 'info', 'Archive loaded'));
+        }));
     }
 
     unsubscribeFromDataSources() {
         console.log('[players] unsubscribing from data sources');
-        if (this.dataChangeSubscription) {
-            this.dataChangeSubscription.unsubscribe();
-        }
+        this.dataChangeSubscriptions.forEach(subscription => {
+            subscription.unsubscribe();
+        });
     }
 
-    getPlayers() {
-        return this.playerList.slice();
+    getPlayers(includeArchive: boolean = false): Player[] {
+        if (includeArchive) {
+            return this.currentPlayerList.concat(this.archivedPlayerList);
+        } else {
+            return this.currentPlayerList.slice();
+        }
     }
 
     addPlayer(player: Player) {
         console.log('[playerssvc] added player');
-        this.playerList.push(player);
+        this.currentPlayerList.push(player);
         this.saveSinglePlayerToFirebase(player);
     }
 
+    movePlayerToArchive(player: Player) {
+        console.log('[playerscv] archiving player');
+
+        // remove the element from the current player array
+        const tempPlayerList = this.currentPlayerList.filter(x => x != player);
+        if (tempPlayerList.length === this.currentPlayerList.length) {
+            // we should have removed an entry.
+            // this should not happen!
+            return;
+        }
+
+        // ensure that the player is available only once.
+        this.archivedPlayerList.push(player);
+        this.archivedPlayerList = [...new Set(this.archivedPlayerList)];
+
+        this.currentPlayerList = tempPlayerList;
+
+        this.savePlayersArrayToDoc(this.archivedPlayerList, 'archive').then(_ => {
+            // successfully saved archive.
+            // can now also save the regular player list: we won't lose a player, at worst a duplicate
+            this.savePlayersArrayToDoc(this.currentPlayerList, 'current').then(_ => {
+                const playerInfo = new PlayerChangeInfo(this.currentPlayerList, 'info', `moved player ${player.name} to archive.`);
+
+                this.playerDataChangeEvent.next(playerInfo);
+            });
+        });
+    }
+
+    pullPlayerFromArchive(player: Player) {
+        console.log('[playerscv] unarchiving player');
+
+        // remove the element from the current player array
+        const tempPlayerList = this.archivedPlayerList.filter(x => x === player);
+        if (tempPlayerList.length === this.archivedPlayerList.length) {
+            // we should have removed an entry.
+            // this should not happen!
+            return;
+        }
+
+        // ensure that the player is available in the current list
+        this.currentPlayerList.push(player);
+
+        this.savePlayersArrayToDoc(this.currentPlayerList, 'ratings/current').then(_ => {
+            // successfully saved archive.
+            // can now also save the regular player list: we won't lose a player, at worst a duplicate
+            this.savePlayersArrayToDoc(this.archivedPlayerList, 'ratings/current').then(_ => {
+                const playerInfo = new PlayerChangeInfo(this.archivedPlayerList, 'info', `moved player ${player.name} to current.`);
+
+                this.playerDataChangeEvent.next(playerInfo);
+            });
+        });
+    }
+
     getPlayerById(id: number) {
-        return this.playerList.find(
+        return this.currentPlayerList.find(
             item => item.id === id);
     }
 
@@ -107,14 +182,14 @@ export class PlayersService {
      * @param newPlayer The new object (already constructed) to use.
      */
     updatePlayerById(id: number, newPlayer: Player): boolean {
-        const oldIndex = this.playerList.findIndex((playerItem) => (playerItem.id === id));
+        const oldIndex = this.currentPlayerList.findIndex((playerItem) => (playerItem.id === id));
         if (oldIndex === -1) {
             // old entry not found?
             console.warn('Tried to update a player, but did not find it in the previous entries list');
             return false;
         }
 
-        this.playerList[oldIndex] = newPlayer;
+        this.currentPlayerList[oldIndex] = newPlayer;
         console.log('[players.svc] Replaced player for id ' + id + '. New one', newPlayer);
 
         this.updateSinglePlayerToFirebase(newPlayer);
@@ -124,9 +199,9 @@ export class PlayersService {
 
     createDefaultPlayer(): Player {
         // get the id.
-        const newID = this.playerList.length ? Math.max.apply(
+        const newID = this.currentPlayerList.length ? Math.max.apply(
             Math,
-            this.playerList.map((item) => item.id))
+            this.currentPlayerList.map((item) => item.id))
             + 1 : 0;
 
 
@@ -137,18 +212,21 @@ export class PlayersService {
     }
 
     saveAllPlayers() {
-        this.savePlayersToList(this.playerList, 'current');
+        this.savePlayersToList(this.currentPlayerList, 'current');
     }
 
-    public savePlayersToList(playersArr: Player[], listName: string) {
+    public savePlayersArrayToDoc(playersArr: Player[], listName: string): Promise<void> {
         const docPath = 'ratings/' + listName;
         const docRef = this.db.doc(docPath).ref;
         const obj = { players: playersArr };
         console.log('setting data in ' + docPath, obj);
+        return docRef.set(obj, { merge: true });
+    }
 
-        docRef.set(obj, { merge: true })
+    public savePlayersToList(playersArr: Player[], listName: string) {
+        this.savePlayersArrayToDoc(playersArr, listName)
             .then(_ => {
-                const playerInfo = new PlayerChangeInfo(playersArr, 'info', 'Saved players to list ' + docPath);
+                const playerInfo = new PlayerChangeInfo(playersArr, 'info', 'Saved players to list ' + listName);
                 console.log('emitting ', playerInfo);
 
                 this.playerDataChangeEvent.next(playerInfo);
