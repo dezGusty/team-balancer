@@ -2,6 +2,7 @@ import { Component, OnInit, Input, OnDestroy } from '@angular/core';
 import { Player } from 'src/app/shared/player.model';
 import { Observable, Subscription } from 'rxjs';
 import { CustomGame } from 'src/app/shared/custom-game.model';
+import { RatingSystem, RatingSystemSettings } from 'src/app/shared/rating-system';
 
 @Component({
   selector: 'app-match-combos',
@@ -11,6 +12,7 @@ import { CustomGame } from 'src/app/shared/custom-game.model';
 export class MatchCombosComponent implements OnInit, OnDestroy {
   @Input() playerList: Player[];
   @Input() makeTeamsEvent: Observable<void>;
+  @Input() ratingSys: RatingSystem;
   private eventsSubscription: Subscription;
 
   showDetailedSelection = false;
@@ -37,11 +39,11 @@ export class MatchCombosComponent implements OnInit, OnDestroy {
   ngOnInit() {
     console.log('[combos] init');
     this.eventsSubscription = this.makeTeamsEvent.subscribe(
-      () => this.prepareTeams());
+      () => this.prepareTeams(this.ratingSys));
 
     // also do it immediately?
     if (this.playerList.length > 0) {
-      this.prepareTeams();
+      this.prepareTeams(this.ratingSys);
     }
   }
 
@@ -56,19 +58,22 @@ export class MatchCombosComponent implements OnInit, OnDestroy {
     console.log('match selected', data);
   }
 
-  prepareTeams(numberOfCombinationsLimit = 20) {
-    console.log('preparing teams');
+  prepareTeams(ratingSystem: RatingSystem, numberOfCombinationsLimit = 20) {
+    console.log('preparing teams, rating system:', ratingSystem);
 
     // sort the players.
-    this.playerList.sort((a, b) => {
+
+    this.playerList = this.playerList.sort((a, b) => {
       if (a.rating < b.rating) {
-        return -1;
+        return RatingSystemSettings.GetSignMultiplierForWinner(ratingSystem);
       } else if (a.rating === b.rating) {
         return 0;
       }
-      return 1;
+      return RatingSystemSettings.GetSignMultiplierForLoser(ratingSystem);
     });
 
+    console.log('players', this.playerList);
+    
     this.getAllCombinations(this.playerList);
 
     const displayedLength = this.listOfOptions.length > numberOfCombinationsLimit

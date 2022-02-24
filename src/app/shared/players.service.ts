@@ -299,6 +299,10 @@ export class PlayersService {
         this.saveAllPlayers();
     }
 
+    public getCurrentRatingSystem(): RatingSystem {
+        return this.currentRatingSystem;
+    }
+
     public async getRatingHistory(): Promise<Map<string, Player[]>> {
         const ratings = this.db.collection('ratings/');
         const snapshot = await ratings.get();
