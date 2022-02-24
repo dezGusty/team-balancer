@@ -154,6 +154,13 @@ export class AuthService {
         return false;
     }
 
+    public doesRoleContainAdmin(role: UserRoles) {
+        if (role && role.admin) {
+            return role.admin;
+        }
+        return false;
+    }
+
     isAuthenticatedAsOrganizer(): boolean {
         if (!this.cachedUser || !this.cachedUser.roles) {
             const storedValue = this.appStorage.getAppStorageItem('roles');
@@ -166,6 +173,21 @@ export class AuthService {
 
         return this.doesRoleContainOrganizer(this.cachedUser.roles);
     }
+
+    
+    isAuthenticatedAsAdmin(): boolean {
+        if (!this.cachedUser || !this.cachedUser.roles) {
+            const storedValue = this.appStorage.getAppStorageItem('roles');
+            if (!storedValue) {
+                return this.doesRoleContainAdmin(this.cachedUser.roles);
+            }
+            const roles: UserRoles = JSON.parse(storedValue);
+            return this.doesRoleContainAdmin(roles);
+        }
+
+        return this.doesRoleContainAdmin(this.cachedUser.roles);
+    }
+
 
     updateAndCacheUserAfterLogin(authdata: firebase.User) {
         const userData = new User(authdata);

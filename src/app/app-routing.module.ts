@@ -14,6 +14,7 @@ import { RecentMatchesComponent } from './matches/previous-matches/recent-matche
 import { PrevMatchDetailComponent } from './matches/prev-match-detail/prev-match-detail.component';
 import { DraftComponent } from './draft/draft/draft.component';
 import { AdminComponent } from './admin/admin.component';
+import { AdminGuard } from './auth/admin-guard.service';
 
 const appRoutes: Routes = [
     { path: '', redirectTo: '/about', pathMatch: 'full' },
@@ -32,10 +33,10 @@ const appRoutes: Routes = [
     },
     { path: 'draft', canActivate: [AuthGuard], component: DraftComponent },
     {
-        path: 'custom', canActivate: [AuthGuard], component: CustomgameComponent
+        path: 'custom', canActivate: [AuthGuard, OrganizerGuard], component: CustomgameComponent
     },
     { path: 'about', component: AboutComponent },
-    { path: 'admin', canActivate: [AuthGuard], component: AdminComponent },
+    { path: 'admin', canActivate: [AuthGuard, AdminGuard], component: AdminComponent },
     { path: 'signin', component: SigninComponent },
     { path: 'signup', component: SignupComponent }
 ];

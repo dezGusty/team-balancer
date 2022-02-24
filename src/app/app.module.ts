@@ -49,6 +49,7 @@ import { MessagingService } from './shared/messaging.service';
 import { AdminComponent } from './admin/admin.component';
 import { ToastService } from './shared/toasts-service';
 import { ToastsContainer } from './toast/toast-container.component';
+import { AdminGuard } from './auth/admin-guard.service';
 
 // types: opt-out, opt-in, info
 const cookieConfig: NgcCookieConsentConfig = {
@@ -118,6 +119,7 @@ const cookieConfig: NgcCookieConsentConfig = {
     ToastService,
     AuthGuard,
     OrganizerGuard,
+    AdminGuard,
     AppStorage,
     AsyncPipe
   ],

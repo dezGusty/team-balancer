@@ -5,6 +5,7 @@ import { Subscription } from 'rxjs';
 import { DraftService } from 'src/app/shared/draft.service';
 import { Router } from '@angular/router';
 import { ToastService } from 'src/app/shared/toasts-service';
+import { AuthService } from 'src/app/auth/auth.service';
 
 @Component({
   selector: 'app-draft',
@@ -22,6 +23,7 @@ export class DraftComponent implements OnInit, OnDestroy {
   constructor(
     private playersSvc: PlayersService,
     private draftSvc: DraftService,
+    private authSvc: AuthService,
     private router: Router,
     private toastSvc: ToastService) {
   }
@@ -177,5 +179,9 @@ export class DraftComponent implements OnInit, OnDestroy {
   customClipTextToClip(): string {
     this.customClipText = this.getDraftPlainTextFormat();
     return this.customClipText;
+  }
+
+  public canChangePlayersInDraft(): boolean {
+    return this.authSvc.isAuthenticatedAsOrganizer();
   }
 }

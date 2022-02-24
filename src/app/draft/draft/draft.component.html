@@ -1,13 +1,14 @@
 <div class="row justify-content-center">
   <div class="col-6 col-sm-6 col-md-5 col-lg-4 col-xl-3 align-self-center panel-draft-icons">
+
     <button type="button" class="btn btn-outline-gus btn-grad-gusty btn-icon-gus mr-2" ngbTooltip="Save"
-      (click)="onSaveSelectionClicked()">
+      (click)="onSaveSelectionClicked()" *ngIf="canChangePlayersInDraft()">
       <span class="align-self-center"><img src="./../../../assets/save.svg" rel="preload" alt="Save" height="24rem"
           class="btn-clear-all-img"></span>
     </button>
 
     <button type="button" class="btn btn-outline-gus btn-grad-gusty btn-icon-gus mr-2"
-      ngbTooltip="Clear list (does not save)." (click)="onClearListClicked()">
+      ngbTooltip="Clear list (does not save)." (click)="onClearListClicked()" *ngIf="canChangePlayersInDraft()">
       <span class="align-self-center"><img src="./../../../assets/cross.svg" rel="preload" alt="Clear" height="24rem"
           class="btn-clear-all-img"></span>
     </button>
@@ -18,8 +19,9 @@
       <span class="align-self-center"><img src="./../../../assets/copy.svg" rel="preload" alt="Copy-to-clip"
           height="24rem" class="btn-clear-all-img"></span>
     </button>
+
     <button type="button" class="btn btn-outline-gus btn-grad-gusty btn-icon-gus" ngbTooltip="Create match from draft."
-      (click)="onMatchUpClicked()">
+      (click)="onMatchUpClicked()" *ngIf="canChangePlayersInDraft()">
       <span class="align-self-center"><img src="./../../../assets/tshirt2.svg" rel="preload" alt="Match-up"
           height="24rem" class="btn-clear-all-img"></span>
     </button>

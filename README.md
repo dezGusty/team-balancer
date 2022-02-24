@@ -33,6 +33,15 @@ To configure it, look at the files in the environments directory (`environments.
 const deploymentDomain = "localhost";
 ```
 
-# TODO
-- Upgrade firebase to v9
+## TODO
+
+Some of the features to work on
+
+- redesign cards used in draft selection to be more responsive
+  - on larger displays, it should use more real estate
+- redesign player edit card to not be fixed on the right side
+  - could be included in the card once selected
+  - could be a sliding pane for small displays
+- redesign custom game component - does not need player selection, can always start from draft
+  - can add more intuitive player team assignments (E.g. slide left/right)
 - Button loading component
