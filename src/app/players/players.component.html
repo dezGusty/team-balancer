@@ -15,6 +15,7 @@
         <app-player-routed-card
             *ngFor="let playerItem of players | playerFilter: searchedName; let even = even; let odd = odd"
             [player]="playerItem" [id]="playerItem.id" [ngClass]="{ odd: odd, even: even }">
+            (playerSelected)="onPlayerSelected($event)"
         </app-player-routed-card>
 
     </div>

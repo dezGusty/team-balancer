@@ -6,16 +6,20 @@ import { AuthService } from '../auth/auth.service';
 import { CustomPrevGame } from './custom-prev-game.model';
 import { AppStorage } from './app-storage';
 import firebase from 'firebase/compat/app';
+import { onValue, getDatabase, child, ref, get } from "firebase/database";
+
 import { map } from 'rxjs/operators';
 import { RatingSystem, RatingSystemSettings } from './rating-system';
 import { PlayerChangeInfo } from './player-changed-info';
 import { TemplateLiteral } from '@angular/compiler';
+import { RatingHist } from './rating-hist.model';
 
 /**
  * Stores and retrieves player related information.
  */
 @Injectable()
 export class PlayersService {
+
     private dataChangeSubscriptions: Subscription[] = [];
     private currentRatingSystem: RatingSystem;
     private currentLabel: string;
@@ -119,7 +123,7 @@ export class PlayersService {
     }
 
     movePlayerToArchive(player: Player) {
-        console.log('[playerscv] archiving player');
+        console.log('[playerscv] archiving player', player);
 
         // remove the element from the current player array
         const tempPlayerList = this.currentPlayerList.filter(x => x != player);
@@ -147,10 +151,10 @@ export class PlayersService {
     }
 
     pullPlayerFromArchive(player: Player) {
-        console.log('[playerscv] unarchiving player');
+        console.log('[playerscv] unarchiving player', player);
 
         // remove the element from the current player array
-        const tempPlayerList = this.archivedPlayerList.filter(x => x === player);
+        const tempPlayerList = this.archivedPlayerList.filter(x => x != player);
         if (tempPlayerList.length === this.archivedPlayerList.length) {
             // we should have removed an entry.
             // this should not happen!
@@ -159,11 +163,12 @@ export class PlayersService {
 
         // ensure that the player is available in the current list
         this.currentPlayerList.push(player);
+        this.archivedPlayerList = tempPlayerList;
 
-        this.savePlayersArrayToDoc(this.currentPlayerList, 'ratings/current').then(_ => {
+        this.savePlayersArrayToDoc(this.currentPlayerList, 'current').then(_ => {
             // successfully saved archive.
             // can now also save the regular player list: we won't lose a player, at worst a duplicate
-            this.savePlayersArrayToDoc(this.archivedPlayerList, 'ratings/current').then(_ => {
+            this.savePlayersArrayToDoc(this.archivedPlayerList, 'archive').then(_ => {
                 const playerInfo = new PlayerChangeInfo(this.archivedPlayerList, 'info', `moved player ${player.name} to current.`);
 
                 this.playerDataChangeEvent.next(playerInfo);
@@ -171,8 +176,15 @@ export class PlayersService {
         });
     }
 
-    getPlayerById(id: number) {
-        return this.currentPlayerList.find(
+    getPlayerById(id: number): Player {
+        const searchedPlayer: Player = this.currentPlayerList.find(
+            item => item.id === id);
+
+        if (null != searchedPlayer) {
+            return searchedPlayer;
+        }
+
+        return this.archivedPlayerList.find(
             item => item.id === id);
     }
 
@@ -303,15 +315,19 @@ export class PlayersService {
         return this.currentRatingSystem;
     }
 
-    public async getRatingHistory(): Promise<Map<string, Player[]>> {
+    public async getRatingHistory(): Promise<Map<string, RatingHist>> {
         const ratings = this.db.collection('ratings/');
         const snapshot = await ratings.get();
 
-        let history = new Map<string, Player[]>();
+        let history = new Map<string, RatingHist>();
         snapshot.forEach(doc => {
             doc.docs.forEach(test => {
                 if (test.id !== 'current') {
-                    history.set(test.id, test.data() as Player[]);
+                    const histItem: RatingHist = new RatingHist();
+                    const data: any = test.data();
+                    histItem.players = data.players as Player[];
+                    histItem.ratingSystem = data.ratingSystem as RatingSystem;
+                    history.set(test.id, histItem);
                 }
             });
         });
@@ -375,44 +391,66 @@ export class PlayersService {
         }
 
         return playersCpy.map(player => this.updateIndividualRatingForGame(player, winners, losers, difference, ratingSystem));
+    }
 
-        // // TODO: separate to subfunction, use RatingSystemSettings 
-        // switch (ratingSystem) {
-        //     case 1:
-        //         return playersCpy.map(player => {
-        //             // if the game contains the player name in the winner list
-        //             // or the loser list modify the rating.
-        //             // otherwise, just leave it as it is.
-        //             if (winners.includes(player.name)) {
-        //                 // improve rating (lower numerical value)
-        //                 player.rating -= player.rating * (0.02 + difference * 0.002);
-        //                 return player;
-        //             } else if (losers.includes(player.name)) {
-        //                 // worsen rating (higher numerical value)
-        //                 player.rating += player.rating * (0.02 + difference * 0.002);
-        //                 return player;
-        //             } else {
-        //                 return player;
-        //             }
-        //         });
-        //     case 2:
-        //         return playersCpy.map(player => {
-        //             if (winners.includes(player.name)) {
-        //                 player.rating += player.rating * (0.02 + difference * 0.002);
-        //                 if (player.rating > 10) {
-        //                     player.rating = 10;
-        //                 }
-        //                 return player;
-        //             } else if (losers.includes(player.name)) {
-        //                 player.rating -= player.rating * (0.02 + difference * 0.002);
-        //                 if (player.rating < 1) {
-        //                     player.rating = 1;
-        //                 }
-        //                 return player;
-        //             } else {
-        //                 return player;
-        //             }
-        //         });
-        // }
+    async getPlayersFromHist(documentName: string): Promise<Player[]> {
+        // const ratingsDoc = this.db.doc('ratings/' + documentName).get();
+        // const ratingsRef = ref(this.db, 'ratings/' + documentName)
+
+        // const dbRef = ref(getDatabase());
+
+        // const db = getDatabase();
+        let players: Player[];
+
+        const dbRef = ref(getDatabase());
+        get(child(dbRef, 'ratings/' + documentName)).then((snapshot) => {
+            if (snapshot.exists()) {
+                console.log(snapshot.val());
+                players = snapshot.val();
+            } else {
+                console.log("No data available");
+            }
+        }).catch((error) => {
+            console.error(error);
+        });
+        return players;
+        // const ratingsDoc = get(child(dbRef, 'ratings/' + documentName)).then((snapshot) => {
+        //     if (snapshot.exists()) {
+        //       console.log(snapshot.val());
+        //     } else {
+        //       console.log("No data available");
+        //     }
+        //   }).catch((error) => {
+        //     console.error(error);
+        //   });
+
+        // return this.db.doc('ratings/current').get().pipe(
+        //     map(currentDoc => {
+        //         return currentDoc.data();
+        //     })
+        // );
+
+        // const mydata = await ratingsDoc.pipe(
+        //     map(doc => doc.data())
+        // );
+
+        // return mydata;
+        // (playerListDoc => {
+        //     console.log('[players] current ratings watcher notified');
+
+        //     if (!playerListDoc.exists) {
+        //         this.playerDataChangeEvent.next(new PlayerChangeInfo(null, 'error', 'Could not connect to DB'));
+        //         return;
+        //     }
+
+        //     const playersArray: Player[] = playerListDoc.get('players');
+        //     this.currentRatingSystem = playerListDoc.get('ratingSystem');
+        //     this.currentLabel = playerListDoc.get('label');
+        //     this.currentPlayerList = playersArray;
+        //     this.appStorage.setAppStorageItem('players', JSON.stringify(this.currentPlayerList));
+        //     this.playerDataChangeEvent.next(new PlayerChangeInfo(this.currentPlayerList, 'info', 'Players loaded'));
+        // }));
+
+
     }
 }

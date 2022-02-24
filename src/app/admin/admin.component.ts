@@ -10,6 +10,7 @@ import { RatingScaler } from '../shared/rating-scaler';
 import { RatingSystem, RatingSystemSettings } from '../shared/rating-system';
 import { ToastService } from '../shared/toasts-service';
 import { getMessaging, getToken } from "firebase/messaging";
+import { RatingHist } from '../shared/rating-hist.model';
 @Component({
   selector: 'app-admin',
   templateUrl: './admin.component.html',
@@ -19,13 +20,14 @@ export class AdminComponent implements OnInit, OnDestroy {
 
   players: Player[];
   matchHistory: Map<string, CustomPrevGame>;
-  ratingHistory: Map<string, Player[]>;
+  ratingHistory: Map<string, RatingHist>;
   ratingSystems = [];
   ratingChosen: any;
   loadingConvert = -1;
   newBranchName: "";
   newRatingScale: RatingSystem;
   oldRatingScale: RatingSystem;
+  private selectedRatingSystem: RatingSystem;
 
   private subscriptions: Subscription[] = [];
 
@@ -114,8 +116,15 @@ export class AdminComponent implements OnInit, OnDestroy {
 
   changeAction(obj) {
     this.ratingChosen = obj;
-    console.log("Chosen rating:");
-    console.log(this.ratingChosen);
+    console.log('Chosen rating key', this.ratingChosen.key);
+    const data: RatingHist = this.ratingHistory.get(this.ratingChosen.key);
+    this.players = data.players;
+    console.log('players', this.players);
+    this.selectedRatingSystem = data.ratingSystem;
+    if (this.selectedRatingSystem == null) {
+      this.selectedRatingSystem = RatingSystem.German;
+    }
+    console.log('selectedRatingSystem', this.selectedRatingSystem);
   }
 
   changeRatingDropdown(obj: string) {
@@ -131,16 +140,18 @@ export class AdminComponent implements OnInit, OnDestroy {
       branchToEdit = branchToEdit.slice(0, 10) + '_' + this.newBranchName;
     }
 
-    let oldRatingSystem = this.ratingChosen?.value?.ratingScale;
-    if (null == oldRatingSystem) {
-      console.log('No rating system defined for selection; using default');
-      oldRatingSystem = RatingSystem.German;
-    }
+    console.log('xxx', this.ratingChosen);
+    // let oldRatingSystem = this.ratingChosen?.value?.ratingScale;
+    // if (null == oldRatingSystem) {
+    //   console.log('No rating system defined for selection; using default');
+    //   oldRatingSystem = RatingSystem.German;
+    // }
 
     const oldPlayerList: Player[] = this.ratingChosen.value.players;
 
     // Perform a backup of the old ratings.
     this.playersSvc.savePlayersToList(oldPlayerList, branchToEdit + '_bck');
+    this.playersSvc.addFieldValueToDocument('ratingSystem', this.selectedRatingSystem, branchToEdit + '_bck');
 
     const oldMinRating = Math.min(...oldPlayerList.map(x => x.rating)).toFixed(2);
     const oldMaxRating = Math.max(...oldPlayerList.map(x => x.rating)).toFixed(2);
@@ -149,12 +160,12 @@ export class AdminComponent implements OnInit, OnDestroy {
       oldPlayerList,
       RatingSystemSettings.GetExpectedLowerEndRating(this.newRatingScale),
       RatingSystemSettings.GetExpectedUpperEndRating(this.newRatingScale),
-      this.newRatingScale !== oldRatingSystem);
+      this.newRatingScale !== this.selectedRatingSystem);
     const newMinRating = Math.min(...scaledPlayers.map(x => x.rating)).toFixed(2);
     const newMaxRating = Math.max(...scaledPlayers.map(x => x.rating)).toFixed(2);
 
     let messageToShow: string = 'Rating systems: \n'
-      + 'old: ' + RatingSystem[oldRatingSystem] + ' (' + oldMinRating + '-' + oldMaxRating + ')\n'
+      + 'old: ' + RatingSystem[this.selectedRatingSystem] + ' (' + oldMinRating + '-' + oldMaxRating + ')\n'
       + 'new:' + RatingSystem[this.newRatingScale] + ' (' + newMinRating + '-' + newMaxRating + ')';
 
     this.toastSvc.show(messageToShow, { delay: 7500 });
@@ -224,7 +235,7 @@ export class AdminComponent implements OnInit, OnDestroy {
     // // Get registration token. Initially this makes a network call, once retrieved
     // // subsequent calls to getToken will return from cache.
     // const messaging = getMessaging();
-    
+
     // messaging.send(payload)
     // // fadmin.app.messaging().send(payload)
     //   .then((response) => {

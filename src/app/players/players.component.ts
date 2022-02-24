@@ -9,6 +9,7 @@ import { CustomPrevGame } from '../shared/custom-prev-game.model';
 import { RatingSystem } from '../shared/rating-system';
 import { ToastService } from '../shared/toasts-service';
 import { PlayerChangeInfo } from '../shared/player-changed-info';
+import { RatingHist } from '../shared/rating-hist.model';
 
 @Component({
   selector: 'app-players',
@@ -27,7 +28,7 @@ export class PlayersComponent implements OnInit, OnDestroy {
   searchedName = '';
   loadingConvert = -1;
 
-  ratingHistory: Map<string, Player[]>;
+  ratingHistory: Map<string, RatingHist>;
   matchHistory: Map<string, CustomPrevGame>;
   ratingScale: RatingSystem;
 
@@ -93,5 +94,10 @@ export class PlayersComponent implements OnInit, OnDestroy {
   onCheckReload($event) {
     this.loadArchive = !this.loadArchive;
     this.players = this.playersSvc.getPlayers(this.loadArchive);
+  }
+
+  onPlayerSelected($event){
+    console.log('on player selected');
+    
   }
 }
