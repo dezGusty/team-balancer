@@ -3,5 +3,24 @@
 }
 
 .gus-list {
-  padding: 0.5em 1em;
+  padding: 0.5em 0.1em;
+  list-style: none;
+}
+
+.gus-list-item::before {
+  content: "👨";
+}
+
+.gus-list-item-name {
+  font-weight: 700;
+}
+
+.gus-list-item-rating {
+  padding-left: 0.3em;
+  color: var(--standard-secondary-text-color);
+}
+
+.gus-list-item-diff {
+  padding-left: 0.3em;
+  font-style: italic;
 }

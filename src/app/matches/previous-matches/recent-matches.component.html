@@ -1,12 +1,12 @@
 <div class="row justify-content-center">
   <!-- show the list of players on the left side -->
-  <div class="col-3 col-sm-3 col-md-3 col-lg-2 left-player-list">
+  <div class="col-2 col-sm-3 col-md-3 col-lg-2 left-player-list">
     <!-- <app-loading-spinner *ngIf="showSpinner"></app-loading-spinner> -->
     <!-- <ul *ngIf="!showSpinner"> -->
     <ul>
       <li
         *ngFor="
-          let match of this.getRecentMatchNames();
+          let match of this.getRecentMatchDescriptions();
           let idx = index;
           let even = even;
           let odd = odd
@@ -22,7 +22,7 @@
     </ul>
   </div>
   <!-- show the details panel on the right side -->
-  <div class="col-9 col-sm-9 col-md-7 col-lg-6 right-player-list">
+  <div class="col-10 col-sm-9 col-md-7 col-lg-6 right-player-list">
     <router-outlet></router-outlet>
   </div>
 </div>

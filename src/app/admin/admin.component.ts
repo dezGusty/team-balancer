@@ -86,7 +86,7 @@ export class AdminComponent implements OnInit, OnDestroy {
       this.matchesSvc.getMatchForDateAsync(matchName).subscribe((customGame: CustomPrevGame) => {
 
         if (customGame.appliedResults) {
-          const newPlayers = this.playersSvc.updateRatingsForGame(
+          const newPlayers = this.playersSvc.getAllPlayersUpdatedRatingsForGame(
             this.playersSvc.getPlayers(), customGame
           );
 

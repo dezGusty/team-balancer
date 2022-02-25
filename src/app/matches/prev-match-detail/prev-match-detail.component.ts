@@ -85,6 +85,14 @@ export class PrevMatchDetailComponent implements OnInit, OnDestroy {
     return getDisplayName(player);
   }
 
+  getInitialRatingForPlayer(player: Player): string {
+    return player.rating.toFixed(3);
+  }
+
+  getPostMatchDiffForPlayer(player: Player): string {
+    return "~ 0.0";
+  }
+
   onMatchSaveCliked() {
 
   }
@@ -113,9 +121,11 @@ export class PrevMatchDetailComponent implements OnInit, OnDestroy {
       }
     }
 
-    const newPlayers = this.playersSvc.updateRatingsForGame(
+    const newPlayers = this.playersSvc.getAllPlayersUpdatedRatingsForGame(
       this.playersSvc.getPlayers(), this.customGame, version
     );
+
+    //TODO:XXX:also get the difference ?
 
     // Store the 'old' ratings under a different entry.
     if(!currentMatch || !currentMatch.label) {

@@ -21,6 +21,8 @@ export class RecentMatchesComponent implements OnInit, OnDestroy {
   // public showSpinner = true;
   public selectedIndex = -1;
   private recentMatchNames: string[] = [];
+  private recentMatchDescriptions: string[] = [];
+
 
   private recentAsyncMatches: Observable<string[]>;
 
@@ -29,20 +31,38 @@ export class RecentMatchesComponent implements OnInit, OnDestroy {
     return this.recentMatchNames;
   }
 
+  public getRecentMatchDescriptions(): string[] {
+    return this.recentMatchDescriptions;
+  }
+
+  /**
+   * Retrieves the display name / text for a match name.
+   * @param matchName The name of the match-name / document id
+   */
+  public getDisplayTextForMatch(matchName: string): string {
+    // THe name of the match should be the date in iso format
+    // E.g. 2022-12-01
+    let result = matchName;
+    result = result.split('-').join(' ');
+
+    return result;
+  }
+
   ngOnInit() {
     console.log('ngOnInit');
-    // this.showSpinner = true;
-    this.recentMatchNames = [...this.matchSvc.getRecentMatchListCached()];
-    console.log('matches:', this.recentMatchNames);
+
+    let localMatchList: string[] = [...this.matchSvc.getRecentMatchListCached()];
+    this.recentMatchNames = localMatchList;
+    this.recentMatchDescriptions = this.recentMatchNames.map(x => this.getDisplayTextForMatch(x))
 
     // TODO:Add to subscriptions list and release
     this.recentAsyncMatches = this.matchSvc.getRecentMatchListAsync();
     // TODO: make sure that it's possible to receive event after reentering component
     this.subscription = this.recentAsyncMatches.subscribe((matchNames: string[]) => {
+      this.recentMatchNames = [...matchNames];;
+      this.recentMatchDescriptions = this.recentMatchNames.map(x => this.getDisplayTextForMatch(x))
 
-      this.recentMatchNames = [...matchNames];
       this.selectedIndex = -1;
-      // this.showSpinner = false;
 
       // TODO: show current selection.
     });
@@ -59,7 +79,9 @@ export class RecentMatchesComponent implements OnInit, OnDestroy {
     return this.recentMatchNames[index];
   }
   onMatchEntryClicked($event) {
+
     this.selectedIndex = +$event;
+    console.log('match entry clicked, this.selectedIndex', this.selectedIndex);
   }
 
 }

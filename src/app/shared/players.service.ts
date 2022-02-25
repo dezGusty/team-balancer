@@ -341,9 +341,9 @@ export class PlayersService {
      * @param losers  The losing team
      * @param difference The difference in goals
      * @param ratingSystem The used rating system
-     * @returns 
+     * @returns A player obect
      */
-    private updateIndividualRatingForGame(
+    private getPlayerWithUpdatedRatingForGame(
         player: Player,
         winners: string[],
         losers: string[],
@@ -369,7 +369,14 @@ export class PlayersService {
         return player;
     }
 
-    public updateRatingsForGame(players: Player[], game: CustomPrevGame, ratingSystem: RatingSystem = RatingSystem.German): Player[] {
+    /**
+     * Obtains an updated list of all players after a game.
+     * @param players The full list of players
+     * @param game The game based on the result of which the ratings will be updated.
+     * @param ratingSystem The rating system to use.
+     * @returns The updated full list of players (new copy)
+     */
+    public getAllPlayersUpdatedRatingsForGame(players: Player[], game: CustomPrevGame, ratingSystem: RatingSystem = RatingSystem.German): Player[] {
         if (game.scoreTeam1 == null || game.scoreTeam2 == null
             || game.scoreTeam1 === game.scoreTeam2) {
             // nothing to do
@@ -390,7 +397,7 @@ export class PlayersService {
             winners = game.team2.map((player) => player.name);
         }
 
-        return playersCpy.map(player => this.updateIndividualRatingForGame(player, winners, losers, difference, ratingSystem));
+        return playersCpy.map(player => this.getPlayerWithUpdatedRatingForGame(player, winners, losers, difference, ratingSystem));
     }
 
     async getPlayersFromHist(documentName: string): Promise<Player[]> {

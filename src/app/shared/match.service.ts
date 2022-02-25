@@ -63,7 +63,6 @@ export class MatchService {
                 const castedItem = recentMatchesDocContents as { items: string[] };
                 this.recentMatchNames = [...castedItem.items];
                 this.recentMatchesChangeEvent.emit(this.recentMatchNames);
-                console.log('xxx', this.recentMatchNames);
             },
             error => console.log('some error encountered', error),
             () => { console.log('[match-svc]complete'); },

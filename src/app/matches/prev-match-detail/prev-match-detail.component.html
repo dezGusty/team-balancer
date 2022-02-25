@@ -8,16 +8,22 @@
       <div class="col-6 border-right">
         Team one
         <ul class="gus-list">
-          <li *ngFor="let leftItem of this.extractedTeam1">
-            {{ this.getDisplayNameForPlayer(leftItem) }}
+          <li class="gus-list-item" *ngFor="let leftItem of this.extractedTeam1">
+            <span class="gus-list-item-name">{{ this.getDisplayNameForPlayer(leftItem) }}</span>
+            <br>
+            <span class = "gus-list-item-rating">{{ this.getInitialRatingForPlayer(leftItem) }}</span>
+            <span class = "gus-list-item-diff">{{ this.getPostMatchDiffForPlayer(leftItem) }}</span>
           </li>
         </ul>
       </div>
       <div class="col-6">
         Team two
         <ul class="gus-list">
-          <li *ngFor="let rightItem of this.extractedTeam2">
-            {{ this.getDisplayNameForPlayer(rightItem) }}
+          <li class="gus-list-item" *ngFor="let rightItem of this.extractedTeam2">
+            <span class="gus-list-item-name">{{ this.getDisplayNameForPlayer(rightItem) }}</span>
+            <br>
+            <span class = "gus-list-item-rating">{{ this.getInitialRatingForPlayer(rightItem) }}</span>
+            <span class = "gus-list-item-diff">{{ this.getPostMatchDiffForPlayer(rightItem) }}</span>
           </li>
         </ul>
       </div>
