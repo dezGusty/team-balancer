@@ -147,6 +147,13 @@ export class AuthService {
         return result;
     }
 
+    public doesRoleContainUser(role: UserRoles) {
+        if (role && role.standard) {
+            return role.standard;
+        }
+        return false;
+    }
+
     public doesRoleContainOrganizer(role: UserRoles) {
         if (role && role.organizer) {
             return role.organizer;
@@ -159,6 +166,19 @@ export class AuthService {
             return role.admin;
         }
         return false;
+    }
+
+    isAuthenticatedAsUser(): boolean {
+        if (!this.cachedUser || !this.cachedUser.roles) {
+            const storedValue = this.appStorage.getAppStorageItem('roles');
+            if (!storedValue) {
+                return this.doesRoleContainUser(this.cachedUser.roles);
+            }
+            const roles: UserRoles = JSON.parse(storedValue);
+            return this.doesRoleContainUser(roles);
+        }
+
+        return this.doesRoleContainUser(this.cachedUser.roles);
     }
 
     isAuthenticatedAsOrganizer(): boolean {

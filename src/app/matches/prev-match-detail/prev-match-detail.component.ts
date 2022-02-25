@@ -6,6 +6,7 @@ import { CustomPrevGame } from '../../shared/custom-prev-game.model';
 import { Subscription } from 'rxjs';
 import { PlayersService } from 'src/app/shared/players.service';
 import { update } from 'firebase/database';
+import { AuthService } from 'src/app/auth/auth.service';
 
 @Component({
   selector: 'app-prev-match-detail',
@@ -33,7 +34,8 @@ export class PrevMatchDetailComponent implements OnInit, OnDestroy {
   constructor(
     private route: ActivatedRoute,
     private matchSvc: MatchService,
-    private playersSvc: PlayersService) { }
+    private playersSvc: PlayersService,
+    private authSvc: AuthService) { }
 
   ngOnInit() {
     this.subscriptions.push(this.route.params.subscribe(
@@ -104,10 +106,14 @@ export class PrevMatchDetailComponent implements OnInit, OnDestroy {
   }
 
   onMatchSaveCliked() {
-
+    // handle elsewhere
   }
 
   onStoreResultClick() {
+    if (!this.authSvc.isAuthenticatedAsOrganizer()) {
+      return;
+    }
+
     this.customGame.scoreTeam1 = this.team1Score;
     this.customGame.scoreTeam2 = this.team2Score;
     this.matchSvc.saveCustomPrevMatch(this.matchSearchKey, this.customGame);
@@ -146,6 +152,10 @@ export class PrevMatchDetailComponent implements OnInit, OnDestroy {
    *    'ratings/current'
    */
   async onUpdateRatingsClick() {
+    if (!this.authSvc.isAuthenticatedAsOrganizer()) {
+      return;
+    }
+
     let currentMatch = await this.playersSvc.getCurrentRatings().toPromise();
     let ratingSystem = 1;
     if (currentMatch) {
@@ -192,5 +202,13 @@ export class PrevMatchDetailComponent implements OnInit, OnDestroy {
     this.customGame.appliedResults = true;
     this.matchResultsAppliedToRatings = true;
     this.matchSvc.saveCustomPrevMatch(this.matchSearchKey, this.customGame);
+  }
+
+  public canShowStoreResultsButton(): boolean {
+    return !this.matchResultsStored && this.authSvc.isAuthenticatedAsOrganizer();
+  }
+
+  public canShowApplyResultsButton(): boolean {
+    return !this.matchResultsAppliedToRatings && this.authSvc.isAuthenticatedAsOrganizer();
   }
 }

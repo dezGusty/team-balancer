@@ -17,13 +17,13 @@ export class AuthGuard implements CanActivate {
 
     canActivate(route: ActivatedRouteSnapshot, state: RouterStateSnapshot):
         Observable<boolean> | Promise<boolean> | boolean {
-        if (this.authSvc.isAuthenticated()) {
+        if (this.authSvc.isAuthenticated() && this.authSvc.isAuthenticatedAsUser()) {
             return true;
         } else {
             console.log('[guard] navigating to root');
 
             this.router.navigate(['/']);
         }
-        return this.authSvc.isAuthenticated();
+        return this.authSvc.isAuthenticated() && this.authSvc.isAuthenticatedAsUser();
     }
 }

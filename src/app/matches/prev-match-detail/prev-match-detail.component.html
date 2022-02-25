@@ -35,19 +35,19 @@
     <div class="row">
       <div class="col-6 border-right">
         <input type="number" class="form-control" name="team1Score" id="team1Score" [(ngModel)]="this.team1Score"
-          #team1ScoreEntry="ngModel">
+          #team1ScoreEntry="ngModel" [attr.disabled]="this.matchResultsStored">
       </div>
       <div class="col-6">
         <input type="number" class="form-control" name="team2Score" id="team2Score" [(ngModel)]="this.team2Score"
-          #team2ScoreEntry="ngModel">
+          #team2ScoreEntry="ngModel" [attr.disabled]="this.matchResultsStored">
       </div>
     </div>
 
     <div class="row mt-2">
-      <button *ngIf='!this.matchResultsStored' class="btn btn-sm btn-outline-gus btn-grad-gusty ml-2"
+      <button *ngIf='canShowStoreResultsButton()' class="btn btn-sm btn-outline-gus btn-grad-gusty ml-2"
         (click)="onStoreResultClick()">Store
         Result</button>
-      <button *ngIf='!this.matchResultsAppliedToRatings' class="btn btn-sm btn-outline-gus btn-grad-gusty ml-2"
+      <button *ngIf='canShowApplyResultsButton()' class="btn btn-sm btn-outline-gus btn-grad-gusty ml-2"
         (click)="onUpdateRatingsClick()">Update ratings</button>
     </div>
   </div>

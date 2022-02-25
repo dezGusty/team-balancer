@@ -14,6 +14,6 @@ export class User {
     constructor(authData: { email: string, photoURL: string }) {
         this.email = authData.email;
         this.photoURL = authData.photoURL;
-        this.roles = { standard: true };
+        this.roles = { standard: false };
     }
 }

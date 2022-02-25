@@ -27,7 +27,7 @@ const appRoutes: Routes = [
         ]
     },
     {
-        path: 'recent', canActivate: [AuthGuard, OrganizerGuard], component: RecentMatchesComponent, children: [
+        path: 'recent', canActivate: [AuthGuard], component: RecentMatchesComponent, children: [
             { path: ':id', component: PrevMatchDetailComponent }
         ]
     },
