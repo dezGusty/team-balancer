@@ -15,22 +15,26 @@
     );
     --gus-panel-alt-bck: linear-gradient(
       135deg,
-      #8a2be2 0%,
-      #8a2be2 67%,
-      rgb(181, 55, 242) 95%,
+      #6322a0 0%,
+      #3d225a 67%,
       #120052 100%
     );
-    --gus-panel-text: #fda;
+    --gus-panel-text: #f3e5d0;
     --gus-contrast-panel-bck: rgb(2, 12, 27);
     --gus-contrast-panel-alt-bck: #994b0b3d;
-    --gus-secondary-bck: rgb(28, 29, 28);
+    --gus-secondary-bck: #002b3b;
+    --gus-secondary-grad: linear-gradient(
+      135deg,
+      #180269 0%,
+      #0e0f1d 100%
+    );
     --gus-secondary-text: rgb(230, 147, 109);
   }
 }
 
 @media (prefers-color-scheme: light) {
   :root {
-    --btn-active-color: #4a1a77;
+    --btn-active-color: #732db6;
     --btn-back-color: #120052;
     --standard-bck-color: #ffffff;
     --standard-text-color: #000;
@@ -44,15 +48,19 @@
     );
     --gus-panel-alt-bck: linear-gradient(
       135deg,
-      #8a2be2 0%,
+      #9a2bd1 0%,
       #8a2be2 67%,
-      rgb(181, 55, 242) 95%,
-      #120052 100%
+      #520997 100%
     );
     --gus-panel-text: #fff;
     --gus-contrast-panel-bck: #fff;
     --gus-contrast-panel-alt-bck: #362b2b08;
     --gus-secondary-bck: #ddd;
+    --gus-secondary-grad: linear-gradient(
+      135deg,
+      #ffffff 0%,
+      #e7f7ff 100%
+    );
     --gus-secondary-text: #345;
   }
 }
@@ -67,15 +75,22 @@ body {
   color: var(--standard-text-color);
 }
 
+.gus-search-box {
+  padding: 0.5rem;
+}
+
+/* .player-card-shirt {
+  background-color: #2bb7e2;
+  grid-column-start: 1;
+  grid-column-end: 2;
+  grid-row-start: 1;
+  grid-row-end: 3;
+} */
+
 /* You can add global styles to this file, and also import other style files */
 .player-card {
   cursor: pointer;
-  margin: 0.2rem 0 0.2rem 0;
-  /* padding: 0.2rem; */
-}
-
-.gus-search-box {
-  padding: 0.5rem;
+  margin: 0;
 }
 
 .player-card-rating {
@@ -99,28 +114,51 @@ body {
 .player-card-container {
   position: relative;
   align-content: center;
+  border-color: var(--gus-secondary-bck);
+  background: var(--gus-secondary-grad);
+  color: var(--standard-text-color);
+  border-style: solid;
+  border-radius: 0.3rem;
+  border-width: 0.1rem;
+  margin: 0.25rem 0;
+  /* display: grid;
+  grid-template-columns: 1fr 1fr 1fr 1fr;
+  grid-template-rows: 1fr 1fr 1fr; */
+  box-shadow: 0 10px 20px rgba(0, 0, 0, 0.19), 0 6px 6px rgba(0, 0, 0, 0.23);
+}
+
+.player-card-container:hover {
+  background: var(--gus-panel-alt-bck);
+  color: var(--gus-panel-text);
+}
+
+a.player-card-container:hover {
+  /* color: white; */
+}
+
+.player-card-grad {
+  /* border-color: var(--btn-active-color);
+  background: var(--standard-bck-color);
+  color: var(--standard-text-color); */
+}
+
+.player-card-grad:hover {
+  /* background: var(--gus-panel-alt-bck);
+  color: var(--gus-panel-text); */
+}
+
+a.player-card-grad {
+  text-decoration: none;
+}
+
+a.player-card-grad:hover {
+  color: white;
 }
 
 .player-card-img {
   display: inline-block;
   width: 100%;
   padding-left: 0.75rem;
-}
-
-.player-card-shirt {
-  display: inline-block;
-  /* color: #dae0e8; */
-  color: #f00;
-  font-size: large;
-  font-weight: 600;
-  text-align: left;
-  position: absolute;
-  padding-left: 0.75rem;
-  top: 30%;
-  left: 50%;
-  /* transform: translate(-50%, -50%); */
-  transform: skew(15deg);
-  width: 100%;
 }
 
 .square {
@@ -134,27 +172,19 @@ body {
 }
 
 .player-card-tv {
+  color: #2bb7e2;
   background-image: url("assets/tshirt.svg");
   background-repeat: no-repeat;
   background-size: 4rem;
   background-position: right top;
-  background-clip: border-box;
+  /* background-clip: border-box; */
+  border-top-left-radius: inherit;
 
-  /* background-image:
-    linear-gradient(black, #000000dd),
-    url("assets/tshirt.svg"); */
-  background-blend-mode: saturation;
-
-  border-radius: 0.3rem;
-  /* border-style: solid; */
-  /* border-color: var(--btn-active-color, black); */
   color: #fda;
-  /* filter: grayscale(100%); */
   font-size: large;
   font-weight: 600;
   padding-left: 0.1rem;
   text-align: center;
-  /* transform: skew(175deg); */
 }
 
 .player-card-panel {
@@ -241,7 +271,7 @@ body {
 }
 
 .btn-outline-gus {
-  border-color: #8a2be2;
+  border-color: var(--btn-active-color);
   border-width: 1px;
   color: var(--standard-text-color);
 }
@@ -271,21 +301,6 @@ body {
   100% {
     background-position: 0% 50%;
   }
-}
-
-.player-card-grad {
-  border-color: var(--btn-active-color);
-  background: var(--standard-bck-color);
-  color: var(--standard-text-color);
-}
-
-.player-card-grad:hover {
-  background: var(--gus-panel-alt-bck);
-  color: var(--gus-panel-text);
-}
-
-a.player-card-grad:hover {
-  color: white;
 }
 
 .left-player-list {

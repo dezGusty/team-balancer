@@ -1,5 +1,5 @@
 <ul class="list-group">
-  <li class="list-group-item list-group-item-action clearfix"
+  <li class="player-card"
     *ngFor="let gameOption of this.displayedMatchCombos; let i = index">
     <div style="cursor: pointer" (click)="onGameOptionSelected(gameOption, i);">
       <span class="game-option-index"># {{i+1}}</span>

@@ -1,25 +1,10 @@
-<!-- <div class="turbo-card">
-  <div class="turbo-card-pic">
-    {{ player.id }}
-  </div>
-  <div class="turbo-card-displayname">
-    {{ playerDisplayName() }}
-  </div>
-  <span class="turbo-card-fullname">
-    {{ player.name }}
-  </span>
-  <span class="turbo-card-rating">
-    {{ player.rating | number:'1.1-2' }}
-  </span>
-</div> -->
-
 <div class="row player-card-container">
-  <p class="col-3 col-sm-2 player-card-tv square">{{ player.id }}</p>
-  <!-- <div class="col-3 col-sm-2 player-card-panel player-card-tv">
-    <img src="assets/tshirt.svg" alt="pic here" class="player-card-img" >
-    <span class="player-card-shirt">{{ player.id }}</span>
+  <!-- <div class="player-card-shirt">
+    <img src="assets/tshirt.svg" alt="">
   </div> -->
+  <p class="col-3 col-sm-2 player-card-tv square">{{ player.id }}</p>
   <span class="col-auto col-9 col-sm-10 align-self-start player-card-panel">
+
     <div class="player-card-name">
       {{ playerDisplayName() }}
     </div>
@@ -32,31 +17,3 @@
   </span>
   <div></div>
 </div>
-
-<!-- <div class="card">
-  <div class="row">
-    <div class="col-3">
-      <img src="assets/tshirt.svg" alt="pic here" class="img-fluid" height="32em">
-    </div>
-    <div class="col">
-      {{ playerDisplayName() }}
-    </div>
-    <div class="col">
-      {{ player.name }}
-    </div>
-    <div class="col">
-      {{ player.rating | number:'1.1-2' }}
-    </div>
-  </div>
-</div> -->
-<!-- <span class="col-3 player-card-shirt">{{ player.id }}</span>
-<span class="col-auto col-9 align-self-start player-card-name">
-  {{ playerDisplayName() }}
-</span>
-<br>
-<span class="col-auto col-9 offset-3 player-card-internalid">
-  {{ player.name }}
-</span>
-<span class="col-3 float-right">
-  {{ player.rating | number:'1.1-2' }}
-</span> -->
