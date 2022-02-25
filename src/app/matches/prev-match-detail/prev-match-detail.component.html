@@ -3,27 +3,30 @@
   <div *ngIf="!showSpinner">
     <div class="row">
       <div class="col-12">
-        Date: {{matchSearchKey}}
+        Date 🗓️: {{matchSearchKey}}
       </div>
       <div class="col-6 border-right">
-        Team one
+        Team one 1️⃣
         <ul class="gus-list">
           <li class="gus-list-item" *ngFor="let leftItem of this.extractedTeam1">
             <span class="gus-list-item-name">{{ this.getDisplayNameForPlayer(leftItem) }}</span>
             <br>
-            <span class = "gus-list-item-rating">{{ this.getInitialRatingForPlayer(leftItem) }}</span>
-            <span class = "gus-list-item-diff">{{ this.getPostMatchDiffForPlayer(leftItem) }}</span>
+            <span class="gus-list-item-rating">{{ this.getInitialRatingForPlayer(leftItem) }}</span>
+            <span class="gus-list-item-diff" [class.good-num]="isGoodRatingDiff(leftItem)"
+              [class.bad-num]="isBadRatingDiff(leftItem)">
+              {{ this.getPostMatchDiffForPlayer(leftItem) }}</span>
           </li>
         </ul>
       </div>
       <div class="col-6">
-        Team two
+        Team two 2️⃣
         <ul class="gus-list">
           <li class="gus-list-item" *ngFor="let rightItem of this.extractedTeam2">
             <span class="gus-list-item-name">{{ this.getDisplayNameForPlayer(rightItem) }}</span>
             <br>
-            <span class = "gus-list-item-rating">{{ this.getInitialRatingForPlayer(rightItem) }}</span>
-            <span class = "gus-list-item-diff">{{ this.getPostMatchDiffForPlayer(rightItem) }}</span>
+            <span class="gus-list-item-rating">{{ this.getInitialRatingForPlayer(rightItem) }}</span>
+            <span class="gus-list-item-diff" [class.good-num]="isGoodRatingDiff(rightItem)"
+              [class.bad-num]="isBadRatingDiff(rightItem)">{{ this.getPostMatchDiffForPlayer(rightItem) }}</span>
           </li>
         </ul>
       </div>
@@ -41,7 +44,8 @@
     </div>
 
     <div class="row mt-2">
-      <button *ngIf='!this.matchResultsStored' class="btn btn-sm btn-outline-gus btn-grad-gusty ml-2" (click)="onStoreResultClick()">Store
+      <button *ngIf='!this.matchResultsStored' class="btn btn-sm btn-outline-gus btn-grad-gusty ml-2"
+        (click)="onStoreResultClick()">Store
         Result</button>
       <button *ngIf='!this.matchResultsAppliedToRatings' class="btn btn-sm btn-outline-gus btn-grad-gusty ml-2"
         (click)="onUpdateRatingsClick()">Update ratings</button>

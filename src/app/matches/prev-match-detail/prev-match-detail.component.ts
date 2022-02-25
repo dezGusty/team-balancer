@@ -5,6 +5,7 @@ import { MatchService } from '../../shared/match.service';
 import { CustomPrevGame } from '../../shared/custom-prev-game.model';
 import { Subscription } from 'rxjs';
 import { PlayersService } from 'src/app/shared/players.service';
+import { update } from 'firebase/database';
 
 @Component({
   selector: 'app-prev-match-detail',
@@ -90,6 +91,15 @@ export class PrevMatchDetailComponent implements OnInit, OnDestroy {
   }
 
   getPostMatchDiffForPlayer(player: Player): string {
+    if (!this.customGame.appliedResults) {
+      return "";
+    }
+
+    const foundObj = this.customGame.postResults?.find(x => x.id === player.id);
+    if (foundObj) {
+      return foundObj.diff.toFixed(3);
+    }
+
     return "~ 0.0";
   }
 
@@ -103,6 +113,31 @@ export class PrevMatchDetailComponent implements OnInit, OnDestroy {
     this.matchSvc.saveCustomPrevMatch(this.matchSearchKey, this.customGame);
   }
 
+
+  isGoodRatingDiff(player: Player): boolean {
+    if (!this.customGame.postResults) {
+      return false;
+    }
+    const pair = this.customGame.postResults.find(x => x.id === player.id);
+    //TODO: make dependent on rating system
+    if (pair.diff > 0) {
+      return true;
+    }
+    return false;
+  }
+
+  isBadRatingDiff(player: Player): boolean {
+    if (!this.customGame.postResults) {
+      return false;
+    }
+    const pair = this.customGame.postResults.find(x => x.id === player.id);
+    //TODO: make dependent on rating system
+    if (pair.diff < 0) {
+      return true;
+    }
+    return false;
+  }
+
   /**
    * Updates the ratings of the user for the loaded match.
    * The old player ratings are stored to an old entry. E.g.
@@ -112,23 +147,38 @@ export class PrevMatchDetailComponent implements OnInit, OnDestroy {
    */
   async onUpdateRatingsClick() {
     let currentMatch = await this.playersSvc.getCurrentRatings().toPromise();
-    let version = 1;
-    if(currentMatch) { 
-      if(currentMatch.version) {
-        version = currentMatch.version;
+    let ratingSystem = 1;
+    if (currentMatch) {
+      if (currentMatch.version) {
+        ratingSystem = currentMatch.version;
       } else {
-        version = 1; // German by default for old versions of the app.
+        ratingSystem = 1; // German by default for old versions of the app.
       }
     }
 
     const newPlayers = this.playersSvc.getAllPlayersUpdatedRatingsForGame(
-      this.playersSvc.getPlayers(), this.customGame, version
+      this.playersSvc.getPlayers(), this.customGame, ratingSystem
     );
 
-    //TODO:XXX:also get the difference ?
+    // Prepare the difference calculation
+    const updatedPlayers = this.playersSvc.getPlayersWithUpdatedRatingsForGame(this.customGame, ratingSystem);
+    if (updatedPlayers.length > 0) {
+      if (!this.customGame.postResults) {
+        this.customGame.postResults = [];
+      }
+      updatedPlayers.forEach(player => {
+        // get old rating
+        let oldRating = this.customGame.team1.find(x => x.id == player.id)?.rating;
+        if (!oldRating) {
+          oldRating = this.customGame.team2.find(x => x.id == player.id)?.rating;
+        }
+
+        this.customGame.postResults.push({ id: player.id, diff: player.rating - oldRating });
+      })
+    }
 
     // Store the 'old' ratings under a different entry.
-    if(!currentMatch || !currentMatch.label) {
+    if (!currentMatch || !currentMatch.label) {
       this.playersSvc.savePlayersToList(this.playersSvc.getPlayers(), this.matchSearchKey);
     } else {
       this.playersSvc.savePlayersToList(this.playersSvc.getPlayers(), this.matchSearchKey + '_' + currentMatch.label);

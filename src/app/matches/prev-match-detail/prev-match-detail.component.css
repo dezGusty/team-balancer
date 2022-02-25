@@ -24,3 +24,15 @@
   padding-left: 0.3em;
   font-style: italic;
 }
+
+.good-num {
+  color: rgb(129, 218, 129);
+}
+
+.good-num::before{
+  content: "+";
+}
+
+.bad-num {
+  color: rgb(212, 100, 100);
+}

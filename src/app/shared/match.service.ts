@@ -124,14 +124,14 @@ export class MatchService {
         return this.recentMatchesChangeEvent.asObservable();
     }
 
-    public async getMatchList() : Promise<Map<string, CustomPrevGame>> {
+    public async getMatchList(): Promise<Map<string, CustomPrevGame>> {
         const matches = this.db.collection('matches/');
         const snapshot = await matches.get();
-        
+
         let matchList = new Map<string, CustomPrevGame>();
         snapshot.forEach(doc => {
             doc.docs.forEach(test => {
-                if(test.id !== 'recent') {
+                if (test.id !== 'recent') {
                     matchList.set(test.id, test.data() as CustomPrevGame);
                 }
             });
@@ -158,7 +158,8 @@ export class MatchService {
                     team2: fbData.team2,
                     scoreTeam1: fbData.scoreTeam1,
                     scoreTeam2: fbData.scoreTeam2,
-                    appliedResults: fbData.appliedResults
+                    appliedResults: fbData.appliedResults,
+                    postResults: fbData.postResults
                 };
                 const result: CustomPrevGame = obj;
                 return result;
@@ -235,6 +236,9 @@ export class MatchService {
         }
         if (game.scoreTeam2 != null) {
             obj = { ...obj, scoreTeam2: game.scoreTeam2 };
+        }
+        if (game.postResults != null) {
+            obj = { ...obj, postResults: game.postResults };
         }
 
         console.log('save custom prev obj', obj);

@@ -349,24 +349,25 @@ export class PlayersService {
         losers: string[],
         difference: number,
         ratingSystem: RatingSystem = RatingSystem.German): Player {
+        const playerCpy: Player = { ... player };
         if (difference === 0) {
-            return player;
+            return playerCpy;
         }
 
         // Winners earn points and losers lose points in some rating systems.
         // Or the other way around in other rating systems. Use the sign for this.
         let sign = 0;
 
-        if (winners.includes(player.name)) {
+        if (winners.includes(playerCpy.name)) {
             sign = RatingSystemSettings.GetSignMultiplierForWinner(ratingSystem);
-        } else if (losers.includes(player.name)) {
+        } else if (losers.includes(playerCpy.name)) {
             sign = RatingSystemSettings.GetSignMultiplierForLoser(ratingSystem);
         }
 
-        player.rating = player.rating + sign * (
+        playerCpy.rating = playerCpy.rating + sign * (
             RatingSystemSettings.GetFixedMultiplierForMatch(ratingSystem)
             + difference * RatingSystemSettings.GetGoalMultiplierForMatch(ratingSystem));
-        return player;
+        return playerCpy;
     }
 
     /**
@@ -385,6 +386,37 @@ export class PlayersService {
 
         // (deep) clone the array
         const playersCpy = players.map(x => ({ ...x }));
+
+        const difference = game.scoreTeam1 - game.scoreTeam2;
+        let winners: string[] = [];
+        let losers: string[] = [];
+        if (difference > 0) {
+            winners = game.team1.map((player) => player.name);
+            losers = game.team2.map((player) => player.name);
+        } else {
+            losers = game.team1.map((player) => player.name);
+            winners = game.team2.map((player) => player.name);
+        }
+
+        return playersCpy.map(player => this.getPlayerWithUpdatedRatingForGame(player, winners, losers, difference, ratingSystem));
+    }
+
+    /**
+     * Obtains a list of players which took part in a game.
+     * @param game The game based on the result of which the ratings will be updated.
+     * @param ratingSystem The rating system to use.
+     * @returns The list of players which were part of the game with new ratings (new copy).
+     */
+    public getPlayersWithUpdatedRatingsForGame(game: CustomPrevGame, ratingSystem: RatingSystem = RatingSystem.German): Player[] {
+        if (game.scoreTeam1 == null || game.scoreTeam2 == null
+            || game.scoreTeam1 === game.scoreTeam2) {
+            // nothing to do
+            return [];
+        }
+
+        let playersCpy: Player[] = [...game.team1.concat([...game.team2])];
+        // let playersCpy: Player[] = [...game.team1];
+        // playersCpy = [...game.team2];
 
         const difference = game.scoreTeam1 - game.scoreTeam2;
         let winners: string[] = [];
