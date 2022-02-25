@@ -11,19 +11,19 @@
     </button>
     <div class="collapse navbar-collapse" id="navbarNavDropdown" [ngbCollapse]="this.isCollapsed">
       <ul class="navbar-nav flex-row flex-wrap">
-        <li routerLinkActive="active" class="nav-item col-6 col-md-auto" *ngIf="this.isAuthenticated()">
+        <li routerLinkActive="active" class="nav-item col-6 col-md-auto" *ngIf="isAuthenticatedAsUser()">
           <a class="nav-link" routerLink="/recent">Recent Matches</a>
         </li>
-        <li routerLinkActive="active" class="nav-item col-6 col-md-auto" *ngIf="this.isAuthenticated()">
+        <li routerLinkActive="active" class="nav-item col-6 col-md-auto" *ngIf="isAuthenticatedAsUser()">
           <a class="nav-link" routerLink="/draft">Draft</a>
         </li>
-        <li routerLinkActive="active" class="nav-item col-6 col-md-auto" *ngIf="this.isAuthenticated()">
+        <li routerLinkActive="active" class="nav-item col-6 col-md-auto" *ngIf="isAuthenticatedAsUser()">
           <a class="nav-link" routerLink="/players">Players</a>
         </li>
-        <li routerLinkActive="active" class="nav-item col-6 col-md-auto" *ngIf="this.isAuthenticated()">
+        <li routerLinkActive="active" class="nav-item col-6 col-md-auto" *ngIf="isAuthenticatedAsOrganizer()">
           <a class="nav-link" routerLink="/custom">Custom Game</a>
         </li>
-        <li routerLinkActive="active" class="nav-item col-6 col-md-auto">
+        <li routerLinkActive="active" class="nav-item col-6 col-md-auto" *ngIf="isAuthenticatedAsAdmin()">
           <a class="nav-link" routerLink="/admin">Admin</a>
         </li>
         <li routerLinkActive="active" class="nav-item col-6 col-md-auto">

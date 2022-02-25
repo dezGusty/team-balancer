@@ -246,6 +246,11 @@ body {
   color: var(--standard-text-color);
 }
 
+.btn-gus-small {
+  color: var(--standard-text-color);
+  padding: 0.125rem 0.25rem;
+}
+
 .card-header {
   color: #fff;
   background-color: var(--gus-contrast-panel-alt-bck);

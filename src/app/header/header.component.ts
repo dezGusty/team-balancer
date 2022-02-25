@@ -35,6 +35,27 @@ export class HeaderComponent implements OnInit {
   }
 
   /**
+ * Retrieves the authentication state from the service.
+ */
+  public isAuthenticatedAsUser(): boolean {
+    return this.authSvc.isAuthenticatedAsUser();
+  }
+
+  /**
+   * Retrieves the authentication state from the service.
+   */
+  public isAuthenticatedAsAdmin(): boolean {
+    return this.authSvc.isAuthenticatedAsAdmin();
+  }
+
+  /**
+ * Retrieves the authentication state from the service.
+ */
+  public isAuthenticatedAsOrganizer(): boolean {
+    return this.authSvc.isAuthenticatedAsOrganizer();
+  }
+
+  /**
    * React to the signout button being clicked from the UI.
    */
   public onSignoutBtnClick() {

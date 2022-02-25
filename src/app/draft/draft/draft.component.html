@@ -1,29 +1,43 @@
 <div class="row justify-content-center">
   <div class="col-6 col-sm-6 col-md-5 col-lg-4 col-xl-3 align-self-center panel-draft-icons">
 
-    <button type="button" class="btn btn-outline-gus btn-grad-gusty btn-icon-gus mr-2" ngbTooltip="Save"
-      (click)="onSaveSelectionClicked()" *ngIf="canChangePlayersInDraft()">
-      <span class="align-self-center"><img src="./../../../assets/save.svg" rel="preload" alt="Save" height="24rem"
-          class="btn-clear-all-img"></span>
+    <button type="button" class="btn btn-gus-small" ngbTooltip="Save" (click)="onSaveSelectionClicked()"
+      *ngIf="canChangePlayersInDraft()">
+      <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor"
+        class="bi bi-cloud-arrow-up-fill" viewBox="0 0 24 24">
+        <path
+          d="M8 2a5.53 5.53 0 0 0-3.594 1.342c-.766.66-1.321 1.52-1.464 2.383C1.266 6.095 0 7.555 0 9.318 0 11.366 1.708 13 3.781 13h8.906C14.502 13 16 11.57 16 9.773c0-1.636-1.242-2.969-2.834-3.194C12.923 3.999 10.69 2 8 2zm2.354 5.146a.5.5 0 0 1-.708.708L8.5 6.707V10.5a.5.5 0 0 1-1 0V6.707L6.354 7.854a.5.5 0 1 1-.708-.708l2-2a.5.5 0 0 1 .708 0l2 2z" />
+      </svg> </button>
+
+
+
+    <button type="button" class="btn btn-gus-small" ngbTooltip="Clear list (does not save)."
+      (click)="onClearListClicked()" *ngIf="canChangePlayersInDraft()">
+      <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" class="bi bi-x-octagon-fill"
+        viewBox="0 0 24 24">
+        <path
+          d="M11.46.146A.5.5 0 0 0 11.107 0H4.893a.5.5 0 0 0-.353.146L.146 4.54A.5.5 0 0 0 0 4.893v6.214a.5.5 0 0 0 .146.353l4.394 4.394a.5.5 0 0 0 .353.146h6.214a.5.5 0 0 0 .353-.146l4.394-4.394a.5.5 0 0 0 .146-.353V4.893a.5.5 0 0 0-.146-.353L11.46.146zm-6.106 4.5L8 7.293l2.646-2.647a.5.5 0 0 1 .708.708L8.707 8l2.647 2.646a.5.5 0 0 1-.708.708L8 8.707l-2.646 2.647a.5.5 0 0 1-.708-.708L7.293 8 4.646 5.354a.5.5 0 1 1 .708-.708z" />
+      </svg>
     </button>
 
-    <button type="button" class="btn btn-outline-gus btn-grad-gusty btn-icon-gus mr-2"
-      ngbTooltip="Clear list (does not save)." (click)="onClearListClicked()" *ngIf="canChangePlayersInDraft()">
-      <span class="align-self-center"><img src="./../../../assets/cross.svg" rel="preload" alt="Clear" height="24rem"
-          class="btn-clear-all-img"></span>
-    </button>
+    <button type="button" class="btn btn-gus-small" #copyToClipBtn placement="top" #ttip="ngbTooltip"
+      ngbTooltip="Copied to clipboard..." [autoClose]="true" [closeDelay]="1000" triggers="click:blur"
+      [copy-clipboard]="customClipTextToClip()" (click)="onCopyClicked();">
+      <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor"
+        class="bi bi-clipboard-check-fill" viewBox="0 0 24 24">
+        <path
+          d="M6.5 0A1.5 1.5 0 0 0 5 1.5v1A1.5 1.5 0 0 0 6.5 4h3A1.5 1.5 0 0 0 11 2.5v-1A1.5 1.5 0 0 0 9.5 0h-3Zm3 1a.5.5 0 0 1 .5.5v1a.5.5 0 0 1-.5.5h-3a.5.5 0 0 1-.5-.5v-1a.5.5 0 0 1 .5-.5h3Z" />
+        <path
+          d="M4 1.5H3a2 2 0 0 0-2 2V14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V3.5a2 2 0 0 0-2-2h-1v1A2.5 2.5 0 0 1 9.5 5h-3A2.5 2.5 0 0 1 4 2.5v-1Zm6.854 7.354-3 3a.5.5 0 0 1-.708 0l-1.5-1.5a.5.5 0 0 1 .708-.708L7.5 10.793l2.646-2.647a.5.5 0 0 1 .708.708Z" />
+      </svg> </button>
 
-    <button type="button" class="btn btn-outline-gus btn-grad-gusty btn-icon-gus mr-2" #copyToClipBtn placement="top"
-      #ttip="ngbTooltip" ngbTooltip="Copied to clipboard..." [autoClose]="true" [closeDelay]="1000"
-      triggers="click:blur" [copy-clipboard]="customClipTextToClip()" (click)="onCopyClicked();">
-      <span class="align-self-center"><img src="./../../../assets/copy.svg" rel="preload" alt="Copy-to-clip"
-          height="24rem" class="btn-clear-all-img"></span>
-    </button>
-
-    <button type="button" class="btn btn-outline-gus btn-grad-gusty btn-icon-gus" ngbTooltip="Create match from draft."
-      (click)="onMatchUpClicked()" *ngIf="canChangePlayersInDraft()">
-      <span class="align-self-center"><img src="./../../../assets/tshirt2.svg" rel="preload" alt="Match-up"
-          height="24rem" class="btn-clear-all-img"></span>
+    <button type="button" class="btn btn-gus-small" ngbTooltip="Create match from draft." (click)="onMatchUpClicked()"
+      *ngIf="canChangePlayersInDraft()">
+      <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor"
+        class="bi bi-file-earmark-person-fill" viewBox="0 0 24 24">
+        <path
+          d="M9.293 0H4a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h8a2 2 0 0 0 2-2V4.707A1 1 0 0 0 13.707 4L10 .293A1 1 0 0 0 9.293 0zM9.5 3.5v-2l3 3h-2a1 1 0 0 1-1-1zM11 8a3 3 0 1 1-6 0 3 3 0 0 1 6 0zm2 5.755V14a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1v-.245S4 12 8 12s5 1.755 5 1.755z" />
+      </svg>
     </button>
 
   </div>
