@@ -9,7 +9,7 @@ import { ToastService } from '../shared/toasts-service';
       *ngFor="let toast of toastService.toasts"
       [class]="toast.classname"
       [autohide]="true"
-      [delay]="toast.delay || 5000"
+      [delay]="toast.delay || 4000"
       (hidden)="toastService.remove(toast)"
     >
       <ng-template [ngIf]="isTemplate(toast)" [ngIfElse]="text">
@@ -19,7 +19,7 @@ import { ToastService } from '../shared/toasts-service';
       <ng-template #text>{{ toast.textOrTpl }}</ng-template>
     </ngb-toast>
   `,
-  host: { 'class': 'toast-container position-fixed top-0 end-0 p-3', 'style': 'z-index: 1200' }
+  host: { 'class': 'toast-container end-0 p-3', 'style': 'position: fixed; z-index: 1200; top: auto; bottom: 5vh; right: 5rem;' }
 })
 export class ToastsContainer {
   constructor(public toastService: ToastService) { }

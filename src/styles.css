@@ -15,20 +15,20 @@
     );
     --gus-panel-alt-bck: linear-gradient(
       135deg,
-      #6322a0 0%,
+      #5c2094 0%,
       #3d225a 67%,
       #120052 100%
     );
     --gus-panel-text: #f3e5d0;
     --gus-contrast-panel-bck: rgb(2, 12, 27);
     --gus-contrast-panel-alt-bck: #994b0b3d;
-    --gus-secondary-bck: #002b3b;
+    --gus-secondary-bck: #002e30b6;
     --gus-secondary-grad: linear-gradient(
       135deg,
-      #180269 0%,
-      #0e0f1d 100%
+      #140258 0%,
+      #111325 100%
     );
-    --gus-secondary-text: rgb(230, 147, 109);
+    --gus-secondary-text: rgb(213, 250, 255);
   }
 }
 
@@ -121,19 +121,12 @@ body {
   border-radius: 0.3rem;
   border-width: 0.1rem;
   margin: 0.25rem 0;
-  /* display: grid;
-  grid-template-columns: 1fr 1fr 1fr 1fr;
-  grid-template-rows: 1fr 1fr 1fr; */
   box-shadow: 0 10px 20px rgba(0, 0, 0, 0.19), 0 6px 6px rgba(0, 0, 0, 0.23);
 }
 
 .player-card-container:hover {
   background: var(--gus-panel-alt-bck);
   color: var(--gus-panel-text);
-}
-
-a.player-card-container:hover {
-  /* color: white; */
 }
 
 .player-card-grad {
