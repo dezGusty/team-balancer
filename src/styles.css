@@ -73,6 +73,11 @@
   background-color: var(--gus-secondary-bck-color);
 }
 
+.form-control:disabled {
+  color: var(--gus-secondary-text-color);
+  background-color: var(--gus-contrast-panel-bck);
+}
+
 .toast .toast-body {
   background-color: var(--gus-secondary-bck);
   color: var(--gus-secondary-text-color);

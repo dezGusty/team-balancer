@@ -1,7 +1,7 @@
-<form (submit)="onMatchSaveCliked()">
+<div class="container px-0">
   <app-loading-spinner *ngIf="showSpinner"></app-loading-spinner>
   <div *ngIf="!showSpinner">
-    <div class="row">
+    <div class="row mx-0">
       <div class="col-12">
         Date 🗓️: {{matchSearchKey}}
       </div>
@@ -32,18 +32,18 @@
       </div>
     </div>
 
-    <div class="row">
-      <div class="col-6 border-right">
+    <div class="row mx-0">
+      <div class="col-6 input-group-lg">
         <input type="number" class="form-control" name="team1Score" id="team1Score" [(ngModel)]="this.team1Score"
           #team1ScoreEntry="ngModel" [attr.disabled]="this.matchResultsStored">
       </div>
-      <div class="col-6">
+      <div class="col-6 input-group-lg">
         <input type="number" class="form-control" name="team2Score" id="team2Score" [(ngModel)]="this.team2Score"
           #team2ScoreEntry="ngModel" [attr.disabled]="this.matchResultsStored">
       </div>
     </div>
 
-    <div class="row mt-2">
+    <div class="row mx-0 col-10 mt-2">
       <button *ngIf='canShowStoreResultsButton()' class="btn btn-sm btn-outline-gus btn-grad-gusty ml-2"
         (click)="onStoreResultClick()">Store
         Result</button>
@@ -51,4 +51,4 @@
         (click)="onUpdateRatingsClick()">Update ratings</button>
     </div>
   </div>
-</form>
+</div>
