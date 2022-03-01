@@ -3,7 +3,7 @@ import { Subscription } from 'rxjs/internal/Subscription';
 import { AuthService } from '../auth/auth.service';
 import { CustomPrevGame } from '../shared/custom-prev-game.model';
 import { MatchService } from '../shared/match.service';
-import { PlayerChangeInfo } from '../shared/player-changed-info';
+import { PlayerChangeInfo } from '../shared/player-change-info';
 import { Player } from '../shared/player.model';
 import { PlayersService } from '../shared/players.service';
 import { RatingScaler } from '../shared/rating-scaler';

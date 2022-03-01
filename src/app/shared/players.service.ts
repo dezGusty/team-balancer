@@ -10,7 +10,7 @@ import { onValue, getDatabase, child, ref, get } from "firebase/database";
 
 import { map } from 'rxjs/operators';
 import { RatingSystem, RatingSystemSettings } from './rating-system';
-import { PlayerChangeInfo } from './player-changed-info';
+import { PlayerChangeInfo } from './player-change-info';
 import { TemplateLiteral } from '@angular/compiler';
 import { RatingHist } from './rating-hist.model';
 
@@ -60,11 +60,15 @@ export class PlayersService {
     private currentPlayerList: Player[] = [];
     private archivedPlayerList: Player[] = [];
 
-    // playerDataChangeEvent = new EventEmitter<PlayerChangeInfo>();
     playerDataChangeEvent = new BehaviorSubject<PlayerChangeInfo>(null);
 
     subscribeToDataSources() {
         console.log('[players] subscribing to data sources');
+
+        // Emit an event to signal that the app is fetching / loading data
+        const playerInfo = new PlayerChangeInfo(null, 'loading', 'Fetching player data...');
+        console.log('emitting ', playerInfo);
+        this.playerDataChangeEvent.next(playerInfo);
 
         // subscribe to firebase collection changes.
         const currentRatings = this.db.doc('ratings/current').get();
@@ -349,7 +353,7 @@ export class PlayersService {
         losers: string[],
         difference: number,
         ratingSystem: RatingSystem = RatingSystem.German): Player {
-        const playerCpy: Player = { ... player };
+        const playerCpy: Player = { ...player };
         if (difference === 0) {
             return playerCpy;
         }

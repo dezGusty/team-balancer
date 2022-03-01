@@ -1,8 +1,9 @@
 import { AngularFirestore } from '@angular/fire/compat/firestore';
 import { Injectable, EventEmitter } from '@angular/core';
-import { Subscription, Observable } from 'rxjs';
+import { Subscription, Observable, BehaviorSubject } from 'rxjs';
 import { AuthService } from '../auth/auth.service';
 import { Player } from './player.model';
+import { DraftChangeInfo } from './draft-change-info';
 
 @Injectable({
   providedIn: 'root'
@@ -10,7 +11,7 @@ import { Player } from './player.model';
 export class DraftService {
   private dataChangeSubscription: Subscription;
   selectedDraftPlayers: Player[] = [];
-  playerDraftChangeEvent = new EventEmitter<Player[]>();
+  playerDraftChangeEvent = new BehaviorSubject<DraftChangeInfo>(null);
 
   constructor(private db: AngularFirestore, private authSvc: AuthService) {
     this.selectedDraftPlayers = [];
@@ -41,13 +42,19 @@ export class DraftService {
   subscribeToDataSources() {
     console.log('[draft-svc] subscribing');
 
+    // Emit an event to signal that the app is fetching / loading data
+    const playerInfo = new DraftChangeInfo(null, 'loading', 'Fetching draft data...');
+    console.log('emitting ', playerInfo);
+    this.playerDraftChangeEvent.next(playerInfo);
+
     // subscribe to firebase collection changes.
     this.dataChangeSubscription = this.db.doc('drafts/next').valueChanges().subscribe(
       draftDocContents => {
         const castedItem = draftDocContents as { players: Player[] };
         this.selectedDraftPlayers = [...castedItem.players];
         console.log('[draft-svc] selected players', this.selectedDraftPlayers);
-        this.playerDraftChangeEvent.emit(this.selectedDraftPlayers);
+        let notification = new DraftChangeInfo(this.selectedDraftPlayers, 'info', 'loaded');
+        this.playerDraftChangeEvent.next(notification);
       },
       error => console.log('some error encountered', error),
       () => { console.log('[draft-svc]c omplete'); },
@@ -77,6 +84,11 @@ export class DraftService {
    * @param players The array of players to store.
    */
   saveSelectedPlayerList(players: Player[]) {
+    // Emit an event to signal that the app is fetching / loading data
+    const playerInfo = new DraftChangeInfo(null, 'loading', 'Fetching draft data...');
+    console.log('emitting ', playerInfo);
+    this.playerDraftChangeEvent.next(playerInfo);
+    
     const draftPlayersListRef = this.db.doc<any>('/drafts/next').ref;
     const obj = { players };
     draftPlayersListRef.set(obj, { merge: true });

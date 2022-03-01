@@ -6,6 +6,7 @@ import { DraftService } from 'src/app/shared/draft.service';
 import { Router } from '@angular/router';
 import { ToastService } from 'src/app/shared/toasts-service';
 import { AuthService } from 'src/app/auth/auth.service';
+import { DraftChangeInfo } from 'src/app/shared/draft-change-info';
 
 @Component({
   selector: 'app-draft',
@@ -20,6 +21,8 @@ export class DraftComponent implements OnInit, OnDestroy {
   private playerDataChangeSubscription: Subscription;
   @ViewChild('ttip') copyToClipBtn: ElementRef;
 
+  public showLoading: boolean = false;
+
   constructor(
     private playersSvc: PlayersService,
     private draftSvc: DraftService,
@@ -29,6 +32,8 @@ export class DraftComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit() {
+    this.showLoading = true;
+
     console.log('[draft] init');
     this.availablePlayerList = [...this.playersSvc.getPlayers()];
     this.selectedPlayerList = [...this.draftSvc.getDraftedPlayers()];
@@ -38,13 +43,29 @@ export class DraftComponent implements OnInit, OnDestroy {
 
     this.playerDataChangeSubscription = this.draftSvc.playerDraftChangeEvent
       .subscribe(
-        (players: Player[]) => {
+        (draftInfo: DraftChangeInfo) => {
+          if (null === draftInfo) {
+            console.warn('null draftchange info received');
+            return;
+          }
+
+          if (null === draftInfo.players) {
+            // This could be the case when there are no players currently, but a progress event is issued.
+            if (draftInfo.messageType === 'loading') {
+              this.showLoading = true;
+              // this.toastSvc.show(draftInfo.messagePayload);
+            }
+            return;
+          }
+
           this.availablePlayerList = [...this.playersSvc.getPlayers()];
-          this.selectedPlayerList = [...players];
+          this.selectedPlayerList = [...draftInfo.players];
           this.availablePlayerList = this.availablePlayerList.filter(
             player => !this.selectedPlayerList.find(item => player.id === item.id)
           );
-          this.toastSvc.show('Loaded players');
+
+          this.showLoading = false;
+          // this.toastSvc.show('Loaded players');
         }
       );
   }

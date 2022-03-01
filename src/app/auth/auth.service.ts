@@ -3,7 +3,7 @@ import firebase from 'firebase/compat/app';
 import { Injectable, EventEmitter } from '@angular/core';
 import { Router } from '@angular/router';
 import { AngularFirestore } from '@angular/fire/compat/firestore';
-import { User, UserRoles } from '../shared/user.model';
+import { AppUser, UserRoles } from '../shared/app-user.model';
 import { Subscription } from 'rxjs';
 import { AppStorage } from '../shared/app-storage';
 
@@ -49,7 +49,7 @@ export class AuthService {
      * shall be performed on the data read at the login time. The user needs to log-in
      * again in order to read any updated permissions.
      */
-    private cachedUser: User;
+    private cachedUser: AppUser;
     private token: string;
     private subscription: Subscription;
 
@@ -59,7 +59,7 @@ export class AuthService {
      */
     public onSignInOut: EventEmitter<string> = new EventEmitter<string>();
 
-    public getCachedUser(): User {
+    public getCachedUser(): AppUser {
         return this.cachedUser;
     }
 
@@ -210,7 +210,7 @@ export class AuthService {
 
 
     updateAndCacheUserAfterLogin(authdata: firebase.User) {
-        const userData = new User(authdata);
+        const userData = new AppUser(authdata);
         const userPath = authdata.uid;
         const userRef = this.db.doc('users/' + userPath).get();
 

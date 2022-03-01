@@ -1,11 +1,12 @@
 import { AngularFirestore } from '@angular/fire/compat/firestore';
 import { CustomGame } from './custom-game.model';
-import { Injectable, EventEmitter } from '@angular/core';
+import { Injectable } from '@angular/core';
 import { AuthService } from '../auth/auth.service';
-import { Subscription, Observable } from 'rxjs';
+import { Subscription, Observable, BehaviorSubject } from 'rxjs';
 import { map } from 'rxjs/operators';
 import { CustomPrevGame } from './custom-prev-game.model';
 import { Player } from './player.model';
+import { DraftChangeInfo } from './draft-change-info';
 
 /**
  * Stores and retrieves match related information.
@@ -14,7 +15,7 @@ import { Player } from './player.model';
 export class MatchService {
     private dataChangeSubscription: Subscription;
     private recentMatchNames: string[];
-    private recentMatchesChangeEvent = new EventEmitter<string[]>();
+    private recentMatchesChangeEvent = new BehaviorSubject<string[]>(null);
 
     private individualMatchRetrieval: Subscription[] = [];
 
@@ -55,44 +56,19 @@ export class MatchService {
         console.log('[match-svc] subscribing');
 
         this.recentMatchNames = [...this.recentMatchNames];
-        this.recentMatchesChangeEvent.emit(this.recentMatchNames);
+        this.recentMatchesChangeEvent.next(this.recentMatchNames);
 
         // subscribe to firebase collection changes.
         this.dataChangeSubscription = this.db.doc('matches/recent').valueChanges().subscribe(
             recentMatchesDocContents => {
                 const castedItem = recentMatchesDocContents as { items: string[] };
                 this.recentMatchNames = [...castedItem.items];
-                this.recentMatchesChangeEvent.emit(this.recentMatchNames);
+                this.recentMatchesChangeEvent.next(this.recentMatchNames);
             },
             error => console.log('some error encountered', error),
             () => { console.log('[match-svc]complete'); },
         );
-
-        // const recentMatches = this.db.doc('matches/recent').get({ source: 'cache' });
-        // this.dataChangeSubscription = recentMatches.subscribe(
-        //     recentMatchesDoc => this.readRecentMatchesFromDocWithNotif(recentMatchesDoc),
-        //     error => console.log('some error encountered', error),
-        //     () => { console.log('[match-svc]complete'); },
-        // );
     }
-
-    // readRecentMatchesFromDocWithNotif(recentMatchesDoc) {
-    //     const readRecentMatchNames: string[] = this.readRecentMatchesFromDoc(recentMatchesDoc);
-
-    //     this.recentMatchNames = readRecentMatchNames;
-    //     console.log('this.recentMatchNames', this.recentMatchNames);
-
-    //     this.recentMatchesChangeEvent.emit(this.recentMatchNames);
-    // }
-
-    // public readRecentMatchesFromDoc(recentMatchesDoc: firebase.firestore.DocumentSnapshot): string[] {
-    //     if (!recentMatchesDoc.exists) {
-    //         return [];
-    //     }
-
-    //     const readRecentMatchNames: string[] = recentMatchesDoc.get('items');
-    //     return readRecentMatchNames;
-    // }
 
     /**
      * Clean-up the data subscriptions.

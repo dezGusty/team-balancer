@@ -4,7 +4,7 @@ export interface UserRoles {
     admin?: boolean;
 }
 
-export class User {
+export class AppUser {
     email: string;
     photoURL: string;
     roles: UserRoles;

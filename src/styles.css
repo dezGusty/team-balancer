@@ -29,6 +29,7 @@
       #111325 100%
     );
     --gus-secondary-text: rgb(213, 250, 255);
+    --gus-pref-icon-size: 28px;
   }
 }
 
@@ -271,7 +272,12 @@ a.player-card-grad:hover {
 
 .btn-gus-small {
   color: var(--standard-text-color);
-  padding: 0.125rem 0.25rem;
+  padding: 0.05rem 0.07rem;
+}
+
+.btn-gus-small > svg {
+  vertical-align: middle;
+
 }
 
 .card-header {

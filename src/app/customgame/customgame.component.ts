@@ -6,7 +6,7 @@ import { PlayersService } from '../shared/players.service';
 import { ActivatedRoute } from '@angular/router';
 import { DraftService } from '../shared/draft.service';
 import { ToastService } from '../shared/toasts-service';
-import { PlayerChangeInfo } from '../shared/player-changed-info';
+import { PlayerChangeInfo } from '../shared/player-change-info';
 import { RatingSystem } from '../shared/rating-system';
 
 @Component({

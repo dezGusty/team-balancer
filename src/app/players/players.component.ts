@@ -8,7 +8,7 @@ import { MatchService } from '../shared/match.service';
 import { CustomPrevGame } from '../shared/custom-prev-game.model';
 import { RatingSystem } from '../shared/rating-system';
 import { ToastService } from '../shared/toasts-service';
-import { PlayerChangeInfo } from '../shared/player-changed-info';
+import { PlayerChangeInfo } from '../shared/player-change-info';
 import { RatingHist } from '../shared/rating-hist.model';
 
 @Component({
@@ -51,6 +51,15 @@ export class PlayersComponent implements OnInit, OnDestroy {
             console.warn('null playerchange info received');
             return;
           }
+
+          if (null === playerChangeInfo.players) {
+            // This could be the case when there are no players currently, but a progress event is issued.
+            if (playerChangeInfo.messageType === 'loading') {
+              this.toastSvc.show(playerChangeInfo.messagePayload);
+            }
+            return;
+          }
+          
           this.players = this.playersSvc.getPlayers(this.loadArchive);
           this.toastSvc.show('Reloaded all players from service. \n'
             + playerChangeInfo.messageType + '\n'
@@ -96,8 +105,8 @@ export class PlayersComponent implements OnInit, OnDestroy {
     this.players = this.playersSvc.getPlayers(this.loadArchive);
   }
 
-  onPlayerSelected($event){
+  onPlayerSelected($event) {
     console.log('on player selected');
-    
+
   }
 }
