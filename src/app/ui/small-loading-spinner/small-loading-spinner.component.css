@@ -1,5 +1,4 @@
 .spinner {
-  /* margin: 10px auto; */
   display: inline-block;
   width: 50px;
   height: var(--gus-pref-icon-size, 32px);
@@ -9,10 +8,11 @@
 }
 
 .spinner > div {
-  background-color: var(--standard-text-color, #333);
+  background-color: var(--gus-primary-text-color, #333);
   height: 100%;
-  width: 6px;
+  width: 4px;
   display: inline-block;
+  margin: 0 1px;
   
   -webkit-animation: sk-stretchdelay 1.2s infinite ease-in-out;
   animation: sk-stretchdelay 1.2s infinite ease-in-out;

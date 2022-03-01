@@ -2,8 +2,11 @@
   :root {
     --btn-active-color: #b5a7c2;
     --btn-back-color: #423e52;
-    --standard-bck-color: #040730;
-    --standard-text-color: #fff;
+    --gus-primary-bck-color: #040730;
+    --gus-secondary-bck-color: #09465e;
+    --gus-primary-text-color: #fff;
+    --gus-secondary-text-color: rgb(213, 250, 255);
+    --gus-impact-text-color: rgb(238, 165, 9);
     --standard-secondary-text-color: #999;
 
     --gus-panel-bck: linear-gradient(
@@ -15,20 +18,15 @@
     );
     --gus-panel-alt-bck: linear-gradient(
       135deg,
-      #5c2094 0%,
-      #3d225a 67%,
-      #120052 100%
+      #0e6b836a 0%,
+      #1047526a 67%,
+      #03343a6a 100%
     );
     --gus-panel-text: #f3e5d0;
     --gus-contrast-panel-bck: rgb(2, 12, 27);
     --gus-contrast-panel-alt-bck: #994b0b3d;
     --gus-secondary-bck: #002e30b6;
-    --gus-secondary-grad: linear-gradient(
-      135deg,
-      #140258 0%,
-      #111325 100%
-    );
-    --gus-secondary-text: rgb(213, 250, 255);
+    --gus-secondary-grad: linear-gradient(135deg, #140258 0%, #111325 100%);
     --gus-pref-icon-size: 28px;
   }
 }
@@ -37,8 +35,11 @@
   :root {
     --btn-active-color: #732db6;
     --btn-back-color: #120052;
-    --standard-bck-color: #ffffff;
-    --standard-text-color: #000;
+    --gus-primary-bck-color: #ffffff;
+    --gus-secondary-bck-color: #c2e4fa;
+    --gus-primary-text-color: #000;
+    --gus-secondary-text-color: #345;
+    --gus-impact-text-color: rgb(121, 84, 4);
 
     --gus-panel-bck: linear-gradient(
       135deg,
@@ -57,23 +58,29 @@
     --gus-contrast-panel-bck: #fff;
     --gus-contrast-panel-alt-bck: #362b2b08;
     --gus-secondary-bck: #ddd;
-    --gus-secondary-grad: linear-gradient(
-      135deg,
-      #ffffff 0%,
-      #e7f7ff 100%
-    );
-    --gus-secondary-text: #345;
+    --gus-secondary-grad: linear-gradient(135deg, #ffffff 0%, #e7f7ff 100%);
+    --gus-pref-icon-size: 28px;
   }
+}
+
+.form-control {
+  color: var(--gus-primary-text-color);
+  background-color: var(--gus-primary-bck-color);
+}
+
+.form-control:focus {
+  color: var(--gus-secondary-text-color);
+  background-color: var(--gus-secondary-bck-color);
 }
 
 .toast .toast-body {
   background-color: var(--gus-secondary-bck);
-  color: var(--gus-secondary-text);
+  color: var(--gus-secondary-text-color);
 }
 
 body {
-  background-color: var(--standard-bck-color);
-  color: var(--standard-text-color);
+  background-color: var(--gus-primary-bck-color);
+  color: var(--gus-primary-text-color);
 }
 
 .gus-search-box {
@@ -117,7 +124,7 @@ body {
   align-content: center;
   border-color: var(--gus-secondary-bck);
   background: var(--gus-secondary-grad);
-  color: var(--standard-text-color);
+  color: var(--gus-primary-text-color);
   border-style: solid;
   border-radius: 0.3rem;
   border-width: 0.1rem;
@@ -132,8 +139,8 @@ body {
 
 .player-card-grad {
   /* border-color: var(--btn-active-color);
-  background: var(--standard-bck-color);
-  color: var(--standard-text-color); */
+  background: var(--gus-primary-bck-color);
+  color: var(--gus-primary-text-color); */
 }
 
 .player-card-grad:hover {
@@ -166,18 +173,17 @@ a.player-card-grad:hover {
 }
 
 .player-card-tv {
-  color: #2bb7e2;
   background-image: url("assets/tshirt.svg");
   background-repeat: no-repeat;
-  background-size: 4rem;
+  /* background-size: 4rem; */
   background-position: right top;
-  /* background-clip: border-box; */
   border-top-left-radius: inherit;
 
-  color: #fda;
+  color: var(--gus-primary-text-color);
+  margin: 0.4rem 0;
   font-size: large;
   font-weight: 600;
-  padding-left: 0.1rem;
+  /* padding-left: 0.1rem; */
   text-align: center;
 }
 
@@ -261,23 +267,26 @@ a.player-card-grad:hover {
 .btn-grad-gusty:hover {
   background: var(--gus-panel-alt-bck);
   animation: GradAnim 2s ease infinite;
-  color: var(--standard-text-color);
+  color: var(--gus-primary-text-color);
 }
 
 .btn-outline-gus {
   border-color: var(--btn-active-color);
   border-width: 1px;
-  color: var(--standard-text-color);
+  color: var(--gus-primary-text-color);
 }
 
 .btn-gus-small {
-  color: var(--standard-text-color);
+  color: var(--gus-primary-text-color);
   padding: 0.05rem 0.07rem;
+}
+
+.btn-gus-small:hover {
+  color: var(--gus-impact-text-color);
 }
 
 .btn-gus-small > svg {
   vertical-align: middle;
-
 }
 
 .card-header {

@@ -13,12 +13,12 @@
 
 .dot1,
 .dot2 {
-  width: 60%;
-  height: 60%;
+  width: 10%;
+  height: 10%;
   display: inline-block;
   position: absolute;
   top: 0;
-  background-color: var(--standard-text-color, #fff);
+  background-color: var(--gus-primary-text-color, #fff);
 
   border-radius: 100%;
 
