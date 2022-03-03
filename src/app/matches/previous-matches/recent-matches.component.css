@@ -7,7 +7,8 @@
 
 .match-card-active {
   /* background: linear-gradient(135deg, #3CB9FC 0%,#3CB9FC 67%,rgb(90, 157, 194) 100%); */
-  background: #3CB9FC;
+  /* background: #3CB9FC; */
+  background: linear-gradient(135deg, #511a85 0%,#541b8a 67%,rgb(95, 31, 128) 100%);
   color: white;
 }
 

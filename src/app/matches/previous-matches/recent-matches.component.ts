@@ -37,6 +37,20 @@ export class RecentMatchesComponent implements OnInit, OnDestroy {
     return this.recentMatchDescriptions;
   }
 
+  public getCombinedtMatchDescriptions(): { year: string, month: string, day: string }[] {
+    let result: { year: string, month: string, day: string }[] = [];
+    this.recentMatchDescriptions.forEach(element => {
+      const subArray = element.split(' ');
+      const monthDesc = ['JAN', 'FEB', 'MAR', 'APR', 'MAY', 'JUN', 'JUL', 'AUG', 'SEP', 'OCT', 'NOV', 'DEC'];
+
+      if (subArray.length > 2) {
+        const numMonth: number = Number.parseInt(subArray[1]);
+        result.push({ year: subArray[0], month: monthDesc[numMonth - 1], day: subArray[2] });
+      }
+    });
+    return result;
+  }
+
   /**
    * Retrieves the display name / text for a match name.
    * @param matchName The name of the match-name / document id

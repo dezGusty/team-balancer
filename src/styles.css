@@ -92,13 +92,6 @@ body {
   padding: 0.5rem;
 }
 
-/* .player-card-shirt {
-  background-color: #2bb7e2;
-  grid-column-start: 1;
-  grid-column-end: 2;
-  grid-row-start: 1;
-  grid-row-end: 3;
-} */
 
 /* You can add global styles to this file, and also import other style files */
 .player-card {
@@ -141,6 +134,19 @@ body {
   background: var(--gus-panel-alt-bck);
   color: var(--gus-panel-text);
 }
+
+/**TODO: this is cloned from .player-card-container. Make common class for coloring */
+.gus-hoverable {
+  border-color: var(--gus-secondary-bck);
+  background: var(--gus-secondary-grad);
+  color: var(--gus-primary-text-color);
+}
+
+.gus-hoverable:hover {
+  background: var(--gus-panel-alt-bck);
+  color: var(--gus-panel-text);
+}
+
 
 .player-card-grad {
   /* border-color: var(--btn-active-color);
@@ -338,4 +344,75 @@ a.player-card-grad:hover {
 
 .btn-icon-gus {
   padding: 0.1rem 0.2rem;
+}
+
+
+/* Inspired by https://codepen.io/denilsonsa/pen/oNZWRJ */
+.date-as-calendar {
+  font-variant: normal;
+  font-style: normal;
+  font-weight: normal;
+
+  vertical-align: top;
+
+  /* color: var(--gus-primary-text-color); */
+  /* background: var(--gus-primary-bck-color); */
+  /* background : linear-gradient(to bottom right, var(--gus-primary-bck-color) 0%, var(--gus-secondary-bck-color) 100%); */
+
+  border-color: var(--gus-secondary-bck);
+  background: var(--gus-secondary-grad);
+  color: var(--gus-primary-text-color);
+  
+  /* border: 1px solid #888; */
+  /* border-radius: 3px; */
+  border-radius: 0.3rem;
+  overflow: hidden;
+
+  box-shadow: 2px 2px 2px -2px black;
+}
+
+.date-as-calendar .day,
+.date-as-calendar .month,
+.date-as-calendar .year {
+  text-align: center;
+  line-height: 1.0;
+}
+
+.date-as-calendar .month {
+  text-transform: uppercase;
+  background: var(--gus-impact-text-color);
+  background : var(--gus-panel-bck);
+  /* linear-gradient(to bottom right, #D66 0%, #A00 100%); */
+  color: var(--gus-primary-text-color);
+}
+
+
+/****************************************/
+/* Layout rules using display: inline-flex and relative dimensions using em. */
+.vert-calendar.date-as-calendar {
+  flex-direction: column;
+  flex-wrap: nowrap;
+  justify-content: space-between;
+  
+  width: 4em; 
+  height: 4em; 
+}
+.vert-calendar.date-as-calendar .day,
+.vert-calendar.date-as-calendar .month,
+.vert-calendar.date-as-calendar .year {
+  display: block;
+  flex: 1 1 auto;
+}
+.vert-calendar.date-as-calendar .month {
+  order: 1;
+  font-size: 0.75em;
+  padding: 0.1em 0;
+}
+.vert-calendar.date-as-calendar .day {
+  order: 3;
+  font-size: 1.5em;
+}
+.vert-calendar.date-as-calendar .year {
+  order: 4;
+  font-size: 0.87750em;
 }
