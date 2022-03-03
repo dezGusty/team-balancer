@@ -135,6 +135,7 @@ export class MatchService {
                     scoreTeam1: fbData.scoreTeam1,
                     scoreTeam2: fbData.scoreTeam2,
                     appliedResults: fbData.appliedResults,
+                    savedResult: fbData.savedResult,
                     postResults: fbData.postResults
                 };
                 const result: CustomPrevGame = obj;
@@ -197,12 +198,19 @@ export class MatchService {
         let obj: {
             [x: string]: any;
             appliedResults?: true;
+            savedResult?: true;
             team1?: Player[];
             team2?: Player[];
         };
 
         if (game.appliedResults) {
             obj = { ...objScore, appliedResults: game.appliedResults };
+        } else {
+            obj = objScore;
+        }
+
+        if (game.savedResult) {
+            obj = { ...objScore, savedResult: game.savedResult };
         } else {
             obj = objScore;
         }

@@ -62,7 +62,7 @@ export class PrevMatchDetailComponent implements OnInit, OnDestroy {
       this.extractedTeam1 = customGame.team1;
       this.extractedTeam2 = customGame.team2;
       this.showSpinner = false;
-      this.matchResultsStored = true;
+      this.matchResultsStored = customGame.savedResult;
       if (customGame.scoreTeam1 != null) {
         this.team1Score = customGame.scoreTeam1;
       } else {
@@ -76,6 +76,8 @@ export class PrevMatchDetailComponent implements OnInit, OnDestroy {
         this.team2Score = 0;
         this.matchResultsStored = false;
       }
+      console.log('xxx matchResultsStored', this.matchResultsStored);
+      
       this.matchResultsAppliedToRatings = customGame.appliedResults;
     });
   }
@@ -210,5 +212,9 @@ export class PrevMatchDetailComponent implements OnInit, OnDestroy {
 
   public canShowApplyResultsButton(): boolean {
     return !this.matchResultsAppliedToRatings && this.authSvc.isAuthenticatedAsOrganizer();
+  }
+
+  public canChangeScore(): boolean {
+    return !this.matchResultsStored;
   }
 }
