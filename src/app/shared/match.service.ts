@@ -188,7 +188,6 @@ export class MatchService {
     }
 
     public saveCustomPrevMatch(matchName: string, game: CustomPrevGame) {
-        console.log('save custom prev mtch', matchName, game);
         const matchRef = this.db.doc('/matches/' + matchName).ref;
         const objScore = {
             team1: game.team1,
@@ -203,16 +202,13 @@ export class MatchService {
             team2?: Player[];
         };
 
+        obj = { ...objScore };
         if (game.appliedResults) {
-            obj = { ...objScore, appliedResults: game.appliedResults };
-        } else {
-            obj = objScore;
+            obj = { ...obj, appliedResults: game.appliedResults };
         }
 
         if (game.savedResult) {
-            obj = { ...objScore, savedResult: game.savedResult };
-        } else {
-            obj = objScore;
+            obj = { ...obj, savedResult: game.savedResult };
         }
 
         if (game.scoreTeam1 != null) {
@@ -225,7 +221,7 @@ export class MatchService {
             obj = { ...obj, postResults: game.postResults };
         }
 
-        console.log('save custom prev obj', obj);
         matchRef.set(obj, { merge: true });
+        this.recentMatchesChangeEvent.next(this.recentMatchNames);
     }
 }

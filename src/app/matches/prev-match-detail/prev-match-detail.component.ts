@@ -76,8 +76,7 @@ export class PrevMatchDetailComponent implements OnInit, OnDestroy {
         this.team2Score = 0;
         this.matchResultsStored = false;
       }
-      console.log('xxx matchResultsStored', this.matchResultsStored);
-      
+
       this.matchResultsAppliedToRatings = customGame.appliedResults;
     });
   }
@@ -118,6 +117,7 @@ export class PrevMatchDetailComponent implements OnInit, OnDestroy {
 
     this.customGame.scoreTeam1 = this.team1Score;
     this.customGame.scoreTeam2 = this.team2Score;
+    this.customGame.savedResult = true;
     this.matchSvc.saveCustomPrevMatch(this.matchSearchKey, this.customGame);
   }
 
@@ -203,6 +203,8 @@ export class PrevMatchDetailComponent implements OnInit, OnDestroy {
     // Store the new data for the match.
     this.customGame.appliedResults = true;
     this.matchResultsAppliedToRatings = true;
+    console.log('saving ', this.customGame);
+
     this.matchSvc.saveCustomPrevMatch(this.matchSearchKey, this.customGame);
   }
 
