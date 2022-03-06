@@ -1,6 +1,6 @@
 {
   "name": "team-balancer",
-  "version": "0.8.10",
+  "version": "0.8.11",
   "scripts": {
     "ng": "ng",
     "start": "npm run icon && ng serve",
