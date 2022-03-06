@@ -24,6 +24,7 @@ export class PlayersComponent implements OnInit, OnDestroy {
 
   private subscriptions: Subscription[] = [];
   public loadArchive: boolean = false;
+  public showLoading: boolean = false;
 
   searchedName = '';
   loadingConvert = -1;
@@ -43,6 +44,7 @@ export class PlayersComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit() {
+    this.showLoading = true;
     this.players = this.playersSvc.getPlayers(this.loadArchive);
     this.subscriptions.push(this.playersSvc.playerDataChangeEvent
       .subscribe(
@@ -55,11 +57,13 @@ export class PlayersComponent implements OnInit, OnDestroy {
           if (null === playerChangeInfo.players) {
             // This could be the case when there are no players currently, but a progress event is issued.
             if (playerChangeInfo.messageType === 'loading') {
-              this.toastSvc.show(playerChangeInfo.messagePayload);
+              this.showLoading = true;
+              // this.toastSvc.show(playerChangeInfo.messagePayload);
             }
             return;
           }
           
+          this.showLoading = false;
           this.players = this.playersSvc.getPlayers(this.loadArchive);
           this.toastSvc.show('Reloaded all players from service. \n'
             + playerChangeInfo.messageType + '\n'
@@ -103,6 +107,11 @@ export class PlayersComponent implements OnInit, OnDestroy {
   onCheckReload($event) {
     this.loadArchive = !this.loadArchive;
     this.players = this.playersSvc.getPlayers(this.loadArchive);
+    if (this.loadArchive) {
+      this.toastSvc.show("Including archived players");
+    } else {
+      this.toastSvc.show("Excluding archived players");
+    }
   }
 
   onPlayerSelected($event) {
