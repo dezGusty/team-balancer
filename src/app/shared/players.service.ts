@@ -364,13 +364,14 @@ export class PlayersService {
 
         if (winners.includes(playerCpy.name)) {
             sign = RatingSystemSettings.GetSignMultiplierForWinner(ratingSystem);
+
         } else if (losers.includes(playerCpy.name)) {
             sign = RatingSystemSettings.GetSignMultiplierForLoser(ratingSystem);
         }
 
         playerCpy.rating = playerCpy.rating + sign * (
             RatingSystemSettings.GetFixedMultiplierForMatch(ratingSystem)
-            + difference * RatingSystemSettings.GetGoalMultiplierForMatch(ratingSystem));
+            + Math.abs(difference) * RatingSystemSettings.GetGoalMultiplierForMatch(ratingSystem));
         return playerCpy;
     }
 
@@ -432,6 +433,10 @@ export class PlayersService {
             losers = game.team1.map((player) => player.name);
             winners = game.team2.map((player) => player.name);
         }
+
+        console.log('winners', winners);
+        console.log('losers', losers);
+
 
         return playersCpy.map(player => this.getPlayerWithUpdatedRatingForGame(player, winners, losers, difference, ratingSystem));
     }

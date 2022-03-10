@@ -8,9 +8,9 @@
             (keyup)="onSearchContentChange($event)" placeholder="Search..." aria-label="Search" #srcNameArea autofocus>
     </div>
     <div class="col col-auto align-self-center btn-group " role="group">
-        <label class="btn btn-gus-small btn-sm" ngbButtonLabel>
-            <input type="checkbox" class="btn-check" (click)='onCheckReload($event)' ngbButton
-                [(ngModel)]="loadArchive">
+        <label class="btn btn-gus-small btn-sm" ngbButtonLabel ngbTooltip="Include archived players">
+            <input type="checkbox" class="btn-check" (click)='onCheckReload($event)' ngbButton [(ngModel)]="loadArchive"
+                >
             <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" fill="currentColor"
                 class="bi bi-file-earmark-zip-fill" viewBox="0 0 16 16">
                 <path d="M5.5 9.438V8.5h1v.938a1 1 0 0 0 .03.243l.4 1.598-.93.62-.93-.62.4-1.598a1 1 0 0 0 .03-.243z" />

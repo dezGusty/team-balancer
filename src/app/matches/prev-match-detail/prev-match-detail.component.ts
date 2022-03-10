@@ -7,6 +7,7 @@ import { Subscription } from 'rxjs';
 import { PlayersService } from 'src/app/shared/players.service';
 import { update } from 'firebase/database';
 import { AuthService } from 'src/app/auth/auth.service';
+import { RatingSystem } from 'src/app/shared/rating-system';
 
 @Component({
   selector: 'app-prev-match-detail',
@@ -159,12 +160,10 @@ export class PrevMatchDetailComponent implements OnInit, OnDestroy {
     }
 
     let currentMatch = await this.playersSvc.getCurrentRatings().toPromise();
-    let ratingSystem = 1;
+    let ratingSystem = RatingSystem.German;
     if (currentMatch) {
       if (currentMatch.version) {
         ratingSystem = currentMatch.version;
-      } else {
-        ratingSystem = 1; // German by default for old versions of the app.
       }
     }
 
