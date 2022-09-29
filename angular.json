@@ -164,7 +164,6 @@
       }
     }
   },
-  "defaultProject": "team-balancer",
   "cli": {
     "analytics": false
   }
