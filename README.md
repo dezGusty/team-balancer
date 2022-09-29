@@ -12,6 +12,22 @@ The [Cookie Consent](https://www.osano.com/cookieconsent) library is used via [n
 
 ## Development
 
+### Quick set-up
+
+* Install Node.js v16 (incl. npm)
+* Install Angular CLI, via the command line
+  * `npm install -g @angular/cli`
+* Install git
+* Clone the repository (E.g. C:/dev/team-balancer)
+* Open a terminal in the cloned directory and install the dependencies by running
+  * `npm i`
+* Configure your firebase credentials
+  * create a new typescript file -> `src/environments/firebase-data.ts`
+  * go to <https://console.firebase.google.com/>
+  * select your project, go to `Project settings`, `SDK setup and configuration` section, `Config`
+  * Copy the json content into the firebase-data.ts file.
+  * Replace "const firebaseConfig" with "export const firebaseConfig"
+
 ### Development server
 
 Run `ng serve` for a dev server. Navigate to `http://localhost:4200/`. The app will automatically reload if you change any of the source files.
@@ -37,11 +53,11 @@ const deploymentDomain = "localhost";
 
 Some of the features to work on
 
-- redesign cards used in draft selection to be more responsive
-  - on larger displays, it should use more real estate
-- redesign player edit card to not be fixed on the right side
-  - could be included in the card once selected
-  - could be a sliding pane for small displays
-- redesign custom game component - does not need player selection, can always start from draft
-  - can add more intuitive player team assignments (E.g. slide left/right)
-- Button loading component
+* redesign cards used in draft selection to be more responsive
+  * on larger displays, it should use more real estate
+* redesign player edit card to not be fixed on the right side
+  * could be included in the card once selected
+  * could be a sliding pane for small displays
+* redesign custom game component - does not need player selection, can always start from draft
+  * can add more intuitive player team assignments (E.g. slide left/right)
+* Button loading component
