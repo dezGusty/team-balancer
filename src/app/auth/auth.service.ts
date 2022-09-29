@@ -169,43 +169,43 @@ export class AuthService {
     }
 
     isAuthenticatedAsUser(): boolean {
-        if (!this.cachedUser || !this.cachedUser.roles) {
+        if (!this.cachedUser || !this.cachedUser?.roles) {
             const storedValue = this.appStorage.getAppStorageItem('roles');
             if (!storedValue) {
-                return this.doesRoleContainUser(this.cachedUser.roles);
+                return this.doesRoleContainUser(this.cachedUser?.roles);
             }
             const roles: UserRoles = JSON.parse(storedValue);
             return this.doesRoleContainUser(roles);
         }
 
-        return this.doesRoleContainUser(this.cachedUser.roles);
+        return this.doesRoleContainUser(this.cachedUser?.roles);
     }
 
     isAuthenticatedAsOrganizer(): boolean {
-        if (!this.cachedUser || !this.cachedUser.roles) {
+        if (!this.cachedUser || !this.cachedUser?.roles) {
             const storedValue = this.appStorage.getAppStorageItem('roles');
             if (!storedValue) {
-                return this.doesRoleContainOrganizer(this.cachedUser.roles);
+                return this.doesRoleContainOrganizer(this.cachedUser?.roles);
             }
             const roles: UserRoles = JSON.parse(storedValue);
             return this.doesRoleContainOrganizer(roles);
         }
 
-        return this.doesRoleContainOrganizer(this.cachedUser.roles);
+        return this.doesRoleContainOrganizer(this.cachedUser?.roles);
     }
 
     
     isAuthenticatedAsAdmin(): boolean {
-        if (!this.cachedUser || !this.cachedUser.roles) {
+        if (!this.cachedUser || !this.cachedUser?.roles) {
             const storedValue = this.appStorage.getAppStorageItem('roles');
             if (!storedValue) {
-                return this.doesRoleContainAdmin(this.cachedUser.roles);
+                return this.doesRoleContainAdmin(this.cachedUser?.roles);
             }
             const roles: UserRoles = JSON.parse(storedValue);
             return this.doesRoleContainAdmin(roles);
         }
 
-        return this.doesRoleContainAdmin(this.cachedUser.roles);
+        return this.doesRoleContainAdmin(this.cachedUser?.roles);
     }
 
 
@@ -232,7 +232,7 @@ export class AuthService {
                     this.db.doc('users/' + userPath).set(obj, { merge: true });
                 }
                 this.cachedUser = obj;
-                this.appStorage.setAppStorageItem('roles', JSON.stringify(this.cachedUser.roles));
+                this.appStorage.setAppStorageItem('roles', JSON.stringify(this.cachedUser?.roles));
                 if (this.appStorage.cacheUserData) {
                     this.appStorage.setAppStorageItem('user', JSON.stringify(this.cachedUser));
                 }
@@ -242,7 +242,7 @@ export class AuthService {
                 console.log('User does not exist. Should create');
                 this.db.doc('users/' + userPath).set(obj);
                 this.cachedUser = obj;
-                this.appStorage.setAppStorageItem('roles', JSON.stringify(this.cachedUser.roles));
+                this.appStorage.setAppStorageItem('roles', JSON.stringify(this.cachedUser?.roles));
                 if (this.appStorage.cacheUserData) {
                     this.appStorage.setAppStorageItem('user', JSON.stringify(this.cachedUser));
                 }

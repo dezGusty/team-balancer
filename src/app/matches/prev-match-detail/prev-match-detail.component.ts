@@ -111,15 +111,20 @@ export class PrevMatchDetailComponent implements OnInit, OnDestroy {
     // handle elsewhere
   }
 
-  onStoreResultClick() {
+  async onStoreResultClick() {
     if (!this.authSvc.isAuthenticatedAsOrganizer()) {
       return;
     }
 
+    // show animation
+    this.showSpinner = true;
+
     this.customGame.scoreTeam1 = this.team1Score;
     this.customGame.scoreTeam2 = this.team2Score;
     this.customGame.savedResult = true;
-    this.matchSvc.saveCustomPrevMatch(this.matchSearchKey, this.customGame);
+    await this.matchSvc.saveCustomPrevMatchAsync(this.matchSearchKey, this.customGame);
+    this.matchResultsStored = this.customGame.savedResult;
+    this.showSpinner = false;
   }
 
 
@@ -204,7 +209,10 @@ export class PrevMatchDetailComponent implements OnInit, OnDestroy {
     this.matchResultsAppliedToRatings = true;
     console.log('saving ', this.customGame);
 
-    this.matchSvc.saveCustomPrevMatch(this.matchSearchKey, this.customGame);
+    this.showSpinner = true;
+    await this.matchSvc.saveCustomPrevMatchAsync(this.matchSearchKey, this.customGame);
+    this.showSpinner = false;
+    // this.matchSvc.saveCustomPrevMatch(this.matchSearchKey, this.customGame);
   }
 
   public canShowStoreResultsButton(): boolean {

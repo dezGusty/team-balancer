@@ -224,4 +224,42 @@ export class MatchService {
         matchRef.set(obj, { merge: true });
         this.recentMatchesChangeEvent.next(this.recentMatchNames);
     }
+
+    public async saveCustomPrevMatchAsync(matchName: string, game: CustomPrevGame) {
+        const matchRef = this.db.doc('/matches/' + matchName).ref;
+        const objScore = {
+            team1: game.team1,
+            team2: game.team2
+        };
+
+        let obj: {
+            [x: string]: any;
+            appliedResults?: true;
+            savedResult?: true;
+            team1?: Player[];
+            team2?: Player[];
+        };
+
+        obj = { ...objScore };
+        if (game.appliedResults) {
+            obj = { ...obj, appliedResults: game.appliedResults };
+        }
+
+        if (game.savedResult) {
+            obj = { ...obj, savedResult: game.savedResult };
+        }
+
+        if (game.scoreTeam1 != null) {
+            obj = { ...obj, scoreTeam1: game.scoreTeam1 };
+        }
+        if (game.scoreTeam2 != null) {
+            obj = { ...obj, scoreTeam2: game.scoreTeam2 };
+        }
+        if (game.postResults != null) {
+            obj = { ...obj, postResults: game.postResults };
+        }
+
+        await matchRef.set(obj, { merge: true });
+        this.recentMatchesChangeEvent.next(this.recentMatchNames);
+    }
 }
