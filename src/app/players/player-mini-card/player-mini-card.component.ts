@@ -17,4 +17,22 @@ export class PlayerMiniCardComponent implements OnInit {
     return getDisplayName(this.player);
   }
 
+  public getRecentMatches(): Array<{ date: string, diff: number }> {
+    return this.player.mostRecentMatches;
+  }
+
+  public getDisplayTextForRating(rating: { date: string, diff: number }): string {
+    if (rating.diff > 0) {
+      return '↗️';
+    } else if (rating.diff === 0) {
+      return '➡️';
+    } else {
+      return '↘️'
+    }
+  }
+
+  public getDisplayTooltipForRating(rating: { date: string, diff: number }): string {
+    return '📅' + rating.date + ' 👉   ' + rating.diff.toPrecision(2);
+  }
+
 }
