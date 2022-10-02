@@ -19,65 +19,30 @@ export class MatchAltService {
     // E.g. stored in [matches/2018-03-23]
     let myResult: CustomPrevGame = null;
     console.log('getMatchForDateAsync');
+    const docName = 'matches/' + matchName;
 
-    const ref = doc(this.firestore, 'matches/' + matchName);
+    const ref = doc(this.firestore, docName);
     const docSnap = await getDoc(ref);
     if (docSnap.exists()) {
-      console.log('Data ', docSnap.data());
       myResult = docSnap.data() as CustomPrevGame;
-      console.log('Data ', myResult);
-      // const game: CustomPrevGame = docSnap.data();
-      // console.log(game);
     }
     else {
-      console.log('Could not find document for ', matchName);
+      console.log('Could not find document for ', docName);
     }
 
-    // const snapshot = await this.db.doc<CustomPrevGame>('matches/' + matchName).get();
-    // console.log('item get', snapshot);
-
-
-
-
-    // for(const doc of snapshot.docs){
-    //     console.log(doc.id, '=>', doc.data());
-    //   }
-
-    // await snapshot.forEach(matchDoc =>
-    //   // Map each document (expected: only 1) to the read operation.
-    //   map(matchDoc => {
-    //     console.log('mapping', matchDoc);
-    //     // Read the document data.
-    //     // It is expected to consist of serialized data.
-    //     // const fbData = matchDoc.data();
-    //     // const obj: CustomPrevGame = {
-    //     //     team1: fbData.team1,
-    //     //     team2: fbData.team2,
-    //     //     scoreTeam1: fbData.scoreTeam1,
-    //     //     scoreTeam2: fbData.scoreTeam2,
-    //     //     appliedResults: fbData.appliedResults,
-    //     //     savedResult: fbData.savedResult,
-    //     //     postResults: fbData.postResults
-    //     // };
-    //     // myResult = obj;
-    //     // return myResult;
-    //   })
-    // );
-
-    /**let players: Player[];
-
-    const dbRef = ref(getDatabase());
-    get(child(dbRef, 'ratings/' + documentName)).then((snapshot) => {
-        if (snapshot.exists()) {
-            console.log(snapshot.val());
-            players = snapshot.val();
-        } else {
-            console.log("No data available");
-        }
-    }).catch((error) => {
-        console.error(error);
-    });
-    return players; */
     return myResult;
   }
+
+  /**
+   * Get the match date (E.g. "2022-09-02") from a rating date (E.g. "2022-09-02_LblABC123")
+   * @param ratingDate 
+   */
+  public getMatchDateFromRatingDateWithLabel(ratingDate: string): string {
+    if (ratingDate.length > 10) {
+      return ratingDate.substring(0, 10);
+    }
+    return ratingDate;
+  }
+
+  
 }

@@ -62,6 +62,7 @@ export class PlayersService {
 
     playerDataChangeEvent = new BehaviorSubject<PlayerChangeInfo>(null);
 
+
     subscribeToDataSources() {
         console.log('[players] subscribing to data sources');
 
@@ -124,6 +125,10 @@ export class PlayersService {
         console.log('[playerssvc] added player');
         this.currentPlayerList.push(player);
         this.saveSinglePlayerToFirebase(player);
+    }
+
+    getCurrentLabel() {
+        return this.currentLabel;
     }
 
     movePlayerToArchive(player: Player) {
@@ -213,6 +218,44 @@ export class PlayersService {
         return true;
     }
 
+    /**
+     * Updates a player, based on the ID.
+     * @param id The ID of the player.
+     * @param newPlayer The new object (already constructed) to use.
+     */
+     async updatePlayerByIdAsync(id: number, newPlayer: Player): Promise<boolean> {
+        const oldIndex = this.currentPlayerList.findIndex((playerItem) => (playerItem.id === id));
+        if (oldIndex === -1) {
+            // old entry not found?
+            console.warn('Tried to update a player, but did not find it in the previous entries list');
+            return false;
+        }
+
+        this.currentPlayerList[oldIndex] = newPlayer;
+        console.log('[players.svc] Replaced player for id ' + id + '. New one', newPlayer);
+
+        await this.updateSinglePlayerToFirebase(newPlayer);
+        return true;
+    }
+
+    /**
+     * Updates a player, based on the ID.
+     * @param id The ID of the player.
+     * @param newPlayer The new object (already constructed) to use.
+     */
+     updateCachedPlayerById(id: number, newPlayer: Player): boolean {
+        const oldIndex = this.currentPlayerList.findIndex((playerItem) => (playerItem.id === id));
+        if (oldIndex === -1) {
+            // old entry not found?
+            console.warn('Tried to update a player, but did not find it in the previous entries list');
+            return false;
+        }
+
+        this.currentPlayerList[oldIndex] = newPlayer;
+        console.log('[players.svc] Replaced player for id ' + id + '. New one', newPlayer);
+        return true;
+    }
+
     createDefaultPlayer(): Player {
         // get the id.
         const newID = this.currentPlayerList.length ? Math.max.apply(
@@ -241,6 +284,19 @@ export class PlayersService {
 
     public savePlayersToList(playersArr: Player[], listName: string) {
         this.savePlayersArrayToDoc(playersArr, listName)
+            .then(_ => {
+                const playerInfo = new PlayerChangeInfo(playersArr, 'info', 'Saved players to list ' + listName);
+                console.log('emitting ', playerInfo);
+
+                this.playerDataChangeEvent.next(playerInfo);
+            }
+            ).catch(reason =>
+                this.playerDataChangeEvent.next(new PlayerChangeInfo(playersArr, 'error', 'Failed to save player list because of ' + reason))
+            );
+    }
+
+    public async savePlayersToListAsync(playersArr: Player[], listName: string): Promise<void> {
+        return this.savePlayersArrayToDoc(playersArr, listName)
             .then(_ => {
                 const playerInfo = new PlayerChangeInfo(playersArr, 'info', 'Saved players to list ' + listName);
                 console.log('emitting ', playerInfo);
@@ -313,6 +369,10 @@ export class PlayersService {
 
     updateSinglePlayerToFirebase(player: Player) {
         this.saveAllPlayers();
+    }
+
+    saveAllPlayersToFirebaseAsync() {
+        this.savePlayersToListAsync(this.currentPlayerList, 'current');
     }
 
     public getCurrentRatingSystem(): RatingSystem {

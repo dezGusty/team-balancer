@@ -19,7 +19,9 @@ import { MatchAltService } from '../shared/match-alt.service';
 })
 export class AdminComponent implements OnInit, OnDestroy {
 
+  currentLabel: string = "";
   players: Player[];
+
   matchHistory: Map<string, CustomPrevGame>;
   ratingHistory: Map<string, RatingHist>;
   ratingSystems = [];
@@ -43,6 +45,7 @@ export class AdminComponent implements OnInit, OnDestroy {
 
   ngOnInit(): void {
     this.players = this.playersSvc.getPlayers();
+    this.currentLabel = this.playersSvc.getCurrentLabel();
     this.ratingSystems = Object.keys(RatingSystem).filter(p => isNaN(Number(p)));
     this.subscriptions.push(this.playersSvc.playerDataChangeEvent
       .subscribe(
@@ -169,37 +172,48 @@ export class AdminComponent implements OnInit, OnDestroy {
 
     this.playersSvc.savePlayersToList(scaledPlayers, 'current');
     this.playersSvc.addFieldValueToDocument('ratingSystem', this.newRatingScale, 'current');
-    // if (this.newBranchName) {
-    //   this.playersSvc.addFieldValueToDocument('label', this.newBranchName, branchToEdit);
-    //   this.playersSvc.addFieldValueToDocument('label', this.newBranchName, 'current');
-    // }
 
-
-    // Update the rating from the chosen date and save it to current.
-    // this.matchesSvc.getMatchForDateAsync(this.ratingChosen.key.slice(0, 10)).subscribe((customGame: CustomPrevGame) => {
-    //   if (this.newBranchName) {
-    //     this.playersSvc.addFieldValueToDocument('label', this.newBranchName, 'current');
-    //   } else if (this.ratingChosen.value.label) {
-    //     this.playersSvc.addFieldValueToDocument('label', this.ratingChosen.value.label, 'current');
-    //   } else {
-    //     this.playersSvc.removeFieldFromDocument('label', 'current');
-    //   }
-
-    //   this.playersSvc.addFieldValueToDocument('version', this.newRatingScale, 'current');
-    //   this.ratingChosen.value.players = this.playersSvc.updateRatingsForGame(this.ratingChosen.value.players,
-    //     customGame, this.newRatingScale);
-    //   this.playersSvc.savePlayersToList(this.ratingChosen.value.players, 'current');
-
-    // });
     this.loadingConvert = 0;
   }
 
   async storeRatingForPlayersInMatch($event) {
     if (this.ratingChosen?.key) {
+
       this.loadingConvert = 1;
-      const gameObj = await this.matchesAltSvc.getMatchForDateAsync(this.ratingChosen.key);
+      const matchKey = this.matchesAltSvc.getMatchDateFromRatingDateWithLabel(this.ratingChosen.key);
+      const gameObj: CustomPrevGame = await this.matchesAltSvc.getMatchForDateAsync(matchKey);
       console.log("custom prev game:", gameObj);
 
+      // Go through each player and add the results to a separate item.
+      gameObj?.postResults?.forEach(async diffPair => {
+        let playerToUpdate = this.playersSvc.getPlayerById(diffPair.id);
+        const existingEntry = playerToUpdate.mostRecentMatches?.find(x => x.date == matchKey);
+        if (existingEntry) {
+          // update or ignore?
+          // ignore 
+          console.log('existing entry', existingEntry);
+
+        } else {
+          if (playerToUpdate.mostRecentMatches == null) {
+            playerToUpdate.mostRecentMatches = new Array<{ date: string, diff: number }>;
+          }
+          playerToUpdate.mostRecentMatches.push({ date: matchKey, diff: diffPair.diff });
+
+          // don't keep all ratings, just the most recent ones, so sort them.
+          playerToUpdate.mostRecentMatches.sort((a, b) => a.date > b.date ? -1 : 1);
+          if (playerToUpdate.mostRecentMatches.length > 10) { //xxx MAGIC NUMBER
+            // playerToUpdate.mostRecentMatches = playerToUpdate.mostRecentMatches.slice(Math.max(playerToUpdate.mostRecentMatches.length - 10, 0));
+            playerToUpdate.mostRecentMatches = playerToUpdate.mostRecentMatches.slice(0, 10);//xxx MAGIC NUMBER
+          }
+        }
+
+        console.log("*** player to update", playerToUpdate);
+
+        // search for player by id
+        this.playersSvc.updateCachedPlayerById(diffPair.id, playerToUpdate);
+      });
+
+      await this.playersSvc.saveAllPlayersToFirebaseAsync();
     }
 
     this.loadingConvert = 0;

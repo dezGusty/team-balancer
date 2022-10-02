@@ -7,7 +7,7 @@ export class Player {
     public keywords = '';
     public displayName = '';
     public affinity = 0;
-    public mostRecentMatches : Array<[string,string]>;
+    public mostRecentMatches : Array<{date: string, diff: number}>;
     public isArchived = false;
 
     constructor(public id: number, public name: string) {

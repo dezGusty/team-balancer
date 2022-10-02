@@ -18,6 +18,7 @@
             <div class="form-group mb-2">
                 <input [disabled]='!ratingChosen' type="text" class="form-control" id="inputBranchName"
                     placeholder="New Label" [(ngModel)]="newBranchName" name="newBranch">
+                    <label>{{this.currentLabel}}</label>
             </div>
             <div class="form-group mb-2">
                 <div ngbDropdown (openChange)="checkDropDown($event)" class="d-inline-block">
