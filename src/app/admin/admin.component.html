@@ -12,6 +12,7 @@
                                 ngbDropdownItem>{{ratings.key}}</button>
                         </ng-container>
                     </div>
+                    <label>{{this.ratingChosen?.key}}</label>
                 </div>
             </div>
             <div class="form-group mb-2">
@@ -37,8 +38,10 @@
             </button>
         </form>
 
-        <button type="button" role="button" class="center btn btn-info mb-2" (click)='onTestMessageClicked($event)'>
-            Test Msg
+        
+        <br>
+        <button type="button" role="button" class="center btn btn-info mb-2" (click)='storeRatingForPlayersInMatch($event)'>
+            Store player ratings for Match
         </button>
 
         <app-player-routed-card *ngFor="let playerItem of players; let even = even; let odd = odd" [player]="playerItem"

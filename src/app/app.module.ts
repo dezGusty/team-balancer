@@ -24,6 +24,14 @@ import { PlayerFilterPipe } from './matches/player-filter.pipe';
 import { SigninComponent } from './auth/signin/signin.component';
 import { SignupComponent } from './auth/signup/signup.component';
 
+import { provideFirebaseApp, initializeApp } from '@angular/fire/app';
+import { getFirestore, provideFirestore, enableMultiTabIndexedDbPersistence } from '@angular/fire/firestore';
+
+import { getApp } from '@angular/fire/app';
+import { provideAuth, connectAuthEmulator, getAuth } from '@angular/fire/auth';
+import { connectDatabaseEmulator, getDatabase, provideDatabase } from '@angular/fire/database';
+import { getMessaging, provideMessaging } from '@angular/fire/messaging';
+
 import { AngularFireModule } from '@angular/fire/compat';
 import { AngularFirestoreModule } from '@angular/fire/compat/firestore';
 import { AngularFireAuthModule } from '@angular/fire/compat/auth';
@@ -51,6 +59,7 @@ import { AdminComponent } from './admin/admin.component';
 import { ToastService } from './shared/toasts-service';
 import { ToastsContainer } from './toast/toast-container.component';
 import { AdminGuard } from './auth/admin-guard.service';
+import { MatchAltService } from './shared/match-alt.service';
 
 // types: opt-out, opt-in, info
 const cookieConfig: NgcCookieConsentConfig = {
@@ -68,6 +77,12 @@ const cookieConfig: NgcCookieConsentConfig = {
   theme: 'edgeless',
   type: 'info'
 };
+
+let resolvePersistenceEnabled: (enabled: boolean) => void;
+
+export const persistenceEnabled = new Promise<boolean>(resolve => {
+  resolvePersistenceEnabled = resolve;
+});
 
 @NgModule({
   declarations: [
@@ -100,6 +115,23 @@ const cookieConfig: NgcCookieConsentConfig = {
     ToastsContainer
   ],
   imports: [
+    provideAuth(() => {
+      const auth = getAuth();
+      return auth;
+    }),
+    provideFirebaseApp(() => initializeApp(environment.firebase)),
+    provideFirestore(() => {
+      const firestore = getFirestore();
+      // enableMultiTabIndexedDbPersistence(firestore).then(
+      //   () => resolvePersistenceEnabled(true),
+      //   () => resolvePersistenceEnabled(false)
+      // );
+      if (!firestore['_initialized']) {
+        enableMultiTabIndexedDbPersistence(firestore);
+      }
+      return firestore;
+    }),
+    provideMessaging(() => getMessaging()),
     AngularFireModule.initializeApp(environment.firebase),
     AngularFirestoreModule, // imports firebase/firestore, only needed for database features
     AngularFireAuthModule, // imports firebase/auth, only needed for auth features
@@ -111,11 +143,13 @@ const cookieConfig: NgcCookieConsentConfig = {
     NgbCollapseModule,
     NgbTooltipModule,
     NgbModule,
-    NgcCookieConsentModule.forRoot(cookieConfig)
+    NgcCookieConsentModule.forRoot(cookieConfig),
+
   ],
   providers: [
     PlayersService,
     MatchService,
+    MatchAltService,
     MessagingService,
     AuthService,
     ToastService,

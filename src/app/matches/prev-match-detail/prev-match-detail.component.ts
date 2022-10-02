@@ -58,7 +58,7 @@ export class PrevMatchDetailComponent implements OnInit, OnDestroy {
     this.customGame = null;
     this.showSpinner = true;
 
-    this.matchSvc.getMatchForDateAsync(matchSearchKey).subscribe((customGame: CustomPrevGame) => {
+    this.matchSvc.getMatchForDate(matchSearchKey).subscribe((customGame: CustomPrevGame) => {
       this.customGame = customGame;
       this.extractedTeam1 = customGame.team1;
       this.extractedTeam2 = customGame.team2;

@@ -34,6 +34,12 @@ Login with Google account
 firebase login
 ```
 
+To readd the project
+
+```cmd
+firebase use --add
+```
+
 Configure aliases inside `.firebaserc` according to your firebase project name.
 
 Add the firebase configuration credentials:

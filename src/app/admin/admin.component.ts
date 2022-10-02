@@ -11,6 +11,7 @@ import { RatingSystem, RatingSystemSettings } from '../shared/rating-system';
 import { ToastService } from '../shared/toasts-service';
 import { getMessaging, getToken } from "firebase/messaging";
 import { RatingHist } from '../shared/rating-hist.model';
+import { MatchAltService } from '../shared/match-alt.service';
 @Component({
   selector: 'app-admin',
   templateUrl: './admin.component.html',
@@ -35,6 +36,7 @@ export class AdminComponent implements OnInit, OnDestroy {
     private authSvc: AuthService,
     private playersSvc: PlayersService,
     private matchesSvc: MatchService,
+    private matchesAltSvc: MatchAltService,
     private toastSvc: ToastService) {
 
   }
@@ -83,7 +85,7 @@ export class AdminComponent implements OnInit, OnDestroy {
     // Create rating entries again, based on the matches whose results were applied.
     let recentMatchNames = [...this.matchesSvc.getRecentMatchListCached()];
     recentMatchNames.forEach(matchName => {
-      this.matchesSvc.getMatchForDateAsync(matchName).subscribe((customGame: CustomPrevGame) => {
+      this.matchesSvc.getMatchForDate(matchName).subscribe((customGame: CustomPrevGame) => {
 
         if (customGame.appliedResults) {
           const newPlayers = this.playersSvc.getAllPlayersUpdatedRatingsForGame(
@@ -140,13 +142,6 @@ export class AdminComponent implements OnInit, OnDestroy {
       branchToEdit = branchToEdit.slice(0, 10) + '_' + this.newBranchName;
     }
 
-    console.log('xxx', this.ratingChosen);
-    // let oldRatingSystem = this.ratingChosen?.value?.ratingScale;
-    // if (null == oldRatingSystem) {
-    //   console.log('No rating system defined for selection; using default');
-    //   oldRatingSystem = RatingSystem.German;
-    // }
-
     const oldPlayerList: Player[] = this.ratingChosen.value.players;
 
     // Perform a backup of the old ratings.
@@ -171,10 +166,6 @@ export class AdminComponent implements OnInit, OnDestroy {
     this.toastSvc.show(messageToShow, { delay: 7500 });
     console.log(messageToShow);
 
-    // console.log("Old players:");
-    // this.playersSvc.getPlayers().forEach(element => {
-    //   console.log(element.name + ": " + element.rating)
-    // });
 
     this.playersSvc.savePlayersToList(scaledPlayers, 'current');
     this.playersSvc.addFieldValueToDocument('ratingSystem', this.newRatingScale, 'current');
@@ -203,47 +194,16 @@ export class AdminComponent implements OnInit, OnDestroy {
     this.loadingConvert = 0;
   }
 
-  onTestMessageClicked($event) {
+  async storeRatingForPlayersInMatch($event) {
+    if (this.ratingChosen?.key) {
+      this.loadingConvert = 1;
+      const gameObj = await this.matchesAltSvc.getMatchForDateAsync(this.ratingChosen.key);
+      console.log("custom prev game:", gameObj);
+
+    }
+
+    this.loadingConvert = 0;
     return;
-    // this.toastSvc.show($event, { delay: 7500 });
-    // console.log($event);
-    // const linkToUse = 'https://teams-balancer.firebaseapp.com/players/';
-    // const notification = {
-    //   title: 'New Match Created!',
-    //   body: 'Match ID: [2022-02-22]' + ' test'
-    // };
-    // const payload = {
-    //   notification,
-    //   webpush: {
-    //     notification: {
-    //       vibrate: [100, 100, 200, 200, 300],
-    //       icon: 'assets/ball_128.png',
-    //       actions: [
-    //         {
-    //           action: 'ok',
-    //           title: 'ok'
-    //         }
-    //       ]
-    //     },
-    //     fcmOptions: {
-    //       link: linkToUse
-    //     }
-    //   },
-    //   topic: 'matches'
-    // };
 
-    // // Get registration token. Initially this makes a network call, once retrieved
-    // // subsequent calls to getToken will return from cache.
-    // const messaging = getMessaging();
-
-    // messaging.send(payload)
-    // // fadmin.app.messaging().send(payload)
-    //   .then((response) => {
-    //     // Response is a message ID string.
-    //     console.log('Successfully sent message:', response);
-    //   })
-    //   .catch((error) => {
-    //     console.log('Error sending message:', error);
-    //   });
   }
 }
