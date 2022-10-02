@@ -207,6 +207,29 @@ a.player-card-grad:hover {
   padding: 0;
 }
 
+.player-card-recent-matches-good {
+  color: #30FF3084;
+  text-shadow: 0 0 0 green;
+}
+.player-card-recent-matches-very-good {
+  color: #30FF3054;
+  text-shadow: 0 0 0 green;
+}
+.player-card-recent-matches-bad {
+  color: #FF303084;
+  text-shadow: 0 0 0 red;
+}
+.player-card-recent-matches-very-bad {
+  color: #FF303054;
+  text-shadow: 0 0 0 red;
+}
+
+.player-card-recent-matches-neutral {
+  color: #77777774;  
+  text-shadow: 0 0 0 gray;
+}
+
+
 .player-card-name {
   font-size: medium;
   font-weight: 700;

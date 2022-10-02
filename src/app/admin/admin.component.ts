@@ -182,7 +182,6 @@ export class AdminComponent implements OnInit, OnDestroy {
       this.loadingConvert = 1;
       const matchKey = this.matchesAltSvc.getMatchDateFromRatingDateWithLabel(this.ratingChosen.key);
       const gameObj: CustomPrevGame = await this.matchesAltSvc.getMatchForDateAsync(matchKey);
-      console.log("custom prev game:", gameObj);
 
       // Go through each player and add the results to a separate item.
       gameObj?.postResults?.forEach(async diffPair => {
@@ -206,8 +205,6 @@ export class AdminComponent implements OnInit, OnDestroy {
             playerToUpdate.mostRecentMatches = playerToUpdate.mostRecentMatches.slice(0, 10);//xxx MAGIC NUMBER
           }
         }
-
-        console.log("*** player to update", playerToUpdate);
 
         // search for player by id
         this.playersSvc.updateCachedPlayerById(diffPair.id, playerToUpdate);

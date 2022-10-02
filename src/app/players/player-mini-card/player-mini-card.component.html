@@ -18,6 +18,7 @@
 
     <div class="d-flex flex-row-reverse">
       <span *ngFor="let recentRating of this.getRecentMatches()"
+        [ngClass]="this.getDisplayClassForRating(recentRating)"
         ngbTooltip={{this.getDisplayTooltipForRating(recentRating)}}>
         {{ this.getDisplayTextForRating(recentRating) }}</span>
     </div>

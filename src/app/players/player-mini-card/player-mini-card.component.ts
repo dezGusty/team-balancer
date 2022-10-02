@@ -18,16 +18,38 @@ export class PlayerMiniCardComponent implements OnInit {
   }
 
   public getRecentMatches(): Array<{ date: string, diff: number }> {
-    return this.player.mostRecentMatches;
+    return this.player?.mostRecentMatches?.slice(0, 8);
   }
 
   public getDisplayTextForRating(rating: { date: string, diff: number }): string {
     if (rating.diff > 0) {
+      if (rating.diff > 0.1) {
+        return '⬆️';
+      }
       return '↗️';
     } else if (rating.diff === 0) {
       return '➡️';
     } else {
-      return '↘️'
+      if (rating.diff < -0.1) {
+        return '⬇️';
+      }
+      return '↘️';
+    }
+  }
+
+  public getDisplayClassForRating(rating: { date: string, diff: number }): string {
+    if (rating.diff > 0) {
+      if (rating.diff > 0.1) {
+        return 'player-card-recent-matches-very-good';
+      }
+      return 'player-card-recent-matches-good';
+    } else if (rating.diff === 0) {
+      return 'player-card-recent-matches-neutral';
+    } else {
+      if (rating.diff < -0.1) {
+        return 'player-card-recent-matches-very-bad';
+      }
+      return 'player-card-recent-matches-bad';
     }
   }
 
