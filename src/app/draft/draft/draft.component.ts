@@ -177,8 +177,10 @@ export class DraftComponent implements OnInit, OnDestroy {
     this.availablePlayerList = [...this.playersSvc.getPlayers()];
   }
 
-  onSaveSelectionClicked() {
-    this.draftSvc.saveSelectedPlayerList(this.selectedPlayerList);
+  async onSaveSelectionClicked() {
+    this.showLoading = true;
+    await this.draftSvc.saveSelectedPlayerListAsync(this.selectedPlayerList);
+    this.showLoading = false;
   }
 
   onMatchUpClicked() {

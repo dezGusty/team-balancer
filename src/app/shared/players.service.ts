@@ -1,19 +1,15 @@
 import { Player } from './player.model';
 import { Injectable } from '@angular/core';
-import { AngularFirestore } from '@angular/fire/compat/firestore';
-import { BehaviorSubject, Observable, Subscription } from 'rxjs';
+import { BehaviorSubject, Subscription } from 'rxjs';
 import { AuthService } from '../auth/auth.service';
 import { CustomPrevGame } from './custom-prev-game.model';
 import { AppStorage } from './app-storage';
-import firebase from 'firebase/compat/app';
-import { onValue, getDatabase, child, ref, get } from "firebase/database";
 
-import { map } from 'rxjs/operators';
 import { RatingSystem, RatingSystemSettings } from './rating-system';
 import { PlayerChangeInfo } from './player-change-info';
-import { TemplateLiteral } from '@angular/compiler';
 import { RatingHist } from './rating-hist.model';
 import { AuthAltService } from '../auth/auth-alt.service';
+import { collection, doc, docData, Firestore, getDoc, getDocs, setDoc } from '@angular/fire/firestore';
 
 /**
  * Stores and retrieves player related information.
@@ -27,7 +23,8 @@ export class PlayersService {
 
     // constructor.
     constructor(
-        private db: AngularFirestore,
+        private firestore: Firestore,
+        // private db: AngularFirestore,
         private authSvc: AuthService,
         private authAltSvc: AuthAltService,
         private appStorage: AppStorage) {
@@ -74,8 +71,11 @@ export class PlayersService {
         this.playerDataChangeEvent.next(playerInfo);
 
         // subscribe to firebase collection changes.
-        const currentRatings = this.db.doc('ratings/current').get();
-        this.dataChangeSubscriptions.push(currentRatings.subscribe(playerListDoc => {
+        const ratingsDocRef = doc(this.firestore, 'ratings/current');
+        this.dataChangeSubscriptions.push(docData(ratingsDocRef).subscribe(playerListDoc => {
+
+            // const currentRatings = this.db.doc('ratings/current').get();
+            // this.dataChangeSubscriptions.push(currentRatings.subscribe(playerListDoc => {
             console.log('[players] current ratings watcher notified');
 
             if (!playerListDoc.exists) {
@@ -91,8 +91,9 @@ export class PlayersService {
             this.playerDataChangeEvent.next(new PlayerChangeInfo(this.currentPlayerList, 'info', 'Players loaded'));
         }));
 
-        const archivedRatings = this.db.doc('ratings/archive').get();
-        this.dataChangeSubscriptions.push(archivedRatings.subscribe(playerListDoc => {
+        const archiveDocRef = doc(this.firestore, 'ratings/archive');
+        // const archivedRatings = this.db.doc('ratings/archive').get();
+        this.dataChangeSubscriptions.push(docData(archiveDocRef).subscribe(playerListDoc => {
             console.log('[players] archived ratings watcher notified');
 
             if (!playerListDoc.exists) {
@@ -225,7 +226,7 @@ export class PlayersService {
      * @param id The ID of the player.
      * @param newPlayer The new object (already constructed) to use.
      */
-     async updatePlayerByIdAsync(id: number, newPlayer: Player): Promise<boolean> {
+    async updatePlayerByIdAsync(id: number, newPlayer: Player): Promise<boolean> {
         const oldIndex = this.currentPlayerList.findIndex((playerItem) => (playerItem.id === id));
         if (oldIndex === -1) {
             // old entry not found?
@@ -245,7 +246,7 @@ export class PlayersService {
      * @param id The ID of the player.
      * @param newPlayer The new object (already constructed) to use.
      */
-     updateCachedPlayerById(id: number, newPlayer: Player): boolean {
+    updateCachedPlayerById(id: number, newPlayer: Player): boolean {
         const oldIndex = this.currentPlayerList.findIndex((playerItem) => (playerItem.id === id));
         if (oldIndex === -1) {
             // old entry not found?
@@ -272,30 +273,31 @@ export class PlayersService {
         return result;
     }
 
-    saveAllPlayers() {
-        this.savePlayersToList(this.currentPlayerList, 'current');
+    async saveAllPlayers() {
+        await this.savePlayersToListAsync(this.currentPlayerList, 'current');
     }
 
-    public savePlayersArrayToDoc(playersArr: Player[], listName: string): Promise<void> {
-        const docPath = 'ratings/' + listName;
-        const docRef = this.db.doc(docPath).ref;
+    public async savePlayersArrayToDoc(playersArr: Player[], listName: string): Promise<void> {
+        const docName = 'ratings/' + listName;
         const obj = { players: playersArr };
-        console.log('setting data in ' + docPath, obj);
-        return docRef.set(obj, { merge: true });
+        const docRef = doc(this.firestore, docName);
+        console.log('setting data in ' + docName, obj);
+        await setDoc(docRef, obj, { merge: true });
     }
 
-    public savePlayersToList(playersArr: Player[], listName: string) {
-        this.savePlayersArrayToDoc(playersArr, listName)
-            .then(_ => {
-                const playerInfo = new PlayerChangeInfo(playersArr, 'info', 'Saved players to list ' + listName);
-                console.log('emitting ', playerInfo);
+    ///TODO:Obsolete
+    // public async savePlayersToList(playersArr: Player[], listName: string) {
+    //     this.savePlayersArrayToDoc(playersArr, listName)
+    //         .then(_ => {
+    //             const playerInfo = new PlayerChangeInfo(playersArr, 'info', 'Saved players to list ' + listName);
+    //             console.log('emitting ', playerInfo);
 
-                this.playerDataChangeEvent.next(playerInfo);
-            }
-            ).catch(reason =>
-                this.playerDataChangeEvent.next(new PlayerChangeInfo(playersArr, 'error', 'Failed to save player list because of ' + reason))
-            );
-    }
+    //             this.playerDataChangeEvent.next(playerInfo);
+    //         }
+    //         ).catch(reason =>
+    //             this.playerDataChangeEvent.next(new PlayerChangeInfo(playersArr, 'error', 'Failed to save player list because of ' + reason))
+    //         );
+    // }
 
     public async savePlayersToListAsync(playersArr: Player[], listName: string): Promise<void> {
         return this.savePlayersArrayToDoc(playersArr, listName)
@@ -310,59 +312,81 @@ export class PlayersService {
             );
     }
 
-    public addFieldValueToDocument(fieldName: string, value: any, documentName: string) {
-        const docRef = this.db.doc('ratings/' + documentName);
+    public async addFieldValueToDocumentAsync(fieldName: string, value: any, documentName: string) {
+        const docName = 'ratings/' + documentName;
+        const docRef = doc(this.firestore, docName);
         var obj = {};
         obj[fieldName] = value;
-        docRef.update(obj);
+        await setDoc(docRef, obj, { merge: true });
     }
 
-    public removeFieldFromDocument(fieldName: string, documentName: string) {
-        const docRef = this.db.doc('ratings/' + documentName);
-        docRef.update({ [fieldName]: firebase.firestore.FieldValue.delete() });
-    }
+    // public async removeFieldFromDocument(fieldName: string, documentName: string) {
+    //     const docName = 'ratings/' + documentName;
+    //     const docRef = doc(this.firestore, docName);
+    //     await updateDoc(docRef, { [fieldName]: FieldValue.delete() })
+    //     // docRef.update({ [fieldName]: firebase.firestore.FieldValue.delete() });
+    // }
 
-    public getCurrentRatings(): Observable<any> {
-        return this.db.doc('ratings/current').get().pipe(
-            map(currentDoc => {
-                return currentDoc.data();
-            })
-        );
-    }
+    public async getCurrentRatingsAsync(): Promise<any> {
 
-    async deleteCollection(db, collectionPath, batchSize) {
-        const collectionRef = db.collection(collectionPath).ref;
-        const query = collectionRef.orderBy('__name__').limit(batchSize);
-        return new Promise((resolve, reject) => {
-            this.deleteQueryBatch(db, query, resolve).catch(reject);
-        });
-    }
-    async deleteQueryBatch(db, query, resolve) {
-        const snapshot = await query.get();
+        const docName = 'ratings/current';
+        const docRef = doc(this.firestore, docName);
 
-        const batchSize = snapshot.size;
-        if (batchSize === 0) {
-            resolve();
-            return;
+        const docSnap = await getDoc(docRef);
+        if (docSnap.exists()) {
+            return docSnap.data();
         }
-
-        const batch = db.firestore.batch();
-        snapshot.docs.forEach((doc) => {
-            batch.delete(doc.ref);
-        });
-        await batch.commit();
-
-        this.deleteQueryBatch(db, query, resolve);
+        else {
+            console.log('Could not find document for ', docName);
+        }
     }
+
+    // async deleteCollection(db, collectionPath, batchSize) {
+    //     const collectionRef = db.collection(collectionPath).ref;
+    //     const query = collectionRef.orderBy('__name__').limit(batchSize);
+    //     return new Promise((resolve, reject) => {
+    //         this.deleteQueryBatch(db, query, resolve).catch(reject);
+    //     });
+    // }
+
+    // async deleteQueryBatch(db, query, resolve) {
+    //     const snapshot = await query.get();
+
+    //     const batchSize = snapshot.size;
+    //     if (batchSize === 0) {
+    //         resolve();
+    //         return;
+    //     }
+
+    //     const batch = db.firestore.batch();
+    //     snapshot.docs.forEach((doc) => {
+    //         batch.delete(doc.ref);
+    //     });
+    //     await batch.commit();
+
+    //     this.deleteQueryBatch(db, query, resolve);
+    // }
 
     async getNumberOfDocumentsInCollection(collectionPath) {
-        let snapshot = await this.db.collection(collectionPath).get().toPromise();
-        return snapshot.size;
+        const collectionRef = collection(this.firestore, 'ratings');
+        const docsSnap = await getDocs(collectionRef);
+        return docsSnap.size;
     }
 
     public async dropPlayerRatings() {
-        let size = await this.getNumberOfDocumentsInCollection('ratings');
-        await this.deleteCollection(this.db, 'ratings', size);
+        // TODO:XXX:suspended
+        // const collectionRef = collection(this.firestore, 'ratings');
+        // const docsSnap = await getDocs(collectionRef);
+        // let size = docsSnap.size;
+        // // let size = await this.getNumberOfDocumentsInCollection('ratings');
+        // // await this.deleteCollection(this.db, 'ratings', size);
+        // // const collectionRef = db.collection(collectionPath).ref;
+        // deletequerybatch
+        // const query = collectionRef.orderBy('__name__').limit(batchSize);
+        // return new Promise((resolve, reject) => {
+        //     this.deleteQueryBatch(db, query, resolve).catch(reject);
+        // });
+
     }
 
     saveSinglePlayerToFirebase(player: Player) {
@@ -381,13 +405,16 @@ export class PlayersService {
         return this.currentRatingSystem;
     }
 
-    public async getRatingHistory(): Promise<Map<string, RatingHist>> {
-        const ratings = this.db.collection('ratings/');
-        const snapshot = await ratings.get();
+    public async getRatingHistoryAsync(): Promise<Map<string, RatingHist>> {
+
+        const collectionRef = collection(this.firestore, 'ratings');
+        const docsSnap = await getDocs(collectionRef);
 
         let history = new Map<string, RatingHist>();
-        snapshot.forEach(doc => {
-            doc.docs.forEach(test => {
+        docsSnap.forEach(
+            // doc => {
+            // doc.docs.forEach(
+            test => {
                 if (test.id !== 'current') {
                     const histItem: RatingHist = new RatingHist();
                     const data: any = test.data();
@@ -395,8 +422,8 @@ export class PlayersService {
                     histItem.ratingSystem = data.ratingSystem as RatingSystem;
                     history.set(test.id, histItem);
                 }
+                // });
             });
-        });
         return history;
     }
 
@@ -503,64 +530,23 @@ export class PlayersService {
         return playersCpy.map(player => this.getPlayerWithUpdatedRatingForGame(player, winners, losers, difference, ratingSystem));
     }
 
-    async getPlayersFromHist(documentName: string): Promise<Player[]> {
-        // const ratingsDoc = this.db.doc('ratings/' + documentName).get();
-        // const ratingsRef = ref(this.db, 'ratings/' + documentName)
+    // async getPlayersFromHist(documentName: string): Promise<Player[]> {
+    //     let players: Player[];
 
-        // const dbRef = ref(getDatabase());
+    //     console.log('***getPlayersFromHist');
+        
 
-        // const db = getDatabase();
-        let players: Player[];
+    //     const docName = 'ratings/' + documentName;
+    //     const docRef = doc(this.firestore, docName);
+    //     const docSnap = await getDoc(docRef);
+    //     if (docSnap.exists()) {
+    //         players = docSnap.data() as Player[];
+    //         console.log('***getPlayersFromHist', players);
+    //     }
+    //     else {
+    //         console.log('Could not find document for ', docName);
+    //     }
 
-        const dbRef = ref(getDatabase());
-        get(child(dbRef, 'ratings/' + documentName)).then((snapshot) => {
-            if (snapshot.exists()) {
-                console.log(snapshot.val());
-                players = snapshot.val();
-            } else {
-                console.log("No data available");
-            }
-        }).catch((error) => {
-            console.error(error);
-        });
-        return players;
-        // const ratingsDoc = get(child(dbRef, 'ratings/' + documentName)).then((snapshot) => {
-        //     if (snapshot.exists()) {
-        //       console.log(snapshot.val());
-        //     } else {
-        //       console.log("No data available");
-        //     }
-        //   }).catch((error) => {
-        //     console.error(error);
-        //   });
-
-        // return this.db.doc('ratings/current').get().pipe(
-        //     map(currentDoc => {
-        //         return currentDoc.data();
-        //     })
-        // );
-
-        // const mydata = await ratingsDoc.pipe(
-        //     map(doc => doc.data())
-        // );
-
-        // return mydata;
-        // (playerListDoc => {
-        //     console.log('[players] current ratings watcher notified');
-
-        //     if (!playerListDoc.exists) {
-        //         this.playerDataChangeEvent.next(new PlayerChangeInfo(null, 'error', 'Could not connect to DB'));
-        //         return;
-        //     }
-
-        //     const playersArray: Player[] = playerListDoc.get('players');
-        //     this.currentRatingSystem = playerListDoc.get('ratingSystem');
-        //     this.currentLabel = playerListDoc.get('label');
-        //     this.currentPlayerList = playersArray;
-        //     this.appStorage.setAppStorageItem('players', JSON.stringify(this.currentPlayerList));
-        //     this.playerDataChangeEvent.next(new PlayerChangeInfo(this.currentPlayerList, 'info', 'Players loaded'));
-        // }));
-
-
-    }
+    //     return players;
+    // }
 }

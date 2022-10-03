@@ -97,8 +97,8 @@ export class AdminComponent implements OnInit, OnDestroy {
             this.playersSvc.getPlayers(), customGame
           );
 
-          this.playersSvc.savePlayersToList(this.playersSvc.getPlayers(), matchName);
-          this.playersSvc.savePlayersToList(newPlayers, 'current');
+          await this.playersSvc.savePlayersToListAsync(this.playersSvc.getPlayers(), matchName);
+          await this.playersSvc.savePlayersToListAsync(newPlayers, 'current');
 
         }
       };
@@ -116,7 +116,7 @@ export class AdminComponent implements OnInit, OnDestroy {
 
   async checkDropDown(dropdown: boolean) {
     if (dropdown == true) {
-      this.ratingHistory = await this.playersSvc.getRatingHistory();
+      this.ratingHistory = await this.playersSvc.getRatingHistoryAsync();
       this.matchHistory = await this.matchesAltSvc.getMatchListAsync();
     }
   }
@@ -150,8 +150,8 @@ export class AdminComponent implements OnInit, OnDestroy {
     const oldPlayerList: Player[] = this.ratingChosen.value.players;
 
     // Perform a backup of the old ratings.
-    this.playersSvc.savePlayersToList(oldPlayerList, branchToEdit + '_bck');
-    this.playersSvc.addFieldValueToDocument('ratingSystem', this.selectedRatingSystem, branchToEdit + '_bck');
+    await this.playersSvc.savePlayersToListAsync(oldPlayerList, branchToEdit + '_bck');
+    await this.playersSvc.addFieldValueToDocumentAsync('ratingSystem', this.selectedRatingSystem, branchToEdit + '_bck');
 
     const oldMinRating = Math.min(...oldPlayerList.map(x => x.rating)).toFixed(2);
     const oldMaxRating = Math.max(...oldPlayerList.map(x => x.rating)).toFixed(2);
@@ -172,8 +172,8 @@ export class AdminComponent implements OnInit, OnDestroy {
     console.log(messageToShow);
 
 
-    this.playersSvc.savePlayersToList(scaledPlayers, 'current');
-    this.playersSvc.addFieldValueToDocument('ratingSystem', this.newRatingScale, 'current');
+    await this.playersSvc.savePlayersToListAsync(scaledPlayers, 'current');
+    await this.playersSvc.addFieldValueToDocumentAsync('ratingSystem', this.newRatingScale, 'current');
 
     this.loadingConvert = 0;
   }

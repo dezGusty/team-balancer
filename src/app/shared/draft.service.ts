@@ -1,10 +1,9 @@
-import { AngularFirestore } from '@angular/fire/compat/firestore';
-import { Injectable, EventEmitter } from '@angular/core';
-import { Subscription, Observable, BehaviorSubject } from 'rxjs';
-import { AuthService } from '../auth/auth.service';
+import { Injectable } from '@angular/core';
+import { Subscription, BehaviorSubject } from 'rxjs';
 import { Player } from './player.model';
 import { DraftChangeInfo } from './draft-change-info';
 import { AuthAltService } from '../auth/auth-alt.service';
+import { doc, docData, Firestore, setDoc } from '@angular/fire/firestore';
 
 @Injectable({
   providedIn: 'root'
@@ -14,7 +13,9 @@ export class DraftService {
   selectedDraftPlayers: Player[] = [];
   playerDraftChangeEvent = new BehaviorSubject<DraftChangeInfo>(null);
 
-  constructor(private db: AngularFirestore, private authSvc: AuthService, private authAltSvc: AuthAltService) {
+  constructor(
+    private firestore: Firestore,
+    private authAltSvc: AuthAltService) {
     this.selectedDraftPlayers = [];
     if (!this.authAltSvc.isAuthenticated()) {
       console.log('[matches] waiting for login...');
@@ -48,18 +49,19 @@ export class DraftService {
     console.log('emitting ', playerInfo);
     this.playerDraftChangeEvent.next(playerInfo);
 
-    // subscribe to firebase collection changes.
-    this.dataChangeSubscription = this.db.doc('drafts/next').valueChanges().subscribe(
-      draftDocContents => {
+    const docRef = doc(this.firestore, 'drafts/next');
+    this.dataChangeSubscription = docData(docRef).subscribe({
+      next: draftDocContents => {
         const castedItem = draftDocContents as { players: Player[] };
         this.selectedDraftPlayers = [...castedItem.players];
         console.log('[draft-svc] selected players', this.selectedDraftPlayers);
         let notification = new DraftChangeInfo(this.selectedDraftPlayers, 'info', 'loaded');
         this.playerDraftChangeEvent.next(notification);
       },
-      error => console.log('some error encountered', error),
-      () => { console.log('[draft-svc]c omplete'); },
-    );
+      error: err => console.log('some error encountered', err),
+      complete:
+        () => { console.log('[draft-svc]complete') }
+    });
   }
 
   /**
@@ -84,15 +86,20 @@ export class DraftService {
    * only the player id is used, instead of using separate objects.
    * @param players The array of players to store.
    */
-  saveSelectedPlayerList(players: Player[]) {
+  async saveSelectedPlayerListAsync(players: Player[]) {
     // Emit an event to signal that the app is fetching / loading data
     const playerInfo = new DraftChangeInfo(null, 'loading', 'Fetching draft data...');
     console.log('emitting ', playerInfo);
     this.playerDraftChangeEvent.next(playerInfo);
-    
-    const draftPlayersListRef = this.db.doc<any>('/drafts/next').ref;
+
+    // const draftPlayersListRef = this.db.doc<any>('/drafts/next').ref;
+    // const obj = { players };
+    // draftPlayersListRef.set(obj, { merge: true });
+
+    const docName = '/drafts/next';
+    const docRef = doc(this.firestore, docName);
     const obj = { players };
-    draftPlayersListRef.set(obj, { merge: true });
+    await setDoc(docRef, obj, { merge: true });
   }
 
   /**

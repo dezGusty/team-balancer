@@ -169,7 +169,7 @@ export class PrevMatchDetailComponent implements OnInit, OnDestroy {
       return;
     }
 
-    let currentMatch = await this.playersSvc.getCurrentRatings().toPromise();
+    let currentMatch = await this.playersSvc.getCurrentRatingsAsync();
     let ratingSystem = RatingSystem.German;
     if (currentMatch) {
       if (currentMatch.version) {
@@ -200,14 +200,14 @@ export class PrevMatchDetailComponent implements OnInit, OnDestroy {
 
     // Store the 'old' ratings under a different entry.
     if (!currentMatch || !currentMatch.label) {
-      this.playersSvc.savePlayersToList(this.playersSvc.getPlayers(), this.matchSearchKey);
+      await this.playersSvc.savePlayersToListAsync(this.playersSvc.getPlayers(), this.matchSearchKey);
     } else {
-      this.playersSvc.savePlayersToList(this.playersSvc.getPlayers(), this.matchSearchKey + '_' + currentMatch.label);
-      this.playersSvc.addFieldValueToDocument("label", currentMatch.label, "current");
+      await this.playersSvc.savePlayersToListAsync(this.playersSvc.getPlayers(), this.matchSearchKey + '_' + currentMatch.label);
+      await this.playersSvc.addFieldValueToDocumentAsync("label", currentMatch.label, "current");
     }
 
     // Store the 'new' ratings under the 'current' entry.
-    this.playersSvc.savePlayersToList(newPlayers, 'current');
+    await this.playersSvc.savePlayersToListAsync(newPlayers, 'current');
 
     // Store the new data for the match.
     this.customGame.appliedResults = true;
