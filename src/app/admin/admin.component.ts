@@ -115,7 +115,7 @@ export class AdminComponent implements OnInit, OnDestroy {
   async checkDropDown(dropdown: boolean) {
     if (dropdown == true) {
       this.ratingHistory = await this.playersSvc.getRatingHistory();
-      this.matchHistory = await this.matchesSvc.getMatchList();
+      this.matchHistory = await this.matchesAltSvc.getMatchListAsync();
     }
   }
 

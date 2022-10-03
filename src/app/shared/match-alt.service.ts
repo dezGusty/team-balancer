@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { CustomPrevGame } from './custom-prev-game.model';
-import { doc, getDoc, docData, Firestore } from '@angular/fire/firestore';
+import { collection, doc, getDoc, getDocs, docData, Firestore } from '@angular/fire/firestore';
 
 @Injectable({
   providedIn: 'root'
@@ -18,7 +18,6 @@ export class MatchAltService {
     // Get the firestore document where the match details are stored, based on the key.
     // E.g. stored in [matches/2018-03-23]
     let myResult: CustomPrevGame = null;
-    console.log('getMatchForDateAsync');
     const docName = 'matches/' + matchName;
 
     const ref = doc(this.firestore, docName);
@@ -44,5 +43,16 @@ export class MatchAltService {
     return ratingDate;
   }
 
-  
+  public async getMatchListAsync(): Promise<Map<string, CustomPrevGame>> {
+    const collectionRef = collection(this.firestore, 'matches');
+    const docsSnap = await getDocs(collectionRef);
+    let matchList = new Map<string, CustomPrevGame>();
+    docsSnap.forEach(
+      myDoc => {
+        if (myDoc.id !== 'recent') {
+          matchList.set(myDoc.id, myDoc.data() as CustomPrevGame);
+        }
+      });
+    return matchList;
+  }
 }

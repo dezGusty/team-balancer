@@ -92,28 +92,7 @@ export class MatchService {
      */
     public getRecentMatchListAsync(issueOneEvt = true): Observable<string[]> {
         console.log('getRecentMatchListAsync');
-
-        // if (issueOneEvt) {
-        //     setTimeout(() => {
-        //         this.recentMatchesChangeEvent.emit(this.recentMatchNames);
-        //     }, 0);
-        // }
         return this.recentMatchesChangeEvent.asObservable();
-    }
-
-    public async getMatchList(): Promise<Map<string, CustomPrevGame>> {
-        const matches = this.db.collection('matches/');
-        const snapshot = await matches.get();
-
-        let matchList = new Map<string, CustomPrevGame>();
-        snapshot.forEach(doc => {
-            doc.docs.forEach(test => {
-                if (test.id !== 'recent') {
-                    matchList.set(test.id, test.data() as CustomPrevGame);
-                }
-            });
-        });
-        return matchList;
     }
 
     /**
