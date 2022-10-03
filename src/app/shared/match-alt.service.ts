@@ -9,6 +9,9 @@ export class MatchAltService {
 
   constructor(private firestore: Firestore) { }
 
+
+
+
   /**
      * Asynchronously retrieves the match object as an Observable.
      * @param matchName The name of the match (basically: the date to be used as a key for accessing the match from the DB)
@@ -20,8 +23,8 @@ export class MatchAltService {
     let myResult: CustomPrevGame = null;
     const docName = 'matches/' + matchName;
 
-    const ref = doc(this.firestore, docName);
-    const docSnap = await getDoc(ref);
+    const docRef = doc(this.firestore, docName);
+    const docSnap = await getDoc(docRef);
     if (docSnap.exists()) {
       myResult = docSnap.data() as CustomPrevGame;
     }

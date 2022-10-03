@@ -87,8 +87,9 @@ export class AdminComponent implements OnInit, OnDestroy {
 
     // Create rating entries again, based on the matches whose results were applied.
     let recentMatchNames = [...this.matchesSvc.getRecentMatchListCached()];
-    recentMatchNames.forEach(matchName => {
-      this.matchesSvc.getMatchForDate(matchName).subscribe((customGame: CustomPrevGame) => {
+    recentMatchNames.forEach(async matchName => {
+      const customGame = await this.matchesAltSvc.getMatchForDateAsync(matchName);
+      if (customGame) {
 
         if (customGame.appliedResults) {
           const newPlayers = this.playersSvc.getAllPlayersUpdatedRatingsForGame(
@@ -99,7 +100,7 @@ export class AdminComponent implements OnInit, OnDestroy {
           this.playersSvc.savePlayersToList(newPlayers, 'current');
 
         }
-      });
+      };
     })
     this.loadingConvert = 0;
   }

@@ -3,10 +3,8 @@ import { CustomGame } from './custom-game.model';
 import { Injectable } from '@angular/core';
 import { AuthService } from '../auth/auth.service';
 import { Subscription, Observable, BehaviorSubject } from 'rxjs';
-import { map } from 'rxjs/operators';
 import { CustomPrevGame } from './custom-prev-game.model';
 import { Player } from './player.model';
-import { DraftChangeInfo } from './draft-change-info';
 
 
 /**
@@ -94,36 +92,6 @@ export class MatchService {
         console.log('getRecentMatchListAsync');
         return this.recentMatchesChangeEvent.asObservable();
     }
-
-    /**
-     * Asynchronously retrieves the match object as an Observable.
-     * @param matchName The name of the match (basically: the date to be used as a key for accessing the match from the DB)
-     * E.g. '2018-03-23'
-     */
-    public getMatchForDate(matchName: string): Observable<CustomPrevGame> {
-        // Get the firestore document where the match details are stored, based on the key.
-        // E.g. stored in [matches/2018-03-23]
-        return this.db.doc<CustomPrevGame>('matches/' + matchName).get().pipe(
-            // Map each document (expected: only 1) to the read operation.
-            map(matchDoc => {
-                // Read the document data.
-                // It is expected to consist of serialized data.
-                const fbData = matchDoc.data();
-                const obj = {
-                    team1: fbData.team1,
-                    team2: fbData.team2,
-                    scoreTeam1: fbData.scoreTeam1,
-                    scoreTeam2: fbData.scoreTeam2,
-                    appliedResults: fbData.appliedResults,
-                    savedResult: fbData.savedResult,
-                    postResults: fbData.postResults
-                };
-                const result: CustomPrevGame = obj;
-                return result;
-            })
-        );
-    }
-
 
     /**
      * Saves a given match name in the 'recent' list. If the name is already part of the list,

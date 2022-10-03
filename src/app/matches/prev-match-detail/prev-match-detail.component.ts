@@ -8,6 +8,7 @@ import { PlayersService } from 'src/app/shared/players.service';
 import { update } from 'firebase/database';
 import { AuthService } from 'src/app/auth/auth.service';
 import { RatingSystem } from 'src/app/shared/rating-system';
+import { MatchAltService } from 'src/app/shared/match-alt.service';
 
 @Component({
   selector: 'app-prev-match-detail',
@@ -35,6 +36,7 @@ export class PrevMatchDetailComponent implements OnInit, OnDestroy {
   constructor(
     private route: ActivatedRoute,
     private matchSvc: MatchService,
+    private matchAltSvc: MatchAltService,
     private playersSvc: PlayersService,
     private authSvc: AuthService) { }
 
@@ -54,32 +56,34 @@ export class PrevMatchDetailComponent implements OnInit, OnDestroy {
   }
 
 
-  loadCustomGameForKey(matchSearchKey: string) {
+  async loadCustomGameForKey(matchSearchKey: string) {
     this.customGame = null;
     this.showSpinner = true;
 
-    this.matchSvc.getMatchForDate(matchSearchKey).subscribe((customGame: CustomPrevGame) => {
-      this.customGame = customGame;
-      this.extractedTeam1 = customGame.team1;
-      this.extractedTeam2 = customGame.team2;
-      this.showSpinner = false;
-      this.matchResultsStored = customGame.savedResult;
-      if (customGame.scoreTeam1 != null) {
-        this.team1Score = customGame.scoreTeam1;
+    const gameForMatch = await this.matchAltSvc.getMatchForDateAsync(matchSearchKey);
+    this.showSpinner = false;
+    if (gameForMatch) {
+      this.customGame = { ...gameForMatch };
+      this.extractedTeam1 = this.customGame.team1;
+      this.extractedTeam2 = this.customGame.team2;
+
+      this.matchResultsStored = this.customGame.savedResult;
+      if (this.customGame.scoreTeam1 != null) {
+        this.team1Score = this.customGame.scoreTeam1;
       } else {
         this.team1Score = 0;
         this.matchResultsStored = false;
       }
 
-      if (customGame.scoreTeam2 != null) {
-        this.team2Score = customGame.scoreTeam2;
+      if (this.customGame.scoreTeam2 != null) {
+        this.team2Score = this.customGame.scoreTeam2;
       } else {
         this.team2Score = 0;
         this.matchResultsStored = false;
       }
 
-      this.matchResultsAppliedToRatings = customGame.appliedResults;
-    });
+      this.matchResultsAppliedToRatings = this.customGame.appliedResults;
+    }
   }
 
   /**
@@ -212,7 +216,6 @@ export class PrevMatchDetailComponent implements OnInit, OnDestroy {
     this.showSpinner = true;
     await this.matchSvc.saveCustomPrevMatchAsync(this.matchSearchKey, this.customGame);
     this.showSpinner = false;
-    // this.matchSvc.saveCustomPrevMatch(this.matchSearchKey, this.customGame);
   }
 
   public canShowStoreResultsButton(): boolean {
