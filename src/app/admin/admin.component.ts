@@ -1,9 +1,7 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { Subscription } from 'rxjs/internal/Subscription';
-import { AuthService } from '../auth/auth.service';
 import { AuthAltService } from '../auth/auth-alt.service';
 import { CustomPrevGame } from '../shared/custom-prev-game.model';
-import { MatchService } from '../shared/match.service';
 import { PlayerChangeInfo } from '../shared/player-change-info';
 import { Player } from '../shared/player.model';
 import { PlayersService } from '../shared/players.service';
@@ -35,10 +33,8 @@ export class AdminComponent implements OnInit, OnDestroy {
   private subscriptions: Subscription[] = [];
 
   constructor(
-    private authSvc: AuthService,
     private authAltSvc: AuthAltService,
     private playersSvc: PlayersService,
-    private matchesSvc: MatchService,
     private matchesAltSvc: MatchAltService,
     private toastSvc: ToastService) {
 
@@ -87,7 +83,7 @@ export class AdminComponent implements OnInit, OnDestroy {
     await this.playersSvc.dropPlayerRatings();
 
     // Create rating entries again, based on the matches whose results were applied.
-    let recentMatchNames = [...this.matchesSvc.getRecentMatchListCached()];
+    let recentMatchNames = [...this.matchesAltSvc.getRecentMatchListCached()];
     recentMatchNames.forEach(async matchName => {
       const customGame = await this.matchesAltSvc.getMatchForDateAsync(matchName);
       if (customGame) {

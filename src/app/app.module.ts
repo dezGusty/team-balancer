@@ -5,10 +5,8 @@ import { AsyncPipe } from '@angular/common';
 
 import { NgbCollapseModule, NgbModule, NgbTooltipModule } from '@ng-bootstrap/ng-bootstrap';
 import { NgcCookieConsentModule, NgcCookieConsentConfig } from 'ngx-cookieconsent';
-import { AuthService } from './auth/auth.service';
 import { AuthAltService } from './auth/auth-alt.service';
 import { PlayersService } from './shared/players.service';
-import { MatchService } from './shared/match.service';
 
 import { AppComponent } from './app.component';
 import { HeaderComponent } from './header/header.component';
@@ -33,11 +31,6 @@ import { provideAuth, connectAuthEmulator, getAuth } from '@angular/fire/auth';
 import { connectDatabaseEmulator, getDatabase, provideDatabase } from '@angular/fire/database';
 import { getMessaging, provideMessaging } from '@angular/fire/messaging';
 
-import { AngularFireModule } from '@angular/fire/compat';
-import { AngularFirestoreModule } from '@angular/fire/compat/firestore';
-import { AngularFireAuthModule } from '@angular/fire/compat/auth';
-import { AngularFireMessagingModule } from '@angular/fire/compat/messaging';
-import { AngularFireFunctionsModule } from '@angular/fire/compat/functions';
 import { environment } from '../environments/environment';
 import { AuthGuard } from './auth/auth-guard.service';
 import { OrganizerGuard } from './auth/organizer-guard.service';
@@ -130,11 +123,6 @@ export const persistenceEnabled = new Promise<boolean>(resolve => {
       return firestore;
     }),
     provideMessaging(() => getMessaging()),
-    AngularFireModule.initializeApp(environment.firebase),
-    AngularFirestoreModule, // imports firebase/firestore, only needed for database features
-    AngularFireAuthModule, // imports firebase/auth, only needed for auth features
-    AngularFireMessagingModule,
-    AngularFireFunctionsModule,
     BrowserModule,
     FormsModule,
     AppRoutingModule,
@@ -146,9 +134,7 @@ export const persistenceEnabled = new Promise<boolean>(resolve => {
   ],
   providers: [
     PlayersService,
-    MatchService,
     MatchAltService,
-    AuthService,
     AuthAltService,
     ToastService,
     AuthGuard,

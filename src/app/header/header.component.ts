@@ -1,5 +1,4 @@
 import { Component, OnInit } from '@angular/core';
-import { AuthService } from '../auth/auth.service';
 import { Router, Event, NavigationStart } from '@angular/router';
 import { AuthAltService } from '../auth/auth-alt.service';
 
@@ -18,7 +17,6 @@ export class HeaderComponent implements OnInit {
    * and collapse the navbar.
    */
   constructor(
-    private authSvc: AuthService,
     private authAltSvc: AuthAltService,
     private router: Router) {
     this.router.events.subscribe((evt: Event) => {

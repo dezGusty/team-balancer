@@ -3,8 +3,6 @@ import { Player, filterPlayerArray } from '../shared/player.model';
 import { PlayersService } from '../shared/players.service';
 import { Subscription } from 'rxjs';
 import { Router, ActivatedRoute } from '@angular/router';
-import { AuthService } from '../auth/auth.service';
-import { MatchService } from '../shared/match.service';
 import { CustomPrevGame } from '../shared/custom-prev-game.model';
 import { RatingSystem } from '../shared/rating-system';
 import { ToastService } from '../shared/toasts-service';
@@ -35,7 +33,6 @@ export class PlayersComponent implements OnInit, OnDestroy {
   ratingScale: RatingSystem;
 
   constructor(
-    private authSvc: AuthService,
     private authAltSvc: AuthAltService,
     private playersSvc: PlayersService,
     private toastSvc: ToastService,

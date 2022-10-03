@@ -1,6 +1,6 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
-import { MatchService } from 'src/app/shared/match.service';
 import { Observable, Subscription } from 'rxjs';
+import { MatchAltService } from 'src/app/shared/match-alt.service';
 
 @Component({
   selector: 'app-recent-matches',
@@ -12,7 +12,7 @@ export class RecentMatchesComponent implements OnInit, OnDestroy {
   private subscription: Subscription;
 
   constructor(
-    private matchSvc: MatchService
+    private matchAltSvc: MatchAltService
   ) {
 
   }
@@ -64,12 +64,12 @@ export class RecentMatchesComponent implements OnInit, OnDestroy {
   ngOnInit() {
     console.log('ngOnInit');
 
-    let localMatchList: string[] = [...this.matchSvc.getRecentMatchListCached()];
+    let localMatchList: string[] = [...this.matchAltSvc.getRecentMatchListCached()];
     this.recentMatchNames = localMatchList;
     this.recentMatchDescriptions = this.recentMatchNames.map(x => this.getDisplayTextForMatch(x))
 
     // TODO:Add to subscriptions list and release
-    this.recentAsyncMatches = this.matchSvc.getRecentMatchListAsync();
+    this.recentAsyncMatches = this.matchAltSvc.getRecentMatchListAsync();
     // TODO: make sure that it's possible to receive event after reentering component
     this.subscription = this.recentAsyncMatches.subscribe((matchNames: string[]) => {
       this.recentMatchNames = [...matchNames];;

@@ -1,5 +1,4 @@
 import { Component, OnInit } from '@angular/core';
-import { AuthService } from '../auth.service';
 import { Router } from '@angular/router';
 import { AuthAltService } from '../auth-alt.service';
 
@@ -11,7 +10,6 @@ import { AuthAltService } from '../auth-alt.service';
 export class SigninComponent implements OnInit {
 
   constructor(
-    private authSvc: AuthService,
     private authAltSvc: AuthAltService,
     private router: Router) {
   }

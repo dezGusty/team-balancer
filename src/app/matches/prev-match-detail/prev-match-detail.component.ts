@@ -1,11 +1,9 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
 import { Player, getDisplayName } from '../../shared/player.model';
 import { ActivatedRoute, Params } from '@angular/router';
-import { MatchService } from '../../shared/match.service';
 import { CustomPrevGame } from '../../shared/custom-prev-game.model';
 import { Subscription } from 'rxjs';
 import { PlayersService } from 'src/app/shared/players.service';
-import { AuthService } from 'src/app/auth/auth.service';
 import { RatingSystem } from 'src/app/shared/rating-system';
 import { MatchAltService } from 'src/app/shared/match-alt.service';
 import { AuthAltService } from 'src/app/auth/auth-alt.service';
@@ -35,10 +33,8 @@ export class PrevMatchDetailComponent implements OnInit, OnDestroy {
 
   constructor(
     private route: ActivatedRoute,
-    private matchSvc: MatchService,
     private matchAltSvc: MatchAltService,
     private playersSvc: PlayersService,
-    private authSvc: AuthService,
     private authAltSvc: AuthAltService) { }
 
   ngOnInit() {

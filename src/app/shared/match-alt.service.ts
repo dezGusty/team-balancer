@@ -2,8 +2,9 @@ import { Injectable } from '@angular/core';
 import { CustomPrevGame } from './custom-prev-game.model';
 import { collection, doc, getDoc, getDocs, docData, Firestore, setDoc } from '@angular/fire/firestore';
 import { Player } from './player.model';
-import { BehaviorSubject, Subscription } from 'rxjs';
+import { BehaviorSubject, Observable, Subscription } from 'rxjs';
 import { CustomGame } from './custom-game.model';
+import { AuthAltService } from '../auth/auth-alt.service';
 
 @Injectable({
   providedIn: 'root'
@@ -16,7 +17,35 @@ export class MatchAltService {
   private recentMatchNames: string[];
   public maxNumberOfRecentMatches = 5;
 
-  constructor(private firestore: Firestore) { }
+  constructor(private firestore: Firestore, private authAltSvc: AuthAltService) {
+    this.recentMatchNames = [];
+    if (!this.authAltSvc.isAuthenticated()) {
+      console.log('[matches] waiting for login...');
+    }
+
+    this.authAltSvc.onSignInOut.subscribe((message) => {
+      if (message === 'signout-pending') {
+        this.unsubscribeFromDataSources();
+      } else if (message === 'signin-done') {
+        this.subscribeToDataSources();
+      } else {
+        console.log('[matches] unexpected message from auth svc: ' + message);
+      }
+    });
+
+    // if already logged in, there will be no notification for signin-done.
+    // simulate the event now.
+    if (this.authAltSvc.isAuthenticated()) {
+      this.subscribeToDataSources();
+    }
+  }
+
+  public getRecentMatchListCached(): string[] {
+    console.log('getRecentMatchListCached', this.recentMatchNames);
+
+    return this.recentMatchNames;
+  }
+
 
   /**
      * Subscribes to the data sources used by this service.
@@ -177,5 +206,14 @@ export class MatchAltService {
 
     await setDoc(docRef, obj, { merge: true });
     this.recentMatchesChangeEvent.next(this.recentMatchNames);
+  }
+
+  /**
+     * Retrieves (asynchronously) a list of recent matches.
+     * @returns the match name collection, as an Observable.
+     */
+  public getRecentMatchListAsync(issueOneEvt = true): Observable<string[]> {
+    console.log('getRecentMatchListAsync');
+    return this.recentMatchesChangeEvent.asObservable();
   }
 }

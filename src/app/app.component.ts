@@ -1,7 +1,6 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
 import { NgcCookieConsentService, NgcInitializeEvent, NgcStatusChangeEvent, NgcNoCookieLawEvent } from 'ngx-cookieconsent';
 import { Subscription } from 'rxjs';
-import { AuthService } from './auth/auth.service';
 import { AuthAltService } from './auth/auth-alt.service';
 
 @Component({
@@ -23,7 +22,6 @@ export class AppComponent implements OnInit, OnDestroy {
 
   constructor(
     private ccService: NgcCookieConsentService,
-    private authSvc: AuthService,
     private authAltSvc: AuthAltService
   ) {
 

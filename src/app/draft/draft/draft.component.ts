@@ -5,7 +5,6 @@ import { Subscription } from 'rxjs';
 import { DraftService } from 'src/app/shared/draft.service';
 import { Router } from '@angular/router';
 import { ToastService } from 'src/app/shared/toasts-service';
-import { AuthService } from 'src/app/auth/auth.service';
 import { DraftChangeInfo } from 'src/app/shared/draft-change-info';
 import { AuthAltService } from 'src/app/auth/auth-alt.service';
 
@@ -27,7 +26,6 @@ export class DraftComponent implements OnInit, OnDestroy {
   constructor(
     private playersSvc: PlayersService,
     private draftSvc: DraftService,
-    private authSvc: AuthService,
     private authAltSvc: AuthAltService,
     private router: Router,
     private toastSvc: ToastService) {

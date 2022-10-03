@@ -1,7 +1,6 @@
 import { Player } from './player.model';
 import { Injectable } from '@angular/core';
 import { BehaviorSubject, Subscription } from 'rxjs';
-import { AuthService } from '../auth/auth.service';
 import { CustomPrevGame } from './custom-prev-game.model';
 import { AppStorage } from './app-storage';
 
@@ -24,8 +23,6 @@ export class PlayersService {
     // constructor.
     constructor(
         private firestore: Firestore,
-        // private db: AngularFirestore,
-        private authSvc: AuthService,
         private authAltSvc: AuthAltService,
         private appStorage: AppStorage) {
         if (!this.authAltSvc.isAuthenticated()) {

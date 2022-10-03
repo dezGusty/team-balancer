@@ -3,7 +3,6 @@ import { ActivatedRoute, Params, Router } from '@angular/router';
 
 import { Player, getDisplayName } from '../../shared/player.model';
 import { PlayersService } from '../../shared/players.service';
-import { AuthService } from 'src/app/auth/auth.service';
 import { AuthAltService } from 'src/app/auth/auth-alt.service';
 
 @Component({
@@ -16,7 +15,6 @@ export class PlayerDetailsComponent implements OnInit {
   id: number;
 
   constructor(
-    private authSvc: AuthService,
     private authAltSvc: AuthAltService,
     private playersSvc: PlayersService,
     private router: Router,
