@@ -126,7 +126,7 @@ export class PrevMatchDetailComponent implements OnInit, OnDestroy {
     this.customGame.scoreTeam1 = this.team1Score;
     this.customGame.scoreTeam2 = this.team2Score;
     this.customGame.savedResult = true;
-    await this.matchSvc.saveCustomPrevMatchAsync(this.matchSearchKey, this.customGame);
+    await this.matchAltSvc.saveCustomPrevMatchAsync(this.matchSearchKey, this.customGame);
     this.matchResultsStored = this.customGame.savedResult;
     this.showSpinner = false;
   }
@@ -214,7 +214,7 @@ export class PrevMatchDetailComponent implements OnInit, OnDestroy {
     console.log('saving ', this.customGame);
 
     this.showSpinner = true;
-    await this.matchSvc.saveCustomPrevMatchAsync(this.matchSearchKey, this.customGame);
+    await this.matchAltSvc.saveCustomPrevMatchAsync(this.matchSearchKey, this.customGame);
     this.showSpinner = false;
   }
 

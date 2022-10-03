@@ -1,15 +1,20 @@
 import { Injectable } from '@angular/core';
 import { CustomPrevGame } from './custom-prev-game.model';
-import { collection, doc, getDoc, getDocs, docData, Firestore } from '@angular/fire/firestore';
+import { collection, doc, getDoc, getDocs, docData, Firestore, setDoc } from '@angular/fire/firestore';
+import { Player } from './player.model';
+import { BehaviorSubject } from 'rxjs';
+import { CustomGame } from './custom-game.model';
 
 @Injectable({
   providedIn: 'root'
 })
 export class MatchAltService {
 
+  private recentMatchesChangeEvent = new BehaviorSubject<string[]>(null);
+  private recentMatchNames: string[];
+  public maxNumberOfRecentMatches = 5;
+
   constructor(private firestore: Firestore) { }
-
-
 
 
   /**
@@ -57,5 +62,88 @@ export class MatchAltService {
         }
       });
     return matchList;
+  }
+
+  /**
+     * Saves a given match name in the 'recent' list. If the name is already part of the list,
+     * nothing happens, if it's not there already, it's added.
+     * The 'recent' list is a rolling list, containing the most recent N items. Adding the N+1th item
+     * will evict the oldest item from the list.
+     *
+     * @param matchName Match name to save into the 'recent' list.
+     */
+   public async saveMatchNameToRecentList(matchName: string) {
+    let newRecentMatches: string[] = [];
+    if (this.recentMatchNames) {
+        const index = this.recentMatchNames.findIndex((game) => game === matchName);
+        if (index !== -1) {
+            // Found.
+            return;
+        }
+
+        newRecentMatches = this.recentMatchNames.slice();
+    }
+
+    newRecentMatches.push(matchName);
+
+    if (newRecentMatches.length > this.maxNumberOfRecentMatches) {
+        newRecentMatches.splice(0, 1);
+    }
+    const docName = '/matches/recent';
+    const docRef = doc(this.firestore, docName);
+    const obj = { items: newRecentMatches };
+    await setDoc(docRef, obj, { merge: true });
+}
+
+  public async saveCustomMatchAsync(matchName: string, customGame: CustomGame) {
+    const docName = 'matches/' + matchName;
+    const docRef = doc(this.firestore, docName);
+
+    const obj = { team1: customGame.team1, team2: customGame.team2 };
+
+    await setDoc(docRef, obj, { merge: true });
+
+    // also update the recent list.
+    await this.saveMatchNameToRecentList(matchName);
+}
+
+  public async saveCustomPrevMatchAsync(matchName: string, game: CustomPrevGame) {
+    const docName = 'matches/' + matchName;
+    const docRef = doc(this.firestore, docName);
+
+    const objScore = {
+      team1: game.team1,
+      team2: game.team2
+    };
+
+    let obj: {
+      [x: string]: any;
+      appliedResults?: true;
+      savedResult?: true;
+      team1?: Player[];
+      team2?: Player[];
+    };
+
+    obj = { ...objScore };
+    if (game.appliedResults) {
+      obj = { ...obj, appliedResults: game.appliedResults };
+    }
+
+    if (game.savedResult) {
+      obj = { ...obj, savedResult: game.savedResult };
+    }
+
+    if (game.scoreTeam1 != null) {
+      obj = { ...obj, scoreTeam1: game.scoreTeam1 };
+    }
+    if (game.scoreTeam2 != null) {
+      obj = { ...obj, scoreTeam2: game.scoreTeam2 };
+    }
+    if (game.postResults != null) {
+      obj = { ...obj, postResults: game.postResults };
+    }
+
+    await setDoc(docRef, obj, { merge: true });
+    this.recentMatchesChangeEvent.next(this.recentMatchNames);
   }
 }
