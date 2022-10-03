@@ -1,6 +1,7 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { Subscription } from 'rxjs/internal/Subscription';
 import { AuthService } from '../auth/auth.service';
+import { AuthAltService } from '../auth/auth-alt.service';
 import { CustomPrevGame } from '../shared/custom-prev-game.model';
 import { MatchService } from '../shared/match.service';
 import { PlayerChangeInfo } from '../shared/player-change-info';
@@ -9,7 +10,6 @@ import { PlayersService } from '../shared/players.service';
 import { RatingScaler } from '../shared/rating-scaler';
 import { RatingSystem, RatingSystemSettings } from '../shared/rating-system';
 import { ToastService } from '../shared/toasts-service';
-import { getMessaging, getToken } from "firebase/messaging";
 import { RatingHist } from '../shared/rating-hist.model';
 import { MatchAltService } from '../shared/match-alt.service';
 @Component({
@@ -36,6 +36,7 @@ export class AdminComponent implements OnInit, OnDestroy {
 
   constructor(
     private authSvc: AuthService,
+    private authAltSvc: AuthAltService,
     private playersSvc: PlayersService,
     private matchesSvc: MatchService,
     private matchesAltSvc: MatchAltService,
@@ -66,11 +67,11 @@ export class AdminComponent implements OnInit, OnDestroy {
   }
 
   public canExportPlayers(): boolean {
-    return this.authSvc.isAuthenticatedAsOrganizer();
+    return this.authAltSvc.isAuthenticatedAsOrganizer();
   }
 
   public canAddPlayers(): boolean {
-    return this.authSvc.isAuthenticatedAsOrganizer();
+    return this.authAltSvc.isAuthenticatedAsOrganizer();
   }
 
 

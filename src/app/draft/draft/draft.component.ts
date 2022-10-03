@@ -7,6 +7,7 @@ import { Router } from '@angular/router';
 import { ToastService } from 'src/app/shared/toasts-service';
 import { AuthService } from 'src/app/auth/auth.service';
 import { DraftChangeInfo } from 'src/app/shared/draft-change-info';
+import { AuthAltService } from 'src/app/auth/auth-alt.service';
 
 @Component({
   selector: 'app-draft',
@@ -27,6 +28,7 @@ export class DraftComponent implements OnInit, OnDestroy {
     private playersSvc: PlayersService,
     private draftSvc: DraftService,
     private authSvc: AuthService,
+    private authAltSvc: AuthAltService,
     private router: Router,
     private toastSvc: ToastService) {
   }
@@ -203,6 +205,6 @@ export class DraftComponent implements OnInit, OnDestroy {
   }
 
   public canChangePlayersInDraft(): boolean {
-    return this.authSvc.isAuthenticatedAsOrganizer();
+    return this.authAltSvc.isAuthenticatedAsOrganizer();
   }
 }

@@ -2,6 +2,7 @@ import { AngularFirestore } from '@angular/fire/compat/firestore';
 import { Injectable } from '@angular/core';
 import { AuthService } from '../auth/auth.service';
 import { Subscription, Observable, BehaviorSubject } from 'rxjs';
+import { AuthAltService } from '../auth/auth-alt.service';
 
 
 /**
@@ -20,13 +21,13 @@ export class MatchService {
      * @param db Database service.
      * @param authSvc The authentication service.
      */
-    public constructor(private db: AngularFirestore, private authSvc: AuthService) {
+    public constructor(private db: AngularFirestore, private authSvc: AuthService, private authAltSvc: AuthAltService) {
         this.recentMatchNames = [];
-        if (!this.authSvc.isAuthenticated()) {
+        if (!this.authAltSvc.isAuthenticated()) {
             console.log('[matches] waiting for login...');
         }
 
-        this.authSvc.onSignInOut.subscribe((message) => {
+        this.authAltSvc.onSignInOut.subscribe((message) => {
             if (message === 'signout-pending') {
                 this.unsubscribeFromDataSources();
             } else if (message === 'signin-done') {
@@ -38,7 +39,7 @@ export class MatchService {
 
         // if already logged in, there will be no notification for signin-done.
         // simulate the event now.
-        if (this.authSvc.isAuthenticated()) {
+        if (this.authAltSvc.isAuthenticated()) {
             this.subscribeToDataSources();
         }
     }

@@ -13,6 +13,7 @@ import { RatingSystem, RatingSystemSettings } from './rating-system';
 import { PlayerChangeInfo } from './player-change-info';
 import { TemplateLiteral } from '@angular/compiler';
 import { RatingHist } from './rating-hist.model';
+import { AuthAltService } from '../auth/auth-alt.service';
 
 /**
  * Stores and retrieves player related information.
@@ -28,8 +29,9 @@ export class PlayersService {
     constructor(
         private db: AngularFirestore,
         private authSvc: AuthService,
+        private authAltSvc: AuthAltService,
         private appStorage: AppStorage) {
-        if (!this.authSvc.isAuthenticated()) {
+        if (!this.authAltSvc.isAuthenticated()) {
             console.log('[players] waiting for login...');
         }
 
@@ -40,7 +42,7 @@ export class PlayersService {
         }
 
         // Subscribe to the login-logout events.
-        this.authSvc.onSignInOut.subscribe((message) => {
+        this.authAltSvc.onSignInOut.subscribe((message) => {
             if (message === 'signout-pending') {
                 this.unsubscribeFromDataSources();
             } else if (message === 'signin-done') {
@@ -52,7 +54,7 @@ export class PlayersService {
 
         // if already logged in, there will be no notification for signin-done.
         // simulate the event now.
-        if (this.authSvc.isAuthenticated()) {
+        if (this.authAltSvc.isAuthenticated()) {
             this.subscribeToDataSources();
         }
     }

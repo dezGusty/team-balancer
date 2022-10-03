@@ -5,10 +5,10 @@ import { MatchService } from '../../shared/match.service';
 import { CustomPrevGame } from '../../shared/custom-prev-game.model';
 import { Subscription } from 'rxjs';
 import { PlayersService } from 'src/app/shared/players.service';
-import { update } from 'firebase/database';
 import { AuthService } from 'src/app/auth/auth.service';
 import { RatingSystem } from 'src/app/shared/rating-system';
 import { MatchAltService } from 'src/app/shared/match-alt.service';
+import { AuthAltService } from 'src/app/auth/auth-alt.service';
 
 @Component({
   selector: 'app-prev-match-detail',
@@ -38,7 +38,8 @@ export class PrevMatchDetailComponent implements OnInit, OnDestroy {
     private matchSvc: MatchService,
     private matchAltSvc: MatchAltService,
     private playersSvc: PlayersService,
-    private authSvc: AuthService) { }
+    private authSvc: AuthService,
+    private authAltSvc: AuthAltService) { }
 
   ngOnInit() {
     this.subscriptions.push(this.route.params.subscribe(
@@ -116,7 +117,7 @@ export class PrevMatchDetailComponent implements OnInit, OnDestroy {
   }
 
   async onStoreResultClick() {
-    if (!this.authSvc.isAuthenticatedAsOrganizer()) {
+    if (!this.authAltSvc.isAuthenticatedAsOrganizer()) {
       return;
     }
 
@@ -164,7 +165,7 @@ export class PrevMatchDetailComponent implements OnInit, OnDestroy {
    *    'ratings/current'
    */
   async onUpdateRatingsClick() {
-    if (!this.authSvc.isAuthenticatedAsOrganizer()) {
+    if (!this.authAltSvc.isAuthenticatedAsOrganizer()) {
       return;
     }
 
@@ -219,11 +220,11 @@ export class PrevMatchDetailComponent implements OnInit, OnDestroy {
   }
 
   public canShowStoreResultsButton(): boolean {
-    return !this.matchResultsStored && this.authSvc.isAuthenticatedAsOrganizer();
+    return !this.matchResultsStored && this.authAltSvc.isAuthenticatedAsOrganizer();
   }
 
   public canShowApplyResultsButton(): boolean {
-    return !this.matchResultsAppliedToRatings && this.authSvc.isAuthenticatedAsOrganizer();
+    return !this.matchResultsAppliedToRatings && this.authAltSvc.isAuthenticatedAsOrganizer();
   }
 
   public canChangeScore(): boolean {

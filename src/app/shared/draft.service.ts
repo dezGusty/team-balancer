@@ -4,6 +4,7 @@ import { Subscription, Observable, BehaviorSubject } from 'rxjs';
 import { AuthService } from '../auth/auth.service';
 import { Player } from './player.model';
 import { DraftChangeInfo } from './draft-change-info';
+import { AuthAltService } from '../auth/auth-alt.service';
 
 @Injectable({
   providedIn: 'root'
@@ -13,13 +14,13 @@ export class DraftService {
   selectedDraftPlayers: Player[] = [];
   playerDraftChangeEvent = new BehaviorSubject<DraftChangeInfo>(null);
 
-  constructor(private db: AngularFirestore, private authSvc: AuthService) {
+  constructor(private db: AngularFirestore, private authSvc: AuthService, private authAltSvc: AuthAltService) {
     this.selectedDraftPlayers = [];
-    if (!this.authSvc.isAuthenticated()) {
+    if (!this.authAltSvc.isAuthenticated()) {
       console.log('[matches] waiting for login...');
     }
 
-    this.authSvc.onSignInOut.subscribe((message) => {
+    this.authAltSvc.onSignInOut.subscribe((message) => {
       if (message === 'signout-pending') {
         this.unsubscribeFromDataSources();
       } else if (message === 'signin-done') {
@@ -31,7 +32,7 @@ export class DraftService {
 
     // if already logged in, there will be no notification for signin-done.
     // simulate the event now.
-    if (this.authSvc.isAuthenticated()) {
+    if (this.authAltSvc.isAuthenticated()) {
       this.subscribeToDataSources();
     }
   }

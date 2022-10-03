@@ -3,6 +3,7 @@ import { NgcCookieConsentService, NgcInitializeEvent, NgcStatusChangeEvent, NgcN
 import { Subscription } from 'rxjs';
 import { MessagingService } from './shared/messaging.service';
 import { AuthService } from './auth/auth.service';
+import { AuthAltService } from './auth/auth-alt.service';
 
 @Component({
   selector: 'app-root',
@@ -24,7 +25,8 @@ export class AppComponent implements OnInit, OnDestroy {
   constructor(
     private ccService: NgcCookieConsentService,
     private msgSvc: MessagingService,
-    private auth: AuthService
+    private authSvc: AuthService,
+    private authAltSvc: AuthAltService
   ) {
 
   }

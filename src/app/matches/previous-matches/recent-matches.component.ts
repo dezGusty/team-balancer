@@ -1,8 +1,6 @@
-import { Component, OnInit, AfterViewInit, OnDestroy } from '@angular/core';
+import { Component, OnInit, OnDestroy } from '@angular/core';
 import { MatchService } from 'src/app/shared/match.service';
-import { CustomGame } from 'src/app/shared/custom-game.model';
 import { Observable, Subscription } from 'rxjs';
-import { AuthService } from 'src/app/auth/auth.service';
 
 @Component({
   selector: 'app-recent-matches',
@@ -14,8 +12,7 @@ export class RecentMatchesComponent implements OnInit, OnDestroy {
   private subscription: Subscription;
 
   constructor(
-    private matchSvc: MatchService,
-    private authSvc: AuthService
+    private matchSvc: MatchService
   ) {
 
   }
