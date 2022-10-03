@@ -1,10 +1,7 @@
 import { AngularFirestore } from '@angular/fire/compat/firestore';
-import { CustomGame } from './custom-game.model';
 import { Injectable } from '@angular/core';
 import { AuthService } from '../auth/auth.service';
 import { Subscription, Observable, BehaviorSubject } from 'rxjs';
-import { CustomPrevGame } from './custom-prev-game.model';
-import { Player } from './player.model';
 
 
 /**
@@ -15,8 +12,6 @@ export class MatchService {
     private dataChangeSubscription: Subscription;
     private recentMatchNames: string[];
     private recentMatchesChangeEvent = new BehaviorSubject<string[]>(null);
-
-    private individualMatchRetrieval: Subscription[] = [];
 
     public maxNumberOfRecentMatches = 5;
 
@@ -76,9 +71,6 @@ export class MatchService {
         if (this.dataChangeSubscription) {
             this.dataChangeSubscription.unsubscribe();
         }
-        this.individualMatchRetrieval.forEach(subscription => {
-            subscription.unsubscribe();
-        });
     }
 
     public getRecentMatchListCached(): string[] {

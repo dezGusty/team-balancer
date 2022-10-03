@@ -50,7 +50,6 @@ import { PrevMatchDetailComponent } from './matches/prev-match-detail/prev-match
 import { PlayerMiniCardComponent } from './players/player-mini-card/player-mini-card.component';
 
 import { AppStorage } from './shared/app-storage';
-import { LoadingSpinnerComponent } from './ui/loading-spinner/loading-spinner.component';
 import { SmallLoadingSpinnerComponent } from './ui/small-loading-spinner/small-loading-spinner.component';
 import { DraftComponent } from './draft/draft/draft.component';
 import { PlayerCardPrefComponent } from './player-card-pref/player-card-pref.component';
@@ -107,7 +106,6 @@ export const persistenceEnabled = new Promise<boolean>(resolve => {
     CopyClipboardDirective,
     PrevMatchDetailComponent,
     PlayerMiniCardComponent,
-    LoadingSpinnerComponent,
     SmallLoadingSpinnerComponent,
     DraftComponent,
     PlayerCardPrefComponent,

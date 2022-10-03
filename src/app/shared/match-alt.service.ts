@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { CustomPrevGame } from './custom-prev-game.model';
 import { collection, doc, getDoc, getDocs, docData, Firestore, setDoc } from '@angular/fire/firestore';
 import { Player } from './player.model';
-import { BehaviorSubject } from 'rxjs';
+import { BehaviorSubject, Subscription } from 'rxjs';
 import { CustomGame } from './custom-game.model';
 
 @Injectable({
@@ -10,12 +10,44 @@ import { CustomGame } from './custom-game.model';
 })
 export class MatchAltService {
 
+  private dataChangeSubscription: Subscription;
+
   private recentMatchesChangeEvent = new BehaviorSubject<string[]>(null);
   private recentMatchNames: string[];
   public maxNumberOfRecentMatches = 5;
 
   constructor(private firestore: Firestore) { }
 
+  /**
+     * Subscribes to the data sources used by this service.
+     */
+  subscribeToDataSources() {
+    console.log('[match-svc] subscribing');
+
+    this.recentMatchNames = [...this.recentMatchNames];
+    this.recentMatchesChangeEvent.next(this.recentMatchNames);
+
+    const docRef = doc(this.firestore, 'matches/recent');
+    this.dataChangeSubscription = docData(docRef).subscribe({
+      next: recentMatchesDocContents => {
+        const castedItem = recentMatchesDocContents as { items: string[] };
+        this.recentMatchNames = [...castedItem.items];
+        this.recentMatchesChangeEvent.next(this.recentMatchNames);
+      },
+      error: err => console.log('some error encountered', err),
+      complete:
+        () => { console.log('[match-svc]complete') }
+    });
+  }
+
+  /**
+   * Clean-up the data subscriptions.
+   */
+  unsubscribeFromDataSources() {
+    if (this.dataChangeSubscription) {
+      this.dataChangeSubscription.unsubscribe();
+    }
+  }
 
   /**
      * Asynchronously retrieves the match object as an Observable.
@@ -72,28 +104,28 @@ export class MatchAltService {
      *
      * @param matchName Match name to save into the 'recent' list.
      */
-   public async saveMatchNameToRecentList(matchName: string) {
+  public async saveMatchNameToRecentList(matchName: string) {
     let newRecentMatches: string[] = [];
     if (this.recentMatchNames) {
-        const index = this.recentMatchNames.findIndex((game) => game === matchName);
-        if (index !== -1) {
-            // Found.
-            return;
-        }
+      const index = this.recentMatchNames.findIndex((game) => game === matchName);
+      if (index !== -1) {
+        // Found.
+        return;
+      }
 
-        newRecentMatches = this.recentMatchNames.slice();
+      newRecentMatches = this.recentMatchNames.slice();
     }
 
     newRecentMatches.push(matchName);
 
     if (newRecentMatches.length > this.maxNumberOfRecentMatches) {
-        newRecentMatches.splice(0, 1);
+      newRecentMatches.splice(0, 1);
     }
     const docName = '/matches/recent';
     const docRef = doc(this.firestore, docName);
     const obj = { items: newRecentMatches };
     await setDoc(docRef, obj, { merge: true });
-}
+  }
 
   public async saveCustomMatchAsync(matchName: string, customGame: CustomGame) {
     const docName = 'matches/' + matchName;
@@ -105,7 +137,7 @@ export class MatchAltService {
 
     // also update the recent list.
     await this.saveMatchNameToRecentList(matchName);
-}
+  }
 
   public async saveCustomPrevMatchAsync(matchName: string, game: CustomPrevGame) {
     const docName = 'matches/' + matchName;
