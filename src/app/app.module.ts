@@ -54,7 +54,6 @@ import { AppStorage } from './shared/app-storage';
 import { SmallLoadingSpinnerComponent } from './ui/small-loading-spinner/small-loading-spinner.component';
 import { DraftComponent } from './draft/draft/draft.component';
 import { PlayerCardPrefComponent } from './player-card-pref/player-card-pref.component';
-import { MessagingService } from './shared/messaging.service';
 import { AdminComponent } from './admin/admin.component';
 import { ToastService } from './shared/toasts-service';
 import { ToastsContainer } from './toast/toast-container.component';
@@ -149,7 +148,6 @@ export const persistenceEnabled = new Promise<boolean>(resolve => {
     PlayersService,
     MatchService,
     MatchAltService,
-    MessagingService,
     AuthService,
     AuthAltService,
     ToastService,

@@ -1,7 +1,6 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
 import { NgcCookieConsentService, NgcInitializeEvent, NgcStatusChangeEvent, NgcNoCookieLawEvent } from 'ngx-cookieconsent';
 import { Subscription } from 'rxjs';
-import { MessagingService } from './shared/messaging.service';
 import { AuthService } from './auth/auth.service';
 import { AuthAltService } from './auth/auth-alt.service';
 
@@ -24,7 +23,6 @@ export class AppComponent implements OnInit, OnDestroy {
 
   constructor(
     private ccService: NgcCookieConsentService,
-    private msgSvc: MessagingService,
     private authSvc: AuthService,
     private authAltSvc: AuthAltService
   ) {
@@ -62,9 +60,6 @@ export class AppComponent implements OnInit, OnDestroy {
       (event: NgcNoCookieLawEvent) => {
         // you can use this.ccService.getConfig() to do stuff...
       });
-
-
-    this.msgSvc.showMessages().subscribe();
   }
 
   ngOnDestroy() {
