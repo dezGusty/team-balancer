@@ -1,7 +1,7 @@
 import { Component, OnInit, Input, ElementRef, ViewChild } from '@angular/core';
 import { CustomGame } from '../../shared/custom-game.model';
 import { Player, getDisplayName } from '../../shared/player.model';
-import { MatchAltService } from 'src/app/shared/match-alt.service';
+import { MatchService } from 'src/app/shared/match.service';
 
 @Component({
   selector: 'app-match-storage',
@@ -14,7 +14,7 @@ export class MatchStorageComponent implements OnInit {
   public customClipText = '';
   public targetDate = '';
   @ViewChild('ttip') copyToClipBtn: ElementRef;
-  constructor(private matchSvc: MatchAltService, private matchAltSvc: MatchAltService) {
+  constructor(private matchSvc: MatchService, private matchAltSvc: MatchService) {
     this.targetDate = new Date().toISOString().slice(0, 10);
   }
 

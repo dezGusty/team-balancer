@@ -9,7 +9,7 @@ import { RatingScaler } from '../shared/rating-scaler';
 import { RatingSystem, RatingSystemSettings } from '../shared/rating-system';
 import { ToastService } from '../shared/toasts-service';
 import { RatingHist } from '../shared/rating-hist.model';
-import { MatchAltService } from '../shared/match-alt.service';
+import { MatchService } from '../shared/match.service';
 @Component({
   selector: 'app-admin',
   templateUrl: './admin.component.html',
@@ -35,7 +35,7 @@ export class AdminComponent implements OnInit, OnDestroy {
   constructor(
     private authAltSvc: AuthAltService,
     private playersSvc: PlayersService,
-    private matchesAltSvc: MatchAltService,
+    private matchesSvc: MatchService,
     private toastSvc: ToastService) {
 
   }
@@ -52,7 +52,7 @@ export class AdminComponent implements OnInit, OnDestroy {
             + playerChangeInfo.messageType + '\n'
             + playerChangeInfo.messagePayload);
         }
-      )
+      )   
     );
   }
 
@@ -83,9 +83,9 @@ export class AdminComponent implements OnInit, OnDestroy {
     await this.playersSvc.dropPlayerRatings();
 
     // Create rating entries again, based on the matches whose results were applied.
-    let recentMatchNames = [...this.matchesAltSvc.getRecentMatchListCached()];
+    let recentMatchNames = [...this.matchesSvc.getRecentMatchListCached()];
     recentMatchNames.forEach(async matchName => {
-      const customGame = await this.matchesAltSvc.getMatchForDateAsync(matchName);
+      const customGame = await this.matchesSvc.getMatchForDateAsync(matchName);
       if (customGame) {
 
         if (customGame.appliedResults) {
@@ -113,7 +113,7 @@ export class AdminComponent implements OnInit, OnDestroy {
   async checkDropDown(dropdown: boolean) {
     if (dropdown == true) {
       this.ratingHistory = await this.playersSvc.getRatingHistoryAsync();
-      this.matchHistory = await this.matchesAltSvc.getMatchListAsync();
+      this.matchHistory = await this.matchesSvc.getMatchListAsync();
     }
   }
 
@@ -178,8 +178,8 @@ export class AdminComponent implements OnInit, OnDestroy {
     if (this.ratingChosen?.key) {
 
       this.loadingConvert = 1;
-      const matchKey = this.matchesAltSvc.getMatchDateFromRatingDateWithLabel(this.ratingChosen.key);
-      const gameObj: CustomPrevGame = await this.matchesAltSvc.getMatchForDateAsync(matchKey);
+      const matchKey = this.matchesSvc.getMatchDateFromRatingDateWithLabel(this.ratingChosen.key);
+      const gameObj: CustomPrevGame = await this.matchesSvc.getMatchForDateAsync(matchKey);
 
       // Go through each player and add the results to a separate item.
       gameObj?.postResults?.forEach(async diffPair => {

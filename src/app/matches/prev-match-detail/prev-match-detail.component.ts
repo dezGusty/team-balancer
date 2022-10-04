@@ -5,7 +5,7 @@ import { CustomPrevGame } from '../../shared/custom-prev-game.model';
 import { Subscription } from 'rxjs';
 import { PlayersService } from 'src/app/shared/players.service';
 import { RatingSystem } from 'src/app/shared/rating-system';
-import { MatchAltService } from 'src/app/shared/match-alt.service';
+import { MatchService } from 'src/app/shared/match.service';
 import { AuthAltService } from 'src/app/auth/auth-alt.service';
 
 @Component({
@@ -33,7 +33,7 @@ export class PrevMatchDetailComponent implements OnInit, OnDestroy {
 
   constructor(
     private route: ActivatedRoute,
-    private matchAltSvc: MatchAltService,
+    private matchAltSvc: MatchService,
     private playersSvc: PlayersService,
     private authAltSvc: AuthAltService) { }
 

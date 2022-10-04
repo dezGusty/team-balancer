@@ -51,7 +51,7 @@ import { AdminComponent } from './admin/admin.component';
 import { ToastService } from './shared/toasts-service';
 import { ToastsContainer } from './toast/toast-container.component';
 import { AdminGuard } from './auth/admin-guard.service';
-import { MatchAltService } from './shared/match-alt.service';
+import { MatchService } from './shared/match.service';
 
 // types: opt-out, opt-in, info
 const cookieConfig: NgcCookieConsentConfig = {
@@ -134,7 +134,7 @@ export const persistenceEnabled = new Promise<boolean>(resolve => {
   ],
   providers: [
     PlayersService,
-    MatchAltService,
+    MatchService,
     AuthAltService,
     ToastService,
     AuthGuard,

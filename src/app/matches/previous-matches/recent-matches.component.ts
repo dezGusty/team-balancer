@@ -1,6 +1,6 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
 import { Observable, Subscription } from 'rxjs';
-import { MatchAltService } from 'src/app/shared/match-alt.service';
+import { MatchService } from 'src/app/shared/match.service';
 
 @Component({
   selector: 'app-recent-matches',
@@ -12,7 +12,7 @@ export class RecentMatchesComponent implements OnInit, OnDestroy {
   private subscription: Subscription;
 
   constructor(
-    private matchAltSvc: MatchAltService
+    private matchAltSvc: MatchService
   ) {
 
   }

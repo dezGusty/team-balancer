@@ -9,7 +9,7 @@ import { AuthAltService } from '../auth/auth-alt.service';
 @Injectable({
   providedIn: 'root'
 })
-export class MatchAltService {
+export class MatchService {
 
   private dataChangeSubscription: Subscription;
 
