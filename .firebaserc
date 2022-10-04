@@ -1,7 +1,8 @@
 {
   "projects": {
     "default": "teams-balancer",
-    "team-balancer": "teams-balancer"
+    "team-balancer": "teams-balancer",
+    "teams-balancer": "teams-balancer"
   },
   "targets": {
     "teams-balancer": {
@@ -11,5 +12,6 @@
         ]
       }
     }
-  }
+  },
+  "etags": {}
 }
