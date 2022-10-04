@@ -60,7 +60,7 @@ export class HeaderComponent implements OnInit {
   /**
    * React to the signout button being clicked from the UI.
    */
-  public onSignoutBtnClick() {
-    this.authAltSvc.signOut();
+  public async onSignoutBtnClick() {
+    await this.authAltSvc.signOutAsync();
   }
 }

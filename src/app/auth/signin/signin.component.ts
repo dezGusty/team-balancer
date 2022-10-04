@@ -17,12 +17,22 @@ export class SigninComponent implements OnInit {
   ngOnInit() {
   }
 
-  tryGoogleLogin() {
-    this.authAltSvc.doGoogleLogin({ successRoute: [] })
-      .then(res => {
-        console.log('[signin] navigating to root');
-        this.router.navigate(['/players']);
-      });
+  async tryGoogleLogin() {
+
+    const success = await this.authAltSvc.doGoogleLoginAsync({ successRoute: [] });
+    if (success) {
+      console.log('[signin] navigating to root');
+      this.router.navigate(['/players']);
+    } else {
+      console.log('[signin] failed when logging in');
+
+    }
+
+    // this.authAltSvc.doGoogleLogin({ successRoute: [] })
+    //   .then(res => {
+    //     console.log('[signin] navigating to root');
+    //     this.router.navigate(['/players']);
+    //   });
   }
 
 }

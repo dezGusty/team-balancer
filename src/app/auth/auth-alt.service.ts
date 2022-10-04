@@ -79,6 +79,26 @@ export class AuthAltService {
         });
     }
 
+    public async doGoogleLoginAsync(postNavi: { successRoute: string[] } = { successRoute: ['/'] }): Promise<boolean> {
+        console.log('doGoogleLoginAsync entered');
+
+        const userCred = await signInWithPopup(
+            this.auth,
+            new GoogleAuthProvider());
+        console.log('userCred', userCred);
+        if (userCred) {
+            this.issueTokenRetrieval();
+            this.updateAndCacheUserAfterLogin(userCred.user);
+            this.onSignInOut.emit('signin-done');
+            if (postNavi?.successRoute?.length > 0) {
+                console.log('[login] navigating to route ', postNavi.successRoute);
+                this.router.navigate(postNavi.successRoute);
+            }
+            return true;
+        }
+        return false;
+    }
+
     notifySubscribersOfSignout() {
         this.onSignInOut.emit('signout-pending');
     }
@@ -98,13 +118,34 @@ export class AuthAltService {
             });
     }
 
+    public async signOutAsync() {
+        console.log('signOutAsync');
+        this.notifySubscribersOfSignout();
+        // unsubscribe
+        if (this.subscription) {
+            this.subscription.unsubscribe();
+        }
+
+        this.token = null;
+        this.cachedUser = null;
+        this.appStorage.removeAppStorageItem('roles');
+
+        await this.auth.signOut();
+        console.log('[guard] navigating in place');
+        this.appStorage.removeAppStorageItem('roles');
+        this.router.navigate(['']);
+    }
+
     private issueTokenRetrieval() {
+        console.log('issueTokenRetrieval');
+
         if (!this.auth || !this.auth.currentUser) {
             return;
         }
 
         // Request the token. Store it when received.
         this.token = this.auth?.currentUser?.uid;
+        console.log('this.token', this.token);
     }
 
     /**
@@ -120,6 +161,7 @@ export class AuthAltService {
 
     isAuthenticated(): boolean {
         const result = (this.token != null);
+
         return result;
     }
 
@@ -200,7 +242,7 @@ export class AuthAltService {
                     console.log('User does not have role. Should create');
                 }
                 const obj = { ...userData };
-                
+
                 if (!originalObj || !originalObj.standard) {
                     // no permission property stored initially.
                     // store something.

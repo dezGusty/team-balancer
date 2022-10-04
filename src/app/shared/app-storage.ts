@@ -23,5 +23,15 @@ export class AppStorage {
         // else
         sessionStorage.setItem(key, value);
     }
+
+    public removeAppStorageItem(key: string): void {
+        if (localStorage) {
+            localStorage.removeItem(key);
+            return;
+        }
+
+        // else
+        sessionStorage.removeItem(key);
+    }
 }
 
