@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
-import { AuthAltService } from '../auth-alt.service';
+import { AuthService } from '../auth.service';
 
 @Component({
   selector: 'app-signin',
@@ -10,7 +10,7 @@ import { AuthAltService } from '../auth-alt.service';
 export class SigninComponent implements OnInit {
 
   constructor(
-    private authAltSvc: AuthAltService,
+    private authSvc: AuthService,
     private router: Router) {
   }
 
@@ -19,7 +19,7 @@ export class SigninComponent implements OnInit {
 
   async tryGoogleLogin() {
 
-    const success = await this.authAltSvc.doGoogleLoginAsync({ successRoute: [] });
+    const success = await this.authSvc.doGoogleLoginAsync({ successRoute: [] });
     if (success) {
       console.log('[signin] navigating to root');
       this.router.navigate(['/players']);

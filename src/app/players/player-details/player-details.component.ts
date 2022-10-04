@@ -3,7 +3,7 @@ import { ActivatedRoute, Params, Router } from '@angular/router';
 
 import { Player, getDisplayName } from '../../shared/player.model';
 import { PlayersService } from '../../shared/players.service';
-import { AuthAltService } from 'src/app/auth/auth-alt.service';
+import { AuthService } from 'src/app/auth/auth.service';
 
 @Component({
   selector: 'app-player-details',
@@ -15,7 +15,7 @@ export class PlayerDetailsComponent implements OnInit {
   id: number;
 
   constructor(
-    private authAltSvc: AuthAltService,
+    private authSvc: AuthService,
     private playersSvc: PlayersService,
     private router: Router,
     private route: ActivatedRoute) {
@@ -40,15 +40,15 @@ export class PlayerDetailsComponent implements OnInit {
   }
 
   public canEditPlayers(): boolean {
-    return this.authAltSvc.isAuthenticatedAsOrganizer();
+    return this.authSvc.isAuthenticatedAsOrganizer();
   }
 
   public canArchivePlayer(): boolean {
-    return this.authAltSvc.isAuthenticatedAsOrganizer() && (!this.player.isArchived);
+    return this.authSvc.isAuthenticatedAsOrganizer() && (!this.player.isArchived);
   }
 
   public canUnarchivePlayer(): boolean {
-    return this.authAltSvc.isAuthenticatedAsOrganizer() && this.player.isArchived;
+    return this.authSvc.isAuthenticatedAsOrganizer() && this.player.isArchived;
   }
 
   public onEditPlayerClicked($event): void {

@@ -8,7 +8,7 @@ import { RatingSystem } from '../shared/rating-system';
 import { ToastService } from '../shared/toasts-service';
 import { PlayerChangeInfo } from '../shared/player-change-info';
 import { RatingHist } from '../shared/rating-hist.model';
-import { AuthAltService } from '../auth/auth-alt.service';
+import { AuthService } from '../auth/auth.service';
 
 @Component({
   selector: 'app-players',
@@ -33,7 +33,7 @@ export class PlayersComponent implements OnInit, OnDestroy {
   ratingScale: RatingSystem;
 
   constructor(
-    private authAltSvc: AuthAltService,
+    private authSvc: AuthService,
     private playersSvc: PlayersService,
     private toastSvc: ToastService,
     private router: Router,
@@ -80,7 +80,7 @@ export class PlayersComponent implements OnInit, OnDestroy {
   }
 
   public canAddPlayers(): boolean {
-    return this.authAltSvc.isAuthenticatedAsOrganizer();
+    return this.authSvc.isAuthenticatedAsOrganizer();
   }
 
   public playerIsSelected(): boolean {

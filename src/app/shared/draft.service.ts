@@ -1,8 +1,8 @@
 import { Injectable } from '@angular/core';
 import { Subscription, BehaviorSubject } from 'rxjs';
-import { Player } from './player.model';
+import { getDisplayName, Player } from './player.model';
 import { DraftChangeInfo } from './draft-change-info';
-import { AuthAltService } from '../auth/auth-alt.service';
+import { AuthService } from '../auth/auth.service';
 import { doc, docData, Firestore, setDoc } from '@angular/fire/firestore';
 
 @Injectable({
@@ -13,15 +13,17 @@ export class DraftService {
   selectedDraftPlayers: Player[] = [];
   playerDraftChangeEvent = new BehaviorSubject<DraftChangeInfo>(null);
 
+  public PREFERRED_PLAYERS_COUNT: number = 12;
+
   constructor(
     private firestore: Firestore,
-    private authAltSvc: AuthAltService) {
+    private authSvc: AuthService) {
     this.selectedDraftPlayers = [];
-    if (!this.authAltSvc.isAuthenticated()) {
+    if (!this.authSvc.isAuthenticated()) {
       console.log('[matches] waiting for login...');
     }
 
-    this.authAltSvc.onSignInOut.subscribe((message) => {
+    this.authSvc.onSignInOut.subscribe((message) => {
       if (message === 'signout-pending') {
         this.unsubscribeFromDataSources();
       } else if (message === 'signin-done') {
@@ -33,7 +35,7 @@ export class DraftService {
 
     // if already logged in, there will be no notification for signin-done.
     // simulate the event now.
-    if (this.authAltSvc.isAuthenticated()) {
+    if (this.authSvc.isAuthenticated()) {
       this.subscribeToDataSources();
     }
   }
@@ -92,10 +94,6 @@ export class DraftService {
     console.log('emitting ', playerInfo);
     this.playerDraftChangeEvent.next(playerInfo);
 
-    // const draftPlayersListRef = this.db.doc<any>('/drafts/next').ref;
-    // const obj = { players };
-    // draftPlayersListRef.set(obj, { merge: true });
-
     const docName = '/drafts/next';
     const docRef = doc(this.firestore, docName);
     const obj = { players };
@@ -109,5 +107,23 @@ export class DraftService {
    */
   storePlayersInMemoryOnly(players: Player[]) {
     this.selectedDraftPlayers = [...players];
+  }
+
+  public getDraftPlainTextFormat(players: Player[]): string {
+    let plainText = 'Main line-up ⚽\n';
+    plainText += '---------------\n'
+    players.slice(0, this.PREFERRED_PLAYERS_COUNT).forEach((player, index) => {
+      plainText += '' + (index + 1) + '. ' + getDisplayName(player) + '\n';
+    });
+
+    let reservesArray = players.slice(this.PREFERRED_PLAYERS_COUNT);
+    if (reservesArray.length > 0) {
+      plainText += '\nReserves 💺\n';
+      plainText += '---------------\n'
+      reservesArray.forEach((player, index) => {
+        plainText += '' + (index + 1) + '. ' + getDisplayName(player) + '\n';
+      })
+    }
+    return plainText;
   }
 }

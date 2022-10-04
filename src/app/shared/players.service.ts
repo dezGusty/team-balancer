@@ -7,7 +7,7 @@ import { AppStorage } from './app-storage';
 import { RatingSystem, RatingSystemSettings } from './rating-system';
 import { PlayerChangeInfo } from './player-change-info';
 import { RatingHist } from './rating-hist.model';
-import { AuthAltService } from '../auth/auth-alt.service';
+import { AuthService } from '../auth/auth.service';
 import { collection, doc, docData, Firestore, getDoc, getDocs, setDoc } from '@angular/fire/firestore';
 
 /**
@@ -23,9 +23,9 @@ export class PlayersService {
     // constructor.
     constructor(
         private firestore: Firestore,
-        private authAltSvc: AuthAltService,
+        private authSvc: AuthService,
         private appStorage: AppStorage) {
-        if (!this.authAltSvc.isAuthenticated()) {
+        if (!this.authSvc.isAuthenticated()) {
             console.log('[players] waiting for login...');
         }
 
@@ -36,7 +36,7 @@ export class PlayersService {
         }
 
         // Subscribe to the login-logout events.
-        this.authAltSvc.onSignInOut.subscribe((message) => {
+        this.authSvc.onSignInOut.subscribe((message) => {
             if (message === 'signout-pending') {
                 this.unsubscribeFromDataSources();
             } else if (message === 'signin-done') {
@@ -48,7 +48,7 @@ export class PlayersService {
 
         // if already logged in, there will be no notification for signin-done.
         // simulate the event now.
-        if (this.authAltSvc.isAuthenticated()) {
+        if (this.authSvc.isAuthenticated()) {
             this.subscribeToDataSources();
         }
     }
@@ -282,20 +282,6 @@ export class PlayersService {
         await setDoc(docRef, obj, { merge: true });
     }
 
-    ///TODO:Obsolete
-    // public async savePlayersToList(playersArr: Player[], listName: string) {
-    //     this.savePlayersArrayToDoc(playersArr, listName)
-    //         .then(_ => {
-    //             const playerInfo = new PlayerChangeInfo(playersArr, 'info', 'Saved players to list ' + listName);
-    //             console.log('emitting ', playerInfo);
-
-    //             this.playerDataChangeEvent.next(playerInfo);
-    //         }
-    //         ).catch(reason =>
-    //             this.playerDataChangeEvent.next(new PlayerChangeInfo(playersArr, 'error', 'Failed to save player list because of ' + reason))
-    //         );
-    // }
-
     public async savePlayersToListAsync(playersArr: Player[], listName: string): Promise<void> {
         return this.savePlayersArrayToDoc(playersArr, listName)
             .then(_ => {
@@ -317,13 +303,6 @@ export class PlayersService {
         await setDoc(docRef, obj, { merge: true });
     }
 
-    // public async removeFieldFromDocument(fieldName: string, documentName: string) {
-    //     const docName = 'ratings/' + documentName;
-    //     const docRef = doc(this.firestore, docName);
-    //     await updateDoc(docRef, { [fieldName]: FieldValue.delete() })
-    //     // docRef.update({ [fieldName]: firebase.firestore.FieldValue.delete() });
-    // }
-
     public async getCurrentRatingsAsync(): Promise<any> {
 
         const docName = 'ratings/current';
@@ -336,54 +315,6 @@ export class PlayersService {
         else {
             console.log('Could not find document for ', docName);
         }
-    }
-
-    // async deleteCollection(db, collectionPath, batchSize) {
-    //     const collectionRef = db.collection(collectionPath).ref;
-    //     const query = collectionRef.orderBy('__name__').limit(batchSize);
-    //     return new Promise((resolve, reject) => {
-    //         this.deleteQueryBatch(db, query, resolve).catch(reject);
-    //     });
-    // }
-
-    // async deleteQueryBatch(db, query, resolve) {
-    //     const snapshot = await query.get();
-
-    //     const batchSize = snapshot.size;
-    //     if (batchSize === 0) {
-    //         resolve();
-    //         return;
-    //     }
-
-    //     const batch = db.firestore.batch();
-    //     snapshot.docs.forEach((doc) => {
-    //         batch.delete(doc.ref);
-    //     });
-    //     await batch.commit();
-
-    //     this.deleteQueryBatch(db, query, resolve);
-    // }
-
-    async getNumberOfDocumentsInCollection(collectionPath) {
-        const collectionRef = collection(this.firestore, 'ratings');
-        const docsSnap = await getDocs(collectionRef);
-        return docsSnap.size;
-    }
-
-    public async dropPlayerRatings() {
-        // TODO:XXX:suspended
-        // const collectionRef = collection(this.firestore, 'ratings');
-        // const docsSnap = await getDocs(collectionRef);
-        // let size = docsSnap.size;
-        // // let size = await this.getNumberOfDocumentsInCollection('ratings');
-        // // await this.deleteCollection(this.db, 'ratings', size);
-        // // const collectionRef = db.collection(collectionPath).ref;
-        // deletequerybatch
-        // const query = collectionRef.orderBy('__name__').limit(batchSize);
-        // return new Promise((resolve, reject) => {
-        //     this.deleteQueryBatch(db, query, resolve).catch(reject);
-        // });
-
     }
 
     saveSinglePlayerToFirebase(player: Player) {

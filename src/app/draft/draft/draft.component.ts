@@ -6,7 +6,7 @@ import { DraftService } from 'src/app/shared/draft.service';
 import { Router } from '@angular/router';
 import { ToastService } from 'src/app/shared/toasts-service';
 import { DraftChangeInfo } from 'src/app/shared/draft-change-info';
-import { AuthAltService } from 'src/app/auth/auth-alt.service';
+import { AuthService } from 'src/app/auth/auth.service';
 
 @Component({
   selector: 'app-draft',
@@ -26,7 +26,7 @@ export class DraftComponent implements OnInit, OnDestroy {
   constructor(
     private playersSvc: PlayersService,
     private draftSvc: DraftService,
-    private authAltSvc: AuthAltService,
+    private authSvc: AuthService,
     private router: Router,
     private toastSvc: ToastService) {
   }
@@ -79,10 +79,10 @@ export class DraftComponent implements OnInit, OnDestroy {
 
 
   public getDraftedPlayersMainList(): Player[] {
-    return [...this.selectedPlayerList].splice(0, 12);
+    return [...this.selectedPlayerList].splice(0, this.draftSvc.PREFERRED_PLAYERS_COUNT);
   }
   public getDraftedPlayersReservesList(): Player[] {
-    return [...this.selectedPlayerList].splice(12);
+    return [...this.selectedPlayerList].splice(this.draftSvc.PREFERRED_PLAYERS_COUNT);
   }
 
   onSearchContentChange($event) {
@@ -192,11 +192,7 @@ export class DraftComponent implements OnInit, OnDestroy {
   }
 
   getDraftPlainTextFormat(): string {
-    let plainText = '';
-    this.selectedPlayerList.forEach((player, index) => {
-      plainText += '' + (index + 1) + '. ' + getDisplayName(player) + '\n';
-    });
-    return plainText;
+    return this.draftSvc.getDraftPlainTextFormat(this.selectedPlayerList);
   }
 
   customClipTextToClip(): string {
@@ -205,6 +201,6 @@ export class DraftComponent implements OnInit, OnDestroy {
   }
 
   public canChangePlayersInDraft(): boolean {
-    return this.authAltSvc.isAuthenticatedAsOrganizer();
+    return this.authSvc.isAuthenticatedAsOrganizer();
   }
 }

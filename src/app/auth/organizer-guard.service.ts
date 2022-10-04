@@ -6,7 +6,7 @@ import {
 } from '@angular/router';
 import { Observable } from 'rxjs';
 import { Injectable } from '@angular/core';
-import { AuthAltService } from './auth-alt.service';
+import { AuthService } from './auth.service';
 
 /**
  * @description
@@ -16,12 +16,12 @@ import { AuthAltService } from './auth-alt.service';
 export class OrganizerGuard implements CanActivate {
 
     constructor(
-        private authAltSvc: AuthAltService,
+        private authSvc: AuthService,
         private router: Router) { }
 
     canActivate(route: ActivatedRouteSnapshot, state: RouterStateSnapshot):
         Observable<boolean> | Promise<boolean> | boolean {
-        if (this.authAltSvc.isAuthenticatedAsOrganizer()) {
+        if (this.authSvc.isAuthenticatedAsOrganizer()) {
             return true;
         } else {
             return false;

@@ -6,7 +6,7 @@ import { Subscription } from 'rxjs';
 import { PlayersService } from 'src/app/shared/players.service';
 import { RatingSystem } from 'src/app/shared/rating-system';
 import { MatchService } from 'src/app/shared/match.service';
-import { AuthAltService } from 'src/app/auth/auth-alt.service';
+import { AuthService } from 'src/app/auth/auth.service';
 
 @Component({
   selector: 'app-prev-match-detail',
@@ -35,7 +35,7 @@ export class PrevMatchDetailComponent implements OnInit, OnDestroy {
     private route: ActivatedRoute,
     private matchAltSvc: MatchService,
     private playersSvc: PlayersService,
-    private authAltSvc: AuthAltService) { }
+    private authSvc: AuthService) { }
 
   ngOnInit() {
     this.subscriptions.push(this.route.params.subscribe(
@@ -113,7 +113,7 @@ export class PrevMatchDetailComponent implements OnInit, OnDestroy {
   }
 
   async onStoreResultClick() {
-    if (!this.authAltSvc.isAuthenticatedAsOrganizer()) {
+    if (!this.authSvc.isAuthenticatedAsOrganizer()) {
       return;
     }
 
@@ -161,7 +161,7 @@ export class PrevMatchDetailComponent implements OnInit, OnDestroy {
    *    'ratings/current'
    */
   async onUpdateRatingsClick() {
-    if (!this.authAltSvc.isAuthenticatedAsOrganizer()) {
+    if (!this.authSvc.isAuthenticatedAsOrganizer()) {
       return;
     }
 
@@ -216,11 +216,11 @@ export class PrevMatchDetailComponent implements OnInit, OnDestroy {
   }
 
   public canShowStoreResultsButton(): boolean {
-    return !this.matchResultsStored && this.authAltSvc.isAuthenticatedAsOrganizer();
+    return !this.matchResultsStored && this.authSvc.isAuthenticatedAsOrganizer();
   }
 
   public canShowApplyResultsButton(): boolean {
-    return !this.matchResultsAppliedToRatings && this.authAltSvc.isAuthenticatedAsOrganizer();
+    return !this.matchResultsAppliedToRatings && this.authSvc.isAuthenticatedAsOrganizer();
   }
 
   public canChangeScore(): boolean {

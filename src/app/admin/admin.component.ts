@@ -1,6 +1,6 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { Subscription } from 'rxjs/internal/Subscription';
-import { AuthAltService } from '../auth/auth-alt.service';
+import { AuthService } from '../auth/auth.service';
 import { CustomPrevGame } from '../shared/custom-prev-game.model';
 import { PlayerChangeInfo } from '../shared/player-change-info';
 import { Player } from '../shared/player.model';
@@ -33,7 +33,7 @@ export class AdminComponent implements OnInit, OnDestroy {
   private subscriptions: Subscription[] = [];
 
   constructor(
-    private authAltSvc: AuthAltService,
+    private authSvc: AuthService,
     private playersSvc: PlayersService,
     private matchesSvc: MatchService,
     private toastSvc: ToastService) {
@@ -63,11 +63,11 @@ export class AdminComponent implements OnInit, OnDestroy {
   }
 
   public canExportPlayers(): boolean {
-    return this.authAltSvc.isAuthenticatedAsOrganizer();
+    return this.authSvc.isAuthenticatedAsOrganizer();
   }
 
   public canAddPlayers(): boolean {
-    return this.authAltSvc.isAuthenticatedAsOrganizer();
+    return this.authSvc.isAuthenticatedAsOrganizer();
   }
 
 
@@ -78,9 +78,6 @@ export class AdminComponent implements OnInit, OnDestroy {
       player.rating = 5;
     }
     this.playersSvc.saveAllPlayers();
-
-    // Delete all rating documents.
-    await this.playersSvc.dropPlayerRatings();
 
     // Create rating entries again, based on the matches whose results were applied.
     let recentMatchNames = [...this.matchesSvc.getRecentMatchListCached()];

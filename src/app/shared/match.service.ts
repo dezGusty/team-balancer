@@ -4,7 +4,7 @@ import { collection, doc, getDoc, getDocs, docData, Firestore, setDoc } from '@a
 import { Player } from './player.model';
 import { BehaviorSubject, Observable, Subscription } from 'rxjs';
 import { CustomGame } from './custom-game.model';
-import { AuthAltService } from '../auth/auth-alt.service';
+import { AuthService } from '../auth/auth.service';
 
 @Injectable({
   providedIn: 'root'
@@ -17,13 +17,13 @@ export class MatchService {
   private recentMatchNames: string[];
   public maxNumberOfRecentMatches = 5;
 
-  constructor(private firestore: Firestore, private authAltSvc: AuthAltService) {
+  constructor(private firestore: Firestore, private authSvc: AuthService) {
     this.recentMatchNames = [];
-    if (!this.authAltSvc.isAuthenticated()) {
+    if (!this.authSvc.isAuthenticated()) {
       console.log('[matches] waiting for login...');
     }
 
-    this.authAltSvc.onSignInOut.subscribe((message) => {
+    this.authSvc.onSignInOut.subscribe((message) => {
       if (message === 'signout-pending') {
         this.unsubscribeFromDataSources();
       } else if (message === 'signin-done') {
@@ -35,7 +35,7 @@ export class MatchService {
 
     // if already logged in, there will be no notification for signin-done.
     // simulate the event now.
-    if (this.authAltSvc.isAuthenticated()) {
+    if (this.authSvc.isAuthenticated()) {
       this.subscribeToDataSources();
     }
   }

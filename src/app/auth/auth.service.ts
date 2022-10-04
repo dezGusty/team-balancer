@@ -7,7 +7,7 @@ import { Subscription } from 'rxjs';
 import { AppStorage } from '../shared/app-storage';
 
 @Injectable()
-export class AuthAltService {
+export class AuthService {
     /**
      * Store a cache for the currently logged in user.
      * This means that all permission checks (E.g. is the current user a match organizer)

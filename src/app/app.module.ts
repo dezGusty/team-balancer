@@ -5,7 +5,7 @@ import { AsyncPipe } from '@angular/common';
 
 import { NgbCollapseModule, NgbModule, NgbTooltipModule } from '@ng-bootstrap/ng-bootstrap';
 import { NgcCookieConsentModule, NgcCookieConsentConfig } from 'ngx-cookieconsent';
-import { AuthAltService } from './auth/auth-alt.service';
+import { AuthService } from './auth/auth.service';
 import { PlayersService } from './shared/players.service';
 
 import { AppComponent } from './app.component';
@@ -135,7 +135,7 @@ export const persistenceEnabled = new Promise<boolean>(resolve => {
   providers: [
     PlayersService,
     MatchService,
-    AuthAltService,
+    AuthService,
     ToastService,
     AuthGuard,
     OrganizerGuard,
