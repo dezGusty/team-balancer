@@ -10,9 +10,9 @@ import { PlayersService } from '../../shared/players.service';
   styleUrls: ['./player-edit.component.css']
 })
 export class PlayerEditComponent implements OnInit {
-  @Input() player: Player;
+  @Input() player: Player | undefined;
 
-  id: number;
+  id: number = 0;
   editMode = false;
 
   constructor(
@@ -33,7 +33,7 @@ export class PlayerEditComponent implements OnInit {
           this.player = this.playersSvc.createDefaultPlayer();
         } else {
           this.player = this.playersSvc.getPlayerById(this.id);
-          if (null == this.player) {
+          if (!this.player) {
             // trigger a reroute?
             console.warn('[player edit] invalid id');
             this.router.navigate(['..'], { relativeTo: this.route });
@@ -70,14 +70,12 @@ export class PlayerEditComponent implements OnInit {
       this.playersSvc.addPlayer(clonedPlayer);
     }
 
-    // console.log('[player-edit-com] emitting event');
-    // this.playersSvc.playerDataChangeEvent.next(null);
     form.reset();
 
     this.router.navigate(['..'], { relativeTo: this.route });
   }
 
-  onCancel($event) {
+  onCancel($event: any) {
     this.router.navigate(['..'], { relativeTo: this.route });
   }
 }

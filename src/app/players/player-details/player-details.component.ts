@@ -11,8 +11,8 @@ import { AuthService } from 'src/app/auth/auth.service';
   styles: ['']
 })
 export class PlayerDetailsComponent implements OnInit {
-  player: Player;
-  id: number;
+  player: Player | undefined;
+  id: number = 0;
 
   constructor(
     private authSvc: AuthService,
@@ -44,26 +44,41 @@ export class PlayerDetailsComponent implements OnInit {
   }
 
   public canArchivePlayer(): boolean {
+    if (!this.player) {
+      return false;
+    }
     return this.authSvc.isAuthenticatedAsOrganizer() && (!this.player.isArchived);
   }
 
   public canUnarchivePlayer(): boolean {
+    if (!this.player) {
+      return false;
+    }
     return this.authSvc.isAuthenticatedAsOrganizer() && this.player.isArchived;
   }
 
-  public onEditPlayerClicked($event): void {
+  public onEditPlayerClicked($event: any): void {
     this.router.navigate(['edit'], { relativeTo: this.route });
   }
 
-  public onArchivePlayer($event): void {
+  public onArchivePlayer($event: any): void {
+    if (!this.player) {
+      return;
+    }
     this.playersSvc.movePlayerToArchive(this.player);
   }
 
-  public onUnarchivePlayer($event): void {
+  public onUnarchivePlayer($event: any): void {
+    if (!this.player) {
+      return;
+    }
     this.playersSvc.pullPlayerFromArchive(this.player);
   }
 
   public playerDisplayName(): string {
+    if (!this.player) {
+      return '';
+    }
     return getDisplayName(this.player);
   }
 }

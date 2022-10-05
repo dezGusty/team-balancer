@@ -17,8 +17,8 @@ import { AuthService } from '../auth/auth.service';
 })
 
 export class PlayersComponent implements OnInit, OnDestroy {
-  players: Player[];
-  selectedPlayer: Player;
+  players: Player[] = [];
+  selectedPlayer: Player | null;
   editMode: boolean;
 
   private subscriptions: Subscription[] = [];
@@ -28,9 +28,9 @@ export class PlayersComponent implements OnInit, OnDestroy {
   searchedName = '';
   loadingConvert = -1;
 
-  ratingHistory: Map<string, RatingHist>;
-  matchHistory: Map<string, CustomPrevGame>;
-  ratingScale: RatingSystem;
+  ratingHistory: Map<string, RatingHist> = new Map<string, RatingHist>();
+  matchHistory: Map<string, CustomPrevGame> = new Map<string, CustomPrevGame>();
+  ratingScale: RatingSystem = RatingSystem.Progressive;
 
   constructor(
     private authSvc: AuthService,
@@ -87,15 +87,15 @@ export class PlayersComponent implements OnInit, OnDestroy {
     return this.selectedPlayer != null;
   }
 
-  public onNewPlayerClicked($event): void {
+  public onNewPlayerClicked($event: any): void {
     this.router.navigate(['new'], { relativeTo: this.route });
   }
 
-  public onSavePlayerClicked($event): void {
+  public onSavePlayerClicked($event: any): void {
     this.playersSvc.saveAllPlayers();
   }
 
-  onSearchContentChange($event) {
+  onSearchContentChange($event: any) {
     // try to apply the target value.
     const filteredPlayers = filterPlayerArray(this.players, $event.target.value);
     if (filteredPlayers.length === 1) {
@@ -103,7 +103,7 @@ export class PlayersComponent implements OnInit, OnDestroy {
     }
   }
 
-  onCheckReload($event) {
+  onCheckReload($event: any) {
     this.loadArchive = !this.loadArchive;
     this.players = this.playersSvc.getPlayers(this.loadArchive);
     if (this.loadArchive) {
@@ -113,7 +113,7 @@ export class PlayersComponent implements OnInit, OnDestroy {
     }
   }
 
-  onPlayerSelected($event) {
+  onPlayerSelected($event: any) {
     console.log('on player selected');
 
   }

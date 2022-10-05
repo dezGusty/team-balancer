@@ -190,7 +190,7 @@ export class AuthService {
         if (!this.cachedUser || !this.cachedUser?.roles) {
             const storedValue = this.appStorage.getAppStorageItem('roles');
             if (!storedValue) {
-                return this.doesRoleContainUser(this.cachedUser?.roles);
+                return false;
             }
             const roles: UserRoles = JSON.parse(storedValue);
             return this.doesRoleContainUser(roles);
@@ -203,7 +203,7 @@ export class AuthService {
         if (!this.cachedUser || !this.cachedUser?.roles) {
             const storedValue = this.appStorage.getAppStorageItem('roles');
             if (!storedValue) {
-                return this.doesRoleContainOrganizer(this.cachedUser?.roles);
+                return false;
             }
             const roles: UserRoles = JSON.parse(storedValue);
             return this.doesRoleContainOrganizer(roles);
@@ -216,7 +216,7 @@ export class AuthService {
         if (!this.cachedUser || !this.cachedUser?.roles) {
             const storedValue = this.appStorage.getAppStorageItem('roles');
             if (!storedValue) {
-                return this.doesRoleContainAdmin(this.cachedUser?.roles);
+                return false;
             }
             const roles: UserRoles = JSON.parse(storedValue);
             return this.doesRoleContainAdmin(roles);

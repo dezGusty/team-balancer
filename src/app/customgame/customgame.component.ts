@@ -18,7 +18,7 @@ export class CustomgameComponent implements OnInit, OnDestroy {
 
   private useDraftPlayersAsInput = false;
 
-  searchedName: string;
+  searchedName: string = '';
   public showCombinations = false;
 
   public matchData = new Match(new Date(Date.now()));
@@ -103,7 +103,7 @@ export class CustomgameComponent implements OnInit, OnDestroy {
     this.makeTeamsSubject.next();
   }
 
-  onSearchContentChange($event) {
+  onSearchContentChange($event: any) {
     if ($event.code === 'Enter') {
       // try to apply the target value.
       const filteredPlayers = filterPlayerArray(this.matchData.availablePlayersPool, $event.target.value);
@@ -122,7 +122,7 @@ export class CustomgameComponent implements OnInit, OnDestroy {
     }
   }
 
-  onPlayerSelected($event) {
+  onPlayerSelected($event: any) {
     const selectedPlayer: Player = $event;
     if (null == selectedPlayer) {
       return;
@@ -138,7 +138,7 @@ export class CustomgameComponent implements OnInit, OnDestroy {
     }
   }
 
-  onPlayerLockTeam1($event) {
+  onPlayerLockTeam1($event: any) {
     const selectedPlayer: Player = $event;
     if (null == selectedPlayer) {
       return;
@@ -157,7 +157,7 @@ export class CustomgameComponent implements OnInit, OnDestroy {
     const currentPosition = this.matchData.draftPlayers.indexOf(selectedPlayer);
   }
 
-  onPlayerLockTeam2($event) {
+  onPlayerLockTeam2($event: any) {
     const selectedPlayer: Player = $event;
     if (null == selectedPlayer) {
       return;
