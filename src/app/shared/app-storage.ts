@@ -5,7 +5,7 @@ export class AppStorage {
     public cacheUserData = false;
     constructor() { }
 
-    public getAppStorageItem(key: string): string {
+    public getAppStorageItem(key: string): string | null {
         if (localStorage) {
             return localStorage.getItem(key);
         }

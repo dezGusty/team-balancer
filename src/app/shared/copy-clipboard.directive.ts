@@ -6,7 +6,7 @@ import { Directive, Input, Output, EventEmitter, HostListener } from '@angular/c
 export class CopyClipboardDirective {
 
   @Input('copy-clipboard')
-  public payload: string;
+  public payload: string = '';
 
   @Output('copied')
   public copied: EventEmitter<string> = new EventEmitter<string>();
@@ -20,7 +20,9 @@ export class CopyClipboardDirective {
     }
 
     const listener = (e: ClipboardEvent) => {
-      const clipboard = e.clipboardData || window['clipboardData'];
+      //todo:xxx
+      const clipData = (window as { [key: string]: any })["clipboardData"] as DataTransfer;
+      const clipboard = e.clipboardData || clipData;
       clipboard.setData('text', this.payload.toString());
       e.preventDefault();
 

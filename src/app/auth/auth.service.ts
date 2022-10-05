@@ -14,9 +14,9 @@ export class AuthService {
      * shall be performed on the data read at the login time. The user needs to log-in
      * again in order to read any updated permissions.
      */
-    private cachedUser: AppUser;
-    private token: string;
-    private subscription: Subscription;
+    private cachedUser: AppUser | null = null;
+    private token: string | null;
+    private subscription: Subscription = Subscription.EMPTY;
 
     constructor(
         private router: Router,
@@ -28,7 +28,7 @@ export class AuthService {
         this.token = this.appStorage.getAppStorageItem('token');
         if (this.appStorage.cacheUserData) {
             const tempCacheData = this.appStorage.getAppStorageItem('user');
-            if (tempCacheData !== undefined) {
+            if (tempCacheData) {
                 this.cachedUser = JSON.parse(tempCacheData);
             }
         }
@@ -154,9 +154,9 @@ export class AuthService {
      */
     public onSignInOut: EventEmitter<string> = new EventEmitter<string>();
 
-    public getCachedUser(): AppUser {
-        return this.cachedUser;
-    }
+    // public getCachedUser(): AppUser {
+    //     return this.cachedUser;
+    // }
 
 
     isAuthenticated(): boolean {

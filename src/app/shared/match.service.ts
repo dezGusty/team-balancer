@@ -11,9 +11,9 @@ import { AuthService } from '../auth/auth.service';
 })
 export class MatchService {
 
-  private dataChangeSubscription: Subscription;
+  private dataChangeSubscription: Subscription = Subscription.EMPTY;
 
-  private recentMatchesChangeEvent = new BehaviorSubject<string[]>(null);
+  private recentMatchesChangeEvent = new BehaviorSubject<string[]>([]);
   private recentMatchNames: string[];
   public maxNumberOfRecentMatches = 5;
 
@@ -83,10 +83,10 @@ export class MatchService {
      * @param matchName The name of the match (basically: the date to be used as a key for accessing the match from the DB)
      * E.g. '2018-03-23'
      */
-  public async getMatchForDateAsync(matchName: string): Promise<CustomPrevGame> {
+  public async getMatchForDateAsync(matchName: string): Promise<CustomPrevGame | undefined> {
     // Get the firestore document where the match details are stored, based on the key.
     // E.g. stored in [matches/2018-03-23]
-    let myResult: CustomPrevGame = null;
+    let myResult: CustomPrevGame | undefined = undefined;
     const docName = 'matches/' + matchName;
 
     const docRef = doc(this.firestore, docName);

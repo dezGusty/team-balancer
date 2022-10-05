@@ -25,8 +25,8 @@ export class PlayerEditComponent implements OnInit {
   ngOnInit() {
     this.route.params.subscribe(
       (params: Params) => {
-        this.id = +params.id;
-        this.editMode = params.id != null;
+        this.id = +params['id'];
+        this.editMode = params['id'] != null;
         console.log('id: ' + this.id + '; edit? ' + this.editMode);
         if (!this.editMode) {
           // New mode.

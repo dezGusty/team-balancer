@@ -18,14 +18,15 @@ import { PlayerRatingSnapshot } from './player-rating-snapshot.model';
 export class PlayersService {
 
     private dataChangeSubscriptions: Subscription[] = [];
-    private currentRatingSystem: RatingSystem;
-    private currentLabel: string;
+    private currentRatingSystem: RatingSystem = RatingSystem.Progressive;
+    private currentLabel: string = '';
 
     // constructor.
     constructor(
         private firestore: Firestore,
         private authSvc: AuthService,
         private appStorage: AppStorage) {
+
         if (!this.authSvc.isAuthenticated()) {
             console.log('[players] waiting for login...');
         }
@@ -57,14 +58,14 @@ export class PlayersService {
     private currentPlayerList: Player[] = [];
     private archivedPlayerList: Player[] = [];
 
-    playerDataChangeEvent = new BehaviorSubject<PlayerChangeInfo>(null);
+    playerDataChangeEvent = new BehaviorSubject<PlayerChangeInfo | undefined>(undefined);
 
 
     subscribeToDataSources() {
         console.log('[players] subscribing to data sources');
 
         // Emit an event to signal that the app is fetching / loading data
-        const playerInfo = new PlayerChangeInfo(null, 'loading', 'Fetching player data...');
+        const playerInfo = new PlayerChangeInfo([], 'loading', 'Fetching player data...');
         console.log('emitting ', playerInfo);
         this.playerDataChangeEvent.next(playerInfo);
 
@@ -191,8 +192,8 @@ export class PlayersService {
         });
     }
 
-    getPlayerById(id: number): Player {
-        const searchedPlayer: Player = this.currentPlayerList.find(
+    getPlayerById(id: number): Player | undefined {
+        const searchedPlayer: Player | undefined = this.currentPlayerList.find(
             item => item.id === id);
 
         if (null != searchedPlayer) {

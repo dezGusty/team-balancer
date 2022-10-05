@@ -1,7 +1,7 @@
 import { Player } from './player.model';
 
 export class Match {
-    public description: string;
+    public description: string = '';
     public availablePlayersPool: Player[] = [];
     public draftPlayers: Player[] = [];
     public matchState: string;

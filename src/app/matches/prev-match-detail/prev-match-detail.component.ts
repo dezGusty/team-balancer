@@ -17,7 +17,7 @@ export class PrevMatchDetailComponent implements OnInit, OnDestroy {
 
   public showSpinner = true;
 
-  customGame: CustomPrevGame;
+  customGame: CustomPrevGame | undefined;
   private subscriptions: Subscription[] = [];
 
   extractedTeam1: Array<Player> = [];
@@ -40,7 +40,7 @@ export class PrevMatchDetailComponent implements OnInit, OnDestroy {
   ngOnInit() {
     this.subscriptions.push(this.route.params.subscribe(
       (params: Params) => {
-        this.matchSearchKey = params.id;
+        this.matchSearchKey = params['id'];
         this.loadCustomGameForKey(this.matchSearchKey);
       }
     ));
@@ -54,7 +54,7 @@ export class PrevMatchDetailComponent implements OnInit, OnDestroy {
 
 
   async loadCustomGameForKey(matchSearchKey: string) {
-    this.customGame = null;
+    this.customGame = undefined;
     this.showSpinner = true;
 
     const gameForMatch = await this.matchAltSvc.getMatchForDateAsync(matchSearchKey);
@@ -96,8 +96,12 @@ export class PrevMatchDetailComponent implements OnInit, OnDestroy {
   }
 
   getPostMatchDiffForPlayer(player: Player): string {
+    if (!this.customGame) {
+      return '';
+    }
+
     if (!this.customGame.appliedResults) {
-      return "";
+      return '';
     }
 
     const foundObj = this.customGame.postResults?.find(x => x.id === player.id);
@@ -117,6 +121,10 @@ export class PrevMatchDetailComponent implements OnInit, OnDestroy {
       return;
     }
 
+    if (!this.customGame) {
+      return;
+    }
+
     // show animation
     this.showSpinner = true;
 
@@ -130,24 +138,33 @@ export class PrevMatchDetailComponent implements OnInit, OnDestroy {
 
 
   isGoodRatingDiff(player: Player): boolean {
+    if (!this.customGame) {
+      return false;
+    }
+
     if (!this.customGame.postResults) {
       return false;
     }
     const pair = this.customGame.postResults.find(x => x.id === player.id);
     //TODO: make dependent on rating system
-    if (pair.diff > 0) {
+
+    if (pair && pair.diff > 0) {
       return true;
     }
     return false;
   }
 
   isBadRatingDiff(player: Player): boolean {
+    if (!this.customGame) {
+      return false;
+    }
+
     if (!this.customGame.postResults) {
       return false;
     }
     const pair = this.customGame.postResults.find(x => x.id === player.id);
     //TODO: make dependent on rating system
-    if (pair.diff < 0) {
+    if (pair && pair.diff < 0) {
       return true;
     }
     return false;
@@ -162,6 +179,10 @@ export class PrevMatchDetailComponent implements OnInit, OnDestroy {
    */
   async onUpdateRatingsClick() {
     if (!this.authSvc.isAuthenticatedAsOrganizer()) {
+      return;
+    }
+
+    if (!this.customGame) {
       return;
     }
 
@@ -184,10 +205,17 @@ export class PrevMatchDetailComponent implements OnInit, OnDestroy {
         this.customGame.postResults = [];
       }
       updatedPlayers.forEach(player => {
-        // get old rating
+        if (!this.customGame) {
+          return;
+        }
+
+        // get old rating from team 1 or team 2, or fail
         let oldRating = this.customGame.team1.find(x => x.id == player.id)?.rating;
         if (!oldRating) {
           oldRating = this.customGame.team2.find(x => x.id == player.id)?.rating;
+        }
+        if (!oldRating) {
+          return;
         }
 
         this.customGame.postResults.push({ id: player.id, diff: player.rating - oldRating });

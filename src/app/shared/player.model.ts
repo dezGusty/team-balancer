@@ -7,7 +7,7 @@ export class Player {
     public keywords = '';
     public displayName = '';
     public affinity = 0;
-    public mostRecentMatches : Array<{date: string, diff: number}>;
+    public mostRecentMatches : Array<{date: string, diff: number}> = new Array<{date: string, diff: number}>();
     public isArchived = false;
 
     constructor(public id: number, public name: string) {
@@ -63,5 +63,7 @@ export function filterPlayerArray(items: Player[], searchedValue: string): Playe
         if (it.keywords && it.keywords.toLocaleLowerCase().includes(searchedValue)) {
             return true;
         }
+
+        return false;
     });
 }

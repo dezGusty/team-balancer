@@ -72,7 +72,7 @@ export class CustomgameComponent implements OnInit, OnDestroy {
     this.subscriptions.push(this.route.queryParams
       .subscribe(params => {
         console.log('[custom] qparams:', params);
-        this.useDraftPlayersAsInput = params.draft;
+        this.useDraftPlayersAsInput = params['draft'];
         this.reloadInternal();
       })
     );

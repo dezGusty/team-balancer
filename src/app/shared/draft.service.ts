@@ -9,9 +9,9 @@ import { doc, docData, Firestore, setDoc } from '@angular/fire/firestore';
   providedIn: 'root'
 })
 export class DraftService {
-  private dataChangeSubscription: Subscription;
+  private dataChangeSubscription: Subscription = Subscription.EMPTY;
   selectedDraftPlayers: Player[] = [];
-  playerDraftChangeEvent = new BehaviorSubject<DraftChangeInfo>(null);
+  playerDraftChangeEvent = new BehaviorSubject<DraftChangeInfo | undefined>(undefined);
 
   public PREFERRED_PLAYERS_COUNT: number = 12;
 
@@ -47,7 +47,7 @@ export class DraftService {
     console.log('[draft-svc] subscribing');
 
     // Emit an event to signal that the app is fetching / loading data
-    const playerInfo = new DraftChangeInfo(null, 'loading', 'Fetching draft data...');
+    const playerInfo = new DraftChangeInfo([], 'loading', 'Fetching draft data...');
     console.log('emitting ', playerInfo);
     this.playerDraftChangeEvent.next(playerInfo);
 
@@ -92,7 +92,7 @@ export class DraftService {
    */
   async saveSelectedPlayerListAsync(players: Player[]) {
     // Emit an event to signal that the app is fetching / loading data
-    const playerInfo = new DraftChangeInfo(null, 'loading', 'Fetching draft data...');
+    const playerInfo = new DraftChangeInfo([], 'loading', 'Fetching draft data...');
     console.log('emitting ', playerInfo);
     this.playerDraftChangeEvent.next(playerInfo);
 
