@@ -19,7 +19,7 @@ export class AboutComponent implements OnInit {
     this.author = 'Gusti';
     this.version = pkg.version;
 
-    this.releaseDate = new Date('2022-10-04');
+    this.releaseDate = new Date('2022-10-05');
   }
 
   ngOnInit() {
