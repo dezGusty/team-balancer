@@ -51,7 +51,7 @@ export class DraftService {
     console.log('emitting ', playerInfo);
     this.playerDraftChangeEvent.next(playerInfo);
 
-    const docRef = doc(this.firestore, 'drafts/next');
+    const docRef = doc(this.firestore, '/drafts/next');
     this.dataChangeSubscription = docData(docRef).subscribe({
       next: draftDocContents => {
         console.log('draft data change');

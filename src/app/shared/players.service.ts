@@ -9,6 +9,7 @@ import { PlayerChangeInfo } from './player-change-info';
 import { RatingHist } from './rating-hist.model';
 import { AuthService } from '../auth/auth.service';
 import { collection, doc, docData, Firestore, getDoc, getDocs, setDoc } from '@angular/fire/firestore';
+import { PlayerRatingSnapshot } from './player-rating-snapshot.model';
 
 /**
  * Stores and retrieves player related information.
@@ -68,24 +69,28 @@ export class PlayersService {
         this.playerDataChangeEvent.next(playerInfo);
 
         // subscribe to firebase collection changes.
-        const ratingsDocRef = doc(this.firestore, 'ratings/current');
-        this.dataChangeSubscriptions.push(docData(ratingsDocRef).subscribe(playerListDoc => {
+        const ratingsDocRef = doc(this.firestore, '/ratings/current');
+        this.dataChangeSubscriptions.push(docData(ratingsDocRef).subscribe({
+            next: playerListDoc => {
 
-            // const currentRatings = this.db.doc('ratings/current').get();
-            // this.dataChangeSubscriptions.push(currentRatings.subscribe(playerListDoc => {
-            console.log('[players] current ratings watcher notified');
+                console.log('[players] current ratings watcher notified');
 
-            if (!playerListDoc.exists) {
-                this.playerDataChangeEvent.next(new PlayerChangeInfo(null, 'error', 'Could not connect to DB'));
-                return;
-            }
+                // if (!playerListDoc.exists) {
+                //     this.playerDataChangeEvent.next(new PlayerChangeInfo(null, 'error', 'Could not connect to DB'));
+                //     return;
+                // }
+                const snap: PlayerRatingSnapshot = playerListDoc as PlayerRatingSnapshot;
+                const playersArray: Player[] = snap.players; //playerListDoc.get('players');
+                this.currentRatingSystem = snap.ratingSystem; //playerListDoc.get('ratingSystem');
+                this.currentLabel = snap.label; //playerListDoc.get('label');
+                this.currentPlayerList = playersArray;
 
-            const playersArray: Player[] = playerListDoc.get('players');
-            this.currentRatingSystem = playerListDoc.get('ratingSystem');
-            this.currentLabel = playerListDoc.get('label');
-            this.currentPlayerList = playersArray;
-            this.appStorage.setAppStorageItem('players', JSON.stringify(this.currentPlayerList));
-            this.playerDataChangeEvent.next(new PlayerChangeInfo(this.currentPlayerList, 'info', 'Players loaded'));
+                this.appStorage.setAppStorageItem('players', JSON.stringify(this.currentPlayerList));
+                this.playerDataChangeEvent.next(new PlayerChangeInfo(this.currentPlayerList, 'info', 'Players loaded'));
+            },
+            error: err => console.log('[players-svc] some error encountered', err),
+            complete:
+                () => { console.log('[players-svc] complete') }
         }));
 
         const archiveDocRef = doc(this.firestore, 'ratings/archive');
@@ -93,12 +98,13 @@ export class PlayersService {
         this.dataChangeSubscriptions.push(docData(archiveDocRef).subscribe(playerListDoc => {
             console.log('[players] archived ratings watcher notified');
 
-            if (!playerListDoc.exists) {
-                this.playerDataChangeEvent.next(new PlayerChangeInfo(null, 'error', 'Could not connect to DB'));
-                return;
-            }
+            // if (!playerListDoc.exists) {
+            //     this.playerDataChangeEvent.next(new PlayerChangeInfo(null, 'error', 'Could not connect to DB'));
+            //     return;
+            // }
 
-            const playersArray: Player[] = playerListDoc.get('players');
+            const snap: PlayerRatingSnapshot = playerListDoc as PlayerRatingSnapshot;
+            const playersArray: Player[] = snap.players; //playerListDoc.get('players');
             playersArray.forEach(x => x.isArchived = true);
             this.archivedPlayerList = playersArray;
             this.appStorage.setAppStorageItem('archived_players', JSON.stringify(this.archivedPlayerList));
@@ -305,7 +311,7 @@ export class PlayersService {
 
     public async getCurrentRatingsAsync(): Promise<any> {
 
-        const docName = 'ratings/current';
+        const docName = '/ratings/current';
         const docRef = doc(this.firestore, docName);
 
         const docSnap = await getDoc(docRef);
@@ -462,7 +468,7 @@ export class PlayersService {
     //     let players: Player[];
 
     //     console.log('***getPlayersFromHist');
-        
+
 
     //     const docName = 'ratings/' + documentName;
     //     const docRef = doc(this.firestore, docName);
