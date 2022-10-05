@@ -54,6 +54,8 @@ export class DraftService {
     const docRef = doc(this.firestore, 'drafts/next');
     this.dataChangeSubscription = docData(docRef).subscribe({
       next: draftDocContents => {
+        console.log('draft data change');
+        
         const castedItem = draftDocContents as { players: Player[] };
         this.selectedDraftPlayers = [...castedItem.players];
         console.log('[draft-svc] selected players', this.selectedDraftPlayers);
