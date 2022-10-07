@@ -46,16 +46,16 @@ export class PlayerMiniCardComponent implements OnInit {
   public getDisplayClassForRating(rating: { date: string, diff: number }): string {
     if (rating.diff > 0) {
       if (rating.diff > 0.1) {
-        return 'player-card-recent-matches-very-good';
+        return 'player-card-recent-matches player-card-recent-matches-very-good';
       }
-      return 'player-card-recent-matches-good';
+      return 'player-card-recent-matches player-card-recent-matches-good';
     } else if (rating.diff === 0) {
-      return 'player-card-recent-matches-neutral';
+      return 'player-card-recent-matches player-card-recent-matches-neutral';
     } else {
       if (rating.diff < -0.1) {
-        return 'player-card-recent-matches-very-bad';
+        return 'player-card-recent-matches player-card-recent-matches-very-bad';
       }
-      return 'player-card-recent-matches-bad';
+      return 'player-card-recent-matches player-card-recent-matches-bad';
     }
   }
 

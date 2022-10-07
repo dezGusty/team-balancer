@@ -102,9 +102,8 @@ body {
 .player-card-rating {
   text-align: right;
   vertical-align: bottom;
-  float: right;
   padding-right: 1rem;
-  font-size: medium;
+  font-weight: 700;
 }
 
 .player-card-rating::before {
@@ -204,7 +203,12 @@ a.player-card-grad:hover {
 
 .player-card-internalid {
   font-size: x-small;
+  text-align: right;
   padding: 0;
+}
+
+.player-card-recent-matches{
+  font-size: medium;
 }
 
 .player-card-recent-matches-good {
