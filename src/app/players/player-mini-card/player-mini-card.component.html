@@ -2,17 +2,17 @@
   <!-- <div class="player-card-shirt">
     <img src="assets/tshirt.svg" alt="">
   </div> -->
-  <p class="col-3 col-sm-2 player-card-tv square">{{ player.id }}</p>
+  <p class="col-3 col-sm-2 player-card-tv square">{{ player?.id }}</p>
   <span class="col-auto col-9 col-sm-10 align-self-start player-card-panel">
 
     <div class="player-card-name">
       {{ playerDisplayName() }}
     </div>
     <span class="player-card-internalid">
-      {{ player.name }}
+      {{ player?.name }}
     </span>
     <span class="float-right player-card-rating">
-      {{ player.rating | number:'1.1-2' }}
+      {{ player?.rating | number:'1.1-2' }}
     </span>
 
 

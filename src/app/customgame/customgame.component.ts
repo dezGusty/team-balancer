@@ -22,7 +22,7 @@ export class CustomgameComponent implements OnInit, OnDestroy {
   public showCombinations = false;
 
   public matchData = new Match(new Date(Date.now()));
-  public selectedPlayer: Player;
+  // public selectedPlayer: Player | undefined;
   makeTeamsSubject: Subject<void> = new Subject<void>();
 
   private subscriptions: Subscription[] = [];
@@ -53,9 +53,9 @@ export class CustomgameComponent implements OnInit, OnDestroy {
 
     this.subscriptions.push(this.playersSvc.playerDataChangeEvent
       .subscribe(
-        (playerChangeInfo: PlayerChangeInfo) => {
-          if (null === playerChangeInfo) {
-            console.warn('null playerchange info received');
+        (playerChangeInfo: PlayerChangeInfo | undefined) => {
+          if (!playerChangeInfo) {
+            console.warn('no playerchange info received');
             return;
           }
           this.reloadInternal();
@@ -124,7 +124,7 @@ export class CustomgameComponent implements OnInit, OnDestroy {
 
   onPlayerSelected($event: any) {
     const selectedPlayer: Player = $event;
-    if (null == selectedPlayer) {
+    if (!selectedPlayer) {
       return;
     }
 
@@ -140,7 +140,7 @@ export class CustomgameComponent implements OnInit, OnDestroy {
 
   onPlayerLockTeam1($event: any) {
     const selectedPlayer: Player = $event;
-    if (null == selectedPlayer) {
+    if (!selectedPlayer) {
       return;
     }
 
@@ -153,13 +153,11 @@ export class CustomgameComponent implements OnInit, OnDestroy {
 
     selectedPlayer.affinity = 1;
     return;
-
-    const currentPosition = this.matchData.draftPlayers.indexOf(selectedPlayer);
   }
 
   onPlayerLockTeam2($event: any) {
     const selectedPlayer: Player = $event;
-    if (null == selectedPlayer) {
+    if (!selectedPlayer) {
       return;
     }
 
@@ -172,7 +170,6 @@ export class CustomgameComponent implements OnInit, OnDestroy {
 
     selectedPlayer.affinity = 2;
     return;
-    const currentPosition = this.matchData.draftPlayers.indexOf(selectedPlayer);
   }
 
   onMakeTeamsClicked() {

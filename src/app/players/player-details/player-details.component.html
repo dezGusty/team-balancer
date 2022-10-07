@@ -1,16 +1,16 @@
 <div class="container">
   <div class="row player-card border rounded">
     <div class="col-12 player-card-internalid">
-      ID: {{ player.id }}
+      ID: {{ player?.id }}
     </div>
     <br>
     <div class="col-12 pull-left">
-      Rating: {{ player.rating }}
+      Rating: {{ player?.rating }}
     </div>
     <div class="col-12 player-card-name pull-left">
       {{ playerDisplayName() }}
     </div>
-    <div class="col-12">({{ player.name }})</div>
+    <div class="col-12">({{ player?.name }})</div>
 
     <div class="col-6 pull-right">
       <img src="./../../../assets/default_user_pic.svg" alt="pic" height="96em">

@@ -2,11 +2,11 @@
   <app-player-mini-card [player]="this.player"></app-player-mini-card>
   <div>
     <span class="player-card-team-selector btn-outline-gus"
-      [class.player-card-team-selector-active]="this.player.affinity===1" (click)="onLockTeam1($event)">
+      [class.player-card-team-selector-active]="this.player?.affinity===1" (click)="onLockTeam1($event)">
       1
     </span>
     <span class="player-card-team-selector btn-outline-gus"
-      [class.player-card-team-selector-active]="this.player.affinity===2" (click)="onLockTeam2($event)">
+      [class.player-card-team-selector-active]="this.player?.affinity===2" (click)="onLockTeam2($event)">
       2
     </span>
   </div>

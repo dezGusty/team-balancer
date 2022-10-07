@@ -7,8 +7,8 @@ import { Player } from '../../shared/player.model';
   styles: ['']
 })
 export class PlayerRoutedCardComponent implements OnInit {
-  @Input() player: Player;
-  @Input() id: number;
+  @Input() player: Player | undefined;
+  @Input() id: number = 0;
   @Output() playerSelected = new EventEmitter<Player>();
 
   constructor() {

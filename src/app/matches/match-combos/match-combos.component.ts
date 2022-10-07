@@ -1,6 +1,6 @@
 import { Component, OnInit, Input, OnDestroy } from '@angular/core';
 import { Player } from 'src/app/shared/player.model';
-import { Observable, Subscription } from 'rxjs';
+import { EMPTY, Observable, Subscription } from 'rxjs';
 import { CustomGame } from 'src/app/shared/custom-game.model';
 import { RatingSystem, RatingSystemSettings } from 'src/app/shared/rating-system';
 
@@ -10,14 +10,14 @@ import { RatingSystem, RatingSystemSettings } from 'src/app/shared/rating-system
   styleUrls: ['./match-combos.component.css']
 })
 export class MatchCombosComponent implements OnInit, OnDestroy {
-  @Input() playerList: Player[];
-  @Input() makeTeamsEvent: Observable<void>;
-  @Input() ratingSys: RatingSystem;
-  private eventsSubscription: Subscription;
+  @Input() playerList: Player[] = [];
+  @Input() makeTeamsEvent: Observable<void> = EMPTY;
+  @Input() ratingSys: RatingSystem = RatingSystem.Progressive;
+  private eventsSubscription: Subscription = Subscription.EMPTY;
 
   showDetailedSelection = false;
   showDetailedSelectionIndex = -1;
-  selectionData: CustomGame = undefined;
+  selectionData: CustomGame | undefined = undefined;
 
   listOfOptions = new Array<{ value: number, diff: number, combination: string }>();
   displayedMatchCombos = new Array<{
@@ -248,7 +248,7 @@ export class MatchCombosComponent implements OnInit, OnDestroy {
     // console.log('Ideal balance value', totalSum / 2, 'from', totalSum);
   }
 
-  onGameOptionSelected($event, i) {
+  onGameOptionSelected($event: any, i: number) {
     const selectedOption: { value: number, diff: number, combination: string } = $event;
     this.showDetailedSelection = true;
     this.showDetailedSelectionIndex = i;

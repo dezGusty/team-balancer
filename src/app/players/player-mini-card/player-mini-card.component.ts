@@ -7,18 +7,24 @@ import { Player, getDisplayName } from 'src/app/shared/player.model';
   styles: ['']
 })
 export class PlayerMiniCardComponent implements OnInit {
-  @Input() player: Player;
+  @Input() player: Player | undefined;
   constructor() { }
 
   ngOnInit() {
   }
 
   public playerDisplayName(): string {
+    if (!this.player) {
+      return '';
+    }
     return getDisplayName(this.player);
   }
 
   public getRecentMatches(): Array<{ date: string, diff: number }> {
-    return this.player?.mostRecentMatches?.slice(0, 8);
+    if (!this.player) {
+      return [];
+    }
+    return this.player.mostRecentMatches?.slice(0, 8);
   }
 
   public getDisplayTextForRating(rating: { date: string, diff: number }): string {

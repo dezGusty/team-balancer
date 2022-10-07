@@ -47,21 +47,20 @@ export class PlayersComponent implements OnInit, OnDestroy {
     this.players = this.playersSvc.getPlayers(this.loadArchive);
     this.subscriptions.push(this.playersSvc.playerDataChangeEvent
       .subscribe(
-        (playerChangeInfo: PlayerChangeInfo) => {
-          if (null === playerChangeInfo) {
-            console.warn('null playerchange info received');
+        (playerChangeInfo: PlayerChangeInfo | undefined) => {
+          if (!playerChangeInfo) {
+            console.warn('missing playerchange info in subscription callback');
             return;
           }
 
-          if (null === playerChangeInfo.players) {
+          if (!playerChangeInfo.players) {
             // This could be the case when there are no players currently, but a progress event is issued.
             if (playerChangeInfo.messageType === 'loading') {
               this.showLoading = true;
-              // this.toastSvc.show(playerChangeInfo.messagePayload);
             }
             return;
           }
-          
+
           this.showLoading = false;
           this.players = this.playersSvc.getPlayers(this.loadArchive);
           this.toastSvc.show('Reloaded all players from service. \n'

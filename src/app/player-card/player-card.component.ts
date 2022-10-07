@@ -7,7 +7,7 @@ import { Player } from '../shared/player.model';
   styles: ['']
 })
 export class PlayerCardComponent implements OnInit {
-  @Input() player: Player;
+  @Input() player: Player | undefined;
   @Output() playerSelected = new EventEmitter<Player>();
 
   constructor() { }
@@ -16,6 +16,10 @@ export class PlayerCardComponent implements OnInit {
   }
 
   onPlayerCardSelected() {
+    if (!this.player) {
+      return;
+    }
+
     this.playerSelected.emit(this.player);
     console.log('[pcard] player selected:', this.player);
   }

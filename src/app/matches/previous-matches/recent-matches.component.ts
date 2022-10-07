@@ -1,5 +1,5 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
-import { Observable, Subscription } from 'rxjs';
+import { EMPTY, Observable, Subscription } from 'rxjs';
 import { MatchService } from 'src/app/shared/match.service';
 
 @Component({
@@ -9,7 +9,7 @@ import { MatchService } from 'src/app/shared/match.service';
 })
 export class RecentMatchesComponent implements OnInit, OnDestroy {
 
-  private subscription: Subscription;
+  private subscription: Subscription = Subscription.EMPTY;
 
   constructor(
     private matchAltSvc: MatchService
@@ -23,7 +23,7 @@ export class RecentMatchesComponent implements OnInit, OnDestroy {
   private recentMatchDescriptions: string[] = [];
 
 
-  private recentAsyncMatches: Observable<string[]>;
+  private recentAsyncMatches: Observable<string[]> = EMPTY;
 
 
   public getRecentMatchNames(): string[] {
@@ -91,7 +91,7 @@ export class RecentMatchesComponent implements OnInit, OnDestroy {
   getSelectedMatch(index: number) {
     return this.recentMatchNames[index];
   }
-  onMatchEntryClicked($event) {
+  onMatchEntryClicked($event: any) {
 
     this.selectedIndex = +$event;
     console.log('match entry clicked, this.selectedIndex', this.selectedIndex);

@@ -305,7 +305,7 @@ export class PlayersService {
     public async addFieldValueToDocumentAsync(fieldName: string, value: any, documentName: string) {
         const docName = 'ratings/' + documentName;
         const docRef = doc(this.firestore, docName);
-        var obj = {};
+        var obj: any = {};
         obj[fieldName] = value;
         await setDoc(docRef, obj, { merge: true });
     }

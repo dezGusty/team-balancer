@@ -7,7 +7,7 @@ import { Player } from '../shared/player.model';
   styles: ['']
 })
 export class PlayerCardPrefComponent implements OnInit {
-  @Input() player: Player;
+  @Input() player: Player | undefined;
   @Output() playerSelected = new EventEmitter<Player>();
   @Output() lockTeam1Selected = new EventEmitter<Player>();
   @Output() lockTeam2Selected = new EventEmitter<Player>();
@@ -21,12 +21,12 @@ export class PlayerCardPrefComponent implements OnInit {
     this.playerSelected.emit(this.player);
   }
 
-  onLockTeam1($event) {
+  onLockTeam1($event: any) {
     this.lockTeam1Selected.emit(this.player);
     $event.stopPropagation();
   }
 
-  onLockTeam2($event) {
+  onLockTeam2($event: any) {
     this.lockTeam2Selected.emit(this.player);
     $event.stopPropagation();
   }

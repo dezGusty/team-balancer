@@ -8,8 +8,8 @@ import { Player, getDisplayName } from 'src/app/shared/player.model';
 })
 export class MatchVersusComponent implements OnInit {
 
-  @Input() contentsIndex: number;
-  @Input() playerList: Player[];
+  @Input() contentsIndex: number = 0;
+  @Input() playerList: Player[] = [];
 
   // one to one mapping for the same index with the displayedMatchCombos array
   @Input() displayedMatchDetails = new Array<{

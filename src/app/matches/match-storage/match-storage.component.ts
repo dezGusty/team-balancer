@@ -10,10 +10,10 @@ import { MatchService } from 'src/app/shared/match.service';
 })
 export class MatchStorageComponent implements OnInit {
 
-  @Input() customGame: CustomGame;
+  @Input() customGame: CustomGame | undefined;
   public customClipText = '';
   public targetDate = '';
-  @ViewChild('ttip') copyToClipBtn: ElementRef;
+  @ViewChild('ttip') copyToClipBtn: ElementRef | undefined;
   constructor(private matchSvc: MatchService, private matchAltSvc: MatchService) {
     this.targetDate = new Date().toISOString().slice(0, 10);
   }
@@ -26,10 +26,12 @@ export class MatchStorageComponent implements OnInit {
   }
 
   async onStoreCliked() {
-    console.log('[match-storage] click');
+    if (!this.customGame) {
+      console.log('no game object stored!');
+      return;
+    }
 
     const dateRegex = /([12]\d{3}-(0[1-9]|1[0-2])-(0[1-9]|[12]\d|3[01]))/;
-    console.log('target date', this.targetDate);
 
     const regexMatchResult = this.targetDate.match(dateRegex);
     if (regexMatchResult == null) {
@@ -40,9 +42,15 @@ export class MatchStorageComponent implements OnInit {
   }
 
   onCopyClicked() {
-    console.log('[match-storage] copy click');
+    if (!this.customGame) {
+      return;
+    }
 
     this.customClipText = this.customGame.toPlainTextFormat();
+
+    if (!this.copyToClipBtn) {
+      return;
+    }
 
     try {
       const elem = this.copyToClipBtn.nativeElement;
@@ -62,6 +70,10 @@ export class MatchStorageComponent implements OnInit {
   }
 
   customClipTextToClip(): string {
+    if (!this.customGame) {
+      return '';
+    }
+
     this.customClipText = this.customGame.toPlainTextFormat();
     return this.customClipText;
   }

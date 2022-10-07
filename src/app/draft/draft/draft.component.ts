@@ -14,12 +14,12 @@ import { AuthService } from 'src/app/auth/auth.service';
   styles: ['']
 })
 export class DraftComponent implements OnInit, OnDestroy {
-  searchedName: string;
+  searchedName: string = '';
   public customClipText = '';
   availablePlayerList: Player[] = [];
   selectedPlayerList: Player[] = [];
-  private playerDataChangeSubscription: Subscription;
-  @ViewChild('ttip') copyToClipBtn: ElementRef;
+  private playerDataChangeSubscription: Subscription = Subscription.EMPTY;
+  @ViewChild('ttip') copyToClipBtn: ElementRef | undefined; // TODO: why is this here?
 
   public showLoading: boolean = false;
 
@@ -43,13 +43,13 @@ export class DraftComponent implements OnInit, OnDestroy {
 
     this.playerDataChangeSubscription = this.draftSvc.playerDraftChangeEvent
       .subscribe(
-        (draftInfo: DraftChangeInfo) => {
-          if (null === draftInfo) {
+        (draftInfo: DraftChangeInfo | undefined) => {
+          if (!draftInfo) {
             console.warn('null draftchange info received');
             return;
           }
 
-          if (null === draftInfo.players) {
+          if (!draftInfo.players) {
             // This could be the case when there are no players currently, but a progress event is issued.
             if (draftInfo.messageType === 'loading') {
               this.showLoading = true;
@@ -85,7 +85,7 @@ export class DraftComponent implements OnInit, OnDestroy {
     return [...this.selectedPlayerList].splice(this.draftSvc.PREFERRED_PLAYERS_COUNT);
   }
 
-  onSearchContentChange($event) {
+  onSearchContentChange($event: any) {
     if ($event.code === 'Enter') {
       // try to apply the target value.
       const filteredPlayers = filterPlayerArray(this.availablePlayerList, $event.target.value);
@@ -104,7 +104,7 @@ export class DraftComponent implements OnInit, OnDestroy {
     }
   }
 
-  onPlayerSelected($event) {
+  onPlayerSelected($event: any) {
     const selectedPlayer: Player = $event;
     if (null == selectedPlayer) {
       return;
