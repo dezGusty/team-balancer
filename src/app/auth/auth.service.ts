@@ -227,7 +227,7 @@ export class AuthService {
 
     ///TODO:XXX:This can be simplified
     async updateAndCacheUserAfterLogin(authdata: User) {
-        const userData = new AppUser(authdata);
+        const userData = new AppUser({email: authdata.email as string, photoURL: authdata.photoURL as string});
         const userPath = authdata.uid;
         const userDocRef = doc(this.firestore, 'users/' + userPath);
         // const userRef = this.db.doc('users/' + userPath).get();

@@ -10,15 +10,15 @@ import { AuthService } from './auth/auth.service';
 })
 export class AppComponent implements OnInit, OnDestroy {
   // keep refs to subscriptions to be able to unsubscribe later
-  private popupOpenSubscription: Subscription;
-  private popupCloseSubscription: Subscription;
-  private initializeSubscription: Subscription;
-  private statusChangeSubscription: Subscription;
-  private revokeChoiceSubscription: Subscription;
-  private noCookieLawSubscription: Subscription;
+  private popupOpenSubscription: Subscription = Subscription.EMPTY;
+  private popupCloseSubscription: Subscription = Subscription.EMPTY;
+  private initializeSubscription: Subscription = Subscription.EMPTY;
+  private statusChangeSubscription: Subscription = Subscription.EMPTY;
+  private revokeChoiceSubscription: Subscription = Subscription.EMPTY;
+  private noCookieLawSubscription: Subscription = Subscription.EMPTY;
 
   title = 'team-balancer';
-  message;
+  private message: any;
 
   constructor(
     private ccService: NgcCookieConsentService,

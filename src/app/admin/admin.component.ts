@@ -18,17 +18,17 @@ import { MatchService } from '../shared/match.service';
 export class AdminComponent implements OnInit, OnDestroy {
 
   currentLabel: string = "";
-  players: Player[];
+  players: Player[] = [];
 
-  matchHistory: Map<string, CustomPrevGame>;
-  ratingHistory: Map<string, RatingHist>;
+  matchHistory: Map<string, CustomPrevGame> = new Map();
+  ratingHistory: Map<string, RatingHist> = new Map();
   ratingSystems = [];
   ratingChosen: any;
   loadingConvert = -1;
-  newBranchName: "";
-  newRatingScale: RatingSystem;
-  oldRatingScale: RatingSystem;
-  private selectedRatingSystem: RatingSystem;
+  newBranchName: string = '';
+  newRatingScale: RatingSystem = RatingSystem.Progressive;
+  oldRatingScale: RatingSystem = RatingSystem.Progressive;
+  private selectedRatingSystem: RatingSystem = RatingSystem.Progressive;
 
   private subscriptions: Subscription[] = [];
 
@@ -71,7 +71,7 @@ export class AdminComponent implements OnInit, OnDestroy {
   }
 
 
-  public async onConvertRatingClicked($event) {
+  public async onConvertRatingClicked($event: any) {
     this.loadingConvert = 1;
     // Reset player ratings.
     for (let player of this.playersSvc.getPlayers()) {
@@ -99,7 +99,7 @@ export class AdminComponent implements OnInit, OnDestroy {
     this.loadingConvert = 0;
   }
 
-  public onExportPlayerClicked($event): void {
+  public onExportPlayerClicked($event: any): void {
     // export data as json
     const content: string = JSON.stringify(this.playersSvc.getPlayers(true), null, 2);
     const blob = new Blob([content], { type: 'application/json' });
@@ -114,10 +114,15 @@ export class AdminComponent implements OnInit, OnDestroy {
     }
   }
 
-  changeAction(obj) {
+  changeAction(obj: any) {
+    console.log("***TODO:XXX:remove", obj);
+    
     this.ratingChosen = obj;
     console.log('Chosen rating key', this.ratingChosen.key);
-    const data: RatingHist = this.ratingHistory.get(this.ratingChosen.key);
+    const data: RatingHist | undefined = this.ratingHistory.get(this.ratingChosen.key);
+    if (!data){
+      return
+    }
     this.players = data.players;
     console.log('players', this.players);
     this.selectedRatingSystem = data.ratingSystem;
@@ -127,12 +132,11 @@ export class AdminComponent implements OnInit, OnDestroy {
     console.log('selectedRatingSystem', this.selectedRatingSystem);
   }
 
-  changeRatingDropdown(obj: string) {
-    this.newRatingScale = RatingSystem[obj];
-    console.log(this.newRatingScale);
+  changeRatingDropdown(selectedSys: string) {
+    this.newRatingScale = RatingSystem[selectedSys as keyof RatingSystem];
   }
 
-  async onNewBranchClicked($event) {
+  async onNewBranchClicked($event: any) {
     this.loadingConvert = 1;
     let branchToEdit = this.ratingChosen.key;
 
@@ -171,7 +175,7 @@ export class AdminComponent implements OnInit, OnDestroy {
     this.loadingConvert = 0;
   }
 
-  async storeRatingForPlayersInMatch($event) {
+  async storeRatingForPlayersInMatch($event: any) {
     if (this.ratingChosen?.key) {
 
       this.loadingConvert = 1;
