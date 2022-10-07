@@ -117,9 +117,9 @@ export const persistenceEnabled = new Promise<boolean>(resolve => {
       //   () => resolvePersistenceEnabled(true),
       //   () => resolvePersistenceEnabled(false)
       // );
-      if (!firestore['_initialized']) {
-        enableMultiTabIndexedDbPersistence(firestore);
-      }
+      // if (!firestore['_initialized']) {
+      //   enableMultiTabIndexedDbPersistence(firestore);
+      // }
       return firestore;
     }),
     provideMessaging(() => getMessaging()),

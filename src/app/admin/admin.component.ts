@@ -22,7 +22,7 @@ export class AdminComponent implements OnInit, OnDestroy {
 
   matchHistory: Map<string, CustomPrevGame> = new Map();
   ratingHistory: Map<string, RatingHist> = new Map();
-  ratingSystems = [];
+  protected ratingSystemsDescriptions: string[] = [];
   ratingChosen: any;
   loadingConvert = -1;
   newBranchName: string = '';
@@ -43,16 +43,20 @@ export class AdminComponent implements OnInit, OnDestroy {
   ngOnInit(): void {
     this.players = this.playersSvc.getPlayers();
     this.currentLabel = this.playersSvc.getCurrentLabel();
-    this.ratingSystems = Object.keys(RatingSystem).filter(p => isNaN(Number(p)));
+    this.ratingSystemsDescriptions = Object.keys(RatingSystem).filter(p => isNaN(Number(p)));
     this.subscriptions.push(this.playersSvc.playerDataChangeEvent
       .subscribe(
-        (playerChangeInfo: PlayerChangeInfo) => {
+        (playerChangeInfo: PlayerChangeInfo | undefined) => {
+          if (!playerChangeInfo) {
+            return;
+          }
+
           this.players = this.playersSvc.getPlayers();
           this.toastSvc.show('Reloaded all players from service. \n'
             + playerChangeInfo.messageType + '\n'
             + playerChangeInfo.messagePayload);
         }
-      )   
+      )
     );
   }
 
@@ -115,12 +119,10 @@ export class AdminComponent implements OnInit, OnDestroy {
   }
 
   changeAction(obj: any) {
-    console.log("***TODO:XXX:remove", obj);
-    
     this.ratingChosen = obj;
     console.log('Chosen rating key', this.ratingChosen.key);
     const data: RatingHist | undefined = this.ratingHistory.get(this.ratingChosen.key);
-    if (!data){
+    if (!data) {
       return
     }
     this.players = data.players;
@@ -133,7 +135,7 @@ export class AdminComponent implements OnInit, OnDestroy {
   }
 
   changeRatingDropdown(selectedSys: string) {
-    this.newRatingScale = RatingSystem[selectedSys as keyof RatingSystem];
+    this.newRatingScale = RatingSystem[selectedSys as keyof typeof RatingSystem];
   }
 
   async onNewBranchClicked($event: any) {
@@ -176,41 +178,49 @@ export class AdminComponent implements OnInit, OnDestroy {
   }
 
   async storeRatingForPlayersInMatch($event: any) {
-    if (this.ratingChosen?.key) {
-
-      this.loadingConvert = 1;
-      const matchKey = this.matchesSvc.getMatchDateFromRatingDateWithLabel(this.ratingChosen.key);
-      const gameObj: CustomPrevGame = await this.matchesSvc.getMatchForDateAsync(matchKey);
-
-      // Go through each player and add the results to a separate item.
-      gameObj?.postResults?.forEach(async diffPair => {
-        let playerToUpdate = this.playersSvc.getPlayerById(diffPair.id);
-        const existingEntry = playerToUpdate.mostRecentMatches?.find(x => x.date == matchKey);
-        if (existingEntry) {
-          // update or ignore?
-          // ignore 
-          console.log('existing entry', existingEntry);
-
-        } else {
-          if (playerToUpdate.mostRecentMatches == null) {
-            playerToUpdate.mostRecentMatches = new Array<{ date: string, diff: number }>;
-          }
-          playerToUpdate.mostRecentMatches.push({ date: matchKey, diff: diffPair.diff });
-
-          // don't keep all ratings, just the most recent ones, so sort them.
-          playerToUpdate.mostRecentMatches.sort((a, b) => a.date > b.date ? -1 : 1);
-          if (playerToUpdate.mostRecentMatches.length > 10) { //xxx MAGIC NUMBER
-            // playerToUpdate.mostRecentMatches = playerToUpdate.mostRecentMatches.slice(Math.max(playerToUpdate.mostRecentMatches.length - 10, 0));
-            playerToUpdate.mostRecentMatches = playerToUpdate.mostRecentMatches.slice(0, 10);//xxx MAGIC NUMBER
-          }
-        }
-
-        // search for player by id
-        this.playersSvc.updateCachedPlayerById(diffPair.id, playerToUpdate);
-      });
-
-      await this.playersSvc.saveAllPlayersToFirebaseAsync();
+    if (!this.ratingChosen) {
+      return;
     }
+
+    this.loadingConvert = 1;
+    const matchKey = this.matchesSvc.getMatchDateFromRatingDateWithLabel(this.ratingChosen.key);
+    const gameObj: CustomPrevGame | undefined = await this.matchesSvc.getMatchForDateAsync(matchKey);
+
+    if (!gameObj) {
+      return;
+    }
+
+    // Go through each player and add the results to a separate item.
+    gameObj.postResults.forEach(async diffPair => {
+      let playerToUpdate = this.playersSvc.getPlayerById(diffPair.id);
+      if (!playerToUpdate) {
+        return;
+      }
+
+      const existingEntry = playerToUpdate.mostRecentMatches?.find(x => x.date == matchKey);
+      if (existingEntry) {
+        // update or ignore?
+        // ignore 
+        console.log('existing entry', existingEntry);
+
+      } else {
+        if (playerToUpdate.mostRecentMatches == null) {
+          playerToUpdate.mostRecentMatches = new Array<{ date: string, diff: number }>;
+        }
+        playerToUpdate.mostRecentMatches.push({ date: matchKey, diff: diffPair.diff });
+
+        // don't keep all ratings, just the most recent ones, so sort them.
+        playerToUpdate.mostRecentMatches.sort((a, b) => a.date > b.date ? -1 : 1);
+        if (playerToUpdate.mostRecentMatches.length > 10) { //xxx MAGIC NUMBER
+          // playerToUpdate.mostRecentMatches = playerToUpdate.mostRecentMatches.slice(Math.max(playerToUpdate.mostRecentMatches.length - 10, 0));
+          playerToUpdate.mostRecentMatches = playerToUpdate.mostRecentMatches.slice(0, 10);//xxx MAGIC NUMBER
+        }
+      }
+
+      // search for player by id
+      this.playersSvc.updateCachedPlayerById(diffPair.id, playerToUpdate);
+      await this.playersSvc.saveAllPlayersToFirebaseAsync();
+    });
 
     this.loadingConvert = 0;
     return;
