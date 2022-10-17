@@ -10,6 +10,7 @@ import { RatingHist } from './rating-hist.model';
 import { AuthService } from '../auth/auth.service';
 import { collection, doc, docData, Firestore, getDoc, getDocs, setDoc } from '@angular/fire/firestore';
 import { PlayerRatingSnapshot } from './player-rating-snapshot.model';
+import { SettingsService } from './settings.service';
 
 /**
  * Stores and retrieves player related information.
@@ -25,7 +26,8 @@ export class PlayersService {
     constructor(
         private firestore: Firestore,
         private authSvc: AuthService,
-        private appStorage: AppStorage) {
+        private appStorage: AppStorage,
+        private settingsSvc: SettingsService) {
 
         if (!this.authSvc.isAuthenticated()) {
             console.log('[players] waiting for login...');
@@ -262,6 +264,41 @@ export class PlayersService {
         console.log('[players.svc] Replaced player for id ' + id + '. New one', newPlayer);
         return true;
     }
+
+    public async storeRecentMatchToParticipantsHistoryAsync(gameObj: CustomPrevGame, matchKey: string) {
+
+        // Go through each player and add the results to a separate item.
+        gameObj.postResults.forEach(async diffPair => {
+            let playerToUpdate = this.getPlayerById(diffPair.id);
+            if (!playerToUpdate) {
+                return;
+            }
+
+            const existingEntry = playerToUpdate.mostRecentMatches?.find(x => x.date == matchKey);
+            if (existingEntry) {
+                // update or ignore?
+                // ignore 
+                console.log('existing entry', existingEntry);
+
+            } else {
+                if (playerToUpdate.mostRecentMatches == null) {
+                    playerToUpdate.mostRecentMatches = new Array<{ date: string, diff: number }>;
+                }
+                playerToUpdate.mostRecentMatches.push({ date: matchKey, diff: diffPair.diff });
+
+                // don't keep all ratings, just the most recent ones, so sort them.
+                playerToUpdate.mostRecentMatches.sort((a, b) => a.date > b.date ? -1 : 1);
+                if (playerToUpdate.mostRecentMatches.length > this.settingsSvc.getMaxStoredRecentMatchesCount()) { 
+                    playerToUpdate.mostRecentMatches = playerToUpdate.mostRecentMatches.slice(0, this.settingsSvc.getMaxStoredRecentMatchesCount());
+                }
+            }
+
+            // search for player by id
+            this.updateCachedPlayerById(diffPair.id, playerToUpdate);
+            await this.saveAllPlayersToFirebaseAsync();
+        });
+    }
+
 
     createDefaultPlayer(): Player {
         // get the id.

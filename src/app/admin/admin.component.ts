@@ -190,37 +190,7 @@ export class AdminComponent implements OnInit, OnDestroy {
       return;
     }
 
-    // Go through each player and add the results to a separate item.
-    gameObj.postResults.forEach(async diffPair => {
-      let playerToUpdate = this.playersSvc.getPlayerById(diffPair.id);
-      if (!playerToUpdate) {
-        return;
-      }
-
-      const existingEntry = playerToUpdate.mostRecentMatches?.find(x => x.date == matchKey);
-      if (existingEntry) {
-        // update or ignore?
-        // ignore 
-        console.log('existing entry', existingEntry);
-
-      } else {
-        if (playerToUpdate.mostRecentMatches == null) {
-          playerToUpdate.mostRecentMatches = new Array<{ date: string, diff: number }>;
-        }
-        playerToUpdate.mostRecentMatches.push({ date: matchKey, diff: diffPair.diff });
-
-        // don't keep all ratings, just the most recent ones, so sort them.
-        playerToUpdate.mostRecentMatches.sort((a, b) => a.date > b.date ? -1 : 1);
-        if (playerToUpdate.mostRecentMatches.length > 10) { //xxx MAGIC NUMBER
-          // playerToUpdate.mostRecentMatches = playerToUpdate.mostRecentMatches.slice(Math.max(playerToUpdate.mostRecentMatches.length - 10, 0));
-          playerToUpdate.mostRecentMatches = playerToUpdate.mostRecentMatches.slice(0, 10);//xxx MAGIC NUMBER
-        }
-      }
-
-      // search for player by id
-      this.playersSvc.updateCachedPlayerById(diffPair.id, playerToUpdate);
-      await this.playersSvc.saveAllPlayersToFirebaseAsync();
-    });
+    await this.playersSvc.storeRecentMatchToParticipantsHistoryAsync(gameObj, matchKey);
 
     this.loadingConvert = 0;
     return;

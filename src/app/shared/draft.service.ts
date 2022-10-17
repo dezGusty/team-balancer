@@ -4,6 +4,7 @@ import { getDisplayName, Player } from './player.model';
 import { DraftChangeInfo } from './draft-change-info';
 import { AuthService } from '../auth/auth.service';
 import { doc, docData, Firestore, setDoc } from '@angular/fire/firestore';
+import { SettingsService } from './settings.service';
 
 @Injectable({
   providedIn: 'root'
@@ -13,11 +14,10 @@ export class DraftService {
   selectedDraftPlayers: Player[] = [];
   playerDraftChangeEvent = new BehaviorSubject<DraftChangeInfo | undefined>(undefined);
 
-  public PREFERRED_PLAYERS_COUNT: number = 12;
-
   constructor(
     private firestore: Firestore,
-    private authSvc: AuthService) {
+    private authSvc: AuthService,
+    private settingsSvc: SettingsService) {
     this.selectedDraftPlayers = [];
     if (!this.authSvc.isAuthenticated()) {
       console.log('[matches] waiting for login...');
@@ -55,7 +55,7 @@ export class DraftService {
     this.dataChangeSubscription = docData(docRef).subscribe({
       next: draftDocContents => {
         console.log('draft data change');
-        
+
         const castedItem = draftDocContents as { players: Player[] };
         this.selectedDraftPlayers = [...castedItem.players];
         console.log('[draft-svc] selected players', this.selectedDraftPlayers);
@@ -114,11 +114,11 @@ export class DraftService {
   public getDraftPlainTextFormat(players: Player[]): string {
     let plainText = 'Main line-up ⚽\n';
     plainText += '---------------\n'
-    players.slice(0, this.PREFERRED_PLAYERS_COUNT).forEach((player, index) => {
+    players.slice(0, this.settingsSvc.getPreferredPlayerCount()).forEach((player, index) => {
       plainText += '' + (index + 1) + '. ' + getDisplayName(player) + '\n';
     });
 
-    let reservesArray = players.slice(this.PREFERRED_PLAYERS_COUNT);
+    let reservesArray = players.slice(this.settingsSvc.getPreferredPlayerCount());
     if (reservesArray.length > 0) {
       plainText += '\nReserves 💺\n';
       plainText += '---------------\n'

@@ -222,6 +222,8 @@ export class PrevMatchDetailComponent implements OnInit, OnDestroy {
       })
     }
 
+    this.showSpinner = true;
+
     // Store the 'old' ratings under a different entry.
     if (!currentMatch || !currentMatch.label) {
       await this.playersSvc.savePlayersToListAsync(this.playersSvc.getPlayers(), this.matchSearchKey);
@@ -233,13 +235,16 @@ export class PrevMatchDetailComponent implements OnInit, OnDestroy {
     // Store the 'new' ratings under the 'current' entry.
     await this.playersSvc.savePlayersToListAsync(newPlayers, 'current');
 
+
     // Store the new data for the match.
     this.customGame.appliedResults = true;
     this.matchResultsAppliedToRatings = true;
     console.log('saving ', this.customGame);
 
-    this.showSpinner = true;
     await this.matchAltSvc.saveCustomPrevMatchAsync(this.matchSearchKey, this.customGame);
+
+    await this.playersSvc.storeRecentMatchToParticipantsHistoryAsync(this.customGame, this.matchSearchKey);
+
     this.showSpinner = false;
   }
 

@@ -5,11 +5,9 @@ export class Match {
     public availablePlayersPool: Player[] = [];
     public draftPlayers: Player[] = [];
     public matchState: string;
-    public targetCount: number;
 
     constructor(public date: Date) {
         this.matchState = 'draft phase';
-        this.targetCount = 12; // TODO: move to constants
     }
 
     removePlayerFromPool(newPlayer: Player) {

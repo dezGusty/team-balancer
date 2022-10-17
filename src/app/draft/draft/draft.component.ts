@@ -7,6 +7,7 @@ import { Router } from '@angular/router';
 import { ToastService } from 'src/app/shared/toasts-service';
 import { DraftChangeInfo } from 'src/app/shared/draft-change-info';
 import { AuthService } from 'src/app/auth/auth.service';
+import { SettingsService } from 'src/app/shared/settings.service';
 
 @Component({
   selector: 'app-draft',
@@ -28,6 +29,7 @@ export class DraftComponent implements OnInit, OnDestroy {
     private draftSvc: DraftService,
     private authSvc: AuthService,
     private router: Router,
+    private settingsSvc: SettingsService,
     private toastSvc: ToastService) {
   }
 
@@ -79,10 +81,10 @@ export class DraftComponent implements OnInit, OnDestroy {
 
 
   public getDraftedPlayersMainList(): Player[] {
-    return [...this.selectedPlayerList].splice(0, this.draftSvc.PREFERRED_PLAYERS_COUNT);
+    return [...this.selectedPlayerList].splice(0, this.settingsSvc.getPreferredPlayerCount());
   }
   public getDraftedPlayersReservesList(): Player[] {
-    return [...this.selectedPlayerList].splice(this.draftSvc.PREFERRED_PLAYERS_COUNT);
+    return [...this.selectedPlayerList].splice(this.settingsSvc.getPreferredPlayerCount());
   }
 
   onSearchContentChange($event: any) {
