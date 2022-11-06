@@ -268,7 +268,7 @@ export class PlayersService {
     public async storeRecentMatchToParticipantsHistoryAsync(gameObj: CustomPrevGame, matchKey: string) {
 
         // Go through each player and add the results to a separate item.
-        gameObj.postResults.forEach(async diffPair => {
+        gameObj.postResults?.forEach(async diffPair => {
             let playerToUpdate = this.getPlayerById(diffPair.id);
             if (!playerToUpdate) {
                 return;
