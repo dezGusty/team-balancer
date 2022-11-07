@@ -265,7 +265,44 @@ export class PlayersService {
         return true;
     }
 
+    public async tryToStoreRecentDrawInHistory(gameObj: CustomPrevGame, matchKey: string) {
+        // Go through each player and add the results to a separate item.
+        gameObj.team1.concat(gameObj.team2).forEach(async playerItem => {
+            let playerToUpdate = this.getPlayerById(playerItem.id);
+            if (!playerToUpdate) {
+                return;
+            }
+
+            const existingEntry = playerToUpdate.mostRecentMatches?.find(x => x.date == matchKey);
+            if (existingEntry) {
+                // update or ignore?
+                // ignore 
+                console.log('existing entry', existingEntry);
+
+            } else {
+                if (playerToUpdate.mostRecentMatches == null) {
+                    playerToUpdate.mostRecentMatches = new Array<{ date: string, diff: number }>;
+                }
+                playerToUpdate.mostRecentMatches.push({ date: matchKey, diff: 0 });
+
+                // don't keep all ratings, just the most recent ones, so sort them.
+                playerToUpdate.mostRecentMatches.sort((a, b) => a.date > b.date ? -1 : 1);
+                if (playerToUpdate.mostRecentMatches.length > this.settingsSvc.getMaxStoredRecentMatchesCount()) {
+                    playerToUpdate.mostRecentMatches = playerToUpdate.mostRecentMatches.slice(0, this.settingsSvc.getMaxStoredRecentMatchesCount());
+                }
+            }
+
+            // search for player by id
+            this.updateCachedPlayerById(playerToUpdate.id, playerToUpdate);
+            await this.saveAllPlayersToFirebaseAsync();
+        });
+    }
+
     public async storeRecentMatchToParticipantsHistoryAsync(gameObj: CustomPrevGame, matchKey: string) {
+
+        if (gameObj && !gameObj.postResults && gameObj.appliedResults && gameObj.savedResult) {
+            return this.tryToStoreRecentDrawInHistory(gameObj, matchKey);
+        }
 
         // Go through each player and add the results to a separate item.
         gameObj.postResults?.forEach(async diffPair => {
@@ -288,7 +325,7 @@ export class PlayersService {
 
                 // don't keep all ratings, just the most recent ones, so sort them.
                 playerToUpdate.mostRecentMatches.sort((a, b) => a.date > b.date ? -1 : 1);
-                if (playerToUpdate.mostRecentMatches.length > this.settingsSvc.getMaxStoredRecentMatchesCount()) { 
+                if (playerToUpdate.mostRecentMatches.length > this.settingsSvc.getMaxStoredRecentMatchesCount()) {
                     playerToUpdate.mostRecentMatches = playerToUpdate.mostRecentMatches.slice(0, this.settingsSvc.getMaxStoredRecentMatchesCount());
                 }
             }
