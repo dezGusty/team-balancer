@@ -1,10 +1,13 @@
+import { DatePipe } from '@angular/common';
 import { Component, OnInit } from '@angular/core';
 import pkg from '../../../package.json';
 
 @Component({
+  imports: [DatePipe],
   selector: 'app-about',
+  standalone: true,
+  styles: [''],
   templateUrl: './about.component.html',
-  styles: ['']
 })
 export class AboutComponent implements OnInit {
 
