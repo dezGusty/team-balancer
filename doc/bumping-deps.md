@@ -1,12 +1,20 @@
 # Bumping dependencies
 
-Checking outdated dependencies
+## Checking outdated dependencies
 
-npm outdated
+> npm outdated
 
-Updating angular dependencies
+## Updating angular dependencies
 
-ng update
+> ng update
 
 Typically offers
-ng update @angular/cli
+> ng update @angular/cli
+> ng update @angular/cli
+
+If using angular cli installed globally, might need to update it as well
+Check it
+> npm list -g
+
+Update it
+> ng update @angular/cli

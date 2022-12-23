@@ -25,7 +25,7 @@
     "@angular/pwa": "^15.0.0",
     "@angular/router": "^15.0.4",
     "@angular/service-worker": "^15.0.4",
-    "@ng-bootstrap/ng-bootstrap": "^13.1.1",
+    "@ng-bootstrap/ng-bootstrap": "^14.0.0",
     "bootstrap": "^5.2.2",
     "cookieconsent": "^3.1.1",
     "firebase": "^9.6.6",
