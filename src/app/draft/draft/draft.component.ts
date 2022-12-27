@@ -1,4 +1,4 @@
-import { Component, OnInit, OnDestroy, ViewChild, ElementRef } from '@angular/core';
+import { Component, OnInit, OnDestroy, ViewChild, ElementRef, HostListener } from '@angular/core';
 import { PlayersService } from 'src/app/shared/players.service';
 import { Player, filterPlayerArray, getDisplayName } from 'src/app/shared/player.model';
 import { Subscription } from 'rxjs';
@@ -15,12 +15,13 @@ import { SettingsService } from 'src/app/shared/settings.service';
   styles: ['']
 })
 export class DraftComponent implements OnInit, OnDestroy {
-  searchedName: string = '';
+  protected searchedName: string = '';
   public customClipText = '';
   availablePlayerList: Player[] = [];
   selectedPlayerList: Player[] = [];
   private playerDataChangeSubscription: Subscription = Subscription.EMPTY;
   @ViewChild('ttip') copyToClipBtn: ElementRef | undefined; // TODO: why is this here?
+  @ViewChild('srcNameArea') srcNameArea: ElementRef | undefined;
 
   public showLoading: boolean = false;
 
@@ -79,6 +80,12 @@ export class DraftComponent implements OnInit, OnDestroy {
     }
   }
 
+  @HostListener('window:keydown.control./', ['$event'])
+  startSearching(event: KeyboardEvent) {
+    setTimeout(()=>{ // this will make the execution after the above boolean has changed
+      this.srcNameArea?.nativeElement.focus();
+    },0);
+  }
 
   public getDraftedPlayersMainList(): Player[] {
     return [...this.selectedPlayerList].splice(0, this.settingsSvc.getPreferredPlayerCount());
@@ -190,7 +197,10 @@ export class DraftComponent implements OnInit, OnDestroy {
   }
 
   onCopyClicked() {
+    //TODO(Augustin Preda, 2022.12.26): show notification.
     this.customClipText = this.getDraftPlainTextFormat();
+    this.toastSvc.show('Copied to clipboard. \n'
+      + this.customClipText);
   }
 
   getDraftPlainTextFormat(): string {

@@ -21,7 +21,7 @@
     </button>
 
     <button type="button" class="btn btn-gus-small" #copyToClipBtn placement="top" #ttip="ngbTooltip"
-      ngbTooltip="Copied to clipboard..." [autoClose]="true" [closeDelay]="1000" triggers="click:blur"
+      ngbTooltip="Copy to clipboard" [autoClose]="true" [closeDelay]="1000" triggers="click:blur"
       [copy-clipboard]="customClipTextToClip()" (click)="onCopyClicked();">
       <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" fill="currentColor"
         class="bi bi-clipboard-check-fill" viewBox="0 0 16 16">
@@ -43,8 +43,8 @@
     <app-small-loading-spinner *ngIf="showLoading"></app-small-loading-spinner>
   </div>
   <div class="col-6 col-sm-6 col-md-5 col-lg-4 col-xl-3 border-bottom gus-search-box">
-    <input class="form-control border-0" type="text" [(ngModel)]="searchedName" (keyup)="onSearchContentChange($event)"
-      placeholder="Search..." aria-label="Search" #srcNameArea autofocus />
+    <input class="form-control border-0" type="text" [(ngModel)]="this.searchedName" (keyup)="onSearchContentChange($event)"
+      placeholder="Search... ( CTRL + / )" aria-label="Search" #srcNameArea autofocus />
   </div>
 </div>
 <div class="row justify-content-center">

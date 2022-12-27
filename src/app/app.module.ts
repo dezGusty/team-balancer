@@ -85,7 +85,6 @@ export const persistenceEnabled = new Promise<boolean>(resolve => {
     PlayerDetailsComponent,
     PlayerEditComponent,
     RecentMatchesComponent,
-    AboutComponent,
     PlayerStartComponent,
     PlayerNewComponent,
     PlayerFilterPipe,
@@ -130,7 +129,7 @@ export const persistenceEnabled = new Promise<boolean>(resolve => {
     NgbTooltipModule,
     NgbModule,
     NgcCookieConsentModule.forRoot(cookieConfig),
-
+    AboutComponent,
   ],
   providers: [
     PlayersService,
