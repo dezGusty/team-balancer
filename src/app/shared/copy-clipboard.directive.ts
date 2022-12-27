@@ -20,7 +20,6 @@ export class CopyClipboardDirective {
     }
 
     const listener = (e: ClipboardEvent) => {
-      //todo:xxx
       const clipData = (window as { [key: string]: any })["clipboardData"] as DataTransfer;
       const clipboard = e.clipboardData || clipData;
       clipboard.setData('text', this.payload.toString());
