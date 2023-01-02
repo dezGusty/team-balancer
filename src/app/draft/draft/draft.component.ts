@@ -20,7 +20,6 @@ export class DraftComponent implements OnInit, OnDestroy {
   availablePlayerList: Player[] = [];
   selectedPlayerList: Player[] = [];
   private playerDataChangeSubscription: Subscription = Subscription.EMPTY;
-  @ViewChild('ttip') copyToClipBtn: ElementRef | undefined; // TODO: why is this here?
   @ViewChild('srcNameArea') srcNameArea: ElementRef | undefined;
 
   public showLoading: boolean = false;
@@ -82,9 +81,9 @@ export class DraftComponent implements OnInit, OnDestroy {
 
   @HostListener('window:keydown.control./', ['$event'])
   startSearching(event: KeyboardEvent) {
-    setTimeout(()=>{ // this will make the execution after the above boolean has changed
+    setTimeout(() => { // this will make the execution after the above boolean has changed
       this.srcNameArea?.nativeElement.focus();
-    },0);
+    }, 0);
   }
 
   public getDraftedPlayersMainList(): Player[] {
@@ -196,11 +195,32 @@ export class DraftComponent implements OnInit, OnDestroy {
     this.router.navigate(['/custom'], { queryParams: { draft: true } });
   }
 
+  /**
+   * Use a match with only the top 12 (if 12 or more players available) or the top 10 players (if 10 or 11 players are available).
+   */
+  onMatchUpTopClicked() {
+    console.log('[draft] filtering to top 12/10 players and creating match from draft ...');
+
+    if (this.selectedPlayerList.length < 10) {
+      // Cannot use this functionaliry
+      this.toastSvc.showWithHeader('Insufficient players', `Cannot use this functionality with only ${this.selectedPlayerList.length} players.`);
+      return;
+    }
+
+    if (this.selectedPlayerList.length > 12) {
+      // limit to 12
+      this.draftSvc.storePlayersInMemoryOnly(this.selectedPlayerList.slice(0, 12));
+    }
+    else {
+      // limit to 10
+      this.draftSvc.storePlayersInMemoryOnly(this.selectedPlayerList.slice(0, 10));
+    }
+    this.router.navigate(['/custom'], { queryParams: { draft: true } });
+  }
+
   onCopyClicked() {
-    //TODO(Augustin Preda, 2022.12.26): show notification.
-    this.customClipText = this.getDraftPlainTextFormat();
-    this.toastSvc.show('Copied to clipboard. \n'
-      + this.customClipText);
+    this.customClipText = this.draftSvc.getDraftPlainTextFormat(this.selectedPlayerList);
+    this.toastSvc.showWithHeader('Copied to clipboard.', this.customClipText);
   }
 
   getDraftPlainTextFormat(): string {

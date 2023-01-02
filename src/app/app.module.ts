@@ -101,8 +101,7 @@ export const persistenceEnabled = new Promise<boolean>(resolve => {
     SmallLoadingSpinnerComponent,
     DraftComponent,
     PlayerCardPrefComponent,
-    AdminComponent,
-    ToastsContainer
+    AdminComponent    
   ],
   imports: [
     provideAuth(() => {
@@ -130,6 +129,7 @@ export const persistenceEnabled = new Promise<boolean>(resolve => {
     NgbModule,
     NgcCookieConsentModule.forRoot(cookieConfig),
     AboutComponent,
+    ToastsContainer
   ],
   providers: [
     PlayersService,

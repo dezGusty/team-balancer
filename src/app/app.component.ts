@@ -1,5 +1,5 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
-import { NgcCookieConsentService, NgcInitializeEvent, NgcStatusChangeEvent, NgcNoCookieLawEvent } from 'ngx-cookieconsent';
+import { NgcCookieConsentService, NgcInitializingEvent, NgcStatusChangeEvent, NgcNoCookieLawEvent } from 'ngx-cookieconsent';
 import { Subscription } from 'rxjs';
 import { AuthService } from './auth/auth.service';
 
@@ -12,17 +12,16 @@ export class AppComponent implements OnInit, OnDestroy {
   // keep refs to subscriptions to be able to unsubscribe later
   private popupOpenSubscription: Subscription = Subscription.EMPTY;
   private popupCloseSubscription: Subscription = Subscription.EMPTY;
-  private initializeSubscription: Subscription = Subscription.EMPTY;
+  private initializingSubscription: Subscription = Subscription.EMPTY;
+  private initializedSubscription: Subscription = Subscription.EMPTY;
   private statusChangeSubscription: Subscription = Subscription.EMPTY;
   private revokeChoiceSubscription: Subscription = Subscription.EMPTY;
   private noCookieLawSubscription: Subscription = Subscription.EMPTY;
 
   title = 'team-balancer';
-  private message: any;
 
   constructor(
-    private ccService: NgcCookieConsentService,
-    private authSvc: AuthService
+    private ccService: NgcCookieConsentService
   ) {
 
   }
@@ -39,8 +38,12 @@ export class AppComponent implements OnInit, OnDestroy {
         // you can use this.ccService.getConfig() to do stuff...
       });
 
-    this.initializeSubscription = this.ccService.initialize$.subscribe(
-      (event: NgcInitializeEvent) => {
+    this.initializingSubscription = this.ccService.initializing$.subscribe(
+      (event: NgcInitializingEvent) => {
+        // you can use this.ccService.getConfig() to do stuff...
+      });
+    this.initializedSubscription = this.ccService.initialized$.subscribe(
+      () => {
         // you can use this.ccService.getConfig() to do stuff...
       });
 
@@ -64,7 +67,8 @@ export class AppComponent implements OnInit, OnDestroy {
     // unsubscribe to cookieconsent observables to prevent memory leaks
     this.popupOpenSubscription.unsubscribe();
     this.popupCloseSubscription.unsubscribe();
-    this.initializeSubscription.unsubscribe();
+    this.initializedSubscription.unsubscribe();
+    this.initializingSubscription.unsubscribe();
     this.statusChangeSubscription.unsubscribe();
     this.revokeChoiceSubscription.unsubscribe();
     this.noCookieLawSubscription.unsubscribe();

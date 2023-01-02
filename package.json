@@ -1,6 +1,6 @@
 {
   "name": "team-balancer",
-  "version": "0.8.22",
+  "version": "0.8.23",
   "scripts": {
     "ng": "ng",
     "start": "npm run icon && ng serve",
@@ -31,7 +31,7 @@
     "firebase": "^9.6.6",
     "invert-color": "^2.0.0",
     "jquery": "^3.6.0",
-    "ngx-cookieconsent": "^2.2.3",
+    "ngx-cookieconsent": "^4.0.1",
     "popper.js": "^1.16.1",
     "rxjs": "^7.5.7",
     "tslib": "^2.0.0",

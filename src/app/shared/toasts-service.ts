@@ -8,6 +8,11 @@ export class ToastService {
     this.toasts.push({ textOrTpl, ...options });
   }
 
+  showWithHeader(header: string, textOrTpl: string | TemplateRef<any>, options: any = {}) {
+    let newToast = { header: header, textOrTpl, ...options };
+    this.toasts.push(newToast);
+  }
+
   remove(toast: any) {
     this.toasts = this.toasts.filter(t => t !== toast);
   }

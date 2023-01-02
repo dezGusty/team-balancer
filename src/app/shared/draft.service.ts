@@ -107,25 +107,33 @@ export class DraftService {
    * but will result in no writing to the DB.
    * @param players The players to store in memory.
    */
-  storePlayersInMemoryOnly(players: Player[]) {
+  public storePlayersInMemoryOnly(players: Player[]): void {
     this.selectedDraftPlayers = [...players];
   }
 
-  public getDraftPlainTextFormat(players: Player[]): string {
-    let plainText = 'Main line-up ⚽\n';
-    plainText += '---------------\n'
+  public getDraftPrettyPrinted(players: Player[], newline: string): string {
+    let plainText = 'Main line-up ⚽' + newline;
+    plainText += '---------------' + newline
     players.slice(0, this.settingsSvc.getPreferredPlayerCount()).forEach((player, index) => {
-      plainText += '' + (index + 1) + '. ' + getDisplayName(player) + '\n';
+      plainText += '' + (index + 1) + '. ' + getDisplayName(player) + newline;
     });
 
     let reservesArray = players.slice(this.settingsSvc.getPreferredPlayerCount());
     if (reservesArray.length > 0) {
-      plainText += '\nReserves 💺\n';
-      plainText += '---------------\n'
+      plainText += newline + 'Reserves 💺' + newline;
+      plainText += '---------------' + newline;
       reservesArray.forEach((player, index) => {
-        plainText += '' + (index + 1) + '. ' + getDisplayName(player) + '\n';
+        plainText += '' + (index + 1) + '. ' + getDisplayName(player) + newline;
       })
     }
     return plainText;
+  }
+
+  public getDraftPlainTextFormat(players: Player[]): string {
+    return this.getDraftPrettyPrinted(players, '\r\n');
+  }
+
+  public getDraftHtmlFormat(players: Player[]): string {
+    return this.getDraftPrettyPrinted(players, '<br>');
   }
 }
