@@ -207,7 +207,7 @@ export class DraftComponent implements OnInit, OnDestroy {
       return;
     }
 
-    if (this.selectedPlayerList.length > 12) {
+    if (this.selectedPlayerList.length >= 12) {
       // limit to 12
       this.draftSvc.storePlayersInMemoryOnly(this.selectedPlayerList.slice(0, 12));
     }
