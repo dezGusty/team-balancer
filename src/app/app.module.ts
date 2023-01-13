@@ -18,7 +18,6 @@ import { RecentMatchesComponent } from './matches/previous-matches/recent-matche
 import { AboutComponent } from './about/about.component';
 import { AppRoutingModule } from './app-routing.module';
 import { PlayerStartComponent } from './players/player-start/player-start.component';
-import { PlayerNewComponent } from './players/player-new/player-new.component';
 import { PlayerFilterPipe } from './matches/player-filter.pipe';
 import { SigninComponent } from './auth/signin/signin.component';
 import { SignupComponent } from './auth/signup/signup.component';
@@ -79,46 +78,36 @@ export const persistenceEnabled = new Promise<boolean>(resolve => {
 @NgModule({
   declarations: [
     AppComponent,
-    PlayerEditComponent,
-    RecentMatchesComponent,
-    PlayerNewComponent,
-    CustomgameComponent,
-    PlayerCardPrefComponent,
   ],
   imports: [
     AdminComponent,
     CopyClipboardDirective,
+    CustomgameComponent,
     DraftComponent,
     HeaderComponent,
     MatchCombosComponent,
     MatchStorageComponent,
     MatchVersusComponent,
     PlayerCardComponent,
+    PlayerCardPrefComponent,
     PlayerDetailsComponent,
+    PlayerEditComponent,
     PlayerFilterPipe,
     PlayerMiniCardComponent,
     PlayerRoutedCardComponent,
     PlayersComponent,
     PlayerStartComponent,
+    RecentMatchesComponent,
     PrevMatchDetailComponent,
     SigninComponent,
     SignupComponent,
     SmallLoadingSpinnerComponent,
     provideAuth(() => {
-      const auth = getAuth();
-      return auth;
+      return getAuth();
     }),
     provideFirebaseApp(() => initializeApp(environment.firebase)),
     provideFirestore(() => {
-      const firestore = getFirestore();
-      // enableMultiTabIndexedDbPersistence(firestore).then(
-      //   () => resolvePersistenceEnabled(true),
-      //   () => resolvePersistenceEnabled(false)
-      // );
-      // if (!firestore['_initialized']) {
-      //   enableMultiTabIndexedDbPersistence(firestore);
-      // }
-      return firestore;
+      return getFirestore();
     }),
     provideMessaging(() => getMessaging()),
     BrowserModule,

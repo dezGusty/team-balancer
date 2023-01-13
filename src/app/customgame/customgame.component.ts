@@ -8,11 +8,26 @@ import { DraftService } from '../shared/draft.service';
 import { ToastService } from '../shared/toasts-service';
 import { PlayerChangeInfo } from '../shared/player-change-info';
 import { RatingSystem } from '../shared/rating-system';
+import { CommonModule } from '@angular/common';
+import { MatchCombosComponent } from '../matches/match-combos/match-combos.component';
+import { FormsModule } from '@angular/forms';
+import { PlayerCardComponent } from '../player-card/player-card.component';
+import { PlayerCardPrefComponent } from '../player-card-pref/player-card-pref.component';
+import { PlayerFilterPipe } from '../matches/player-filter.pipe';
 
 @Component({
+  imports: [
+    CommonModule,
+    FormsModule,
+    MatchCombosComponent,
+    PlayerCardComponent,
+    PlayerCardPrefComponent,
+    PlayerFilterPipe
+  ],
   selector: 'app-customgame',
+  standalone: true,
+  styles: [''],
   templateUrl: './customgame.component.html',
-  styles: ['']
 })
 export class CustomgameComponent implements OnInit, OnDestroy {
 

@@ -1,11 +1,15 @@
+import { CommonModule } from '@angular/common';
 import { Component, OnInit, OnDestroy } from '@angular/core';
+import { RouterModule } from '@angular/router';
 import { EMPTY, Observable, Subscription } from 'rxjs';
 import { MatchService } from 'src/app/shared/match.service';
 
 @Component({
+  imports: [CommonModule, RouterModule],
   selector: 'app-recent-matches',
+  standalone: true,
+  styleUrls: ['./recent-matches.component.css'],
   templateUrl: './recent-matches.component.html',
-  styleUrls: ['./recent-matches.component.css']
 })
 export class RecentMatchesComponent implements OnInit, OnDestroy {
 
@@ -17,7 +21,6 @@ export class RecentMatchesComponent implements OnInit, OnDestroy {
 
   }
 
-  // public showSpinner = true;
   public selectedIndex = -1;
   private recentMatchNames: string[] = [];
   private recentMatchDescriptions: string[] = [];

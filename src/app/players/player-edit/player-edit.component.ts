@@ -1,13 +1,16 @@
 import { Component, OnInit, Input } from '@angular/core';
 import { Player } from './../../shared/player.model';
-import { NgForm } from '@angular/forms';
+import { FormsModule, NgForm } from '@angular/forms';
 import { ActivatedRoute, Params, Router } from '@angular/router';
 import { PlayersService } from '../../shared/players.service';
+import { CommonModule } from '@angular/common';
 
 @Component({
+  imports: [CommonModule, FormsModule],
   selector: 'app-player-edit',
+  standalone: true,
+  styleUrls: ['./player-edit.component.css'],
   templateUrl: './player-edit.component.html',
-  styleUrls: ['./player-edit.component.css']
 })
 export class PlayerEditComponent implements OnInit {
   @Input() player: Player | undefined;

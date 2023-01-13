@@ -1,10 +1,17 @@
+import { CommonModule } from '@angular/common';
 import { Component, OnInit, Input, Output, EventEmitter } from '@angular/core';
+import { PlayerMiniCardComponent } from '../players/player-mini-card/player-mini-card.component';
 import { Player } from '../shared/player.model';
 
 @Component({
+  imports: [
+    CommonModule,
+    PlayerMiniCardComponent
+  ],
   selector: 'app-player-card-pref',
+  standalone: true,
+  styles: [''],
   templateUrl: './player-card-pref.component.html',
-  styles: ['']
 })
 export class PlayerCardPrefComponent implements OnInit {
   @Input() player: Player | undefined;
