@@ -43,8 +43,8 @@
             "production": {
               "assets": [
                 {
-                  "input": "src/prod/",
-                  "glob": "favicon.svg",
+                  "input": "src/",
+                  "glob": "favicon.ico",
                   "output": "/"
                 },
                 "src/assets",
