@@ -79,31 +79,31 @@ export const persistenceEnabled = new Promise<boolean>(resolve => {
 @NgModule({
   declarations: [
     AppComponent,
-    HeaderComponent,
-    PlayersComponent,
-    PlayerRoutedCardComponent,
     PlayerDetailsComponent,
     PlayerEditComponent,
     RecentMatchesComponent,
-    PlayerStartComponent,
     PlayerNewComponent,
-    PlayerFilterPipe,
     CustomgameComponent,
-    PlayerCardComponent,
     MatchCombosComponent,
     MatchVersusComponent,
     MatchStorageComponent,
-    CopyClipboardDirective,
     PrevMatchDetailComponent,
-    PlayerMiniCardComponent,
-    SmallLoadingSpinnerComponent,
-    DraftComponent,
     PlayerCardPrefComponent,
-    AdminComponent    
+    AdminComponent
   ],
   imports: [
+    HeaderComponent,
+    PlayersComponent,
+    PlayerFilterPipe,
+    PlayerCardComponent,
     SigninComponent,
     SignupComponent,
+    DraftComponent,
+    CopyClipboardDirective,
+    SmallLoadingSpinnerComponent,
+    PlayerMiniCardComponent,
+    PlayerRoutedCardComponent,
+    PlayerStartComponent,
     provideAuth(() => {
       const auth = getAuth();
       return auth;

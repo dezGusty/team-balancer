@@ -2,18 +2,33 @@ import { Component, OnInit, OnDestroy } from '@angular/core';
 import { Player, filterPlayerArray } from '../shared/player.model';
 import { PlayersService } from '../shared/players.service';
 import { Subscription } from 'rxjs';
-import { Router, ActivatedRoute } from '@angular/router';
+import { Router, ActivatedRoute, RouterModule } from '@angular/router';
 import { CustomPrevGame } from '../shared/custom-prev-game.model';
 import { RatingSystem } from '../shared/rating-system';
 import { ToastService } from '../shared/toasts-service';
 import { PlayerChangeInfo } from '../shared/player-change-info';
 import { RatingHist } from '../shared/rating-hist.model';
 import { AuthService } from '../auth/auth.service';
+import { CommonModule } from '@angular/common';
+import { ToastsContainer } from '../toast/toast-container.component';
+import { SmallLoadingSpinnerComponent } from '../ui/small-loading-spinner/small-loading-spinner.component';
+import { FormsModule } from '@angular/forms';
+import { PlayerFilterPipe } from '../matches/player-filter.pipe';
+import { PlayerRoutedCardComponent } from './player/player-routed-card.component';
 
 @Component({
+  imports: [
+    CommonModule,
+    RouterModule,
+    ToastsContainer,
+    SmallLoadingSpinnerComponent,
+    FormsModule,
+    PlayerFilterPipe,
+  PlayerRoutedCardComponent],
   selector: 'app-players',
+  standalone: true,
+  styles: [''],
   templateUrl: './players.component.html',
-  styles: ['']
 })
 
 export class PlayersComponent implements OnInit, OnDestroy {

@@ -3,16 +3,37 @@ import { PlayersService } from 'src/app/shared/players.service';
 import { Player, filterPlayerArray, getDisplayName } from 'src/app/shared/player.model';
 import { Subscription } from 'rxjs';
 import { DraftService } from 'src/app/shared/draft.service';
-import { Router } from '@angular/router';
+import { Router, RouterModule } from '@angular/router';
 import { ToastService } from 'src/app/shared/toasts-service';
 import { DraftChangeInfo } from 'src/app/shared/draft-change-info';
 import { AuthService } from 'src/app/auth/auth.service';
 import { SettingsService } from 'src/app/shared/settings.service';
+import { CommonModule, NgFor } from '@angular/common';
+import { SmallLoadingSpinnerComponent } from 'src/app/ui/small-loading-spinner/small-loading-spinner.component';
+import { CopyClipboardDirective } from 'src/app/shared/copy-clipboard.directive';
+import { PlayerCardComponent } from 'src/app/player-card/player-card.component';
+import { PlayerFilterPipe } from 'src/app/matches/player-filter.pipe';
+import { FormsModule } from '@angular/forms';
+import { ToastsContainer } from 'src/app/toast/toast-container.component';
+import { NgbTooltipModule } from '@ng-bootstrap/ng-bootstrap';
 
 @Component({
+  imports: [
+    CommonModule,
+    CopyClipboardDirective,
+    FormsModule,
+    NgbTooltipModule,
+    NgFor,
+    PlayerCardComponent,
+    PlayerFilterPipe,
+    RouterModule,
+    SmallLoadingSpinnerComponent,
+    ToastsContainer,
+  ],
   selector: 'app-draft',
+  standalone: true,
+  styles: [''],
   templateUrl: './draft.component.html',
-  styles: ['']
 })
 export class DraftComponent implements OnInit, OnDestroy {
   protected searchedName: string = '';
