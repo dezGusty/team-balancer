@@ -88,8 +88,6 @@ export const persistenceEnabled = new Promise<boolean>(resolve => {
     PlayerStartComponent,
     PlayerNewComponent,
     PlayerFilterPipe,
-    SigninComponent,
-    SignupComponent,
     CustomgameComponent,
     PlayerCardComponent,
     MatchCombosComponent,
@@ -104,6 +102,8 @@ export const persistenceEnabled = new Promise<boolean>(resolve => {
     AdminComponent    
   ],
   imports: [
+    SigninComponent,
+    SignupComponent,
     provideAuth(() => {
       const auth = getAuth();
       return auth;

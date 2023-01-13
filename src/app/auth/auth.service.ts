@@ -79,13 +79,28 @@ export class AuthService {
         });
     }
 
+    /**
+     * Perform the login into the application via Google.
+     * @param postNavi: navigation route to be applied upon a successful log-in.
+     * It consists of an array of strings. Defaults to : ['/'].
+     * To avoid any redirect upon log-in, set this to an empty array:
+     * @example
+     * // login without redirect
+     * await doGoogleLoginAsync({ successRoute: [] });
+     * @example
+     * // login with default redirect to root.
+     * doGoogleLogin();
+     * @example
+     * // login with default redirect to /base.
+     * doGoogleLogin({ successRoute: ['base'] });
+     */
     public async doGoogleLoginAsync(postNavi: { successRoute: string[] } = { successRoute: ['/'] }): Promise<boolean> {
         console.log('doGoogleLoginAsync entered');
 
         const userCred = await signInWithPopup(
             this.auth,
             new GoogleAuthProvider());
-        console.log('userCred', userCred);
+        
         if (userCred) {
             this.issueTokenRetrieval();
             this.updateAndCacheUserAfterLogin(userCred.user);

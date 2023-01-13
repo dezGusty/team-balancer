@@ -1,11 +1,14 @@
+import { CommonModule } from '@angular/common';
 import { Component, OnInit } from '@angular/core';
-import { Router } from '@angular/router';
+import { Router, RouterModule } from '@angular/router';
 import { AuthService } from '../auth.service';
 
 @Component({
+  imports: [RouterModule, CommonModule],
+  standalone: true,
   selector: 'app-signin',
+  styles: [''],
   templateUrl: './signin.component.html',
-  styles: ['']
 })
 export class SigninComponent implements OnInit {
 
