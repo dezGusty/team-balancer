@@ -7,11 +7,16 @@ import { PlayersService } from 'src/app/shared/players.service';
 import { RatingSystem } from 'src/app/shared/rating-system';
 import { MatchService } from 'src/app/shared/match.service';
 import { AuthService } from 'src/app/auth/auth.service';
+import { CommonModule } from '@angular/common';
+import { FormsModule } from '@angular/forms';
+import { SmallLoadingSpinnerComponent } from 'src/app/ui/small-loading-spinner/small-loading-spinner.component';
 
 @Component({
+  imports: [CommonModule, FormsModule, SmallLoadingSpinnerComponent],
   selector: 'app-prev-match-detail',
+  standalone: true,
+  styleUrls: ['./prev-match-detail.component.css'],
   templateUrl: './prev-match-detail.component.html',
-  styleUrls: ['./prev-match-detail.component.css']
 })
 export class PrevMatchDetailComponent implements OnInit, OnDestroy {
 

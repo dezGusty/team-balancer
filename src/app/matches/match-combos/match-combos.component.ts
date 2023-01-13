@@ -3,11 +3,19 @@ import { Player } from 'src/app/shared/player.model';
 import { EMPTY, Observable, Subscription } from 'rxjs';
 import { CustomGame } from 'src/app/shared/custom-game.model';
 import { RatingSystem, RatingSystemSettings } from 'src/app/shared/rating-system';
+import { CommonModule } from '@angular/common';
+import { MatchVersusComponent } from '../match-versus/match-versus.component';
+import { MatchStorageComponent } from '../match-storage/match-storage.component';
 
 @Component({
+  imports: [
+    CommonModule,
+    MatchStorageComponent,
+    MatchVersusComponent],
   selector: 'app-match-combos',
+  standalone: true,
+  styleUrls: ['./match-combos.component.css'],
   templateUrl: './match-combos.component.html',
-  styleUrls: ['./match-combos.component.css']
 })
 export class MatchCombosComponent implements OnInit, OnDestroy {
   @Input() playerList: Player[] = [];
@@ -73,7 +81,7 @@ export class MatchCombosComponent implements OnInit, OnDestroy {
     });
 
     console.log('players', this.playerList);
-    
+
     this.getAllCombinations(this.playerList);
 
     const displayedLength = this.listOfOptions.length > numberOfCombinationsLimit
@@ -223,29 +231,6 @@ export class MatchCombosComponent implements OnInit, OnDestroy {
       }
       return 1;
     });
-
-    // this.listOfOptions.forEach((item, index) => {
-    //   console.log(1 + index + ')' + item.combination + ' - diff: ' + item.diff);
-    // });
-
-    // if (this.listOfOptions.length > 10) {
-    //   for (let i = 0; i < 10; ++i) {
-    //     const stringifiedBinary = this.listOfOptions[i].combination;
-    //     let names = '';
-    //     let otherNames = '';
-    //     // split the string to an array and add the names
-    //     stringifiedBinary.split('').forEach((value, index, array) => {
-    //       if (value === '1') {
-    //         names += players[index].name + ', ';
-    //       } else {
-    //         otherNames += players[index].name + ', ';
-    //       }
-    //     });
-    //     console.log(1 + i + ')' + stringifiedBinary + ' - diff: ' + this.listOfOptions[i].diff + '; ' + names);
-    //   }
-    // }
-
-    // console.log('Ideal balance value', totalSum / 2, 'from', totalSum);
   }
 
   onGameOptionSelected($event: any, i: number) {

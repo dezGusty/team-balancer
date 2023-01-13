@@ -4,11 +4,14 @@ import { ActivatedRoute, Params, Router } from '@angular/router';
 import { Player, getDisplayName } from '../../shared/player.model';
 import { PlayersService } from '../../shared/players.service';
 import { AuthService } from 'src/app/auth/auth.service';
+import { CommonModule } from '@angular/common';
 
 @Component({
+  imports: [CommonModule],
   selector: 'app-player-details',
+  standalone: true,
+  styles: [''],
   templateUrl: './player-details.component.html',
-  styles: ['']
 })
 export class PlayerDetailsComponent implements OnInit {
   player: Player | undefined;

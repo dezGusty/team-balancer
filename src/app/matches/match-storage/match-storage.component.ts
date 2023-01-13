@@ -2,8 +2,19 @@ import { Component, OnInit, Input, ElementRef, ViewChild } from '@angular/core';
 import { CustomGame } from '../../shared/custom-game.model';
 import { Player, getDisplayName } from '../../shared/player.model';
 import { MatchService } from 'src/app/shared/match.service';
+import { CommonModule } from '@angular/common';
+import { NgbTooltipModule } from '@ng-bootstrap/ng-bootstrap';
+import { CopyClipboardDirective } from 'src/app/shared/copy-clipboard.directive';
+import { FormsModule } from '@angular/forms';
 
 @Component({
+  imports: [
+    CommonModule,
+    CopyClipboardDirective,
+    FormsModule,
+    NgbTooltipModule
+  ],
+  standalone: true,
   selector: 'app-match-storage',
   templateUrl: './match-storage.component.html',
   styles: ['']

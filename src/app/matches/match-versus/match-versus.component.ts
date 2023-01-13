@@ -1,10 +1,13 @@
+import { CommonModule } from '@angular/common';
 import { Component, OnInit, Input, Output, EventEmitter } from '@angular/core';
 import { Player, getDisplayName } from 'src/app/shared/player.model';
 
 @Component({
+  imports: [CommonModule],
   selector: 'app-match-versus',
+  standalone: true,
+  styles: [''],
   templateUrl: './match-versus.component.html',
-  styles: ['']
 })
 export class MatchVersusComponent implements OnInit {
 
