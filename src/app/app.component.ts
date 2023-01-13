@@ -1,12 +1,21 @@
+import { CommonModule } from '@angular/common';
 import { Component, OnInit, OnDestroy } from '@angular/core';
+import { RouterModule } from '@angular/router';
 import { NgcCookieConsentService, NgcInitializingEvent, NgcStatusChangeEvent, NgcNoCookieLawEvent } from 'ngx-cookieconsent';
 import { Subscription } from 'rxjs';
 import { AuthService } from './auth/auth.service';
+import { HeaderComponent } from './header/header.component';
 
 @Component({
+  imports: [
+    CommonModule,
+    HeaderComponent,
+    RouterModule
+  ],
   selector: 'app-root',
+  standalone: true,
+  styles: [''],
   templateUrl: './app.component.html',
-  styleUrls: ['./app.component.css']
 })
 export class AppComponent implements OnInit, OnDestroy {
   // keep refs to subscriptions to be able to unsubscribe later
