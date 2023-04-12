@@ -3,13 +3,14 @@ import { Component, OnInit, OnDestroy } from '@angular/core';
 import { RouterModule } from '@angular/router';
 import { NgcCookieConsentService, NgcInitializingEvent, NgcStatusChangeEvent, NgcNoCookieLawEvent } from 'ngx-cookieconsent';
 import { Subscription } from 'rxjs';
-import { AuthService } from './auth/auth.service';
+import { FooterComponent } from './footer/footer.component';
 import { HeaderComponent } from './header/header.component';
 
 @Component({
   imports: [
     CommonModule,
     HeaderComponent,
+    FooterComponent,
     RouterModule
   ],
   selector: 'app-root',

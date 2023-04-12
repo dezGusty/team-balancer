@@ -63,6 +63,12 @@
   }
 }
 
+.main-layout {
+  min-height: 100dvh;
+  display: grid;
+  grid-template-rows: 1fr auto 1fr;
+}
+
 .form-control {
   color: var(--gus-primary-text-color);
   background-color: var(--gus-primary-bck-color);
