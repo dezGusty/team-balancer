@@ -78,7 +78,7 @@ const appRoutes: Routes = [
 
 bootstrapApplication(AppComponent, {
   providers: [
-    provideRouter(appRoutes, withDebugTracing(), withComponentInputBinding()),
+    provideRouter(appRoutes, withComponentInputBinding()),
     importProvidersFrom(provideAuth(() => {
       return getAuth();
     })),
