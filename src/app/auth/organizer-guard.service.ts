@@ -1,9 +1,4 @@
-import {
-    CanActivate,
-    ActivatedRouteSnapshot,
-    RouterStateSnapshot,
-    Router
-} from '@angular/router';
+import { ActivatedRouteSnapshot, RouterStateSnapshot, Router } from '@angular/router';
 import { Observable } from 'rxjs';
 import { Injectable } from '@angular/core';
 import { AuthService } from './auth.service';
@@ -13,7 +8,7 @@ import { AuthService } from './auth.service';
  * A navigation guard to allow access restrictions based on the (match) organizer role.
  */
 @Injectable()
-export class OrganizerGuard implements CanActivate {
+export class OrganizerGuard  {
 
     constructor(
         private authSvc: AuthService,
