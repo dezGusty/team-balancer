@@ -142,6 +142,8 @@ export class PlayersService {
 
     movePlayerToArchive(player: Player) {
         console.log('[playerscv] archiving player', player);
+        const backupOfCurrentPlayerList = this.currentPlayerList.slice();
+        const backupOfArchivedPlayerList = this.archivedPlayerList.slice();
 
         // remove the element from the current player array
         const tempPlayerList = this.currentPlayerList.filter(x => x != player);
@@ -157,15 +159,25 @@ export class PlayersService {
 
         this.currentPlayerList = tempPlayerList;
 
-        this.savePlayersArrayToDoc(this.archivedPlayerList, 'archive').then(_ => {
-            // successfully saved archive.
-            // can now also save the regular player list: we won't lose a player, at worst a duplicate
-            this.savePlayersArrayToDoc(this.currentPlayerList, 'current').then(_ => {
-                const playerInfo = new PlayerChangeInfo(this.currentPlayerList, 'info', `moved player ${player.name} to archive.`);
+        this.savePlayersArrayToDocAsync(this.archivedPlayerList, 'archive')
+            .then(_ => {
+                // successfully saved archive.
+                // can now also save the regular player list: we won't lose a player, at worst a duplicate
+                this.savePlayersArrayToDocAsync(this.currentPlayerList, 'current')
+                    .then(_ => {
+                        const playerInfo = new PlayerChangeInfo(this.currentPlayerList, 'info', `moved player ${player.name} to archive.`);
 
-                this.playerDataChangeEvent.next(playerInfo);
+                        this.playerDataChangeEvent.next(playerInfo);
+                    })
+                    .catch(err => {
+                        console.log('[players] error saving current player list');
+                        this.currentPlayerList = backupOfCurrentPlayerList;
+                    });
+            })
+            .catch(err => {
+                console.log('[players] error saving archive player list');
+                this.archivedPlayerList = backupOfArchivedPlayerList;
             });
-        });
     }
 
     pullPlayerFromArchive(player: Player) {
@@ -183,10 +195,10 @@ export class PlayersService {
         this.currentPlayerList.push(player);
         this.archivedPlayerList = tempPlayerList;
 
-        this.savePlayersArrayToDoc(this.currentPlayerList, 'current').then(_ => {
+        this.savePlayersArrayToDocAsync(this.currentPlayerList, 'current').then(_ => {
             // successfully saved archive.
             // can now also save the regular player list: we won't lose a player, at worst a duplicate
-            this.savePlayersArrayToDoc(this.archivedPlayerList, 'archive').then(_ => {
+            this.savePlayersArrayToDocAsync(this.archivedPlayerList, 'archive').then(_ => {
                 const playerInfo = new PlayerChangeInfo(this.archivedPlayerList, 'info', `moved player ${player.name} to current.`);
 
                 this.playerDataChangeEvent.next(playerInfo);
@@ -355,7 +367,7 @@ export class PlayersService {
         await this.savePlayersToListAsync(this.currentPlayerList, 'current');
     }
 
-    public async savePlayersArrayToDoc(playersArr: Player[], listName: string): Promise<void> {
+    public async savePlayersArrayToDocAsync(playersArr: Player[], listName: string): Promise<void> {
         const docName = 'ratings/' + listName;
         const obj = { players: playersArr };
         const docRef = doc(this.firestore, docName);
@@ -364,7 +376,7 @@ export class PlayersService {
     }
 
     public async savePlayersToListAsync(playersArr: Player[], listName: string): Promise<void> {
-        return this.savePlayersArrayToDoc(playersArr, listName)
+        return this.savePlayersArrayToDocAsync(playersArr, listName)
             .then(_ => {
                 const playerInfo = new PlayerChangeInfo(playersArr, 'info', 'Saved players to list ' + listName);
                 console.log('emitting ', playerInfo);

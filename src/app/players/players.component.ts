@@ -33,7 +33,6 @@ import { PlayerRoutedCardComponent } from './player/player-routed-card.component
 
 export class PlayersComponent implements OnInit, OnDestroy {
   players: Player[] = [];
-  selectedPlayer: Player | null;
   editMode: boolean;
 
   private subscriptions: Subscription[] = [];
@@ -53,7 +52,6 @@ export class PlayersComponent implements OnInit, OnDestroy {
     private toastSvc: ToastService,
     private router: Router,
     private route: ActivatedRoute) {
-    this.selectedPlayer = null;
     this.editMode = false;
   }
 
@@ -95,10 +93,6 @@ export class PlayersComponent implements OnInit, OnDestroy {
 
   public canAddPlayers(): boolean {
     return this.authSvc.isAuthenticatedAsOrganizer();
-  }
-
-  public playerIsSelected(): boolean {
-    return this.selectedPlayer != null;
   }
 
   public onNewPlayerClicked($event: any): void {

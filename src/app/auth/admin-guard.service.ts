@@ -1,8 +1,4 @@
-import {
-    CanActivate,
-    ActivatedRouteSnapshot,
-    RouterStateSnapshot
-} from '@angular/router';
+import { ActivatedRouteSnapshot, RouterStateSnapshot } from '@angular/router';
 import { Observable } from 'rxjs';
 import { Injectable } from '@angular/core';
 import { AuthService } from './auth.service';
@@ -12,7 +8,7 @@ import { AuthService } from './auth.service';
  * A navigation guard to allow access restrictions based on the admin role.
  */
 @Injectable()
-export class AdminGuard implements CanActivate {
+export class AdminGuard  {
 
     constructor(
         private authSvc: AuthService) { }
