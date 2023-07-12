@@ -1,4 +1,4 @@
-import { Component, OnInit, Input } from '@angular/core';
+import { Component, OnInit, Input, inject } from '@angular/core';
 import { Player } from './../../shared/player.model';
 import { FormsModule, NgForm } from '@angular/forms';
 import { ActivatedRoute, Params, Router } from '@angular/router';
@@ -15,35 +15,37 @@ import { CommonModule } from '@angular/common';
 export class PlayerEditComponent implements OnInit {
   @Input() player: Player | undefined;
 
-  id: number = 0;
-  editMode = false;
+  @Input() id: string = '';
+  private numericId: number = 0;
+  private editMode = false;
 
   constructor(
     private playersSvc: PlayersService,
     private router: Router,
-    private route: ActivatedRoute) {
+    private route: ActivatedRoute
+    ) {
 
   }
 
-  ngOnInit() {
-    this.route.params.subscribe(
-      (params: Params) => {
-        this.id = +params['id'];
-        this.editMode = params['id'] != null;
-        console.log('id: ' + this.id + '; edit? ' + this.editMode);
-        if (!this.editMode) {
-          // New mode.
-          this.player = this.playersSvc.createDefaultPlayer();
-        } else {
-          this.player = this.playersSvc.getPlayerById(this.id);
-          if (!this.player) {
-            // trigger a reroute?
-            console.warn('[player edit] invalid id');
-            this.router.navigate(['..'], { relativeTo: this.route });
-          }
-        }
+  ngOnInit(): void {
+    if (this.id) {
+      this.numericId = +this.id;
+      this.editMode = true;
+    }
+
+    console.log('id: ' + this.numericId + '; edit? ' + this.editMode);
+    if (!this.editMode) {
+      // New mode.
+      this.player = this.playersSvc.createDefaultPlayer();
+    } else {
+      this.player = this.playersSvc.getPlayerById(this.numericId);
+      if (!this.player) {
+        // trigger a reroute?
+        console.warn('[player edit] invalid id');
+        
+        this.router.navigate(['..'], { relativeTo: this.route });
       }
-    );
+    }
   }
 
   onSubmit(form: NgForm) {
@@ -66,7 +68,7 @@ export class PlayerEditComponent implements OnInit {
     if (this.editMode) {
       // edit mode
 
-      this.playersSvc.updatePlayerById(this.id, clonedPlayer);
+      this.playersSvc.updatePlayerById(this.numericId, clonedPlayer);
     } else {
       // New mode.
       clonedPlayer.id = changedObject.playerid;
@@ -79,6 +81,7 @@ export class PlayerEditComponent implements OnInit {
   }
 
   onCancel($event: any) {
+    // navigate back to the list.
     this.router.navigate(['..'], { relativeTo: this.route });
   }
 }

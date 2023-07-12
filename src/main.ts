@@ -4,7 +4,7 @@ import { initializeApp, provideFirebaseApp } from '@angular/fire/app';
 import { getAuth, provideAuth } from '@angular/fire/auth';
 import { getFirestore, provideFirestore } from '@angular/fire/firestore';
 import { bootstrapApplication } from '@angular/platform-browser';
-import { provideRouter, Routes, withDebugTracing } from '@angular/router';
+import { provideRouter, Routes, withComponentInputBinding, withDebugTracing } from '@angular/router';
 import { NgcCookieConsentConfig, NgcCookieConsentModule } from 'ngx-cookieconsent';
 import { AboutComponent } from './app/about/about.component';
 import { AdminComponent } from './app/admin/admin.component';
@@ -78,7 +78,7 @@ const appRoutes: Routes = [
 
 bootstrapApplication(AppComponent, {
   providers: [
-    provideRouter(appRoutes, withDebugTracing()),
+    provideRouter(appRoutes, withDebugTracing(), withComponentInputBinding()),
     importProvidersFrom(provideAuth(() => {
       return getAuth();
     })),
