@@ -1,4 +1,4 @@
-import { Component, OnInit, Input, inject } from '@angular/core';
+import { Component, OnInit, Input } from '@angular/core';
 import { Player } from './../../shared/player.model';
 import { FormsModule, NgForm } from '@angular/forms';
 import { ActivatedRoute, Params, Router } from '@angular/router';
