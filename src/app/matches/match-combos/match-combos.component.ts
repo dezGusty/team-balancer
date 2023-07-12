@@ -177,7 +177,7 @@ export class MatchCombosComponent implements OnInit, OnDestroy {
       }
     }
 
-    while (customCounter < maxValue) {
+    while (customCounter <= maxValue) {
       customCounter++;
       let stringifiedBinary = customCounter.toString(2);
       if (stringifiedBinary.split('1').length - 1 !== idealNumberOfPlayers) {
