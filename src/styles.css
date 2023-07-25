@@ -9,19 +9,15 @@
     --gus-impact-text-color: rgb(238, 165, 9);
     --standard-secondary-text-color: #999;
 
-    --gus-panel-bck: linear-gradient(
-      135deg,
-      #2bb7e2 0%,
-      #217892 67%,
-      #113844 95%,
-      #040f13 100%
-    );
-    --gus-panel-alt-bck: linear-gradient(
-      135deg,
-      #0e6b836a 0%,
-      #1047526a 67%,
-      #03343a6a 100%
-    );
+    --gus-panel-bck: linear-gradient(135deg,
+        #2bb7e2 0%,
+        #217892 67%,
+        #113844 95%,
+        #040f13 100%);
+    --gus-panel-alt-bck: linear-gradient(135deg,
+        #0e6b836a 0%,
+        #1047526a 67%,
+        #03343a6a 100%);
     --gus-panel-text: #f3e5d0;
     --gus-contrast-panel-bck: rgb(2, 12, 27);
     --gus-contrast-panel-alt-bck: #994b0b3d;
@@ -41,19 +37,15 @@
     --gus-secondary-text-color: #345;
     --gus-impact-text-color: rgb(121, 84, 4);
 
-    --gus-panel-bck: linear-gradient(
-      135deg,
-      #2bb7e2 0%,
-      #217892 67%,
-      #113844 95%,
-      #040f13 100%
-    );
-    --gus-panel-alt-bck: linear-gradient(
-      135deg,
-      #9a2bd1 0%,
-      #8a2be2 67%,
-      #520997 100%
-    );
+    --gus-panel-bck: linear-gradient(135deg,
+        #2bb7e2 0%,
+        #217892 67%,
+        #113844 95%,
+        #040f13 100%);
+    --gus-panel-alt-bck: linear-gradient(135deg,
+        #9a2bd1 0%,
+        #8a2be2 67%,
+        #520997 100%);
     --gus-panel-text: #fff;
     --gus-contrast-panel-bck: #fff;
     --gus-contrast-panel-alt-bck: #362b2b08;
@@ -66,7 +58,25 @@
 .main-layout {
   min-height: 100dvh;
   display: grid;
-  grid-template-rows: 1fr auto 1fr;
+  grid-template-rows: min-content auto min-content;
+  grid-template-columns: 1fr;
+  grid-template-areas:
+    "header"
+    "main"
+    "footer";
+}
+
+.main-layout>.header {
+  grid-area: header;
+}
+
+.main-layout>.footer {
+  grid-area: footer;
+}
+
+.main-layout>.main {
+  grid-area: main;
+  overflow: auto;
 }
 
 .form-control {
@@ -213,7 +223,7 @@ a.player-card-grad:hover {
   padding: 0;
 }
 
-.player-card-recent-matches{
+.player-card-recent-matches {
   font-size: medium;
 }
 
@@ -221,21 +231,24 @@ a.player-card-grad:hover {
   color: #30FF3084;
   text-shadow: 0 0 0 green;
 }
+
 .player-card-recent-matches-very-good {
   color: #30FF3054;
   text-shadow: 0 0 0 green;
 }
+
 .player-card-recent-matches-bad {
   color: #FF303084;
   text-shadow: 0 0 0 red;
 }
+
 .player-card-recent-matches-very-bad {
   color: #FF303054;
   text-shadow: 0 0 0 red;
 }
 
 .player-card-recent-matches-neutral {
-  color: #77777774;  
+  color: #77777774;
   text-shadow: 0 0 0 gray;
 }
 
@@ -286,13 +299,11 @@ a.player-card-grad:hover {
   padding-right: 1rem;
   border-color: var(--btn-active-color, black);
   border-width: 2px;
-  background: linear-gradient(
-    135deg,
-    #2bb7e2 0%,
-    #217892 67%,
-    #113844 95%,
-    #040f13 100%
-  );
+  background: linear-gradient(135deg,
+      #2bb7e2 0%,
+      #217892 67%,
+      #113844 95%,
+      #040f13 100%);
   color: white;
 }
 
@@ -329,7 +340,7 @@ a.player-card-grad:hover {
   color: var(--gus-impact-text-color);
 }
 
-.btn-gus-small > svg {
+.btn-gus-small>svg {
   vertical-align: middle;
 }
 
@@ -347,9 +358,11 @@ a.player-card-grad:hover {
   0% {
     background-position: 0% 50%;
   }
+
   50% {
     background-position: 100% 50%;
   }
+
   100% {
     background-position: 0% 50%;
   }
@@ -395,7 +408,7 @@ a.player-card-grad:hover {
   border-color: var(--gus-secondary-bck);
   background: var(--gus-secondary-grad);
   color: var(--gus-primary-text-color);
-  
+
   /* border: 1px solid #888; */
   /* border-radius: 3px; */
   border-radius: 0.3rem;
@@ -414,7 +427,7 @@ a.player-card-grad:hover {
 .date-as-calendar .month {
   text-transform: uppercase;
   background: var(--gus-impact-text-color);
-  background : var(--gus-panel-bck);
+  background: var(--gus-panel-bck);
   /* linear-gradient(to bottom right, #D66 0%, #A00 100%); */
   color: var(--gus-primary-text-color);
 }
@@ -426,25 +439,29 @@ a.player-card-grad:hover {
   flex-direction: column;
   flex-wrap: nowrap;
   justify-content: space-between;
-  
-  width: 4em; 
-  height: 4em; 
+
+  width: 4em;
+  height: 4em;
 }
+
 .vert-calendar.date-as-calendar .day,
 .vert-calendar.date-as-calendar .month,
 .vert-calendar.date-as-calendar .year {
   display: block;
   flex: 1 1 auto;
 }
+
 .vert-calendar.date-as-calendar .month {
   order: 1;
   font-size: 0.75em;
   padding: 0.1em 0;
 }
+
 .vert-calendar.date-as-calendar .day {
   order: 3;
   font-size: 1.5em;
 }
+
 .vert-calendar.date-as-calendar .year {
   order: 4;
   font-size: 0.87750em;

@@ -31,4 +31,15 @@ export class SigninComponent implements OnInit {
     }
   }
 
+  async tryFacebookLogin() {
+
+    const success = await this.authSvc.doFacebookLoginAsync({ successRoute: [] });
+    if (success) {
+      console.log('[signin] navigating to root');
+      this.router.navigate(['/players']);
+    } else {
+      console.log('[signin] failed when logging in');
+    }
+  }
+
 }
