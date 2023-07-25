@@ -29,6 +29,7 @@ import { MatchService } from './app/shared/match.service';
 import { PlayersService } from './app/shared/players.service';
 import { ToastService } from './app/shared/toasts-service';
 import { environment } from './environments/environment';
+import { PrivacyComponent } from './app/auth/privacy/privacy.component';
 
 if (environment.production) {
   enableProdMode();
@@ -73,7 +74,8 @@ const appRoutes: Routes = [
   { path: 'about', component: AboutComponent },
   { path: 'admin', canActivate: [AuthGuard, AdminGuard], component: AdminComponent },
   { path: 'signin', component: SigninComponent },
-  { path: 'signup', component: SignupComponent }
+  { path: 'signup', component: SignupComponent },
+  { path: 'privacy', component: PrivacyComponent }
 ];
 
 bootstrapApplication(AppComponent, {

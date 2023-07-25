@@ -1,4 +1,4 @@
-import { Auth, authState, browserPopupRedirectResolver, GoogleAuthProvider, signInWithPopup, User } from '@angular/fire/auth';
+import { Auth, authState, browserPopupRedirectResolver, FacebookAuthProvider, GoogleAuthProvider, signInWithPopup, User } from '@angular/fire/auth';
 import { doc, docData, Firestore, setDoc } from '@angular/fire/firestore';
 import { Injectable, EventEmitter, Optional } from '@angular/core';
 import { Router } from '@angular/router';
@@ -113,6 +113,42 @@ export class AuthService {
         }
         return false;
     }
+
+    /**
+     * Perform the login into the application via Facebook.
+     * @param postNavi: navigation route to be applied upon a successful log-in.
+     * It consists of an array of strings. Defaults to : ['/'].
+     * To avoid any redirect upon log-in, set this to an empty array:
+     * @example
+     * // login without redirect
+     * await doFacebookLoginAsync({ successRoute: [] });
+     * @example
+     * // login with default redirect to root.
+     * await doFacebookLoginAsync();
+     * @example
+     * // login with default redirect to /base.
+     * await doFacebookLoginAsync({ successRoute: ['base'] });
+     */
+    public async doFacebookLoginAsync(postNavi: { successRoute: string[] } = { successRoute: ['/'] }): Promise<boolean> {
+        console.log('doFacebookLoginAsync entered');
+
+        const userCred = await signInWithPopup(
+            this.auth,
+            new FacebookAuthProvider());
+        
+        if (userCred) {
+            this.issueTokenRetrieval();
+            this.updateAndCacheUserAfterLogin(userCred.user);
+            this.onSignInOut.emit('signin-done');
+            if (postNavi?.successRoute?.length > 0) {
+                console.log('[login] navigating to route ', postNavi.successRoute);
+                this.router.navigate(postNavi.successRoute);
+            }
+            return true;
+        }
+        return false;
+    }
+
 
     notifySubscribersOfSignout() {
         this.onSignInOut.emit('signout-pending');
