@@ -29,7 +29,7 @@
     "@ng-bootstrap/ng-bootstrap": "^15.0.0",
     "bootstrap": "^5.2.2",
     "cookieconsent": "^3.1.1",
-    "firebase": "^9.6.6",
+    "firebase": "^10.0.0",
     "invert-color": "^2.0.0",
     "jquery": "^3.6.0",
     "ngx-cookieconsent": "^4.0.1",
