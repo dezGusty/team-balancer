@@ -1,7 +1,3 @@
-export enum RatingSystem {
-    German = 1,
-    Progressive = 2
-};
 
 // German rating system
 // end game : 1 goal diff
@@ -18,61 +14,27 @@ export enum RatingSystem {
 //  0.05 + 8*0.011 = 0.05 + 0.088 = 0.135 . E.g.  6 => 6.135
 
 export class RatingSystemSettings {
-    public static GetExpectedLowerEndRating(ratingSys: RatingSystem): number {
-
-        if (ratingSys === RatingSystem.German) {
-            return 5;
-        } else if (ratingSys === RatingSystem.Progressive) {
-            return 4;
-        }
-
-        return 0;
+    public static GetExpectedLowerEndRating(): number {
+        return 4;
     }
 
-    public static GetExpectedUpperEndRating(ratingSys: RatingSystem): number {
-
-        if (ratingSys === RatingSystem.German) {
-            return 1;
-        } else if (ratingSys === RatingSystem.Progressive) {
-            return 10;
-        }
-
-        return 0;
+    public static GetExpectedUpperEndRating(): number {
+        return 10;
     }
 
-    public static GetGoalMultiplierForMatch(ratingSys: RatingSystem): number {
-        if (ratingSys === RatingSystem.German) {
-            return 0.002;
-        } else if (ratingSys === RatingSystem.Progressive) {
-            return 0.011;
-        }
-        return 0.1;
+    public static GetGoalMultiplierForMatch(): number {
+        return 0.011;
     }
 
-    public static GetFixedMultiplierForMatch(ratingSys: RatingSystem): number {
-        if (ratingSys === RatingSystem.German) {
-            return 0.02;
-        } else if (ratingSys === RatingSystem.Progressive) {
-            return 0.05;
-        }
-        return 0.1;
+    public static GetFixedMultiplierForMatch(): number {
+        return 0.05;
     }
 
-    public static GetSignMultiplierForWinner(ratingSys: RatingSystem): number {
-        if (ratingSys === RatingSystem.German) {
-            return -1;
-        } else if (ratingSys === RatingSystem.Progressive) {
-            return 1;
-        }
-        return -1;
-    }
-
-    public static GetSignMultiplierForLoser(ratingSys: RatingSystem): number {
-        if (ratingSys === RatingSystem.German) {
-            return 1;
-        } else if (ratingSys === RatingSystem.Progressive) {
-            return -1;
-        }
+    public static GetSignMultiplierForWinner(): number {
         return 1;
+    }
+
+    public static GetSignMultiplierForLoser(): number {
+        return -1;
     }
 }

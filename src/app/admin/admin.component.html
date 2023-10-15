@@ -24,13 +24,9 @@
                 <div ngbDropdown (openChange)="checkDropDown($event)" class="d-inline-block">
                     <button [disabled]='!ratingChosen' class="btn btn-outline-primary" id="dropdownScale"
                         ngbDropdownToggle>Rating Scale</button>
-                    <div ngbDropdownMenu aria-labelledby="dropdownBasic1">
-                        <button (click)="changeRatingDropdown(scale)" *ngFor="let scale of ratingSystemsDescriptions"
-                            ngbDropdownItem>{{scale}}</button>
-                    </div>
                 </div>
             </div>
-            <button [disabled]='!ratingChosen || !newRatingScale || loadingConvert === 1' _ngcontent-ueg-c32=""
+            <button [disabled]='!ratingChosen || loadingConvert === 1' _ngcontent-ueg-c32=""
                 type="button" role="button" class="center btn btn-info mb-2" (click)='onNewBranchClicked($event)'
                 *ngIf='canAddPlayers()'>
                 <span *ngIf='loadingConvert === 1' class="spinner-border" style="width: 1.3rem; height: 1.3rem;"

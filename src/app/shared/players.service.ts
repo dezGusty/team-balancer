@@ -4,7 +4,7 @@ import { BehaviorSubject, Subscription } from 'rxjs';
 import { CustomPrevGame } from './custom-prev-game.model';
 import { AppStorage } from './app-storage';
 
-import { RatingSystem, RatingSystemSettings } from './rating-system';
+import { RatingSystemSettings } from './rating-system';
 import { PlayerChangeInfo } from './player-change-info';
 import { RatingHist } from './rating-hist.model';
 import { AuthService } from '../auth/auth.service';
@@ -19,7 +19,6 @@ import { SettingsService } from './settings.service';
 export class PlayersService {
 
     private dataChangeSubscriptions: Subscription[] = [];
-    private currentRatingSystem: RatingSystem = RatingSystem.Progressive;
     private currentLabel: string = '';
 
     // constructor.
@@ -84,7 +83,6 @@ export class PlayersService {
                 // }
                 const snap: PlayerRatingSnapshot = playerListDoc as PlayerRatingSnapshot;
                 const playersArray: Player[] = snap.players; //playerListDoc.get('players');
-                this.currentRatingSystem = snap.ratingSystem; //playerListDoc.get('ratingSystem');
                 this.currentLabel = snap.label; //playerListDoc.get('label');
                 this.currentPlayerList = playersArray;
 
@@ -422,10 +420,6 @@ export class PlayersService {
         this.savePlayersToListAsync(this.currentPlayerList, 'current');
     }
 
-    public getCurrentRatingSystem(): RatingSystem {
-        return this.currentRatingSystem;
-    }
-
     public async getRatingHistoryAsync(): Promise<Map<string, RatingHist>> {
 
         const collectionRef = collection(this.firestore, 'ratings');
@@ -440,7 +434,6 @@ export class PlayersService {
                     const histItem: RatingHist = new RatingHist();
                     const data: any = test.data();
                     histItem.players = data.players as Player[];
-                    histItem.ratingSystem = data.ratingSystem as RatingSystem;
                     history.set(test.id, histItem);
                 }
                 // });
@@ -461,8 +454,7 @@ export class PlayersService {
         player: Player,
         winners: string[],
         losers: string[],
-        difference: number,
-        ratingSystem: RatingSystem = RatingSystem.German): Player {
+        difference: number): Player {
         const playerCpy: Player = { ...player };
         if (difference === 0) {
             return playerCpy;
@@ -473,15 +465,15 @@ export class PlayersService {
         let sign = 0;
 
         if (winners.includes(playerCpy.name)) {
-            sign = RatingSystemSettings.GetSignMultiplierForWinner(ratingSystem);
+            sign = RatingSystemSettings.GetSignMultiplierForWinner();
 
         } else if (losers.includes(playerCpy.name)) {
-            sign = RatingSystemSettings.GetSignMultiplierForLoser(ratingSystem);
+            sign = RatingSystemSettings.GetSignMultiplierForLoser();
         }
 
         playerCpy.rating = playerCpy.rating + sign * (
-            RatingSystemSettings.GetFixedMultiplierForMatch(ratingSystem)
-            + Math.abs(difference) * RatingSystemSettings.GetGoalMultiplierForMatch(ratingSystem));
+            RatingSystemSettings.GetFixedMultiplierForMatch()
+            + Math.abs(difference) * RatingSystemSettings.GetGoalMultiplierForMatch());
         return playerCpy;
     }
 
@@ -492,7 +484,7 @@ export class PlayersService {
      * @param ratingSystem The rating system to use.
      * @returns The updated full list of players (new copy)
      */
-    public getAllPlayersUpdatedRatingsForGame(players: Player[], game: CustomPrevGame, ratingSystem: RatingSystem = RatingSystem.German): Player[] {
+    public getAllPlayersUpdatedRatingsForGame(players: Player[], game: CustomPrevGame): Player[] {
         if (game.scoreTeam1 == null || game.scoreTeam2 == null
             || game.scoreTeam1 === game.scoreTeam2) {
             // nothing to do
@@ -513,7 +505,7 @@ export class PlayersService {
             winners = game.team2.map((player) => player.name);
         }
 
-        return playersCpy.map(player => this.getPlayerWithUpdatedRatingForGame(player, winners, losers, difference, ratingSystem));
+        return playersCpy.map(player => this.getPlayerWithUpdatedRatingForGame(player, winners, losers, difference));
     }
 
     /**
@@ -522,7 +514,7 @@ export class PlayersService {
      * @param ratingSystem The rating system to use.
      * @returns The list of players which were part of the game with new ratings (new copy).
      */
-    public getPlayersWithUpdatedRatingsForGame(game: CustomPrevGame, ratingSystem: RatingSystem = RatingSystem.German): Player[] {
+    public getPlayersWithUpdatedRatingsForGame(game: CustomPrevGame): Player[] {
         if (game.scoreTeam1 == null || game.scoreTeam2 == null
             || game.scoreTeam1 === game.scoreTeam2) {
             // nothing to do
@@ -548,26 +540,7 @@ export class PlayersService {
         console.log('losers', losers);
 
 
-        return playersCpy.map(player => this.getPlayerWithUpdatedRatingForGame(player, winners, losers, difference, ratingSystem));
+        return playersCpy.map(player => this.getPlayerWithUpdatedRatingForGame(player, winners, losers, difference));
     }
 
-    // async getPlayersFromHist(documentName: string): Promise<Player[]> {
-    //     let players: Player[];
-
-    //     console.log('***getPlayersFromHist');
-
-
-    //     const docName = 'ratings/' + documentName;
-    //     const docRef = doc(this.firestore, docName);
-    //     const docSnap = await getDoc(docRef);
-    //     if (docSnap.exists()) {
-    //         players = docSnap.data() as Player[];
-    //         console.log('***getPlayersFromHist', players);
-    //     }
-    //     else {
-    //         console.log('Could not find document for ', docName);
-    //     }
-
-    //     return players;
-    // }
 }

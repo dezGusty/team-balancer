@@ -2,7 +2,7 @@ import { Component, OnInit, Input, OnDestroy } from '@angular/core';
 import { Player } from 'src/app/shared/player.model';
 import { EMPTY, Observable, Subscription } from 'rxjs';
 import { CustomGame } from 'src/app/shared/custom-game.model';
-import { RatingSystem, RatingSystemSettings } from 'src/app/shared/rating-system';
+import { RatingSystemSettings } from 'src/app/shared/rating-system';
 import { CommonModule } from '@angular/common';
 import { MatchVersusComponent } from '../match-versus/match-versus.component';
 import { MatchStorageComponent } from '../match-storage/match-storage.component';
@@ -20,7 +20,6 @@ import { MatchStorageComponent } from '../match-storage/match-storage.component'
 export class MatchCombosComponent implements OnInit, OnDestroy {
   @Input() playerList: Player[] = [];
   @Input() makeTeamsEvent: Observable<void> = EMPTY;
-  @Input() ratingSys: RatingSystem = RatingSystem.Progressive;
   private eventsSubscription: Subscription = Subscription.EMPTY;
 
   showDetailedSelection = false;
@@ -47,11 +46,11 @@ export class MatchCombosComponent implements OnInit, OnDestroy {
   ngOnInit() {
     console.log('[combos] init');
     this.eventsSubscription = this.makeTeamsEvent.subscribe(
-      () => this.prepareTeams(this.ratingSys));
+      () => this.prepareTeams());
 
     // also do it immediately?
     if (this.playerList.length > 0) {
-      this.prepareTeams(this.ratingSys);
+      this.prepareTeams();
     }
   }
 
@@ -66,18 +65,15 @@ export class MatchCombosComponent implements OnInit, OnDestroy {
     console.log('match selected', data);
   }
 
-  prepareTeams(ratingSystem: RatingSystem, numberOfCombinationsLimit = 20) {
-    console.log('preparing teams, rating system:', ratingSystem);
-
+  prepareTeams(numberOfCombinationsLimit = 20) {
     // sort the players.
-
     this.playerList = this.playerList.sort((a, b) => {
       if (a.rating < b.rating) {
-        return RatingSystemSettings.GetSignMultiplierForWinner(ratingSystem);
+        return RatingSystemSettings.GetSignMultiplierForWinner();
       } else if (a.rating === b.rating) {
         return 0;
       }
-      return RatingSystemSettings.GetSignMultiplierForLoser(ratingSystem);
+      return RatingSystemSettings.GetSignMultiplierForLoser();
     });
 
     console.log('players', this.playerList);

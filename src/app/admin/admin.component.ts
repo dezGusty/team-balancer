@@ -6,7 +6,7 @@ import { PlayerChangeInfo } from '../shared/player-change-info';
 import { Player } from '../shared/player.model';
 import { PlayersService } from '../shared/players.service';
 import { RatingScaler } from '../shared/rating-scaler';
-import { RatingSystem, RatingSystemSettings } from '../shared/rating-system';
+import { RatingSystemSettings } from '../shared/rating-system';
 import { ToastService } from '../shared/toasts-service';
 import { RatingHist } from '../shared/rating-hist.model';
 import { MatchService } from '../shared/match.service';
@@ -35,13 +35,9 @@ export class AdminComponent implements OnInit, OnDestroy {
 
   matchHistory: Map<string, CustomPrevGame> = new Map();
   ratingHistory: Map<string, RatingHist> = new Map();
-  protected ratingSystemsDescriptions: string[] = [];
   ratingChosen: any;
   loadingConvert = -1;
   newBranchName: string = '';
-  newRatingScale: RatingSystem = RatingSystem.Progressive;
-  oldRatingScale: RatingSystem = RatingSystem.Progressive;
-  private selectedRatingSystem: RatingSystem = RatingSystem.Progressive;
 
   private subscriptions: Subscription[] = [];
 
@@ -56,7 +52,6 @@ export class AdminComponent implements OnInit, OnDestroy {
   ngOnInit(): void {
     this.players = this.playersSvc.getPlayers();
     this.currentLabel = this.playersSvc.getCurrentLabel();
-    this.ratingSystemsDescriptions = Object.keys(RatingSystem).filter(p => isNaN(Number(p)));
     this.subscriptions.push(this.playersSvc.playerDataChangeEvent
       .subscribe(
         (playerChangeInfo: PlayerChangeInfo | undefined) => {
@@ -140,15 +135,6 @@ export class AdminComponent implements OnInit, OnDestroy {
     }
     this.players = data.players;
     console.log('players', this.players);
-    this.selectedRatingSystem = data.ratingSystem;
-    if (this.selectedRatingSystem == null) {
-      this.selectedRatingSystem = RatingSystem.German;
-    }
-    console.log('selectedRatingSystem', this.selectedRatingSystem);
-  }
-
-  changeRatingDropdown(selectedSys: string) {
-    this.newRatingScale = RatingSystem[selectedSys as keyof typeof RatingSystem];
   }
 
   async onNewBranchClicked($event: any) {
@@ -163,29 +149,26 @@ export class AdminComponent implements OnInit, OnDestroy {
 
     // Perform a backup of the old ratings.
     await this.playersSvc.savePlayersToListAsync(oldPlayerList, branchToEdit + '_bck');
-    await this.playersSvc.addFieldValueToDocumentAsync('ratingSystem', this.selectedRatingSystem, branchToEdit + '_bck');
 
     const oldMinRating = Math.min(...oldPlayerList.map(x => x.rating)).toFixed(2);
     const oldMaxRating = Math.max(...oldPlayerList.map(x => x.rating)).toFixed(2);
 
     let scaledPlayers: Player[] = RatingScaler.rescalePlayerRatings(
       oldPlayerList,
-      RatingSystemSettings.GetExpectedLowerEndRating(this.newRatingScale),
-      RatingSystemSettings.GetExpectedUpperEndRating(this.newRatingScale),
-      this.newRatingScale !== this.selectedRatingSystem);
+      RatingSystemSettings.GetExpectedLowerEndRating(),
+      RatingSystemSettings.GetExpectedUpperEndRating(), false);
     const newMinRating = Math.min(...scaledPlayers.map(x => x.rating)).toFixed(2);
     const newMaxRating = Math.max(...scaledPlayers.map(x => x.rating)).toFixed(2);
 
-    let messageToShow: string = 'Rating systems: \n'
-      + 'old: ' + RatingSystem[this.selectedRatingSystem] + ' (' + oldMinRating + '-' + oldMaxRating + ')\n'
-      + 'new:' + RatingSystem[this.newRatingScale] + ' (' + newMinRating + '-' + newMaxRating + ')';
+    let messageToShow: string = 'Rating systems scale: \n'
+      + 'old: ' + ' (' + oldMinRating + '-' + oldMaxRating + ')\n'
+      + 'new:'  + ' (' + newMinRating + '-' + newMaxRating + ')';
 
     this.toastSvc.show(messageToShow, { delay: 7500 });
     console.log(messageToShow);
 
 
     await this.playersSvc.savePlayersToListAsync(scaledPlayers, 'current');
-    await this.playersSvc.addFieldValueToDocumentAsync('ratingSystem', this.newRatingScale, 'current');
 
     this.loadingConvert = 0;
   }

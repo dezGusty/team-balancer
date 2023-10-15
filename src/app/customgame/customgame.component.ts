@@ -7,7 +7,6 @@ import { ActivatedRoute } from '@angular/router';
 import { DraftService } from '../shared/draft.service';
 import { ToastService } from '../shared/toasts-service';
 import { PlayerChangeInfo } from '../shared/player-change-info';
-import { RatingSystem } from '../shared/rating-system';
 import { CommonModule } from '@angular/common';
 import { MatchCombosComponent } from '../matches/match-combos/match-combos.component';
 import { FormsModule } from '@angular/forms';
@@ -42,8 +41,6 @@ export class CustomgameComponent implements OnInit, OnDestroy {
 
   private subscriptions: Subscription[] = [];
 
-  public usedRatingSystem: RatingSystem;
-
 
   /**
    * Constructor for the Custom game component. Can be instanced in 2 ways:
@@ -57,7 +54,6 @@ export class CustomgameComponent implements OnInit, OnDestroy {
     private draftSvc: DraftService,
     private toastSvc: ToastService,
     private route: ActivatedRoute) {
-    this.usedRatingSystem = RatingSystem.German;
     this.matchData.availablePlayersPool = this.playersSvc.getPlayers();
     this.matchData.draftPlayers.forEach(element => {
       this.matchData.removePlayerFromPool(element);
@@ -79,7 +75,6 @@ export class CustomgameComponent implements OnInit, OnDestroy {
             + playerChangeInfo.messageType + '\n'
             + playerChangeInfo.messagePayload);
 
-          this.usedRatingSystem = this.playersSvc.getCurrentRatingSystem();
         }
       )
     );

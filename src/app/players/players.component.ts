@@ -4,7 +4,6 @@ import { PlayersService } from '../shared/players.service';
 import { Subscription } from 'rxjs';
 import { Router, ActivatedRoute, RouterModule } from '@angular/router';
 import { CustomPrevGame } from '../shared/custom-prev-game.model';
-import { RatingSystem } from '../shared/rating-system';
 import { ToastService } from '../shared/toasts-service';
 import { PlayerChangeInfo } from '../shared/player-change-info';
 import { RatingHist } from '../shared/rating-hist.model';
@@ -44,7 +43,6 @@ export class PlayersComponent implements OnInit, OnDestroy {
 
   ratingHistory: Map<string, RatingHist> = new Map<string, RatingHist>();
   matchHistory: Map<string, CustomPrevGame> = new Map<string, CustomPrevGame>();
-  ratingScale: RatingSystem = RatingSystem.Progressive;
 
   constructor(
     private authSvc: AuthService,

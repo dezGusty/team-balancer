@@ -4,7 +4,6 @@ import { ActivatedRoute, Params } from '@angular/router';
 import { CustomPrevGame } from '../../shared/custom-prev-game.model';
 import { Subscription } from 'rxjs';
 import { PlayersService } from 'src/app/shared/players.service';
-import { RatingSystem } from 'src/app/shared/rating-system';
 import { MatchService } from 'src/app/shared/match.service';
 import { AuthService } from 'src/app/auth/auth.service';
 import { CommonModule } from '@angular/common';
@@ -192,19 +191,13 @@ export class PrevMatchDetailComponent implements OnInit, OnDestroy {
     }
 
     let currentMatch = await this.playersSvc.getCurrentRatingsAsync();
-    let ratingSystem = RatingSystem.German;
-    if (currentMatch) {
-      if (currentMatch.version) {
-        ratingSystem = currentMatch.version;
-      }
-    }
 
     const newPlayers = this.playersSvc.getAllPlayersUpdatedRatingsForGame(
-      this.playersSvc.getPlayers(), this.customGame, ratingSystem
+      this.playersSvc.getPlayers(), this.customGame
     );
 
     // Prepare the difference calculation
-    const updatedPlayers = this.playersSvc.getPlayersWithUpdatedRatingsForGame(this.customGame, ratingSystem);
+    const updatedPlayers = this.playersSvc.getPlayersWithUpdatedRatingsForGame(this.customGame);
     if (updatedPlayers.length > 0) {
       if (!this.customGame.postResults) {
         this.customGame.postResults = [];
