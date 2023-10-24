@@ -82,18 +82,18 @@
         "serve": {
           "builder": "@angular-devkit/build-angular:dev-server",
           "options": {
-            "browserTarget": "team-balancer:build"
+            "buildTarget": "team-balancer:build"
           },
           "configurations": {
             "production": {
-              "browserTarget": "team-balancer:build:production"
+              "buildTarget": "team-balancer:build:production"
             }
           }
         },
         "extract-i18n": {
           "builder": "@angular-devkit/build-angular:extract-i18n",
           "options": {
-            "browserTarget": "team-balancer:build"
+            "buildTarget": "team-balancer:build"
           }
         },
         "test": {
