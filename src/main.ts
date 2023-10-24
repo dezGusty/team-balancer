@@ -17,7 +17,7 @@ import { OrganizerGuard } from './app/auth/organizer-guard.service';
 import { SigninComponent } from './app/auth/signin/signin.component';
 import { SignupComponent } from './app/auth/signup/signup.component';
 import { CustomgameComponent } from './app/customgame/customgame.component';
-import { DraftComponent } from './app/draft/draft/draft.component';
+import { DraftComponent } from './app/draft/draft.component';
 import { PrevMatchDetailComponent } from './app/matches/prev-match-detail/prev-match-detail.component';
 import { RecentMatchesComponent } from './app/matches/previous-matches/recent-matches.component';
 import { PlayerDetailsComponent } from './app/players/player-details/player-details.component';
