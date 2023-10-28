@@ -15,7 +15,6 @@ export class AboutComponent implements OnInit {
   public releaseDate: Date;
   public author: string;
 
-  private topics: string[] = [];
   constructor(
 
   ) {
