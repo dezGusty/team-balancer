@@ -1,10 +1,13 @@
 import { CommonModule } from '@angular/common';
 import { Component, OnInit, Input } from '@angular/core';
-import { NgbTooltipModule } from '@ng-bootstrap/ng-bootstrap';
+// import { NgbTooltipModule } from '@ng-bootstrap/ng-bootstrap';
 import { Player, getDisplayName } from 'src/app/shared/player.model';
 
 @Component({
-  imports: [CommonModule, NgbTooltipModule],
+  imports: [
+    CommonModule
+    //, NgbTooltipModule
+  ],
   selector: 'app-player-mini-card',
   standalone: true,
   styles: [''],

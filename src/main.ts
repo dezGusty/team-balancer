@@ -5,7 +5,7 @@ import { getAuth, provideAuth } from '@angular/fire/auth';
 import { getFirestore, provideFirestore } from '@angular/fire/firestore';
 import { bootstrapApplication } from '@angular/platform-browser';
 import { provideRouter, Routes, withComponentInputBinding, withDebugTracing } from '@angular/router';
-import { NgcCookieConsentConfig, NgcCookieConsentModule } from 'ngx-cookieconsent';
+// import { NgcCookieConsentConfig, NgcCookieConsentModule } from 'ngx-cookieconsent';
 import { AboutComponent } from './app/about/about.component';
 import { AdminComponent } from './app/admin/admin.component';
 import { AppComponent } from './app/app.component';
@@ -35,21 +35,21 @@ if (environment.production) {
   enableProdMode();
 }
 
-const cookieConfig: NgcCookieConsentConfig = {
-  cookie: {
-    domain: environment.cookieConsentDomain // it is mandatory to set a domain, for cookies to work properly (see https://goo.gl/S2Hy2A)
-  },
-  palette: {
-    popup: {
-      background: '#000'
-    },
-    button: {
-      background: '#3CB9FC'
-    }
-  },
-  theme: 'edgeless',
-  type: 'info'
-};
+// const cookieConfig: NgcCookieConsentConfig = {
+//   cookie: {
+//     domain: environment.cookieConsentDomain // it is mandatory to set a domain, for cookies to work properly (see https://goo.gl/S2Hy2A)
+//   },
+//   palette: {
+//     popup: {
+//       background: '#000'
+//     },
+//     button: {
+//       background: '#3CB9FC'
+//     }
+//   },
+//   theme: 'edgeless',
+//   type: 'info'
+// };
 
 
 const appRoutes: Routes = [
@@ -88,7 +88,7 @@ bootstrapApplication(AppComponent, {
     importProvidersFrom(provideFirestore(() => {
       return getFirestore();
     })),
-    importProvidersFrom(NgcCookieConsentModule.forRoot(cookieConfig)),
+    // importProvidersFrom(NgcCookieConsentModule.forRoot(cookieConfig)),
     PlayersService,
     MatchService,
     AuthService,

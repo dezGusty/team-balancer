@@ -8,6 +8,7 @@ It should be applicable to other scenarios where the individuals taking part in 
 
 This project uses Angular as the main development framework.
 Firebase is used to store and access the data.
+!OBSOLETE!
 The [Cookie Consent](https://www.osano.com/cookieconsent) library is used via [ngx-cookieconsent](https://www.npmjs.com/package/ngx-cookieconsent).
 
 ## Development

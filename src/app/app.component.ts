@@ -1,7 +1,7 @@
 import { CommonModule } from '@angular/common';
 import { Component, OnInit, OnDestroy } from '@angular/core';
 import { RouterModule } from '@angular/router';
-import { NgcCookieConsentService, NgcInitializingEvent, NgcStatusChangeEvent, NgcNoCookieLawEvent } from 'ngx-cookieconsent';
+// import { NgcCookieConsentService, NgcInitializingEvent, NgcStatusChangeEvent, NgcNoCookieLawEvent } from 'ngx-cookieconsent';
 import { Subscription } from 'rxjs';
 import { FooterComponent } from './footer/footer.component';
 import { HeaderComponent } from './header/header.component';
@@ -31,46 +31,46 @@ export class AppComponent implements OnInit, OnDestroy {
   title = 'team-balancer';
 
   constructor(
-    private ccService: NgcCookieConsentService
+    // private ccService: NgcCookieConsentService
   ) {
 
   }
 
   ngOnInit() {
     // subscribe to cookieconsent observables to react to main events
-    this.popupOpenSubscription = this.ccService.popupOpen$.subscribe(
-      () => {
-        // you can use this.ccService.getConfig() to do stuff...
-      });
+    // this.popupOpenSubscription = this.ccService.popupOpen$.subscribe(
+    //   () => {
+    //     // you can use this.ccService.getConfig() to do stuff...
+    //   });
 
-    this.popupCloseSubscription = this.ccService.popupClose$.subscribe(
-      () => {
-        // you can use this.ccService.getConfig() to do stuff...
-      });
+    // this.popupCloseSubscription = this.ccService.popupClose$.subscribe(
+    //   () => {
+    //     // you can use this.ccService.getConfig() to do stuff...
+    //   });
 
-    this.initializingSubscription = this.ccService.initializing$.subscribe(
-      (event: NgcInitializingEvent) => {
-        // you can use this.ccService.getConfig() to do stuff...
-      });
-    this.initializedSubscription = this.ccService.initialized$.subscribe(
-      () => {
-        // you can use this.ccService.getConfig() to do stuff...
-      });
+    // this.initializingSubscription = this.ccService.initializing$.subscribe(
+    //   (event: NgcInitializingEvent) => {
+    //     // you can use this.ccService.getConfig() to do stuff...
+    //   });
+    // this.initializedSubscription = this.ccService.initialized$.subscribe(
+    //   () => {
+    //     // you can use this.ccService.getConfig() to do stuff...
+    //   });
 
-    this.statusChangeSubscription = this.ccService.statusChange$.subscribe(
-      (event: NgcStatusChangeEvent) => {
-        // you can use this.ccService.getConfig() to do stuff...
-      });
+    // this.statusChangeSubscription = this.ccService.statusChange$.subscribe(
+    //   (event: NgcStatusChangeEvent) => {
+    //     // you can use this.ccService.getConfig() to do stuff...
+    //   });
 
-    this.revokeChoiceSubscription = this.ccService.revokeChoice$.subscribe(
-      () => {
-        // you can use this.ccService.getConfig() to do stuff...
-      });
+    // this.revokeChoiceSubscription = this.ccService.revokeChoice$.subscribe(
+    //   () => {
+    //     // you can use this.ccService.getConfig() to do stuff...
+    //   });
 
-    this.noCookieLawSubscription = this.ccService.noCookieLaw$.subscribe(
-      (event: NgcNoCookieLawEvent) => {
-        // you can use this.ccService.getConfig() to do stuff...
-      });
+    // this.noCookieLawSubscription = this.ccService.noCookieLaw$.subscribe(
+    //   (event: NgcNoCookieLawEvent) => {
+    //     // you can use this.ccService.getConfig() to do stuff...
+    //   });
   }
 
   ngOnDestroy() {

@@ -11,13 +11,11 @@ import { MatchService } from '../shared/match.service';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { ToastsContainer } from '../toast/toast-container.component';
-import { NgbDropdownModule } from '@ng-bootstrap/ng-bootstrap';
 import { PlayerRoutedCardComponent } from '../players/player/player-routed-card.component';
 @Component({
   imports: [
     CommonModule,
     FormsModule,
-    NgbDropdownModule,
     PlayerRoutedCardComponent,
     ToastsContainer
   ],

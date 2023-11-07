@@ -15,14 +15,14 @@ import { PlayerCardComponent } from 'src/app/player-card/player-card.component';
 import { PlayerFilterPipe } from 'src/app/matches/player-filter.pipe';
 import { FormsModule } from '@angular/forms';
 import { ToastsContainer } from 'src/app/toast/toast-container.component';
-import { NgbTooltipModule } from '@ng-bootstrap/ng-bootstrap';
+// import { NgbTooltipModule } from '@ng-bootstrap/ng-bootstrap';
 
 @Component({
   imports: [
     CommonModule,
     CopyClipboardDirective,
     FormsModule,
-    NgbTooltipModule,
+    // NgbTooltipModule,
     NgFor,
     PlayerCardComponent,
     PlayerFilterPipe,
