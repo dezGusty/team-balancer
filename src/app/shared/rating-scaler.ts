@@ -1,6 +1,5 @@
 import { Injectable } from "@angular/core";
 import { Player } from "./player.model";
-import { ToastService } from "./toasts-service";
 
 @Injectable()
 export class RatingScaler {

@@ -5,8 +5,6 @@ import { CustomPrevGame } from '../shared/custom-prev-game.model';
 import { PlayerChangeInfo } from '../shared/player-change-info';
 import { Player } from '../shared/player.model';
 import { PlayersService } from '../shared/players.service';
-import { RatingScaler } from '../shared/rating-scaler';
-import { RatingSystemSettings } from '../shared/rating-system';
 import { ToastService } from '../shared/toasts-service';
 import { RatingHist } from '../shared/rating-hist.model';
 import { MatchService } from '../shared/match.service';
@@ -35,9 +33,8 @@ export class AdminComponent implements OnInit, OnDestroy {
 
   matchHistory: Map<string, CustomPrevGame> = new Map();
   ratingHistory: Map<string, RatingHist> = new Map();
-  ratingChosen: any;
   loadingConvert = -1;
-  newBranchName: string = '';
+  
 
   private subscriptions: Subscription[] = [];
 
@@ -51,7 +48,6 @@ export class AdminComponent implements OnInit, OnDestroy {
 
   ngOnInit(): void {
     this.players = this.playersSvc.getPlayers();
-    this.currentLabel = this.playersSvc.getCurrentLabel();
     this.subscriptions.push(this.playersSvc.playerDataChangeEvent
       .subscribe(
         (playerChangeInfo: PlayerChangeInfo | undefined) => {
@@ -125,71 +121,5 @@ export class AdminComponent implements OnInit, OnDestroy {
       this.matchHistory = await this.matchesSvc.getMatchListAsync();
     }
   }
-
-  changeAction(obj: any) {
-    this.ratingChosen = obj;
-    console.log('Chosen rating key', this.ratingChosen.key);
-    const data: RatingHist | undefined = this.ratingHistory.get(this.ratingChosen.key);
-    if (!data) {
-      return
-    }
-    this.players = data.players;
-    console.log('players', this.players);
-  }
-
-  async onNewBranchClicked($event: any) {
-    this.loadingConvert = 1;
-    let branchToEdit = this.ratingChosen.key;
-
-    if (this.newBranchName) {
-      branchToEdit = branchToEdit.slice(0, 10) + '_' + this.newBranchName;
-    }
-
-    const oldPlayerList: Player[] = this.ratingChosen.value.players;
-
-    // Perform a backup of the old ratings.
-    await this.playersSvc.savePlayersToListAsync(oldPlayerList, branchToEdit + '_bck');
-
-    const oldMinRating = Math.min(...oldPlayerList.map(x => x.rating)).toFixed(2);
-    const oldMaxRating = Math.max(...oldPlayerList.map(x => x.rating)).toFixed(2);
-
-    let scaledPlayers: Player[] = RatingScaler.rescalePlayerRatings(
-      oldPlayerList,
-      RatingSystemSettings.GetExpectedLowerEndRating(),
-      RatingSystemSettings.GetExpectedUpperEndRating(), false);
-    const newMinRating = Math.min(...scaledPlayers.map(x => x.rating)).toFixed(2);
-    const newMaxRating = Math.max(...scaledPlayers.map(x => x.rating)).toFixed(2);
-
-    let messageToShow: string = 'Rating systems scale: \n'
-      + 'old: ' + ' (' + oldMinRating + '-' + oldMaxRating + ')\n'
-      + 'new:'  + ' (' + newMinRating + '-' + newMaxRating + ')';
-
-    this.toastSvc.show(messageToShow, { delay: 7500 });
-    console.log(messageToShow);
-
-
-    await this.playersSvc.savePlayersToListAsync(scaledPlayers, 'current');
-
-    this.loadingConvert = 0;
-  }
-
-  async storeRatingForPlayersInMatch($event: any) {
-    if (!this.ratingChosen) {
-      return;
-    }
-
-    this.loadingConvert = 1;
-    const matchKey = this.matchesSvc.getMatchDateFromRatingDateWithLabel(this.ratingChosen.key);
-    const gameObj: CustomPrevGame | undefined = await this.matchesSvc.getMatchForDateAsync(matchKey);
-
-    if (!gameObj) {
-      return;
-    }
-
-    await this.playersSvc.storeRecentMatchToParticipantsHistoryAsync(gameObj, matchKey);
-
-    this.loadingConvert = 0;
-    return;
-
-  }
+  
 }
