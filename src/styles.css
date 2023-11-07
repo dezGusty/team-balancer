@@ -492,3 +492,18 @@ a.player-card-grad:hover {
   border-style: solid;
   border-color: var(--gus-secondary-bck);
 }
+
+.history-grid {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  grid-template-rows: 1fr;
+  grid-template-areas: "left right";
+}
+
+.history-grid-left {
+  grid-area: left;
+}
+
+.history-grid-right {
+  grid-area: right;
+}

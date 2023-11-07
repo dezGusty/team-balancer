@@ -14,26 +14,6 @@ export class MatchService {
 
   private dataChangeSubscription: Subscription = Subscription.EMPTY;
 
-  public recentMatches$ = docData(doc(this.firestore, 'matches/recent')).pipe(
-      tap(recentMatchesDocContents => {
-        console.log("*** " + recentMatchesDocContents);
-      }),
-      switchMap(recentMatchesDocContents => {
-        const castedItem = recentMatchesDocContents as { items: string[] };
-        const matchList = castedItem.items;
-        console.log('recentMatches$', matchList);
-        const matchList$ = matchList.map(
-          matchName => {
-            const docRef = doc(this.firestore, 'matches/' + matchName);
-            return docData(docRef);
-          }
-        );
-        return matchList$;
-      }),
-      shareReplay(1),
-      catchError(this.handleError)
-    );
-
   private recentMatchesChangeEvent = new BehaviorSubject<string[]>([]);
   private recentMatchNames: string[];
   public maxNumberOfRecentMatches = 5;
@@ -92,14 +72,6 @@ export class MatchService {
 
     // Firestore document to subscribe to.
     const docRef = doc(this.firestore, 'matches/recent');
-
-    this.recentMatches$ = docData(docRef).pipe(
-      tap(recentMatchesDocContents => {
-        console.log("*** " + recentMatchesDocContents);
-      }),
-      shareReplay(1),
-      catchError(this.handleError)
-    );
 
     this.recentMatchNames = [...this.recentMatchNames];
     this.recentMatchesChangeEvent.next(this.recentMatchNames);
