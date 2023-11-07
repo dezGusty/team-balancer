@@ -1,11 +1,14 @@
 import { CommonModule } from '@angular/common';
 import { Component, OnInit } from '@angular/core';
 import { Router, Event, NavigationStart, RouterModule } from '@angular/router';
-import { NgbCollapseModule } from '@ng-bootstrap/ng-bootstrap';
+// import { NgbCollapseModule } from '@ng-bootstrap/ng-bootstrap';
 import { AuthService } from '../auth/auth.service';
 
 @Component({
-  imports: [CommonModule, NgbCollapseModule, RouterModule],
+  imports: [
+    CommonModule
+    //, NgbCollapseModule
+    , RouterModule],
   selector: 'app-header',
   standalone: true,
   templateUrl: './header.component.html',
@@ -31,6 +34,8 @@ export class HeaderComponent implements OnInit {
   }
 
   ngOnInit() {
+    console.log('[header] ngOnInit');
+    
   }
 
   /**

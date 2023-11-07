@@ -1,23 +1,21 @@
-<div class="row justify-content-center">
-  <!-- show the list of players on the left side -->
-  <div class="col-2 left-player-list">
-    <ul>
-      <li *ngFor="
-          let match of getCombinedtMatchDescriptions();
-          let idx = index;
-          let even = even;
-          let odd = odd
-        " (click)="onMatchEntryClicked(idx)" style="cursor: pointer"
-        class="border match-card player-card-grad date-as-calendar vert-calendar gus-hoverable"
-        [class.match-card-active]="idx === this.selectedIndex" [routerLink]="[getSelectedMatch(idx)]">
-        <span class="year">{{match.year}}</span>
-        <span class="month">{{match.month}}</span>
-        <span class="day">{{match.day}}</span>
-      </li>
-    </ul>
-  </div>
-  <!-- show the details panel on the right side -->
-  <div class="col-10 col-sm-9 col-md-7 col-lg-6 right-player-list match-details-right-container">
-    <router-outlet/>
-  </div>
+<div class="align-left-match-list">
+  <ul>
+    @for (match of getCombinedtMatchDescriptions(); track $index) {
+    <li (click)="onMatchEntryClicked($index)" style="cursor: pointer"
+      class="border match-card player-card-grad date-as-calendar vert-calendar gus-hoverable"
+      [class.match-card-active]="$index === this.selectedIndex" [routerLink]="[getSelectedMatch($index)]">
+      <span class="year">{{match.year}}</span>
+      <span class="month">{{match.month}}</span>
+      <span class="day">{{match.day}}</span>
+    </li>
+    }
+
+  </ul>
+</div>
+<br>
+--details--
+<br>
+<!-- show the details panel on the right side -->
+<div class="col-10 col-sm-9 col-md-7 col-lg-6 right-player-list match-details-right-container">
+  <router-outlet />
 </div>

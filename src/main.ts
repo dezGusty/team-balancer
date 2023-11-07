@@ -30,6 +30,7 @@ import { PlayersService } from './app/shared/players.service';
 import { ToastService } from './app/shared/toasts-service';
 import { environment } from './environments/environment';
 import { PrivacyComponent } from './app/auth/privacy/privacy.component';
+import { HistoryComponent } from './app/matchesnew/history/history.component';
 
 if (environment.production) {
   enableProdMode();
@@ -65,6 +66,10 @@ const appRoutes: Routes = [
   {
     path: 'recent', canActivate: [AuthGuard], component: RecentMatchesComponent, children: [
       { path: ':id', component: PrevMatchDetailComponent }
+    ]
+  },
+  {
+    path: 'history', canActivate: [AuthGuard], component: HistoryComponent, children: [
     ]
   },
   { path: 'draft', canActivate: [AuthGuard], component: DraftComponent },

@@ -2,9 +2,10 @@ import { Injectable } from '@angular/core';
 import { CustomPrevGame } from './custom-prev-game.model';
 import { collection, doc, getDoc, getDocs, docData, Firestore, setDoc } from '@angular/fire/firestore';
 import { Player } from './player.model';
-import { BehaviorSubject, Observable, Subscription } from 'rxjs';
+import { BehaviorSubject, Observable, Subscription, catchError, shareReplay, switchMap, tap, throwError } from 'rxjs';
 import { CustomGame } from './custom-game.model';
 import { AuthService } from '../auth/auth.service';
+import { HttpErrorResponse } from '@angular/common/http';
 
 @Injectable({
   providedIn: 'root'
@@ -12,6 +13,26 @@ import { AuthService } from '../auth/auth.service';
 export class MatchService {
 
   private dataChangeSubscription: Subscription = Subscription.EMPTY;
+
+  public recentMatches$ = docData(doc(this.firestore, 'matches/recent')).pipe(
+      tap(recentMatchesDocContents => {
+        console.log("*** " + recentMatchesDocContents);
+      }),
+      switchMap(recentMatchesDocContents => {
+        const castedItem = recentMatchesDocContents as { items: string[] };
+        const matchList = castedItem.items;
+        console.log('recentMatches$', matchList);
+        const matchList$ = matchList.map(
+          matchName => {
+            const docRef = doc(this.firestore, 'matches/' + matchName);
+            return docData(docRef);
+          }
+        );
+        return matchList$;
+      }),
+      shareReplay(1),
+      catchError(this.handleError)
+    );
 
   private recentMatchesChangeEvent = new BehaviorSubject<string[]>([]);
   private recentMatchNames: string[];
@@ -46,17 +67,43 @@ export class MatchService {
     return this.recentMatchNames;
   }
 
+  private handleError(err: HttpErrorResponse): Observable<never> {
+    // in a real world app, we may send the server to some remote logging infrastructure
+    // instead of just logging it to the console
+    let errorMessage: string;
+    if (err.error instanceof ErrorEvent) {
+      // A client-side or network error occurred. Handle it accordingly.
+      errorMessage = `An error occurred: ${err.error.message}`;
+    } else {
+      // The backend returned an unsuccessful response code.
+      // The response body may contain clues as to what went wrong,
+      errorMessage = `Backend returned code ${err.status}: ${err.message}`;
+    }
+    console.error(err);
+    return throwError(() => errorMessage);
+  }
 
   /**
-     * Subscribes to the data sources used by this service.
-     */
+   * Subscribes to the data sources used by this service.
+   * Keeps an observable to the firestore document for recent matches
+   */
   subscribeToDataSources() {
-    console.log('[match-svc] subscribing');
+    console.log('[match-svc] subscribing to recent matches');
+
+    // Firestore document to subscribe to.
+    const docRef = doc(this.firestore, 'matches/recent');
+
+    this.recentMatches$ = docData(docRef).pipe(
+      tap(recentMatchesDocContents => {
+        console.log("*** " + recentMatchesDocContents);
+      }),
+      shareReplay(1),
+      catchError(this.handleError)
+    );
 
     this.recentMatchNames = [...this.recentMatchNames];
     this.recentMatchesChangeEvent.next(this.recentMatchNames);
 
-    const docRef = doc(this.firestore, 'matches/recent');
     this.dataChangeSubscription = docData(docRef).subscribe({
       next: recentMatchesDocContents => {
         const castedItem = recentMatchesDocContents as { items: string[] };

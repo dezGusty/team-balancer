@@ -16,17 +16,25 @@ import { HeaderComponent } from './header/header.component';
   selector: 'app-root',
   standalone: true,
   styles: [''],
-  templateUrl: './app.component.html',
+  template: `
+<div class="main-layout">
+  <app-header />
+  <div class="container-fluid">
+    <router-outlet/>
+  </div>
+  <app-footer/>
+</div>
+`,
 })
 export class AppComponent implements OnInit, OnDestroy {
   // keep refs to subscriptions to be able to unsubscribe later
-  private popupOpenSubscription: Subscription = Subscription.EMPTY;
-  private popupCloseSubscription: Subscription = Subscription.EMPTY;
-  private initializingSubscription: Subscription = Subscription.EMPTY;
-  private initializedSubscription: Subscription = Subscription.EMPTY;
-  private statusChangeSubscription: Subscription = Subscription.EMPTY;
-  private revokeChoiceSubscription: Subscription = Subscription.EMPTY;
-  private noCookieLawSubscription: Subscription = Subscription.EMPTY;
+  // private popupOpenSubscription: Subscription = Subscription.EMPTY;
+  // private popupCloseSubscription: Subscription = Subscription.EMPTY;
+  // private initializingSubscription: Subscription = Subscription.EMPTY;
+  // private initializedSubscription: Subscription = Subscription.EMPTY;
+  // private statusChangeSubscription: Subscription = Subscription.EMPTY;
+  // private revokeChoiceSubscription: Subscription = Subscription.EMPTY;
+  // private noCookieLawSubscription: Subscription = Subscription.EMPTY;
 
   title = 'team-balancer';
 
@@ -75,13 +83,13 @@ export class AppComponent implements OnInit, OnDestroy {
 
   ngOnDestroy() {
     // unsubscribe to cookieconsent observables to prevent memory leaks
-    this.popupOpenSubscription.unsubscribe();
-    this.popupCloseSubscription.unsubscribe();
-    this.initializedSubscription.unsubscribe();
-    this.initializingSubscription.unsubscribe();
-    this.statusChangeSubscription.unsubscribe();
-    this.revokeChoiceSubscription.unsubscribe();
-    this.noCookieLawSubscription.unsubscribe();
+    // this.popupOpenSubscription.unsubscribe();
+    // this.popupCloseSubscription.unsubscribe();
+    // this.initializedSubscription.unsubscribe();
+    // this.initializingSubscription.unsubscribe();
+    // this.statusChangeSubscription.unsubscribe();
+    // this.revokeChoiceSubscription.unsubscribe();
+    // this.noCookieLawSubscription.unsubscribe();
   }
 }
 

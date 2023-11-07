@@ -4,11 +4,6 @@
       <button type="button" class="btn btn-sm btn-outline-gus btn-grad-gusty mr-2 mt-2" 
         #copyToClipBtn
         placement="top"
-        #ttip="ngbTooltip"
-        ngbTooltip="Copied to clipboard..."
-        [autoClose]="true"
-        [closeDelay]="1000"
-        triggers="click:blur"
         [copy-clipboard]="customClipTextToClip()" (copied)="notifyCpy($event)"
         (click)="onCopyClicked();"><span class="align-self-center"><img
             src="./../../../assets/clippy.svg"></span></button>

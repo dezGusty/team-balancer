@@ -9,10 +9,13 @@
       aria-label="Toggle navigation">
       <span class="navbar-toggler-icon"></span>
     </button>
-    <div class="collapse navbar-collapse" id="navbarNavDropdown" [ngbCollapse]="this.isCollapsed">
+    <div class="collapse navbar-collapse" id="navbarNavDropdown">
       <ul class="navbar-nav flex-row flex-wrap">
         <li routerLinkActive="active" class="nav-item col-6 col-md-auto" *ngIf="isAuthenticatedAsUser()">
-          <a class="nav-link" routerLink="/recent">Recent Matches</a>
+          <a class="nav-link" routerLink="/recent">Recent Games</a>
+        </li>
+        <li routerLinkActive="active" class="nav-item col-6 col-md-auto" *ngIf="isAuthenticatedAsUser()">
+          <a class="nav-link" routerLink="/history">Recent Matches (NEW)</a>
         </li>
         <li routerLinkActive="active" class="nav-item col-6 col-md-auto" *ngIf="isAuthenticatedAsUser()">
           <a class="nav-link" routerLink="/draft">Draft</a>
@@ -20,11 +23,11 @@
         <li routerLinkActive="active" class="nav-item col-6 col-md-auto" *ngIf="isAuthenticatedAsUser()">
           <a class="nav-link" routerLink="/players">Players</a>
         </li>
-        <li routerLinkActive="active" class="nav-item col-6 col-md-auto" *ngIf="isAuthenticatedAsOrganizer()">
-          <a class="nav-link" routerLink="/custom">Custom Game</a>
-        </li>
         <li routerLinkActive="active" class="nav-item col-6 col-md-auto" *ngIf="isAuthenticatedAsAdmin()">
           <a class="nav-link" routerLink="/admin">Admin</a>
+        </li>
+        <li routerLinkActive="active" class="nav-item col-6 col-md-auto" *ngIf="isAuthenticatedAsOrganizer()">
+          <a class="nav-link" routerLink="/custom">Custom Game</a>
         </li>
         <li routerLinkActive="active" class="nav-item col-6 col-md-auto">
           <a class="nav-link" routerLink="/about">About</a>

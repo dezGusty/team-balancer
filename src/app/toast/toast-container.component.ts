@@ -1,15 +1,19 @@
 import { NgFor, NgIf, NgTemplateOutlet } from '@angular/common';
 import { Component, TemplateRef } from '@angular/core';
-import { NgbToastModule } from '@ng-bootstrap/ng-bootstrap';
+// import { NgbToastModule } from '@ng-bootstrap/ng-bootstrap';
 import { ToastService } from '../shared/toasts-service';
 
 
 @Component({
-  imports: [NgbToastModule, NgIf, NgFor, NgTemplateOutlet],
+  imports: [
+    // NgbToastModule, 
+    NgIf, 
+    NgFor, 
+    NgTemplateOutlet],
   selector: 'app-toasts',
   standalone: true,
   template: `
-    <ngb-toast
+    <!-- <ngb-toast
       *ngFor="let toast of toastService.toasts"
       [class]="toast.classname"
       [autohide]="true"
@@ -22,7 +26,7 @@ import { ToastService } from '../shared/toasts-service';
       </ng-template>
 
       <ng-template #text>{{ toast.textOrTpl }}</ng-template>
-    </ngb-toast>
+    </ngb-toast> -->
   `,
   host: { 'class': 'toast-container end-0 p-3', 'style': 'position: fixed; z-index: 1200; top: auto; bottom: 5vh; right: 5rem;' }
 })

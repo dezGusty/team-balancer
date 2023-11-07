@@ -15,8 +15,7 @@
       {{ player?.rating | number:'1.1-2' }}
     </div>
     <div class="d-flex flex-row-reverse">
-      <span *ngFor="let recentRating of this.getRecentMatches()" [ngClass]="this.getDisplayClassForRating(recentRating)"
-        ngbTooltip={{this.getDisplayTooltipForRating(recentRating)}}>
+      <span *ngFor="let recentRating of this.getRecentMatches()" [ngClass]="this.getDisplayClassForRating(recentRating)">
         {{ this.getDisplayTextForRating(recentRating) }}</span>
     </div>
   </div>
