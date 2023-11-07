@@ -466,3 +466,29 @@ a.player-card-grad:hover {
   order: 4;
   font-size: 0.87750em;
 }
+
+.match-card {
+  margin: 1.5em 0em;
+  padding: 0.5em 0em;
+  list-style-type: none;
+  text-align: center;
+  cursor: pointer;
+
+}
+
+.match-card-active {
+  /* background: linear-gradient(135deg, #3CB9FC 0%,#3CB9FC 67%,rgb(90, 157, 194) 100%); */
+  /* background: #3CB9FC; */
+  background: linear-gradient(135deg, #511a85 0%,#541b8a 67%,rgb(95, 31, 128) 100%);
+  color: white;
+}
+
+.match-card-active:hover {
+  background: linear-gradient(135deg, #8A2Be2 0%,#8A2Be2 67%,rgb(181, 55, 242) 100%);
+}
+
+.gus-border {
+  border-width: 1px;
+  border-style: solid;
+  border-color: var(--gus-secondary-bck);
+}

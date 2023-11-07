@@ -3,6 +3,7 @@ import { Injectable } from '@angular/core';
 import { Firestore, docData } from '@angular/fire/firestore';
 import { doc } from 'firebase/firestore';
 import { BehaviorSubject, Observable, Subscription, catchError, map, shareReplay, switchMap, tap, throwError } from 'rxjs';
+import { MatchHistoryTitle } from '../match-history.title';
 
 @Injectable({
   providedIn: 'root'
@@ -13,32 +14,28 @@ export class MatchHistService {
   }
 
   public recentMatches$ = docData(doc(this.firestore, 'matches/recent')).pipe(
-    tap(recentMatchesDocContents => {
-      console.log("*** " + recentMatchesDocContents);
-    }),
     map(recentMatchesDocContents => {
-      console.log('*** recentMatchesDocContents', recentMatchesDocContents);
       const castedItem = recentMatchesDocContents as { items: string[] };
-      console.log('*** castedItem', castedItem.items);
-      console.dir(castedItem.items);
-      return castedItem.items;
+      // Individual string entries are obtained in strings in the YYYY-MM-DD format.
+      // Map each entry to an object of the type MatchHistoryTitle (with the year, month, and day properties).
+      const matchHistoryTitles = castedItem.items.map((entry) => {
+        const [year, month, day] = entry.split('-');
+        return { title: entry, year, month, day } as MatchHistoryTitle;
+      });
+      return matchHistoryTitles;
     }),
-
     shareReplay(1),
     catchError(this.handleError)
   );
 
 
   private handleError(err: HttpErrorResponse): Observable<never> {
-    // in a real world app, we may send the server to some remote logging infrastructure
-    // instead of just logging it to the console
     let errorMessage: string;
     if (err.error instanceof ErrorEvent) {
-      // A client-side or network error occurred. Handle it accordingly.
+      // Client-side or network error.
       errorMessage = `An error occurred: ${err.error.message}`;
     } else {
-      // The backend returned an unsuccessful response code.
-      // The response body may contain clues as to what went wrong,
+      // Some backend error.
       errorMessage = `Backend returned code ${err.status}: ${err.message}`;
     }
     console.error(err);

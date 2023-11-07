@@ -13,8 +13,10 @@ import { MatchHistService } from './data-access/match-hist.service';
 <ul>
     @for (matchData of this.recentMatches$ | async; track $index) {
     <li (click)="onMatchEntryClicked($index)"
-      class="border match-card player-card-grad date-as-calendar vert-calendar gus-hoverable">
-      {{matchData}}
+      class="gus-border match-card player-card-grad date-as-calendar vert-calendar gus-hoverable">
+      <span class="year">{{matchData.year}}</span>
+      <span class="month">{{matchData.month}}</span>
+      <span class="day">{{matchData.day}}</span>
     </li>
     } @empty {
       <li>No recent matches.</li>
@@ -31,7 +33,7 @@ import { MatchHistService } from './data-access/match-hist.service';
       <li>No recent matches.</li>
     }
   </ul>`,
-  styles: ['']
+  styles: [`ul { margin: 0em; padding: 0em; }`]
 })
 export class HistoryComponent {
 
