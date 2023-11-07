@@ -2,13 +2,13 @@ import { HttpErrorResponse } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Firestore, docData } from '@angular/fire/firestore';
 import { doc } from 'firebase/firestore';
-import { BehaviorSubject, Observable, Subscription, catchError, shareReplay, switchMap, tap, throwError } from 'rxjs';
+import { BehaviorSubject, Observable, Subscription, catchError, map, shareReplay, switchMap, tap, throwError } from 'rxjs';
 
 @Injectable({
   providedIn: 'root'
 })
 export class MatchHistService {
-  
+
   constructor(private firestore: Firestore) {
   }
 
@@ -16,20 +16,14 @@ export class MatchHistService {
     tap(recentMatchesDocContents => {
       console.log("*** " + recentMatchesDocContents);
     }),
-    switchMap(recentMatchesDocContents => {
+    map(recentMatchesDocContents => {
       console.log('*** recentMatchesDocContents', recentMatchesDocContents);
       const castedItem = recentMatchesDocContents as { items: string[] };
-      const matchList = castedItem.items;
-      console.log('*** recentMatches$', matchList);
-      // const matchList$ = matchList.map(
-      //   matchName => {
-      //     const docRef = doc(this.firestore, 'matches/' + matchName);
-      //     return docData(docRef);
-      //   }
-      // );
-      // return matchList$;
-      return matchList;
+      console.log('*** castedItem', castedItem.items);
+      console.dir(castedItem.items);
+      return castedItem.items;
     }),
+
     shareReplay(1),
     catchError(this.handleError)
   );
