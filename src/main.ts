@@ -31,6 +31,7 @@ import { ToastService } from './app/shared/toasts-service';
 import { environment } from './environments/environment';
 import { PrivacyComponent } from './app/auth/privacy/privacy.component';
 import { HistoryComponent } from './app/matchesnew/history/history.component';
+import { MatchDetailsComponent } from './app/matchesnew/details/details.component';
 
 if (environment.production) {
   enableProdMode();
@@ -70,6 +71,7 @@ const appRoutes: Routes = [
   },
   {
     path: 'history', canActivate: [AuthGuard], component: HistoryComponent, children: [
+      { path: ':id', component: MatchDetailsComponent }
     ]
   },
   { path: 'draft', canActivate: [AuthGuard], component: DraftComponent },

@@ -3,7 +3,6 @@ import { CommonModule } from '@angular/common';
 import { MatchHistService } from './data-access/match-hist.service';
 import { MatchHistoryTitle } from './match-history.title';
 import { RouterModule } from '@angular/router';
-import { tap } from 'rxjs';
 import { SmallLoadingSpinnerComponent } from "../../ui/small-loading-spinner/small-loading-spinner.component";
 
 @Component({
@@ -12,15 +11,16 @@ import { SmallLoadingSpinnerComponent } from "../../ui/small-loading-spinner/sma
     template: `
 <div class="history-grid">
   <div class="history-grid-left">
-    @if (this.isFetchingData) {
+    @if (this.isFetchingData()) {
       <app-small-loading-spinner></app-small-loading-spinner>
     }
     <div>new (WIP!) history</div>
     <ul>
       @for (matchData of this.recentMatchNames$ | async; track $index) {
         <li (click)="onMatchEntryClicked(matchData)"
-        [class.match-card-active]="matchData.title === this.selectedMatchName"
-        class="gus-border match-card player-card-grad date-as-calendar vert-calendar gus-hoverable">
+        class="gus-border match-card player-card-grad date-as-calendar vert-calendar gus-hoverable"
+        [class.match-card-active]="matchData?.title === (this.selectedMatch$ | async)?.title"
+        >
         <span class="year">{{matchData.year}}</span>
         <span class="month">{{matchData.month}}</span>
         <span class="day">{{matchData.day}}</span>
@@ -45,14 +45,12 @@ import { SmallLoadingSpinnerComponent } from "../../ui/small-loading-spinner/sma
 })
 export class HistoryComponent {
 
-  public recentMatchNames$ = this.matchSvc.recentMatches$.pipe(
-    tap((recentMatches) => { this.isFetchingData = false; })
-  );
-  public isFetchingData: boolean = true;
+  public recentMatchNames$ = this.matchSvc.recentMatches$;
+  
+  public selectedMatch$ = this.matchSvc.selectedMatch$;
 
 
 
-  public selectedMatchName: string | undefined;
   // public selectedMatchDetails$;
   // public matchesSignal = toSignal(this.matchSvc.recentMatches$);
 
@@ -64,10 +62,13 @@ export class HistoryComponent {
 
 
   onMatchEntryClicked(item: MatchHistoryTitle) {
-    this.selectedMatchName = item.title;
     this.matchSvc.selectedMatchSubject.next(item.title);
     console.log('match entry clicked', item);
     // console.log('match entry clicked', +$event);
+  }
+
+  isFetchingData() {
+    return this.matchSvc.isFetchingData();
   }
 
 }

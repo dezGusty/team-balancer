@@ -2,7 +2,7 @@ import { HttpErrorResponse } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Firestore, docData } from '@angular/fire/firestore';
 import { doc } from 'firebase/firestore';
-import { BehaviorSubject, Observable, Subject, Subscription, catchError, map, shareReplay, switchMap, tap, throwError } from 'rxjs';
+import { BehaviorSubject, Observable, Subject, Subscription, catchError, combineLatest, map, shareReplay, switchMap, tap, throwError } from 'rxjs';
 import { MatchHistoryTitle } from '../match-history.title';
 import { CustomPrevGame } from 'src/app/shared/custom-prev-game.model';
 
@@ -29,8 +29,31 @@ export class MatchHistService {
       });
       return matchHistoryTitles;
     }),
+    tap((_) => { this.flagFetchingData = false; }),
     shareReplay(1),
     catchError(this.handleError)
+  );
+
+  private flagFetchingData: boolean = true;
+  public isFetchingData(): boolean {
+    return this.flagFetchingData;
+  }
+
+  // Store an observable for the selected match entry from the recent matches list.
+  selectedMatch$ = combineLatest([
+    this.recentMatches$,
+    this.selectedMatchAction$
+  ]).pipe(
+    map(([recentMatches, selectedMatch]) => {
+      return recentMatches.find((match) => match.title === selectedMatch);
+    }
+    )
+    ,
+    tap((selectedMatch) => {
+      console.log('** selected match', selectedMatch);
+    }
+    ),
+    shareReplay(1)
   );
 
 
