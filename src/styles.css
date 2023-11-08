@@ -507,3 +507,42 @@ a.player-card-grad:hover {
 .history-grid-right {
   grid-area: right;
 }
+
+.score{
+  font-weight: 700;
+}
+
+.gus-list {
+  padding: 0.5em 0.1em;
+  list-style: none;
+}
+
+.gus-list-item::before {
+  content: "👨";
+}
+
+.gus-list-item-name {
+  font-weight: 700;
+}
+
+.gus-list-item-rating {
+  padding-left: 0.3em;
+  color: var(--standard-secondary-text-color);
+}
+
+.gus-list-item-diff {
+  padding-left: 0.3em;
+  font-style: italic;
+}
+
+.good-num {
+  color: rgb(129, 218, 129);
+}
+
+.good-num::before{
+  content: "+";
+}
+
+.bad-num {
+  color: rgb(212, 100, 100);
+}

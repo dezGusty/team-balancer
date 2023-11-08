@@ -2,7 +2,7 @@ import { HttpErrorResponse } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Firestore, docData } from '@angular/fire/firestore';
 import { doc } from 'firebase/firestore';
-import { BehaviorSubject, Observable, Subject, Subscription, catchError, combineLatest, map, shareReplay, switchMap, tap, throwError } from 'rxjs';
+import { BehaviorSubject, Observable, Subject, Subscription, catchError, combineLatest, map, share, shareReplay, switchMap, tap, throwError } from 'rxjs';
 import { MatchHistoryTitle } from '../match-history.title';
 import { CustomPrevGame } from 'src/app/shared/custom-prev-game.model';
 
@@ -12,8 +12,12 @@ import { CustomPrevGame } from 'src/app/shared/custom-prev-game.model';
 export class MatchHistService {
 
   public selectedMatchSubject = new Subject<string>();
-  public selectedMatchAction$ = this.selectedMatchSubject.asObservable();
-  // selectedMatchAction$ = signal(this.selectedMatchSubject);
+  public selectedMatchAction$ = this.selectedMatchSubject.asObservable().pipe(
+    tap(_ => {
+      console.log('** selected match action');
+      this.flagFetchingDetails = true;
+    }),
+  );
 
   constructor(private firestore: Firestore) {
   }
@@ -39,6 +43,11 @@ export class MatchHistService {
     return this.flagFetchingData;
   }
 
+  private flagFetchingDetails: boolean = false;
+  public isFetchingDetails(): boolean {
+    return this.flagFetchingDetails;
+  }
+
   // Store an observable for the selected match entry from the recent matches list.
   selectedMatch$ = combineLatest([
     this.recentMatches$,
@@ -47,13 +56,28 @@ export class MatchHistService {
     map(([recentMatches, selectedMatch]) => {
       return recentMatches.find((match) => match.title === selectedMatch);
     }
-    )
-    ,
+    ),
     tap((selectedMatch) => {
       console.log('** selected match', selectedMatch);
-    }
-    ),
+    }),
     shareReplay(1)
+  );
+
+  // Store an observable with the details for the selected match.
+  // Will get the document 'matches/YYYY-MM-DD'
+  selectedMatchDetails$ = this.selectedMatch$.pipe(
+    switchMap((matchTitle) => {
+      return docData(doc(this.firestore, `matches/${matchTitle?.title}`))
+    }),
+    map(matchDocContents => {
+      const castedItem = matchDocContents as CustomPrevGame;
+      this.flagFetchingDetails = false;
+      return castedItem;
+    }),
+    tap(game => {
+      console.log('** selected match details', game);
+      
+    }),
   );
 
 

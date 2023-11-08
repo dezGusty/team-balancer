@@ -12,15 +12,16 @@ import { map } from 'rxjs';
   template: `
 <div class="history-grid">
   <div class="history-grid-left">
+    <div>new (WIP!) history</div>
     @if (this.isFetchingData()) {
       <app-small-loading-spinner></app-small-loading-spinner>
     }
-    <div>new (WIP!) history</div>
     <ul>
       @for (matchData of this.recentMatchNames$ | async; track $index) {
         <li (click)="onMatchEntryClicked(matchData)"
         class="gus-border match-card player-card-grad date-as-calendar vert-calendar gus-hoverable"
         [class.match-card-active]="matchData?.title === (this.selectedMatch$ | async)?.title"
+        [routerLink]="matchData?.title"
         >
         <span class="year">{{matchData.year}}</span>
         <span class="month">{{matchData.month}}</span>
@@ -64,22 +65,15 @@ export class HistoryComponent {
 
   public selectedMatch$ = this.matchSvc.selectedMatch$;
 
-
-
-  // public selectedMatchDetails$;
-  // public matchesSignal = toSignal(this.matchSvc.recentMatches$);
-
   constructor(
     private matchSvc: MatchHistService
   ) {
     console.log('history component constructor');
   }
 
-
   onMatchEntryClicked(item: MatchHistoryTitle) {
     this.matchSvc.selectedMatchSubject.next(item.title);
     console.log('match entry clicked', item);
-    // console.log('match entry clicked', +$event);
   }
 
   isFetchingData() {
