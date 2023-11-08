@@ -1,21 +1,20 @@
-import { Component, signal, ChangeDetectionStrategy } from '@angular/core';
+import { Component, ChangeDetectionStrategy } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { toSignal } from '@angular/core/rxjs-interop';
 import { MatchHistService } from './data-access/match-hist.service';
 import { MatchHistoryTitle } from './match-history.title';
 import { RouterModule } from '@angular/router';
-import { Subject } from 'rxjs';
+import { tap } from 'rxjs';
+import { SmallLoadingSpinnerComponent } from "../../ui/small-loading-spinner/small-loading-spinner.component";
 
 @Component({
-  selector: 'app-history',
-  standalone: true,
-  imports: [
-    CommonModule,
-    RouterModule
-  ],
-  template: `
+    selector: 'app-history',
+    standalone: true,
+    template: `
 <div class="history-grid">
   <div class="history-grid-left">
+    @if (this.isFetchingData) {
+      <app-small-loading-spinner></app-small-loading-spinner>
+    }
     <div>new (WIP!) history</div>
     <ul>
       @for (matchData of this.recentMatchNames$ | async; track $index) {
@@ -36,12 +35,20 @@ import { Subject } from 'rxjs';
   </div>
 </div>
 `,
-  styles: [`ul { margin: 0em; padding: 0em; }`],
-  changeDetection: ChangeDetectionStrategy.OnPush,
+    styles: [`ul { margin: 0em; padding: 0em; }`],
+    changeDetection: ChangeDetectionStrategy.OnPush,
+    imports: [
+        CommonModule,
+        RouterModule,
+        SmallLoadingSpinnerComponent
+    ]
 })
 export class HistoryComponent {
 
-  public recentMatchNames$ = this.matchSvc.recentMatches$;
+  public recentMatchNames$ = this.matchSvc.recentMatches$.pipe(
+    tap((recentMatches) => { this.isFetchingData = false; })
+  );
+  public isFetchingData: boolean = true;
 
 
 
@@ -55,7 +62,7 @@ export class HistoryComponent {
     console.log('history component constructor');
   }
 
- 
+
   onMatchEntryClicked(item: MatchHistoryTitle) {
     this.selectedMatchName = item.title;
     this.matchSvc.selectedMatchSubject.next(item.title);
