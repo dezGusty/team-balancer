@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { ChangeDetectionStrategy, Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { MatchHistService } from '../history/data-access/match-hist.service';
 import { SmallLoadingSpinnerComponent } from "../../ui/small-loading-spinner/small-loading-spinner.component";
@@ -12,8 +12,9 @@ import { CustomPrevGame } from 'src/app/shared/custom-prev-game.model';
     CommonModule,
     SmallLoadingSpinnerComponent
   ],
-  templateUrl: './details.component.html', 
-  styles: ['']
+  templateUrl: './details.component.html',
+  styles: [''],
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class MatchDetailsComponent {
 
@@ -25,9 +26,7 @@ export class MatchDetailsComponent {
     console.log('history component constructor');
   }
 
-  isFetchingDetails() {
-    return this.matchSvc.isFetchingDetails();
-  }
+  isFetchingMatchDetails$ = this.matchSvc.isFetchingMatchDetails$;
 
   getDisplayNameForPlayer(player: Player): string {
     return getDisplayName(player);

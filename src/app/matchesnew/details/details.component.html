@@ -2,13 +2,11 @@
   Details...
 </div>
 
-@if (this.isFetchingDetails()) {
+@if (this.isFetchingMatchDetails$ | async) {
   <app-small-loading-spinner></app-small-loading-spinner>
 }
 
 <div *ngIf="this.selectedMatchDetails$ | async as match">
-  <h2>{{match}}</h2>
-
   <div>
     <div>
       <!-- Date 🗓️: {{matchSearchKey}} -->

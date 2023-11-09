@@ -13,7 +13,8 @@ import { map } from 'rxjs';
 <div class="history-grid">
   <div class="history-grid-left">
     <div>new (WIP!) history</div>
-    @if (this.isFetchingData()) {
+    @if (this.isFetchingMatchList$ | async) {
+      loading...
       <app-small-loading-spinner></app-small-loading-spinner>
     }
     <ul>
@@ -76,8 +77,6 @@ export class HistoryComponent {
     console.log('match entry clicked', item);
   }
 
-  isFetchingData() {
-    return this.matchSvc.isFetchingData();
-  }
+  isFetchingMatchList$ = this.matchSvc.isFetchingMatchList$;
 
 }

@@ -2,7 +2,7 @@ import { HttpErrorResponse } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Firestore, docData } from '@angular/fire/firestore';
 import { doc } from 'firebase/firestore';
-import { BehaviorSubject, Observable, Subject, Subscription, catchError, combineLatest, map, share, shareReplay, switchMap, tap, throwError } from 'rxjs';
+import { BehaviorSubject, Observable, Subject, Subscription, catchError, combineLatest, from, map, share, shareReplay, startWith, switchMap, tap, throwError } from 'rxjs';
 import { MatchHistoryTitle } from '../match-history.title';
 import { CustomPrevGame } from 'src/app/shared/custom-prev-game.model';
 
@@ -14,8 +14,8 @@ export class MatchHistService {
   public selectedMatchSubject = new Subject<string>();
   public selectedMatchAction$ = this.selectedMatchSubject.asObservable().pipe(
     tap(_ => {
-      console.log('** selected match action');
-      this.flagFetchingDetails = true;
+      console.log('** will fetch some match details');
+      this.fetchingMatchDetails$.next(true);
     }),
   );
 
@@ -33,20 +33,16 @@ export class MatchHistService {
       });
       return matchHistoryTitles;
     }),
-    tap((_) => { this.flagFetchingData = false; }),
+    tap((_) => { this.fetchingMatchList$.next(false); }),
     shareReplay(1),
     catchError(this.handleError)
   );
 
-  private flagFetchingData: boolean = true;
-  public isFetchingData(): boolean {
-    return this.flagFetchingData;
-  }
+  private fetchingMatchList$ = new BehaviorSubject<boolean>(true);
+  public readonly isFetchingMatchList$ = this.fetchingMatchList$.asObservable();
 
-  private flagFetchingDetails: boolean = false;
-  public isFetchingDetails(): boolean {
-    return this.flagFetchingDetails;
-  }
+  private fetchingMatchDetails$ = new BehaviorSubject<boolean>(false);
+  public readonly isFetchingMatchDetails$ = this.fetchingMatchDetails$.asObservable();
 
   // Store an observable for the selected match entry from the recent matches list.
   selectedMatch$ = combineLatest([
@@ -71,12 +67,11 @@ export class MatchHistService {
     }),
     map(matchDocContents => {
       const castedItem = matchDocContents as CustomPrevGame;
-      this.flagFetchingDetails = false;
+      this.fetchingMatchDetails$.next(false);
       return castedItem;
     }),
     tap(game => {
       console.log('** selected match details', game);
-      
     }),
   );
 
