@@ -1,44 +1,52 @@
-<header class="header navbar navbar-expand-md navbar-dark bd-navbar nav-grad-gus">
-  <nav class="container-xxl flex-wrap flex-md-nowrap" aria-label="Navigation">
-    <!--sticky-top-->
-    <a class="navbar-brand align-self-center navbar-gus-title" height="40rem" routerLink="/about">TFL
-      <span><img rel="preload" class="align-self-center" src="./../../assets/gusball_logo_256.webp" height="40rem"
-          alt=""></span></a>
-    <button class="navbar-toggler" type="button" (click)="this.isCollapsed = !this.isCollapsed" data-toggle="collapse"
-      data-target="#navbarNavDropdown" [attr.aria-expanded]="!this.isCollapsed" aria-controls="navbarNavDropdown"
-      aria-label="Toggle navigation">
-      <span class="navbar-toggler-icon"></span>
-    </button>
-    <div class="collapse navbar-collapse" id="navbarNavDropdown">
-      <ul class="navbar-nav flex-row flex-wrap">
-        <li routerLinkActive="active" class="nav-item col-6 col-md-auto" *ngIf="isAuthenticatedAsUser()">
-          <a class="nav-link" routerLink="/recent">Recent Games</a>
-        </li>
-        <li routerLinkActive="active" class="nav-item col-6 col-md-auto" *ngIf="isAuthenticatedAsUser()">
-          <a class="nav-link" routerLink="/history">Recent Matches (NEW)</a>
-        </li>
-        <li routerLinkActive="active" class="nav-item col-6 col-md-auto" *ngIf="isAuthenticatedAsUser()">
-          <a class="nav-link" routerLink="/draft">Draft</a>
-        </li>
-        <li routerLinkActive="active" class="nav-item col-6 col-md-auto" *ngIf="isAuthenticatedAsUser()">
-          <a class="nav-link" routerLink="/players">Players</a>
-        </li>
-        <li routerLinkActive="active" class="nav-item col-6 col-md-auto" *ngIf="isAuthenticatedAsAdmin()">
-          <a class="nav-link" routerLink="/admin">Admin</a>
-        </li>
-        <li routerLinkActive="active" class="nav-item col-6 col-md-auto" *ngIf="isAuthenticatedAsOrganizer()">
-          <a class="nav-link" routerLink="/custom">Custom Game</a>
-        </li>
-        <li routerLinkActive="active" class="nav-item col-6 col-md-auto">
-          <a class="nav-link" routerLink="/about">About</a>
-        </li>
+<header class="header nav">
+  <input type="checkbox" id="nav-check" placeholder="-">
+  <div class="nav-header">
+    <div class="nav-title">
+      <!-- <a class="navbar-gus-title" height="40rem" routerLink="/about">TFL -->
+      TFL
+      <span><img rel="preload" src="./../../assets/gusball_logo_256.webp" height="40rem" alt=""></span>
+      <!-- </a> -->
+    </div>
+  </div>
 
-      </ul>
-      <ul class="navbar-nav navbar-right">
-        <li routerLinkActive="active" class="nav-item" *ngIf="!this.isAuthenticated()">
+  <div class="nav-btn">
+    <label for="nav-check">
+      <span></span>
+      <span></span>
+      <span></span>
+    </label>
+  </div>
+
+  <div class="nav-links">
+    @if(isAuthenticatedAsUser()){
+    <a class="nav-link" routerLink="/recent">Recent Games</a>
+    <a class="nav-link" routerLink="/history">Recent Matches (NEW)</a>
+    <a class="nav-link" routerLink="/draft">Draft</a>
+    <a class="nav-link" routerLink="/players">Players</a>
+    }
+    @if(isAuthenticatedAsAdmin()){
+    <a class="nav-link" routerLink="/admin">Admin</a>
+    }
+    @if(isAuthenticatedAsOrganizer()){
+    <a class="nav-link" routerLink="/custom">Custom Game</a>
+    }
+    <a class="nav-link" routerLink="/about">About</a>
+    @if(this.isAuthenticated()) {
+    <a class="nav-link" (click)="onSignoutBtnClick();" style="cursor: pointer">Sign out</a>
+    }@else{
+    <a class="nav-link" routerLink="/signin">Sign in</a>
+    }
+  </div>
+
+  <nav aria-label="Navigation">
+    <!--sticky-top-->
+
+    <div id="navbarNavDropdown">
+      <ul>
+        <li routerLinkActive="active" class="" *ngIf="!this.isAuthenticated()">
           <a class="nav-link" routerLink="/signin">Sign in</a>
         </li>
-        <li routerLinkActive="active" class="nav-item" *ngIf="this.isAuthenticated()">
+        <li routerLinkActive="active" class="" *ngIf="this.isAuthenticated()">
           <a class="nav-link" (click)="onSignoutBtnClick();" style="cursor: pointer">Sign out</a>
         </li>
       </ul>

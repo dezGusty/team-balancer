@@ -5,13 +5,14 @@ import { MatchHistoryTitle } from './match-history.title';
 import { RouterModule } from '@angular/router';
 import { SmallLoadingSpinnerComponent } from "../../ui/small-loading-spinner/small-loading-spinner.component";
 import { map } from 'rxjs';
+import { MatchDetailsComponent } from '../details/details.component';
 
 @Component({
   selector: 'app-history',
   standalone: true,
   template: `
-<div class="history-grid">
-  <div class="history-grid-left">
+<div class="history-area">
+  <div class="history-left-outline">
     <div>new (WIP!) history</div>
     @if (this.isFetchingMatchList$ | async) {
       loading...
@@ -33,14 +34,13 @@ import { map } from 'rxjs';
     }
     </ul>
   </div>
-  <div class="history-grid-right">
-    <router-outlet />
-  </div>
+  <app-details />
 </div>
 `,
   styles: [`ul { margin: 0em; padding: 0em; }`],
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
+    MatchDetailsComponent,
     CommonModule,
     RouterModule,
     SmallLoadingSpinnerComponent
