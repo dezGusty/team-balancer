@@ -34,11 +34,11 @@
 
     <div class="row mx-0">
       <div class="col-6 input-group-lg">
-        <input type="number" class="form-control" name="team1Score" id="team1Score" [(ngModel)]="this.team1Score"
+        <input aria-label="t1 score" type="number" class="form-control" name="team1Score" id="team1Score" [(ngModel)]="this.team1Score"
           #team1ScoreEntry="ngModel" [attr.disabled]="!this.canChangeScore()? '' : null">
       </div>
       <div class="col-6 input-group-lg">
-        <input type="number" class="form-control" name="team2Score" id="team2Score" [(ngModel)]="this.team2Score"
+        <input aria-label="t2 score" type="number" class="form-control" name="team2Score" id="team2Score" [(ngModel)]="this.team2Score"
           #team2ScoreEntry="ngModel" [attr.disabled]="!this.canChangeScore()? '' : null">
       </div>
     </div>
