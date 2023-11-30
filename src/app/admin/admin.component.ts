@@ -1,4 +1,4 @@
-import { Component, OnDestroy, OnInit } from '@angular/core';
+import { ChangeDetectionStrategy, Component, OnDestroy, OnInit } from '@angular/core';
 import { Subscription } from 'rxjs/internal/Subscription';
 import { AuthService } from '../auth/auth.service';
 import { CustomPrevGame } from '../shared/custom-prev-game.model';
@@ -12,6 +12,7 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { ToastsContainer } from '../toast/toast-container.component';
 import { PlayerRoutedCardComponent } from '../players/player/player-routed-card.component';
+import { UserAuthService } from '../auth/user-auth.service';
 @Component({
   imports: [
     CommonModule,
@@ -21,10 +22,23 @@ import { PlayerRoutedCardComponent } from '../players/player/player-routed-card.
   ],
   selector: 'app-admin',
   standalone: true,
-  styles: [''],
+  styles: [`
+.profile-pic {
+  width: 42px;
+  height: 42px;
+  border-radius: 50%;
+  object-fit: cover;
+  object-position: center;
+}
+`],
   templateUrl: './admin.component.html',
+  changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class AdminComponent implements OnInit, OnDestroy {
+
+  user$ = this.userAuthService.loggedInUser$;
+
+  dataRetrieval$ = this.userAuthService.dataRetrieval$;
 
   currentLabel: string = "";
   players: Player[] = [];
@@ -32,7 +46,7 @@ export class AdminComponent implements OnInit, OnDestroy {
   matchHistory: Map<string, CustomPrevGame> = new Map();
   ratingHistory: Map<string, RatingHist> = new Map();
   loadingConvert = -1;
-  
+
 
   private subscriptions: Subscription[] = [];
 
@@ -40,7 +54,8 @@ export class AdminComponent implements OnInit, OnDestroy {
     private authSvc: AuthService,
     private playersSvc: PlayersService,
     private matchesSvc: MatchService,
-    private toastSvc: ToastService) {
+    private toastSvc: ToastService,
+    private userAuthService: UserAuthService) {
 
   }
 
@@ -119,5 +134,12 @@ export class AdminComponent implements OnInit, OnDestroy {
       this.matchHistory = await this.matchesSvc.getMatchListAsync();
     }
   }
-  
+
+  onTestLoginClick($event: any) {
+    this.userAuthService.doGoogleLogin();
+  }
+
+  onOtherLoginClick($event: any) {
+    this.userAuthService.doOtherGoogleLogin();
+  }
 }

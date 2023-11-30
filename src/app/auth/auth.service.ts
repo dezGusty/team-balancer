@@ -24,7 +24,7 @@ export class AuthService {
         @Optional() private auth: Auth,
         private appStorage: AppStorage) {
 
-        console.log('[auth-alt] ctor');
+        console.log('[auth-svc] ctor');
         this.token = this.appStorage.getAppStorageItem('token');
         if (this.appStorage.cacheUserData) {
             const tempCacheData = this.appStorage.getAppStorageItem('user');

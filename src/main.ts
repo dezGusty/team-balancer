@@ -32,6 +32,7 @@ import { environment } from './environments/environment';
 import { PrivacyComponent } from './app/auth/privacy/privacy.component';
 import { HistoryComponent } from './app/matchesnew/history/history.component';
 import { MatchDetailsComponent } from './app/matchesnew/details/details.component';
+import { UserAuthService } from './app/auth/user-auth.service';
 
 if (environment.production) {
   enableProdMode();
@@ -99,6 +100,7 @@ bootstrapApplication(AppComponent, {
     PlayersService,
     MatchService,
     AuthService,
+    UserAuthService,
     ToastService,
     AuthGuard,
     OrganizerGuard,

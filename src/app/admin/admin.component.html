@@ -2,12 +2,34 @@
     <!-- show the list of players on the left side -->
     <div class="col-6 col-sm-6 col-md-5 col-lg-4 col-xl-3 left-player-list">
 
-        <app-player-routed-card *ngFor="let playerItem of players; let even = even; let odd = odd" [player]="playerItem"
+        <!-- <app-player-routed-card *ngFor="let playerItem of players; let even = even; let odd = odd" [player]="playerItem"
             [id]="playerItem.id" [ngClass]="{ odd: odd, even: even }">
-        </app-player-routed-card>
+        </app-player-routed-card> -->
 
         <button class="btn btn-outline-gus btn-grad-gusty" *ngIf='canExportPlayers()'
             (click)='onExportPlayerClicked($event)' download="download.json">Export...</button>
     </div>
+
+    <div>Test login</div>
+    <button class="btn btn-outline-gus btn-grad-gusty" (click)='onTestLoginClick($event)'>Login with Google</button>
+
+    <button class="btn btn-outline-gus btn-grad-gusty" (click)='onOtherLoginClick($event)'>Other with Google</button>
+
 </div>
-<app-toasts aria-live="polite" aria-atomic="true" style="position: relative; min-height: 200px; z-index: 1;"></app-toasts>
+
+@if (this.user$ | async; as user) {
+Hello {{user.displayName}}!
+
+<img class="profile-pic" [src]="user.photoURL" alt="user photo" />
+}
+<br>
+
+@if (this.dataRetrieval$ | async; as user) {
+Hello {{user.displayName}}!
+
+<img class="profile-pic" [src]="user.photoURL" alt="user photo" />
+}
+
+
+<app-toasts aria-live="polite" aria-atomic="true"
+    style="position: relative; min-height: 200px; z-index: 1;"></app-toasts>
