@@ -506,6 +506,7 @@ a.player-card-grad:hover {
   grid-template-areas:
     "dataheader dataheader"
     "dataleft dataright"
+    "dataleft dataright"
     "datafooter datafooter";
 }
 
@@ -614,7 +615,7 @@ a.player-card-grad:hover {
   display: none;
 }
 
-@media (max-width:600px) {
+@media (max-width:900px) {
   .nav>.nav-btn {
     display: inline-block;
     position: absolute;
@@ -663,9 +664,8 @@ a.player-card-grad:hover {
   }
 
   .nav>#nav-check:checked~.nav-links {
-    /* height: calc(100vh - 50px);
-    overflow-y: auto; */
     height: auto;
-    overflow-y: inherit;
+    overflow-y: hidden;
+    overflow-x: hidden;
   }
 }

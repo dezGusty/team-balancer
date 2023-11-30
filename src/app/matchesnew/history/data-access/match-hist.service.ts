@@ -1,6 +1,6 @@
 import { HttpErrorResponse } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { Firestore, docData } from '@angular/fire/firestore';
+import { Firestore, docData, setDoc, updateDoc } from '@angular/fire/firestore';
 import { doc } from 'firebase/firestore';
 import { BehaviorSubject, Observable, Subject, Subscription, catchError, combineLatest, from, map, share, shareReplay, startWith, switchMap, tap, throwError } from 'rxjs';
 import { MatchHistoryTitle } from '../match-history.title';
@@ -75,22 +75,57 @@ export class MatchHistService {
     }),
   );
 
+  private updateMatchDetailsSubject$ = new Subject<CustomPrevGame>();
+  public readonly updateMatchDetails$ = this.updateMatchDetailsSubject$.asObservable();
 
-  /**
-   * Fetch the details of a specific match. 
-   * Will connect to the document 'matches/YYYY-MM-DD' in Firestore and retrieve items of the type CustomPrevGame.
-   * @param matchDate The date of the match to fetch, in the format YYYY-MM-DD.
-   */
-  // public fetchSpecificMatch(matchDate: string): Observable<CustomPrevGame> {
-  //   return docData(doc(this.firestore, `matches/${matchDate}`)).pipe(
-  //     map(matchDocContents => {
-  //       const castedItem = matchDocContents as CustomPrevGame;
-  //       return castedItem;
-  //     }),
-  //     catchError(this.handleError)
-  //   );
-  // }
+  selectedMatchDetailsWithUpdates$ = combineLatest([]);
 
+
+  public async updateCustomPrevMatchAsync(matchDocName: string, game: CustomPrevGame) {
+    console.log('updating match', matchDocName, game);
+    
+    const docRef = doc(this.firestore, `matches/${matchDocName}`);
+    
+    await setDoc(docRef, game, { merge: true });
+    console.log('updated match', matchDocName, game);
+
+    // const objScore = {
+    //   team1: game.team1,
+    //   team2: game.team2
+    // };
+
+    
+
+    // let obj: {
+    //   [x: string]: any;
+    //   appliedResults?: true;
+    //   savedResult?: true;
+    //   team1?: Player[];
+    //   team2?: Player[];
+    // };
+
+    // obj = { ...objScore };
+    // if (game.appliedResults) {
+    //   obj = { ...obj, appliedResults: game.appliedResults };
+    // }
+
+    // if (game.savedResult) {
+    //   obj = { ...obj, savedResult: game.savedResult };
+    // }
+
+    // if (game.scoreTeam1 != null) {
+    //   obj = { ...obj, scoreTeam1: game.scoreTeam1 };
+    // }
+    // if (game.scoreTeam2 != null) {
+    //   obj = { ...obj, scoreTeam2: game.scoreTeam2 };
+    // }
+    // if (game.postResults != null) {
+    //   obj = { ...obj, postResults: game.postResults };
+    // }
+
+    // await setDoc(docRef, obj, { merge: true });
+    // this.recentMatchesChangeEvent.next(this.recentMatchNames);
+  }
 
   private handleError(err: HttpErrorResponse): Observable<never> {
     let errorMessage: string;

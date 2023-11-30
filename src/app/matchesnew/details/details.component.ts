@@ -6,6 +6,7 @@ import { Player, getDisplayName } from 'src/app/shared/player.model';
 import { CustomPrevGame } from 'src/app/shared/custom-prev-game.model';
 import { AuthService } from 'src/app/auth/auth.service';
 import { FormsModule } from '@angular/forms';
+import { tap } from 'rxjs';
 
 @Component({
   selector: 'app-details',
@@ -21,7 +22,12 @@ import { FormsModule } from '@angular/forms';
 })
 export class MatchDetailsComponent {
 
-  public selectedMatchDetails$ = this.matchSvc.selectedMatchDetails$;
+  public selectedMatchDetails$ = this.matchSvc.selectedMatchDetails$.pipe(
+    tap(match => {
+      this.team1Score = match.scoreTeam1;
+      this.team2Score = match.scoreTeam2;
+    })
+  );
 
   constructor(
     private matchSvc: MatchHistService,
@@ -108,6 +114,8 @@ export class MatchDetailsComponent {
       return;
     }
 
+    // await this.matchSvc.updateCustomPrevMatchAsync(this.matchSvc.selectedMatch$, game);
+
     // show animation
     // this.showSpinner = true;
 
@@ -131,59 +139,59 @@ export class MatchDetailsComponent {
       return;
     }
 
-  //  let currentMatch = await this.playersSvc.getCurrentRatingsAsync();
+    //  let currentMatch = await this.playersSvc.getCurrentRatingsAsync();
 
-  //   const newPlayers = this.playersSvc.getAllPlayersUpdatedRatingsForGame(
-  //     this.playersSvc.getPlayers(), this.customGame
-  //   );
+    //   const newPlayers = this.playersSvc.getAllPlayersUpdatedRatingsForGame(
+    //     this.playersSvc.getPlayers(), this.customGame
+    //   );
 
-  //   // Prepare the difference calculation
-  //   const updatedPlayers = this.playersSvc.getPlayersWithUpdatedRatingsForGame(this.customGame);
-  //   if (updatedPlayers.length > 0) {
-  //     if (!this.customGame.postResults) {
-  //       this.customGame.postResults = [];
-  //     }
-  //     updatedPlayers.forEach(player => {
-  //       if (!this.customGame) {
-  //         return;
-  //       }
+    //   // Prepare the difference calculation
+    //   const updatedPlayers = this.playersSvc.getPlayersWithUpdatedRatingsForGame(this.customGame);
+    //   if (updatedPlayers.length > 0) {
+    //     if (!this.customGame.postResults) {
+    //       this.customGame.postResults = [];
+    //     }
+    //     updatedPlayers.forEach(player => {
+    //       if (!this.customGame) {
+    //         return;
+    //       }
 
-  //       // get old rating from team 1 or team 2, or fail
-  //       let oldRating = this.customGame.team1.find(x => x.id == player.id)?.rating;
-  //       if (!oldRating) {
-  //         oldRating = this.customGame.team2.find(x => x.id == player.id)?.rating;
-  //       }
-  //       if (!oldRating) {
-  //         return;
-  //       }
+    //       // get old rating from team 1 or team 2, or fail
+    //       let oldRating = this.customGame.team1.find(x => x.id == player.id)?.rating;
+    //       if (!oldRating) {
+    //         oldRating = this.customGame.team2.find(x => x.id == player.id)?.rating;
+    //       }
+    //       if (!oldRating) {
+    //         return;
+    //       }
 
-  //       this.customGame.postResults.push({ id: player.id, diff: player.rating - oldRating });
-  //     })
-  //   }
+    //       this.customGame.postResults.push({ id: player.id, diff: player.rating - oldRating });
+    //     })
+    //   }
 
-  //   this.showSpinner = true;
+    //   this.showSpinner = true;
 
-  //   // Store the 'old' ratings under a different entry.
-  //   if (!currentMatch || !currentMatch.label) {
-  //     await this.playersSvc.savePlayersToListAsync(this.playersSvc.getPlayers(), this.matchSearchKey);
-  //   } else {
-  //     await this.playersSvc.savePlayersToListAsync(this.playersSvc.getPlayers(), this.matchSearchKey + '_' + currentMatch.label);
-  //     await this.playersSvc.addFieldValueToDocumentAsync("label", currentMatch.label, "current");
-  //   }
+    //   // Store the 'old' ratings under a different entry.
+    //   if (!currentMatch || !currentMatch.label) {
+    //     await this.playersSvc.savePlayersToListAsync(this.playersSvc.getPlayers(), this.matchSearchKey);
+    //   } else {
+    //     await this.playersSvc.savePlayersToListAsync(this.playersSvc.getPlayers(), this.matchSearchKey + '_' + currentMatch.label);
+    //     await this.playersSvc.addFieldValueToDocumentAsync("label", currentMatch.label, "current");
+    //   }
 
-  //   // Store the 'new' ratings under the 'current' entry.
-  //   await this.playersSvc.savePlayersToListAsync(newPlayers, 'current');
+    //   // Store the 'new' ratings under the 'current' entry.
+    //   await this.playersSvc.savePlayersToListAsync(newPlayers, 'current');
 
 
-  //   // Store the new data for the match.
-  //   this.customGame.appliedResults = true;
-  //   this.matchResultsAppliedToRatings = true;
-  //   console.log('saving ', this.customGame);
+    //   // Store the new data for the match.
+    //   this.customGame.appliedResults = true;
+    //   this.matchResultsAppliedToRatings = true;
+    //   console.log('saving ', this.customGame);
 
-  //   await this.matchAltSvc.saveCustomPrevMatchAsync(this.matchSearchKey, this.customGame);
+    //   await this.matchAltSvc.saveCustomPrevMatchAsync(this.matchSearchKey, this.customGame);
 
-  //   await this.playersSvc.storeRecentMatchToParticipantsHistoryAsync(this.customGame, this.matchSearchKey);
+    //   await this.playersSvc.storeRecentMatchToParticipantsHistoryAsync(this.customGame, this.matchSearchKey);
 
-  //   this.showSpinner = false;
+    //   this.showSpinner = false;
   }
 }

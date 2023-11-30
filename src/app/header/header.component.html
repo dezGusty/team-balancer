@@ -2,10 +2,10 @@
   <input type="checkbox" id="nav-check" placeholder="-">
   <div class="nav-header">
     <div class="nav-title">
-      <!-- <a class="navbar-gus-title" height="40rem" routerLink="/about">TFL -->
-      TFL
-      <span><img rel="preload" src="./../../assets/gusball_logo_256.webp" height="40rem" alt=""></span>
-      <!-- </a> -->
+      <a class="nav-link" height="40rem" routerLink="/about">
+        tfl
+        <span><img rel="preload" src="./../../assets/gusball_logo_256.webp" height="40rem" alt=""></span>
+      </a>
     </div>
   </div>
 
@@ -32,26 +32,9 @@
     }
     <a class="nav-link" routerLink="/about">About</a>
     @if(this.isAuthenticated()) {
-    <a class="nav-link" (click)="onSignoutBtnClick();" style="cursor: pointer">Sign out</a>
+    <a class="nav-link" (click)="onSignoutBtnClick();">Sign out</a>
     }@else{
     <a class="nav-link" routerLink="/signin">Sign in</a>
     }
   </div>
-
-  <nav aria-label="Navigation">
-    <!--sticky-top-->
-
-    <div id="navbarNavDropdown">
-      <ul>
-        <li routerLinkActive="active" class="" *ngIf="!this.isAuthenticated()">
-          <a class="nav-link" routerLink="/signin">Sign in</a>
-        </li>
-        <li routerLinkActive="active" class="" *ngIf="this.isAuthenticated()">
-          <a class="nav-link" (click)="onSignoutBtnClick();" style="cursor: pointer">Sign out</a>
-        </li>
-      </ul>
-
-    </div>
-
-  </nav>
 </header>

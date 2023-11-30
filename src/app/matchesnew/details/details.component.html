@@ -23,6 +23,9 @@
           {{ this.getPostMatchDiffForPlayer(match, leftItem) }}</span>
       </li>
     </ul>
+    <input aria-label="t1 score" type="number" class="form-control" name="team1Score" id="team1Score"
+      [(ngModel)]="this.team1Score" #team1ScoreEntry="ngModel"
+      [attr.disabled]="!this.canChangeScore(match)? '' : null">
   </div>
   <div class="history-grid-data-right">
     Team two 2️⃣
@@ -36,19 +39,12 @@
           }}</span>
       </li>
     </ul>
+    <input aria-label="t2 score" type="number" class="form-control" name="team2Score" id="team2Score"
+      [(ngModel)]="this.team2Score" #team2ScoreEntry="ngModel"
+      [attr.disabled]="!this.canChangeScore(match)? '' : null">
   </div>
 
   <div class="history-grid-data-footer">
-    <div class="col-6 input-group-lg">
-      <input aria-label="t1 score" type="number" class="form-control" name="team1Score" id="team1Score"
-        [(ngModel)]="this.team1Score" #team1ScoreEntry="ngModel"
-        [attr.disabled]="!this.canChangeScore(match)? '' : null">
-    </div>
-    <div class="col-6 input-group-lg">
-      <input aria-label="t2 score" type="number" class="form-control" name="team2Score" id="team2Score"
-        [(ngModel)]="this.team2Score" #team2ScoreEntry="ngModel"
-        [attr.disabled]="!this.canChangeScore(match)? '' : null">
-    </div>
     <div *ngIf='canShowStoreResultsButton(match)'>
       <button type="button" class="btn btn-outline-gus btn-grad-gusty" (click)="onStoreResultClick(match)">
         <span>
