@@ -33,6 +33,7 @@ import { PrivacyComponent } from './app/auth/privacy/privacy.component';
 import { HistoryComponent } from './app/matchesnew/history/history.component';
 import { MatchDetailsComponent } from './app/matchesnew/details/details.component';
 import { UserAuthService } from './app/auth/user-auth.service';
+import { NotificationService } from './app/utils/notification/notification.service';
 
 if (environment.production) {
   enableProdMode();
@@ -102,6 +103,7 @@ bootstrapApplication(AppComponent, {
     AuthService,
     UserAuthService,
     ToastService,
+    NotificationService,
     AuthGuard,
     OrganizerGuard,
     AdminGuard,

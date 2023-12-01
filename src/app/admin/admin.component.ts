@@ -13,6 +13,8 @@ import { FormsModule } from '@angular/forms';
 import { ToastsContainer } from '../toast/toast-container.component';
 import { PlayerRoutedCardComponent } from '../players/player/player-routed-card.component';
 import { UserAuthService } from '../auth/user-auth.service';
+import { BehaviorSubject, Subject, scan, shareReplay, tap } from 'rxjs';
+import { NotificationService } from '../utils/notification/notification.service';
 @Component({
   imports: [
     CommonModule,
@@ -55,7 +57,8 @@ export class AdminComponent implements OnInit, OnDestroy {
     private playersSvc: PlayersService,
     private matchesSvc: MatchService,
     private toastSvc: ToastService,
-    private userAuthService: UserAuthService) {
+    private userAuthService: UserAuthService,
+    private notificationService: NotificationService) {
 
   }
 
@@ -139,7 +142,20 @@ export class AdminComponent implements OnInit, OnDestroy {
     this.userAuthService.doGoogleLogin();
   }
 
-  onOtherLoginClick($event: any) {
-    this.userAuthService.doOtherGoogleLogin();
+  animSubject$ = new BehaviorSubject<boolean>(true);
+  anim$ = this.animSubject$.asObservable().pipe(
+    tap((anim) => console.log('anim', anim)),
+    tap((anim) => this.notificationService.emitMessage('anim:' + anim)),
+    shareReplay(1)
+  );
+
+  onToggleAnim($event: any) {
+    this.animSubject$.next(!this.animSubject$.value);
   }
+
+  onAddNotif($event: any) {
+    this.toastSvc.show('New notification added');
+    this.notificationService.emitMessage('New notification added');
+  }
+
 }

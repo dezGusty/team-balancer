@@ -13,23 +13,22 @@
     <div>Test login</div>
     <button class="btn btn-outline-gus btn-grad-gusty" (click)='onTestLoginClick($event)'>Login with Google</button>
 
-    <button class="btn btn-outline-gus btn-grad-gusty" (click)='onOtherLoginClick($event)'>Other with Google</button>
+    <button type="button" (click)='onToggleAnim($event)'>Toggle anim</button>
+    <button type="button" (click)='onAddNotif($event)'>Add notification</button>
 
 </div>
 
 @if (this.user$ | async; as user) {
-Hello {{user.displayName}}!
-
-<img class="profile-pic" [src]="user.photoURL" alt="user photo" />
+<div style="display: flex;">
+    Hello {{user.displayName}}!
+    <div class="avatar-outer" [class.avatar-outer-anim]="this.anim$ | async">
+        <div class="avatar">
+            <img class="rounded-avatar-img" [src]="user.photoURL" alt="user photo" />
+        </div>
+    </div>
+</div>
 }
 <br>
-
-@if (this.dataRetrieval$ | async; as user) {
-Hello {{user.displayName}}!
-
-<img class="profile-pic" [src]="user.photoURL" alt="user photo" />
-}
-
 
 <app-toasts aria-live="polite" aria-atomic="true"
     style="position: relative; min-height: 200px; z-index: 1;"></app-toasts>

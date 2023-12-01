@@ -5,13 +5,15 @@ import { RouterModule } from '@angular/router';
 import { Subscription } from 'rxjs';
 import { FooterComponent } from './footer/footer.component';
 import { HeaderComponent } from './header/header.component';
+import { NotificationComponent } from './utils/notification/notification.component';
 
 @Component({
   imports: [
     CommonModule,
     HeaderComponent,
     FooterComponent,
-    RouterModule
+    RouterModule,
+    NotificationComponent
   ],
   selector: 'app-root',
   standalone: true,
@@ -23,6 +25,7 @@ import { HeaderComponent } from './header/header.component';
     <router-outlet/>
   </div>
   <app-footer/>
+  <app-notification/>
 </div>
 `,
 })

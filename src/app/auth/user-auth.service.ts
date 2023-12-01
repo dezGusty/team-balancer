@@ -39,11 +39,15 @@ export class UserAuthService implements OnDestroy {
     this.subscriptions.forEach(sub => sub.unsubscribe());
   }
   private subscriptions: Subscription[] = [];
+
+  /**
+   * Some observables need to be subscribed to in order to be triggered, as they would not be typically used in a template.
+   */
   private subscribeToObservables() {
-    // this.subscriptions.push(
-    //   this.dataRetrieval$.subscribe(),
-    //   this.loggedInUser$.subscribe()
-    // );
+    this.subscriptions.push(
+      this.dataRetrieval$.subscribe(),
+      this.loggedInUser$.subscribe()
+    );
   }
 
   private decodeUserFromStorage(): User | null {
@@ -60,9 +64,6 @@ export class UserAuthService implements OnDestroy {
     }
   }
 
-  public doOtherGoogleLogin() {
-    this.dataRetrievalSubject$.next();
-  }
   /**
      * Perform the login into the application via Google.
      * @param postNavi: navigation route to be applied upon a successful log-in.
