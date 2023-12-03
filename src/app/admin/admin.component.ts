@@ -15,6 +15,7 @@ import { PlayerRoutedCardComponent } from '../players/player/player-routed-card.
 import { UserAuthService } from '../auth/user-auth.service';
 import { BehaviorSubject, Subject, scan, shareReplay, tap } from 'rxjs';
 import { NotificationService } from '../utils/notification/notification.service';
+import { LoadingFlagService } from '../utils/loading-flag.service';
 @Component({
   imports: [
     CommonModule,
@@ -58,7 +59,8 @@ export class AdminComponent implements OnInit, OnDestroy {
     private matchesSvc: MatchService,
     private toastSvc: ToastService,
     private userAuthService: UserAuthService,
-    private notificationService: NotificationService) {
+    private notificationService: NotificationService,
+    private loadingFlagService: LoadingFlagService) {
 
   }
 
@@ -151,6 +153,7 @@ export class AdminComponent implements OnInit, OnDestroy {
 
   onToggleAnim($event: any) {
     this.animSubject$.next(!this.animSubject$.value);
+    this.loadingFlagService.setLoadingFlag(!this.animSubject$.value);
   }
 
   onAddNotif($event: any) {

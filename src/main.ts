@@ -34,6 +34,7 @@ import { HistoryComponent } from './app/matchesnew/history/history.component';
 import { MatchDetailsComponent } from './app/matchesnew/details/details.component';
 import { UserAuthService } from './app/auth/user-auth.service';
 import { NotificationService } from './app/utils/notification/notification.service';
+import { LoadingFlagService } from './app/utils/loading-flag.service';
 
 if (environment.production) {
   enableProdMode();
@@ -104,6 +105,7 @@ bootstrapApplication(AppComponent, {
     UserAuthService,
     ToastService,
     NotificationService,
+    LoadingFlagService,
     AuthGuard,
     OrganizerGuard,
     AdminGuard,

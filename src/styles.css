@@ -576,6 +576,7 @@ a.player-card-grad:hover {
   /* background-color: #4d4d4d; */
   background: var(--gus-panel-bck);
   position: relative;
+  z-index: 5;
 }
 
 .nav>.nav-header {

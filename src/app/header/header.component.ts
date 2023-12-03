@@ -3,6 +3,8 @@ import { Component, OnInit } from '@angular/core';
 import { Router, Event, NavigationStart, RouterModule } from '@angular/router';
 // import { NgbCollapseModule } from '@ng-bootstrap/ng-bootstrap';
 import { AuthService } from '../auth/auth.service';
+import { LoadingFlagService } from '../utils/loading-flag.service';
+import { tap } from 'rxjs';
 
 @Component({
   imports: [
@@ -17,6 +19,10 @@ import { AuthService } from '../auth/auth.service';
 export class HeaderComponent implements OnInit {
   isCollapsed = true;
 
+  loadingFlag$ = this.loadingFlagService.loadingFlag$.pipe(
+    tap(flag => console.log(`[header] loadingFlag$ = ${flag}`))
+  );
+
   /**
    * Constructor.
    * @param authSvc The authentication service
@@ -25,7 +31,8 @@ export class HeaderComponent implements OnInit {
    */
   constructor(
     private authSvc: AuthService,
-    private router: Router) {
+    private router: Router,
+    private loadingFlagService: LoadingFlagService) {
     this.router.events.subscribe((evt: Event) => {
       if (evt instanceof NavigationStart) {
         this.isCollapsed = true;

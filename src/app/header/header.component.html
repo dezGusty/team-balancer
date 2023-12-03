@@ -1,12 +1,17 @@
 <header class="header nav">
   <input type="checkbox" id="nav-check" placeholder="-">
   <div class="nav-header">
-    <div class="nav-title">
+    <div class="avatar-outer" [class.avatar-outer-anim]="this.loadingFlag$ | async">
+      <div class="avatar">
+        <img class="rounded-avatar-img" src="./../../assets/gusball_logo_256.webp" alt="logo" />
+      </div>
+    </div>
+    <!-- <div class="nav-title">
       <a class="nav-link" height="40rem" routerLink="/about">
         tfl
         <span><img rel="preload" src="./../../assets/gusball_logo_256.webp" height="40rem" alt=""></span>
       </a>
-    </div>
+    </div> -->
   </div>
 
   <div class="nav-btn">
