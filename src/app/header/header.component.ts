@@ -1,27 +1,24 @@
 import { CommonModule } from '@angular/common';
 import { Component, OnInit } from '@angular/core';
 import { Router, Event, NavigationStart, RouterModule } from '@angular/router';
-// import { NgbCollapseModule } from '@ng-bootstrap/ng-bootstrap';
 import { AuthService } from '../auth/auth.service';
-import { LoadingFlagService } from '../utils/loading-flag.service';
-import { tap } from 'rxjs';
+import { ProfileComponent } from "./profile/profile.component";
 
 @Component({
-  imports: [
-    CommonModule
-    //, NgbCollapseModule
-    , RouterModule],
   selector: 'app-header',
   standalone: true,
   templateUrl: './header.component.html',
-  styleUrls: ['./header.component.css']
+  styleUrls: ['./header.component.css'],
+  imports: [
+    CommonModule,
+    RouterModule,
+    ProfileComponent
+  ]
 })
 export class HeaderComponent implements OnInit {
   isCollapsed = true;
 
-  loadingFlag$ = this.loadingFlagService.loadingFlag$.pipe(
-    tap(flag => console.log(`[header] loadingFlag$ = ${flag}`))
-  );
+
 
   /**
    * Constructor.
@@ -31,8 +28,7 @@ export class HeaderComponent implements OnInit {
    */
   constructor(
     private authSvc: AuthService,
-    private router: Router,
-    private loadingFlagService: LoadingFlagService) {
+    private router: Router) {
     this.router.events.subscribe((evt: Event) => {
       if (evt instanceof NavigationStart) {
         this.isCollapsed = true;
@@ -42,7 +38,7 @@ export class HeaderComponent implements OnInit {
 
   ngOnInit() {
     console.log('[header] ngOnInit');
-    
+
   }
 
   /**

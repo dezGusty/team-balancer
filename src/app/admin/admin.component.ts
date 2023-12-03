@@ -16,16 +16,11 @@ import { UserAuthService } from '../auth/user-auth.service';
 import { BehaviorSubject, Subject, scan, shareReplay, tap } from 'rxjs';
 import { NotificationService } from '../utils/notification/notification.service';
 import { LoadingFlagService } from '../utils/loading-flag.service';
+import { ProfileComponent } from "../header/profile/profile.component";
 @Component({
-  imports: [
-    CommonModule,
-    FormsModule,
-    PlayerRoutedCardComponent,
-    ToastsContainer
-  ],
-  selector: 'app-admin',
-  standalone: true,
-  styles: [`
+    selector: 'app-admin',
+    standalone: true,
+    styles: [`
 .profile-pic {
   width: 42px;
   height: 42px;
@@ -34,8 +29,15 @@ import { LoadingFlagService } from '../utils/loading-flag.service';
   object-position: center;
 }
 `],
-  templateUrl: './admin.component.html',
-  changeDetection: ChangeDetectionStrategy.OnPush
+    templateUrl: './admin.component.html',
+    changeDetection: ChangeDetectionStrategy.OnPush,
+    imports: [
+        CommonModule,
+        FormsModule,
+        PlayerRoutedCardComponent,
+        ToastsContainer,
+        ProfileComponent
+    ]
 })
 export class AdminComponent implements OnInit, OnDestroy {
 

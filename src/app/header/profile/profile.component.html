@@ -1,0 +1,9 @@
+<div class="avatar-outer" [class.avatar-outer-anim]="this.loadingFlag$ | async">
+  <div class="avatar">
+    @if (this.user$ | async; as user) {
+    <img class="rounded-avatar-img" [src]="user.photoURL" alt="logo" />
+    } @else {
+    <img class="rounded-avatar-img" src="./../../assets/gusball_logo_256.webp" alt="logo" />
+    }
+  </div>
+</div>

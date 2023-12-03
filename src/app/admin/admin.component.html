@@ -21,11 +21,12 @@
 @if (this.user$ | async; as user) {
 <div style="display: flex;">
     Hello {{user.displayName}}!
-    <div class="avatar-outer" [class.avatar-outer-anim]="this.anim$ | async">
+    <!-- <div class="avatar-outer" [class.avatar-outer-anim]="this.anim$ | async">
         <div class="avatar">
             <img class="rounded-avatar-img" [src]="user.photoURL" alt="user photo" />
         </div>
-    </div>
+    </div> -->
+    <app-profile></app-profile>
 </div>
 }
 <br>

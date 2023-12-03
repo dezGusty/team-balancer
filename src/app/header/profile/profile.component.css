@@ -1,0 +1,65 @@
+.rounded-avatar-img {
+  border-radius: 50%;
+  z-index: 50;
+  flex-shrink: 0;
+  position: relative;
+  width: calc(100% - 2*3px);
+  height: calc(100% - 2*3px);
+  left: 3px;
+  top: 3px;
+}
+
+.avatar-outer {
+  width: 46px;
+  height: 46px;
+  border-radius: 50%;
+  overflow: hidden;
+  flex-shrink: 0;
+}
+
+.avatar-outer-anim {
+  position: relative;
+}
+
+.avatar-outer-anim::before {
+  content: "";
+  position: absolute;
+  z-index: -5;
+  left: -50%;
+  top: -50%;
+  width: 200%;
+  height: 200%;
+  background-repeat: no-repeat;
+  background-size: 50% 50%, 50% 50%;
+  background-image: conic-gradient(from 45deg, #ff5599 0deg, #50708020 180deg);
+  animation: spin 0.5s ease-in-out infinite;
+}
+
+.avatar-outer-anim::after {
+  content: "";
+  position: absolute;
+  z-index: -5;
+  left: 3px;
+  top: 3px;
+  width: calc(100% - 2*3px);
+  height: calc(100% - 2*3px);
+  border-radius: 50%;
+  background: #111132;
+  /* background: var(--gus-secondary-bck); */
+}
+
+.avatar {
+  z-index: 50;
+  position: relative;
+}
+
+
+@keyframes spin {
+  from {
+    transform: rotate(0deg);
+  }
+
+  to {
+    transform: rotate(360deg);
+  }
+}
