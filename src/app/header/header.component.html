@@ -1,20 +1,15 @@
 <header class="header nav">
-  <input type="checkbox" id="nav-check" placeholder="-">
-  <div class="nav-header">
-    <div class="nav-title">
-      TFL
-    </div>
-  </div>
-  <div class="nav-btn">
-    
-    <label for="nav-check">
-      <span>-</span>
-      <span>-</span>
-      <span>-</span>
+  <input type="checkbox" id="nav-check" placeholder="-" [(ngModel)]="this.menuDisplayed">
+  <div class="nav-btn" (click)="this.logoAreaClick($event)">
+    <img class="nav-logo" src="./../../assets/gusball_logo_256.webp" alt="logo"/>
+    <label class="nav-label" >
+      <span></span>
+      <span></span>
+      <span></span>
     </label>
   </div>
 
-  <div class="nav-links">
+  <div class="nav-links" (click)="this.navLinkClick($event)">
     @if(isAuthenticatedAsUser()){
     <a class="nav-link" routerLink="/recent">Recent Games</a>
     <a class="nav-link" routerLink="/history">Recent Matches (NEW)</a>
@@ -35,5 +30,5 @@
     }
   </div>
   <div class="nav-spacer"></div>
-  <app-profile/>
+  <app-profile />
 </header>

@@ -3,6 +3,7 @@ import { Component, OnInit } from '@angular/core';
 import { Router, Event, NavigationStart, RouterModule } from '@angular/router';
 import { AuthService } from '../auth/auth.service';
 import { ProfileComponent } from "./profile/profile.component";
+import { FormsModule } from '@angular/forms';
 
 @Component({
   selector: 'app-header',
@@ -12,12 +13,14 @@ import { ProfileComponent } from "./profile/profile.component";
   imports: [
     CommonModule,
     RouterModule,
+    FormsModule,
     ProfileComponent
   ]
 })
 export class HeaderComponent implements OnInit {
   isCollapsed = true;
 
+  menuDisplayed = false;
 
 
   /**
@@ -74,5 +77,15 @@ export class HeaderComponent implements OnInit {
    */
   public async onSignoutBtnClick() {
     await this.authSvc.signOutAsync();
+  }
+
+  logoAreaClick($event: any) {
+    console.log("*** logoAreaClick ***", $event, "menuDisplayed=", this.menuDisplayed);
+    this.menuDisplayed = !this.menuDisplayed;
+  }
+
+  navLinkClick($event: any) {
+    console.log("*** navLinkClick ***", $event, "menuDisplayed=", this.menuDisplayed);
+    this.menuDisplayed = false;
   }
 }

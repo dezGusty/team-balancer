@@ -2,35 +2,15 @@ app-profile {
   margin-right: 0.5em;
 }
 
-.nav-grad-gus {
-  /* Permalink - use to edit and share this gradient: http://colorzilla.com/gradient-editor/#b4ddb4+0,83c783+17,52b152+33,008a00+67,005700+83,002400+100;Green+3D+%231 */
-  background: rgb(7, 85, 80);
-  background: linear-gradient(
-    135deg,
-    rgb(67, 154, 201) 0%,
-    rgb(33, 148, 163) 45%,
-    rgb(35, 86, 116) 70%,
-    rgb(42, 60, 61) 85%,
-    #004d52 100%
-  );
-  padding: 0.5rem;
-}
-
-.nav-spacer{
+.nav-spacer {
   flex-grow: 10;
 }
 
 a {
   font-weight: 500;
-  vertical-align: middle;
+  text-decoration: none;
+  display: block;
 }
-
-.navbar-gus-title {
-  font-size: x-large;
-  padding-top: 0;
-  padding-bottom: 0;
-}
-
 
 header {
   position: sticky;
@@ -40,30 +20,25 @@ header {
   justify-content: flex-start;
 }
 
+.nav-logo {
+  width: 2.5em;
+  height: 2.5em;
+}
 
-/* navbar css */
 .nav {
-  height: 50px;
   width: 100%;
-  /* background-color: #4d4d4d; */
   background: var(--gus-panel-bck);
   position: relative;
   z-index: 5;
 }
 
-.nav>.nav-header {
+.nav-header {
   display: inline;
-}
-
-.nav>.nav-header>.nav-title {
-  display: inline-block;
-  font-size: 22px;
-  color: #fff;
-  padding: 10px 10px 10px 10px;
 }
 
 .nav>.nav-btn {
   display: flex;
+  cursor: pointer;
 }
 
 .nav>.nav-links {
@@ -75,8 +50,7 @@ header {
 
 .nav>.nav-links>a {
   display: inline-block;
-  padding: 13px 10px 13px 10px;
-  text-decoration: none;
+  padding: 0.75em 0.5em;
   color: #efefef;
 }
 
@@ -91,56 +65,54 @@ header {
 
 @media (max-width:900px) {
   .nav>.nav-btn {
-    display: flex;
+    /* display: flex; */
     position: absolute;
-    /* right: 0px; */
     left: 0px;
     top: 0px;
+    padding: 3px;
   }
 
-  .nav>.nav-btn>label {
-    display: inline-block;
-    width: 50px;
-    height: 50px;
-    padding: 13px;
+  .nav>.nav-btn>.nav-label {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    padding-top: 4px;
   }
 
-  .nav>.nav-btn>label:hover,
-  .nav #nav-check:checked~.nav-btn>label {
+  .nav>.nav-btn:hover,
+  .nav #nav-check:checked~.nav-btn {
     background-color: rgba(0, 0, 0, 0.3);
   }
 
-  .nav>.nav-btn>label>span {
-    display: block;
-    width: 25px;
-    height: 10px;
-    border-top: 2px solid #eee;
+  .nav-label>span {
+    width: 1.5em;
+    height: 0.25em;
+    border-top: 4px solid #eee;
   }
 
   .nav>.nav-links {
     position: absolute;
-    display: block;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+
+    /* display: block; */
     width: 100%;
     background: var(--gus-panel-bck);
     height: 0px;
-    transition: all 0.5s ease-in;
+    /* transition: transform 0.75s ease-in; */
     overflow-y: hidden;
     top: 50px;
     left: 0px;
   }
 
-  .nav>.nav-links>a {
-    display: block;
-    width: 100%;
-  }
-
   .nav>#nav-check:not(:checked)~.nav-links {
+    transition: height 0.75s ease-in;
     height: 0px;
   }
 
   .nav>#nav-check:checked~.nav-links {
+    transition: height 0.75s ease-in;
     height: auto;
-    overflow-y: hidden;
-    overflow-x: hidden;
+    overflow: hidden;
   }
 }
