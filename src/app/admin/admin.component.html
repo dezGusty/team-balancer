@@ -6,8 +6,10 @@
             [id]="playerItem.id" [ngClass]="{ odd: odd, even: even }">
         </app-player-routed-card> -->
 
-        <button class="btn btn-outline-gus btn-grad-gusty" *ngIf='canExportPlayers()'
-            (click)='onExportPlayerClicked($event)' download="download.json">Export...</button>
+        @if (this.canExportPlayers()) {
+            <button class="btn btn-outline-gus btn-grad-gusty" 
+                (click)='onExportPlayerClicked($event)' download="download.json">Export...</button>
+        }
     </div>
 
     <div>Test login</div>

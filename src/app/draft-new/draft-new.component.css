@@ -1,0 +1,10 @@
+.toolbar-container {
+  padding: 0.25em 0.5em;
+}
+
+.panel-draft-icons {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
+}

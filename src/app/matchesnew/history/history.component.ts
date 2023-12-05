@@ -13,11 +13,6 @@ import { MatchDetailsComponent } from '../details/details.component';
   template: `
 <div class="history-area">
   <div class="history-left-outline">
-    <div>new (WIP!) history</div>
-    @if (this.isFetchingMatchList$ | async) {
-      loading...
-      <app-small-loading-spinner></app-small-loading-spinner>
-    }
     <ul>
       @for (matchData of this.recentMatchNames$ | async; track $index) {
         <li (click)="onMatchEntryClicked(matchData)"
@@ -76,7 +71,4 @@ export class HistoryComponent {
     this.matchSvc.selectedMatchSubject.next(item.title);
     console.log('match entry clicked', item);
   }
-
-  isFetchingMatchList$ = this.matchSvc.isFetchingMatchList$;
-
 }

@@ -5,6 +5,7 @@ import { doc } from 'firebase/firestore';
 import { BehaviorSubject, Observable, Subject, Subscription, catchError, combineLatest, from, map, share, shareReplay, startWith, switchMap, tap, throwError } from 'rxjs';
 import { MatchHistoryTitle } from '../match-history.title';
 import { CustomPrevGame } from 'src/app/shared/custom-prev-game.model';
+import { LoadingFlagService } from 'src/app/utils/loading-flag.service';
 
 @Injectable({
   providedIn: 'root'
@@ -14,12 +15,11 @@ export class MatchHistService {
   public selectedMatchSubject = new Subject<string>();
   public selectedMatchAction$ = this.selectedMatchSubject.asObservable().pipe(
     tap(_ => {
-      console.log('** will fetch some match details');
-      this.fetchingMatchDetails$.next(true);
+      this.loadingFlagService.setLoadingFlag(true);
     }),
   );
 
-  constructor(private firestore: Firestore) {
+  constructor(private firestore: Firestore, private loadingFlagService: LoadingFlagService) {
   }
 
   public recentMatches$ = docData(doc(this.firestore, 'matches/recent')).pipe(
@@ -33,16 +33,10 @@ export class MatchHistService {
       });
       return matchHistoryTitles;
     }),
-    tap((_) => { this.fetchingMatchList$.next(false); }),
+    tap((_) => { this.loadingFlagService.setLoadingFlag(false); }),
     shareReplay(1),
     catchError(this.handleError)
   );
-
-  private fetchingMatchList$ = new BehaviorSubject<boolean>(true);
-  public readonly isFetchingMatchList$ = this.fetchingMatchList$.asObservable();
-
-  private fetchingMatchDetails$ = new BehaviorSubject<boolean>(false);
-  public readonly isFetchingMatchDetails$ = this.fetchingMatchDetails$.asObservable();
 
   // Store an observable for the selected match entry from the recent matches list.
   selectedMatch$ = combineLatest([
@@ -67,7 +61,7 @@ export class MatchHistService {
     }),
     map(matchDocContents => {
       const castedItem = matchDocContents as CustomPrevGame;
-      this.fetchingMatchDetails$.next(false);
+      this.loadingFlagService.setLoadingFlag(false);
       return castedItem;
     }),
     tap(game => {

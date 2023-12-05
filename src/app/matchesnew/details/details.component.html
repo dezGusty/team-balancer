@@ -2,10 +2,6 @@
   Details...
 </div>
 
-@if (this.isFetchingMatchDetails$ | async) {
-<app-small-loading-spinner></app-small-loading-spinner>
-}
-
 <div *ngIf="this.selectedMatchDetails$ | async as match" class="history-grid">
   <div class="history-grid-data-header">
     <!-- Date 🗓️: {{matchSearchKey}} -->

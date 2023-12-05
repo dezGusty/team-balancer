@@ -39,8 +39,6 @@ export class MatchDetailsComponent {
   team1Score: number = 0;
   team2Score: number = 0;
 
-  isFetchingMatchDetails$ = this.matchSvc.isFetchingMatchDetails$;
-
   getDisplayNameForPlayer(player: Player): string {
     return getDisplayName(player);
   }

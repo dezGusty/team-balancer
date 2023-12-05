@@ -35,6 +35,7 @@ import { MatchDetailsComponent } from './app/matchesnew/details/details.componen
 import { UserAuthService } from './app/auth/user-auth.service';
 import { NotificationService } from './app/utils/notification/notification.service';
 import { LoadingFlagService } from './app/utils/loading-flag.service';
+import { DraftNewComponent } from './app/draft-new/draft-new.component';
 
 if (environment.production) {
   enableProdMode();
@@ -78,6 +79,7 @@ const appRoutes: Routes = [
     ]
   },
   { path: 'draft', canActivate: [AuthGuard], component: DraftComponent },
+  { path: 'draftnew', canActivate: [AuthGuard], component: DraftNewComponent },
   {
     path: 'custom', canActivate: [AuthGuard, OrganizerGuard], component: CustomgameComponent
   },
