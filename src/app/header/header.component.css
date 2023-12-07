@@ -37,9 +37,12 @@ header {
   display: inline;
 }
 
+.nav-btn {
+  cursor: pointer;
+}
+
 .nav>.nav-btn {
   display: flex;
-  cursor: pointer;
   padding: 3px;
   height: 2.5em;
 }

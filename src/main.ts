@@ -36,6 +36,8 @@ import { UserAuthService } from './app/auth/user-auth.service';
 import { NotificationService } from './app/utils/notification/notification.service';
 import { LoadingFlagService } from './app/utils/loading-flag.service';
 import { DraftNewComponent } from './app/draft-new/draft-new.component';
+import { DraftSelectionService } from './app/draft-new/data-access/draft-selection.service';
+import { CurrentPlayersService } from './app/draft-new/data-access/current-players.service';
 
 if (environment.production) {
   enableProdMode();
@@ -104,9 +106,11 @@ bootstrapApplication(AppComponent, {
     PlayersService,
     MatchService,
     AuthService,
+    CurrentPlayersService,
     UserAuthService,
     ToastService,
     NotificationService,
+    DraftSelectionService,
     LoadingFlagService,
     AuthGuard,
     OrganizerGuard,

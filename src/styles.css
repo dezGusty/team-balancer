@@ -312,6 +312,8 @@ a.player-card-grad:hover {
   cursor: pointer;
   appearance: none;
   border: solid 1px burlywood;
+  background-color: var(--btn-back-color);
+  padding: 0.2em;
 }
 
 .btn-cmd-float {

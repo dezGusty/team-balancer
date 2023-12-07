@@ -8,7 +8,7 @@ export class Player {
     // E.g. Johny (Guy) : 1.952
     let splitContent = nameAndRating.split(':');
     if (splitContent.length < 2) {
-      return null;
+      return new Player("invalid name", 0);
     }
 
     parsedName = splitContent[0].trim();

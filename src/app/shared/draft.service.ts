@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { Subscription, BehaviorSubject } from 'rxjs';
+import { Subscription, BehaviorSubject, map, tap, shareReplay, catchError } from 'rxjs';
 import { getDisplayName, Player } from './player.model';
 import { DraftChangeInfo } from './draft-change-info';
 import { AuthService } from '../auth/auth.service';
@@ -10,7 +10,6 @@ import { SettingsService } from './settings.service';
   providedIn: 'root'
 })
 export class DraftService {
-  private dataChangeSubscription: Subscription = Subscription.EMPTY;
   selectedDraftPlayers: Player[] = [];
   playerDraftChangeEvent = new BehaviorSubject<DraftChangeInfo | undefined>(undefined);
 
@@ -40,6 +39,10 @@ export class DraftService {
     }
   }
 
+  private subscriptions: Subscription[] = [];
+
+  
+
   /**
    * Subscribes to the data sources used by this service.
    */
@@ -52,7 +55,7 @@ export class DraftService {
     this.playerDraftChangeEvent.next(playerInfo);
 
     const docRef = doc(this.firestore, '/drafts/next');
-    this.dataChangeSubscription = docData(docRef).subscribe({
+    this.subscriptions.push(docData(docRef).subscribe({
       next: draftDocContents => {
         console.log('draft data change');
 
@@ -65,16 +68,14 @@ export class DraftService {
       error: err => console.log('some error encountered', err),
       complete:
         () => { console.log('[draft-svc]complete') }
-    });
+    }));
   }
 
   /**
    * Clean-up the data subscriptions.
    */
   unsubscribeFromDataSources() {
-    if (this.dataChangeSubscription) {
-      this.dataChangeSubscription.unsubscribe();
-    }
+    this.subscriptions.forEach(sub => sub.unsubscribe());
   }
 
   /**

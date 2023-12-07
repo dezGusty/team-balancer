@@ -5,6 +5,20 @@
 .panel-draft-icons {
   display: flex;
   flex-direction: row;
-  justify-content: space-between;
-  align-items: center;
+  justify-content: flex-start;
+  align-items: flex-start;
+  gap: 0.5em;
+}
+
+.searchfield {
+  border-top: none;
+  border-left: none;
+  border-right: none;
+  /* appearance: none; */
+  outline: none;
+}
+
+.availableplayers {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(10em, 1fr));
 }

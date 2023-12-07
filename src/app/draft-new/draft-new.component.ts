@@ -1,21 +1,34 @@
 import { CommonModule } from '@angular/common';
-import { Component, ElementRef, ViewChild } from '@angular/core';
+import { ChangeDetectionStrategy, Component, ElementRef, ViewChild } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { CopyClipboardDirective } from '../shared/copy-clipboard.directive';
 import { DraftService } from '../shared/draft.service';
+import { DraftSelectionService } from './data-access/draft-selection.service';
+import { NotificationService } from '../utils/notification/notification.service';
+import { CurrentPlayersData, CurrentPlayersService } from './data-access/current-players.service';
+import { PlayerCardComponent } from "../player-card/player-card.component";
+import { Player } from '../shared/player.model';
 
 @Component({
-  selector: 'app-draft-new',
-  standalone: true,
-  imports: [CommonModule, FormsModule],
-  templateUrl: './draft-new.component.html',
-  styleUrl: './draft-new.component.css'
+    selector: 'app-draft-new',
+    changeDetection: ChangeDetectionStrategy.OnPush,
+    standalone: true,
+    templateUrl: './draft-new.component.html',
+    styleUrl: './draft-new.component.css',
+    imports: [CommonModule, FormsModule, PlayerCardComponent]
 })
 export class DraftNewComponent {
 
+  nextMatches$ = this.draftService.nextMatches$;
+
+  playersData$ = this.playersService.currentPlayers$;
+
+
   @ViewChild('srcNameArea') srcNameArea: ElementRef | undefined;
   constructor(
-    private draftSvc: DraftService) {
+    private draftService: DraftSelectionService,
+    private playersService: CurrentPlayersService,
+    private notificationService: NotificationService) {
   }
   
   searchedName: string = '';
@@ -98,5 +111,10 @@ export class DraftNewComponent {
     //   this.draftSvc.storePlayersInMemoryOnly(this.selectedPlayerList.slice(0, 10));
     // }
     // this.router.navigate(['/custom'], { queryParams: { draft: true } });
+  }
+
+  onPlayerSelected($event: any, player: Player) {
+    // this.movePlayerToDraft(player);
+  
   }
 }
