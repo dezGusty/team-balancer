@@ -1,7 +1,8 @@
 import { HttpErrorResponse } from '@angular/common/http';
 import { Injectable, OnDestroy } from '@angular/core';
 import { Firestore, doc, docData, setDoc } from '@angular/fire/firestore';
-import { BehaviorSubject, Observable, Subscription, catchError, map, shareReplay, switchMap, tap, throwError } from 'rxjs';
+import { BehaviorSubject, Observable, Subject, Subscription, catchError, map, shareReplay, switchMap, tap, throwError } from 'rxjs';
+import { DraftChangeInfo } from 'src/app/shared/draft-change-info';
 import { LoadingFlagService } from 'src/app/utils/loading-flag.service';
 import { Player } from 'temp/player';
 
@@ -16,7 +17,7 @@ export class DraftSelectionService implements OnDestroy {
 
   triggerDataRetrieval$ = new BehaviorSubject<boolean>(true);
 
-  public nextMatches$ = this.triggerDataRetrieval$.asObservable().pipe(
+  public nextMatchDraft$ = this.triggerDataRetrieval$.asObservable().pipe(
     switchMap(_ => {
       this.loadingFlagService.setLoadingFlag(true);
       return docData(doc(this.firestore, 'drafts/next'))
@@ -30,24 +31,33 @@ export class DraftSelectionService implements OnDestroy {
     shareReplay(1),
   );
 
-  public triggerStoreMatch$ = new BehaviorSubject<DraftSelectionData>({} as DraftSelectionData);
-  public storedMatch$ = this.triggerStoreMatch$.asObservable().pipe(
+  public triggerStoreMatchSubject$ = new Subject<DraftSelectionData>();
+  public storedMatch$ = this.triggerStoreMatchSubject$.asObservable().pipe(
+    tap(data => console.log("*** upload data ", data)),
     switchMap(data => {
       this.loadingFlagService.setLoadingFlag(true);
       return setDoc(doc(this.firestore, 'drafts/next'), data, { merge: true });
-    })
+    }),
+    tap(data => console.log("*** upload data result", data)),
+    tap((_) => { this.loadingFlagService.setLoadingFlag(false); }),
   );
 
   constructor(
     private firestore: Firestore,
     private loadingFlagService: LoadingFlagService) {
-
+    this.subscriptions.push(this.storedMatch$.subscribe());
   }
 
   private subscriptions: Subscription[] = [];
   ngOnDestroy(): void {
     this.subscriptions.forEach(subscription => subscription.unsubscribe());
   }
+
+  // saveDraftToFirebase(draftData: DraftSelectionData) {
+  //   // Emit an event to signal that the app is fetching / loading data
+  //   const obj = { players: draftData.players };
+  //   return setDoc(doc(this.firestore, '/drafts/next'), obj, { merge: true });
+  // }
 
   private handleError(err: HttpErrorResponse): Observable<never> {
     // in a real world app, we may send the server to some remote logging infrastructure

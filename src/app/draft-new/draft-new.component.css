@@ -22,3 +22,8 @@
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(10em, 1fr));
 }
+
+.selectedplayers {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(10em, 1fr));
+}

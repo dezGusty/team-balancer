@@ -1,3 +1,5 @@
+@if (uploadData$ | async; as uploadData) { }
+
 <div class="toolbar-container">
   <div class="panel-draft-icons">
     @if (this.canChangePlayersInDraft()) {
@@ -50,36 +52,24 @@
   </div>
 </div>
 
-<div class="row justify-content-center">
-  <!-- show the list of players on the left side -->
-  <!-- <div class="col-6 col-sm-6 col-md-5 col-lg-4 col-xl-3 left-player-list">
-    <h5>Selected players</h5>
-    <p>{{ selectedPlayerList.length }} players</p>
-    <div>
-      <app-player-card *ngFor="let playerItem of this.getDraftedPlayersMainList()" [player]="playerItem"
-        (playerSelected)="onPlayerSelected($event)"></app-player-card>
-    </div>
-    <p>Reserves</p>
-    <div>
-      <app-player-card *ngFor="let playerItem of this.getDraftedPlayersReservesList()" [player]="playerItem"
-        (playerSelected)="onPlayerSelected($event)"></app-player-card>
-    </div>
-  </div> -->
-  <!-- show the list of players on the right side -->
-  @if (this.playersData$ | async; as playersData) {
+<div>
+  @if (this.selectedPlayersData$ | async; as selectedPlayersData) {
+  <h5>Selected players</h5>
+  <p>{{ selectedPlayersData.players.length }} players</p>
+  <div class="selectedplayers">
+    @for (player of selectedPlayersData.players; track player) {
+    <app-player-card [player]="player" (playerSelected)="onDraftedPlayerClicked($event, player)"></app-player-card>
+    }
+  </div>
+  }
+  @if (this.filteredAvailablePlayersData$ | async; as playersData) {
   <h5>Available players</h5>
   <p>{{playersData.players.length}}</p>
   <div class="availableplayers">
     @for (player of playersData.players; track player) {
-    <app-player-card [player]="player" (playerSelected)="onPlayerSelected($event, player)"></app-player-card>
+    <app-player-card [player]="player" (playerSelected)="onAvailablePlayerClicked($event, player)"></app-player-card>
     }
   </div>
   }
 
-  <!-- <div class="col-6 col-sm-6 col-md-5 col-lg-4 col-xl-3 right-player-list">
-    <app-player-card *ngFor="
-        let playerItem of this.availablePlayerList | playerFilter: searchedName
-      " [player]="playerItem" (playerSelected)="onPlayerSelected($event)">
-    </app-player-card>
-  </div> -->
 </div>

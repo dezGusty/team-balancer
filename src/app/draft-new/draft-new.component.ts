@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { ChangeDetectionStrategy, Component, ElementRef, ViewChild } from '@angular/core';
+import { ChangeDetectionStrategy, Component, ElementRef, HostListener, ViewChild } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { CopyClipboardDirective } from '../shared/copy-clipboard.directive';
 import { DraftService } from '../shared/draft.service';
@@ -8,20 +8,107 @@ import { NotificationService } from '../utils/notification/notification.service'
 import { CurrentPlayersData, CurrentPlayersService } from './data-access/current-players.service';
 import { PlayerCardComponent } from "../player-card/player-card.component";
 import { Player } from '../shared/player.model';
+import { BehaviorSubject, Subject, combineLatest, map, shareReplay, startWith, switchMap, tap, withLatestFrom } from 'rxjs';
+
+export enum DraftAction {
+  None = 0,
+  AddPlayer = 1,
+  RemovePlayer = 2,
+  RemoveAllPlayers = 3,
+}
+
+export class PlayerDraftAction {
+  constructor(public action: DraftAction, public player: Player) { }
+}
 
 @Component({
-    selector: 'app-draft-new',
-    changeDetection: ChangeDetectionStrategy.OnPush,
-    standalone: true,
-    templateUrl: './draft-new.component.html',
-    styleUrl: './draft-new.component.css',
-    imports: [CommonModule, FormsModule, PlayerCardComponent]
+  selector: 'app-draft-new',
+  changeDetection: ChangeDetectionStrategy.OnPush,
+  standalone: true,
+  templateUrl: './draft-new.component.html',
+  styleUrl: './draft-new.component.css',
+  imports: [CommonModule, FormsModule, PlayerCardComponent]
 })
 export class DraftNewComponent {
 
-  nextMatches$ = this.draftService.nextMatches$;
 
-  playersData$ = this.playersService.currentPlayers$;
+  // TODO: combine with add player / remove player, remove all
+  actionSubject$ = new BehaviorSubject<PlayerDraftAction>({ action: DraftAction.None, player: null! });
+  action$ = this.actionSubject$.asObservable().pipe(
+    tap(x => console.log("*** action", x)),
+    shareReplay(1)
+  );
+
+  nextMatchDraft$ = combineLatest([this.draftService.nextMatchDraft$, this.action$]).pipe(
+    map(([draftData, action]) => {
+      switch (action.action) {
+        case DraftAction.AddPlayer:
+          draftData.players.push(action.player);
+          break;
+        case DraftAction.RemovePlayer:
+          draftData.players = draftData.players.filter(p => p.id !== action.player.id);
+          break;
+        case DraftAction.RemoveAllPlayers:
+          draftData.players = [];
+          break;
+      }
+      return draftData;
+    }),
+  );
+
+  filterByContentSubject$ = new BehaviorSubject<string>('');
+  filterByContent$ = this.filterByContentSubject$.asObservable().pipe(
+    tap(x => console.log("*** filter by content", x)),
+    shareReplay(1)
+  );
+
+  uploadDataSubject$ = new Subject<void>();
+  uploadData$ = this.uploadDataSubject$.asObservable().pipe(
+    tap(data => { console.log("*** upload data", data); }),
+    withLatestFrom(this.nextMatchDraft$),
+    tap(([_, draftData]) => {
+      return this.draftService.triggerStoreMatchSubject$.next(draftData);
+    }),
+  );
+
+  playersData$ = this.playersService.currentPlayers$.pipe(
+    shareReplay(1)
+  );
+
+  selectedPlayersData$ = combineLatest([this.playersData$, this.nextMatchDraft$]).pipe(
+    map(([playersData, draftData]) => {
+      const selectedPlayers = playersData.players.filter(
+        draftPl => draftData.players.findIndex(p => draftPl.id == p.id) != -1);
+      return { players: selectedPlayers, label: playersData.label, version: playersData.version };
+    }),
+    tap(x => console.log("*** selected players data", x)),
+    shareReplay(1)
+  );
+
+  availablePlayersData$ = combineLatest([this.playersData$, this.nextMatchDraft$]).pipe(
+    map(([playersData, draftData]) => {
+      const selectedPlayers = playersData.players.filter(
+        draftPl => draftData.players.findIndex(p => draftPl.id == p.id) == -1);
+      return { players: selectedPlayers, label: playersData.label, version: playersData.version };
+    }),
+    tap(x => console.log("*** available players data", x)),
+    shareReplay(1)
+  );
+
+  filteredAvailablePlayersData$ = combineLatest([this.availablePlayersData$, this.filterByContent$]).pipe(
+    map(([playersData, filterByContent]) => {
+      if (filterByContent === '') {
+        return playersData;
+      }
+
+      return {
+        players: playersData.players.filter(p => p.name.toLowerCase().includes(filterByContent.toLowerCase())),
+        label: playersData.label,
+        version: playersData.version
+      };
+    }),
+    tap(x => console.log("*** filtered players data", x)),
+  );
 
 
   @ViewChild('srcNameArea') srcNameArea: ElementRef | undefined;
@@ -30,15 +117,21 @@ export class DraftNewComponent {
     private playersService: CurrentPlayersService,
     private notificationService: NotificationService) {
   }
-  
+
   searchedName: string = '';
+  @HostListener('window:keydown.control./', ['$event'])
+  startSearching(event: KeyboardEvent) {
+    setTimeout(() => { // this will make the execution after the above boolean has changed
+      this.srcNameArea?.nativeElement.focus();
+    }, 0);
+  }
 
   onClearListClicked() {
-    // this.selectedPlayerList = [];
-    // this.availablePlayerList = [...this.playersSvc.getPlayers()];
+    this.actionSubject$.next({ action: DraftAction.RemoveAllPlayers, player: null! });
   }
 
   onSaveSelectionClicked() {
+    this.uploadDataSubject$.next();
     // this.showLoading = true;
     // await this.draftSvc.saveSelectedPlayerListAsync(this.selectedPlayerList);
     // this.showLoading = false;
@@ -66,22 +159,12 @@ export class DraftNewComponent {
   }
 
   onSearchContentChange($event: any) {
-    // if ($event.code === 'Enter') {
-    //   // try to apply the target value.
-    //   const filteredPlayers = filterPlayerArray(this.availablePlayerList, $event.target.value);
-    //   if (filteredPlayers.length === 1) {
-    //     this.movePlayerToDraft(filteredPlayers[0]);
-    //   }
-
-    //   this.searchedName = '';
-    // } else {
-
-    //   // try to apply the target value.
-    //   const filteredPlayers = filterPlayerArray(this.availablePlayerList, $event.target.value);
-    //   if (filteredPlayers.length === 1) {
-    //     // show special marker?
-    //   }
-    // }
+    if ($event.code === 'Enter') {
+      // try to apply the target value.
+      this.filterByContentSubject$.next($event.target.value);
+    } else {
+      this.filterByContentSubject$.next($event.target.value);
+    }
   }
 
   onMatchUpClicked() {
@@ -113,8 +196,13 @@ export class DraftNewComponent {
     // this.router.navigate(['/custom'], { queryParams: { draft: true } });
   }
 
-  onPlayerSelected($event: any, player: Player) {
-    // this.movePlayerToDraft(player);
-  
+  onAvailablePlayerClicked($event: any, player: Player) {
+    console.log("available player clicked", $event, player);
+    this.actionSubject$.next({ action: DraftAction.AddPlayer, player: player });
+  }
+
+  onDraftedPlayerClicked($event: any, player: Player) {
+    console.log("drafter player clicked", $event, player);
+    this.actionSubject$.next({ action: DraftAction.RemovePlayer, player: player });
   }
 }

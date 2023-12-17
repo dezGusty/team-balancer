@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component, OnInit, Input, Output, EventEmitter } from '@angular/core';
+import { Component, OnInit, Input, Output, EventEmitter, ChangeDetectionStrategy } from '@angular/core';
 import { PlayerMiniCardComponent } from '../players/player-mini-card/player-mini-card.component';
 import { Player } from '../shared/player.model';
 
@@ -9,15 +9,13 @@ import { Player } from '../shared/player.model';
   standalone: true,
   styles: [''],
   templateUrl: './player-card.component.html',
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class PlayerCardComponent implements OnInit {
+export class PlayerCardComponent {
   @Input() player: Player | undefined;
   @Output() playerSelected = new EventEmitter<Player>();
 
   constructor() { }
-
-  ngOnInit() {
-  }
 
   onPlayerCardSelected() {
     if (!this.player) {

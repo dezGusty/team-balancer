@@ -1,17 +1,16 @@
 import { CommonModule } from '@angular/common';
-import { Component, OnInit, Input } from '@angular/core';
-// import { NgbTooltipModule } from '@ng-bootstrap/ng-bootstrap';
+import { Component, OnInit, Input, ChangeDetectionStrategy } from '@angular/core';
 import { Player, getDisplayName } from 'src/app/shared/player.model';
 
 @Component({
   imports: [
     CommonModule
-    //, NgbTooltipModule
   ],
   selector: 'app-player-mini-card',
   standalone: true,
   styles: [''],
   templateUrl: './player-mini-card.component.html',
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class PlayerMiniCardComponent implements OnInit {
   @Input() player: Player | undefined;
