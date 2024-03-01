@@ -10,7 +10,7 @@
     "test": "ng test",
     "lint": "ng lint",
     "e2e": "ng e2e",
-    "postinstall": "ngcc --properties es2015 browser module main --first-only --create-ivy-entry-points"
+    "postinstall": ""
   },
   "private": true,
   "dependencies": {
@@ -24,7 +24,6 @@
     "@angular/platform-browser": "^17.2.3",
     "@angular/platform-browser-dynamic": "^17.2.3",
     "@angular/router": "^17.2.3",
-    "@angular/service-worker": "^17.2.3",
     "@angular/ssr": "^17.2.2",
     "cookieconsent": "^3.1.1",
     "firebase": "^10.0.0",
