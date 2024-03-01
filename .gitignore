@@ -51,3 +51,5 @@ src/assets_src/*
 functions/package-lock.json
 src/firebase-messaging-sw.js
 src/favicon.svg
+firebase-debug.log
+ui-debug.log
