@@ -1,7 +1,7 @@
 import { join, resolve } from 'path';
 import * as fs from 'fs';
 import * as os from 'os';
-import { Player } from './player';
+import { PlayerTestO } from './player.testo';
 import { GameInfo } from './game-info';
 
 
@@ -77,8 +77,8 @@ function readAllGames(sourceFile: string): GameInfo[] {
   return games;
 }
 
-function readAllPlayers(sourceFile: string): Player[] {
-  let players: Player[] = new Array<Player>();
+function readAllPlayers(sourceFile: string): PlayerTestO[] {
+  let players: PlayerTestO[] = new Array<PlayerTestO>();
 
   const fileContents = fs.readFileSync(sourceFile, 'utf8');
 
@@ -95,7 +95,7 @@ function readAllPlayers(sourceFile: string): Player[] {
       return;
     }
 
-    players.push(Player.fromNameAndRating(singleLine));
+    players.push(PlayerTestO.fromNameAndRating(singleLine));
   });
 
   return players;
@@ -145,7 +145,7 @@ function doTFLFilesExist() {
   return true;
 }
 
-function updateRatingsForGame(players: Player[], game: GameInfo): Player[] {
+function updateRatingsForGame(players: PlayerTestO[], game: GameInfo): PlayerTestO[] {
   return players.map(player => {
     // if the game contains the player name in the winner list
     // or the loser list modify the rating.
@@ -164,7 +164,7 @@ function updateRatingsForGame(players: Player[], game: GameInfo): Player[] {
   })
 }
 
-function getUpdatedActivePlayerRatings(): Player[] {
+function getUpdatedActivePlayerRatings(): PlayerTestO[] {
 
   let players = readAllPlayers(getPlayersFile());
   let tempOutPlayers = readTempOutPlayerNames(getPlayersFile());
@@ -256,7 +256,7 @@ function main() {
 
 }
 
-function getAllCombinations(players: Player[]) {
+function getAllCombinations(players: PlayerTestO[]) {
   // Create 2 teams; use combinations.
   // Basically: choose 6 players from a list of 12.
   // C(n, k) = n! / (n-k)! * k!

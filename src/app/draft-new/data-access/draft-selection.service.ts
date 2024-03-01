@@ -3,8 +3,9 @@ import { Injectable, OnDestroy } from '@angular/core';
 import { Firestore, doc, docData, setDoc } from '@angular/fire/firestore';
 import { BehaviorSubject, Observable, Subject, Subscription, catchError, map, shareReplay, switchMap, tap, throwError } from 'rxjs';
 import { DraftChangeInfo } from 'src/app/shared/draft-change-info';
+import { Player, getDisplayName } from 'src/app/shared/player.model';
+import { SettingsService } from 'src/app/shared/settings.service';
 import { LoadingFlagService } from 'src/app/utils/loading-flag.service';
-import { Player } from 'temp/player';
 
 export interface DraftSelectionData {
   players: Player[];
@@ -44,7 +45,8 @@ export class DraftSelectionService implements OnDestroy {
 
   constructor(
     private firestore: Firestore,
-    private loadingFlagService: LoadingFlagService) {
+    private loadingFlagService: LoadingFlagService,
+    private settingsSvc: SettingsService) {
     this.subscriptions.push(this.storedMatch$.subscribe());
   }
 
@@ -73,5 +75,27 @@ export class DraftSelectionService implements OnDestroy {
     }
     console.error(err);
     return throwError(() => errorMessage);
+  }
+
+  public getDraftPrettyPrinted(players: Player[], newline: string): string {
+    let plainText = 'Main line-up ⚽' + newline;
+    plainText += '---------------' + newline
+    players.slice(0, this.settingsSvc.getPreferredPlayerCount()).forEach((player, index) => {
+      plainText += '' + (index + 1) + '. ' + getDisplayName(player) + newline;
+    });
+
+    let reservesArray = players.slice(this.settingsSvc.getPreferredPlayerCount());
+    if (reservesArray.length > 0) {
+      plainText += newline + 'Reserves 💺' + newline;
+      plainText += '---------------' + newline;
+      reservesArray.forEach((player, index) => {
+        plainText += '' + (index + 1) + '. ' + getDisplayName(player) + newline;
+      })
+    }
+    return plainText;
+  }
+
+  public getDraftPlainTextFormat(players: Player[]): string {
+    return this.getDraftPrettyPrinted(players, '\r\n');
   }
 }

@@ -190,7 +190,7 @@ a.player-card-grad:hover {
 }
 
 .square {
-  /* width: 2rem; */
+  width: 4rem;
 }
 
 .square:after {

@@ -21,9 +21,28 @@
 .availableplayers {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(10em, 1fr));
+  /* flex-grow: 1; */
+}
+
+.leftArea {
+  flex-grow: 0;
+
+}
+
+.rightArea {
+  flex-grow: 1;
 }
 
 .selectedplayers {
-  display: grid;
+  display: flex;
+  flex-direction: column;
   grid-template-columns: repeat(auto-fill, minmax(10em, 1fr));
+}
+
+.draftPlayersArea {
+  display: flex;
+  flex-direction: row;
+  /* justify-content: space-between; */
+  align-items: flex-start;
+  gap: 1em;
 }

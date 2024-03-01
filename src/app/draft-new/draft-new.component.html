@@ -1,4 +1,5 @@
 @if (uploadData$ | async; as uploadData) { }
+@if (copyToClipboard$ | async; as copyToClipboard) { }
 
 <div class="toolbar-container">
   <div class="panel-draft-icons">
@@ -17,8 +18,8 @@
     </button>
     }
 
-    <button title="copy" type="button" class="btn btn-gus-small" ngbTooltip="Copy to clipboard"
-      copy-clipboard="customClipTextToClip()" (click)="onCopyClicked();">
+    <button title="copy" type="button" class="btn btn-gus-small" ngbTooltip="Copy to clipboard" 
+      (click)="onCopyClicked();">
       <svg width="28" height="28" fill="currentColor" class="bi bi-x-octagon-fill" viewBox="0 0 16 16">
         <use xlink:href="./../../../assets/svgicons.svg#clipboard" />
       </svg>
@@ -52,24 +53,28 @@
   </div>
 </div>
 
-<div>
-  @if (this.selectedPlayersData$ | async; as selectedPlayersData) {
-  <h5>Selected players</h5>
-  <p>{{ selectedPlayersData.players.length }} players</p>
-  <div class="selectedplayers">
-    @for (player of selectedPlayersData.players; track player) {
-    <app-player-card [player]="player" (playerSelected)="onDraftedPlayerClicked($event, player)"></app-player-card>
+<div class="draftPlayersArea">
+  <div class="leftArea">
+    @if (this.selectedPlayersData$ | async; as selectedPlayersData) {
+    <h5>Selected players</h5>
+    <p>{{ selectedPlayersData.players.length }} players</p>
+    <div class="selectedplayers">
+      @for (player of selectedPlayersData.players; track player) {
+      <app-player-card [player]="player" (playerSelected)="onDraftedPlayerClicked($event, player)"></app-player-card>
+      }
+    </div>
     }
   </div>
-  }
-  @if (this.filteredAvailablePlayersData$ | async; as playersData) {
-  <h5>Available players</h5>
-  <p>{{playersData.players.length}}</p>
-  <div class="availableplayers">
-    @for (player of playersData.players; track player) {
-    <app-player-card [player]="player" (playerSelected)="onAvailablePlayerClicked($event, player)"></app-player-card>
+  <div class="rightArea">
+    @if (this.filteredAvailablePlayersData$ | async; as playersData) {
+    <h5>Available players</h5>
+    <p>{{playersData.players.length}}</p>
+    <div class="availableplayers">
+      @for (player of playersData.players; track player) {
+      <app-player-card [player]="player" (playerSelected)="onAvailablePlayerClicked($event, player)"></app-player-card>
+      }
+    </div>
     }
   </div>
-  }
 
 </div>

@@ -1,22 +1,22 @@
-export class Player {
+export class PlayerTestO {
 
   id?: number;
 
   constructor(public name: string, public rating: number) {
   }
 
-  public static fromNameAndRating(nameAndRating: string): Player {
+  public static fromNameAndRating(nameAndRating: string): PlayerTestO {
     let parsedName: string;
     let parsedRating: number;
     // E.g. Johny (Guy) : 1.952
     let splitContent = nameAndRating.split(':');
     if (splitContent.length < 2) {
-      return new Player("invalid name", 0);
+      return new PlayerTestO("invalid name", 0);
     }
 
     parsedName = splitContent[0].trim();
     parsedRating = parseFloat(splitContent[1]);
 
-    return new Player(parsedName, parsedRating);
+    return new PlayerTestO(parsedName, parsedRating);
   }
 }

@@ -1,14 +1,12 @@
 import { CommonModule } from '@angular/common';
 import { ChangeDetectionStrategy, Component, ElementRef, HostListener, ViewChild } from '@angular/core';
 import { FormsModule } from '@angular/forms';
-import { CopyClipboardDirective } from '../shared/copy-clipboard.directive';
-import { DraftService } from '../shared/draft.service';
 import { DraftSelectionService } from './data-access/draft-selection.service';
 import { NotificationService } from '../utils/notification/notification.service';
-import { CurrentPlayersData, CurrentPlayersService } from './data-access/current-players.service';
+import { CurrentPlayersService } from './data-access/current-players.service';
 import { PlayerCardComponent } from "../player-card/player-card.component";
 import { Player } from '../shared/player.model';
-import { BehaviorSubject, Subject, combineLatest, map, shareReplay, startWith, switchMap, tap, withLatestFrom } from 'rxjs';
+import { BehaviorSubject, Subject, combineLatest, map, shareReplay, tap, withLatestFrom } from 'rxjs';
 
 export enum DraftAction {
   None = 0,
@@ -31,6 +29,7 @@ export class PlayerDraftAction {
 })
 export class DraftNewComponent {
 
+  public customClipboardText = '';
 
   // TODO: combine with add player / remove player, remove all
   actionSubject$ = new BehaviorSubject<PlayerDraftAction>({ action: DraftAction.None, player: null! });
@@ -110,6 +109,16 @@ export class DraftNewComponent {
     tap(x => console.log("*** filtered players data", x)),
   );
 
+  copyToClipboardSubject$ = new Subject<void>();
+  copyToClipboard$ = this.copyToClipboardSubject$.asObservable().pipe(
+    withLatestFrom(this.selectedPlayersData$),
+    tap(([_, selectedPlayersData]) => {
+      this.customClipboardText = this.draftService.getDraftPlainTextFormat(selectedPlayersData.players);
+      navigator['clipboard'].writeText(this.customClipboardText);
+      this.notificationService.emitMessage('Copied to clipboard:' + this.customClipboardText);
+    }),
+  );
+
 
   @ViewChild('srcNameArea') srcNameArea: ElementRef | undefined;
   constructor(
@@ -138,13 +147,9 @@ export class DraftNewComponent {
   }
 
   onCopyClicked() {
-    // this.customClipText = this.draftSvc.getDraftPlainTextFormat(this.selectedPlayerList);
+    this.copyToClipboardSubject$.next();
+    // this.customClipTextToClip = this.draftService.getDraftPlainTextFormat(this.selectedPlayerList);
     // this.toastSvc.showWithHeader('Copied to clipboard.', this.customClipText);
-  }
-
-  getDraftPlainTextFormat(): string {
-    return "blabla";
-    // return this.draftSvc.getDraftPlainTextFormat(this.selectedPlayerList);
   }
 
   customClipTextToClip(): string {
@@ -205,4 +210,6 @@ export class DraftNewComponent {
     console.log("drafter player clicked", $event, player);
     this.actionSubject$.next({ action: DraftAction.RemovePlayer, player: player });
   }
+
+
 }
