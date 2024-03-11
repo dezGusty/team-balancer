@@ -1,16 +1,17 @@
 import { HttpErrorResponse } from '@angular/common/http';
-import { Injectable } from '@angular/core';
+import { Injectable, OnDestroy } from '@angular/core';
 import { Firestore, docData, setDoc, updateDoc } from '@angular/fire/firestore';
 import { doc } from 'firebase/firestore';
 import { BehaviorSubject, Observable, Subject, Subscription, catchError, combineLatest, from, map, share, shareReplay, startWith, switchMap, tap, throwError } from 'rxjs';
-import { MatchHistoryTitle } from '../match-history.title';
+import { MatchDateTitle } from '../match-history.title';
 import { CustomPrevGame } from 'src/app/shared/custom-prev-game.model';
 import { LoadingFlagService } from 'src/app/utils/loading-flag.service';
+import { CreateGameEventRequest } from './create-game-event-request.model';
 
 @Injectable({
   providedIn: 'root'
 })
-export class MatchHistService {
+export class MatchHistService implements OnDestroy {
 
   public selectedMatchSubject = new Subject<string>();
   public selectedMatchAction$ = this.selectedMatchSubject.asObservable().pipe(
@@ -19,17 +20,42 @@ export class MatchHistService {
     }),
   );
 
-  constructor(private firestore: Firestore, private loadingFlagService: LoadingFlagService) {
+  createGameEventSubject$ = new Subject<CreateGameEventRequest>();
+  public readonly createGameEventAction$ = this.createGameEventSubject$.asObservable().pipe(
+    tap(_ => {
+      this.loadingFlagService.setLoadingFlag(true);
+    }),
+    switchMap((createGameEventRequest) => {
+      console.log('creating game event', createGameEventRequest);
+
+      // Create a new document in the 'games' collection with the match name as the document name.
+      return setDoc(doc(this.firestore, `games/${createGameEventRequest.eventName}`), createGameEventRequest);
+    }),
+    tap((_) => { this.loadingFlagService.setLoadingFlag(false); }),
+  );
+
+  public createGameEvent(createMatchRequest: CreateGameEventRequest) {
+    this.createGameEventSubject$.next(createMatchRequest);
   }
 
-  public recentMatches$ = docData(doc(this.firestore, 'matches/recent')).pipe(
+  private subscriptions: Subscription[] = [];
+
+  constructor(private firestore: Firestore, private loadingFlagService: LoadingFlagService) {
+    this.subscriptions.push(this.createGameEventAction$.subscribe());
+  }
+
+  ngOnDestroy(): void {
+    this.subscriptions.forEach(sub => sub.unsubscribe());
+  }
+
+  public readonly matches$ = docData(doc(this.firestore, 'matches/recent')).pipe(
     map(recentMatchesDocContents => {
       const castedItem = recentMatchesDocContents as { items: string[] };
       // Individual string entries are obtained in strings in the YYYY-MM-DD format.
       // Map each entry to an object of the type MatchHistoryTitle (with the year, month, and day properties).
       const matchHistoryTitles = castedItem.items.map((entry) => {
         const [year, month, day] = entry.split('-');
-        return { title: entry, year, month, day } as MatchHistoryTitle;
+        return { title: entry, year, month, day } as MatchDateTitle;
       });
       return matchHistoryTitles;
     }),
@@ -40,7 +66,7 @@ export class MatchHistService {
 
   // Store an observable for the selected match entry from the recent matches list.
   selectedMatch$ = combineLatest([
-    this.recentMatches$,
+    this.matches$,
     this.selectedMatchAction$
   ]).pipe(
     map(([recentMatches, selectedMatch]) => {
@@ -77,9 +103,9 @@ export class MatchHistService {
 
   public async updateCustomPrevMatchAsync(matchDocName: string, game: CustomPrevGame) {
     console.log('updating match', matchDocName, game);
-    
+
     const docRef = doc(this.firestore, `matches/${matchDocName}`);
-    
+
     await setDoc(docRef, game, { merge: true });
     console.log('updated match', matchDocName, game);
 
@@ -88,7 +114,7 @@ export class MatchHistService {
     //   team2: game.team2
     // };
 
-    
+
 
     // let obj: {
     //   [x: string]: any;

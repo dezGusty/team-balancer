@@ -30,7 +30,7 @@ import { PlayersService } from './app/shared/players.service';
 import { ToastService } from './app/shared/toasts-service';
 import { environment } from './environments/environment';
 import { PrivacyComponent } from './app/auth/privacy/privacy.component';
-import { HistoryComponent } from './app/matchesnew/history/history.component';
+import { GameEventsComponent } from './app/matchesnew/history/game-events.component';
 import { MatchDetailsComponent } from './app/matchesnew/details/details.component';
 import { UserAuthService } from './app/auth/user-auth.service';
 import { NotificationService } from './app/utils/notification/notification.service';
@@ -76,7 +76,7 @@ const appRoutes: Routes = [
     ]
   },
   {
-    path: 'history', canActivate: [AuthGuard], component: HistoryComponent, children: [
+    path: 'games', canActivate: [AuthGuard], component: GameEventsComponent, children: [
       { path: ':id', component: MatchDetailsComponent }
     ]
   },

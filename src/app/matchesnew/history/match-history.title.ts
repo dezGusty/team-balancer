@@ -1,4 +1,4 @@
-export interface MatchHistoryTitle {
+export interface MatchDateTitle {
   title: string;
   year: string;
   month: string;

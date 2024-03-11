@@ -1,0 +1,42 @@
+<div class="history-area">
+  <div class="history-left-outline">
+    <button class="gus-button" type="button" (click)="onAddGameClicked();">Add game ➕</button>
+    <ul>
+      @for (matchData of this.matchNames$ | async; track $index) {
+      <li (click)="onMatchEntryClicked(matchData)"
+        class="gus-border match-card player-card-grad date-as-calendar vert-calendar gus-hoverable"
+        [class.match-card-active]="matchData?.title === (this.selectedMatch$ | async)?.title"
+        [routerLink]="matchData?.title">
+        <span class="year">{{matchData.year}}</span>
+        <span class="month">{{matchData.month}}</span>
+        <span class="day">{{matchData.day}}</span>
+      </li>
+      } @empty {
+      <li>No recent matches.</li>
+      }
+    </ul>
+  </div>
+  <div class="history-right-outline">
+
+    @if(this.formEdit$ | async; as gameForm) {
+    @if (gameForm.action != undefined && gameForm.action != EMPTY) {
+    <form (submit)="this.saveMatch(gameForm)">
+      <h3>{{gameForm.action =="add" ? "Add" : "Edit" }} Game Event</h3>
+      <label for="event_date"></label>
+      <input [ngModel]="gameForm.matchDate | date:'yyyy-MM-dd'" (ngModelChange)="this.onCalendarDateSelected($event)" type="date" name="event_date" required
+        placeholder="Event Date">
+      <label for="event_name"></label>
+      <input [(ngModel)]="gameForm.eventName" type="text" name="event_name" placeholder="(Optional) Name">
+      <div>
+        <button type="button" (click)="this.selectNextTuesdayOrThursday()">Next Tuesday/Thursday</button>
+      </div>
+      <div>
+        <button class="gus-button" type="submit">Save</button>
+        <button class="gus-button" type="button" (click)="this.cancelEdit()">Cancel</button>
+      </div>
+    </form>
+    }
+    }
+    <app-details />
+  </div>
+</div>

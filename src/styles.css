@@ -55,6 +55,10 @@
   }
 }
 
+.justify-content-center {
+  justify-content: center;
+}
+
 .main-layout {
   min-height: 100dvh;
   display: grid;
@@ -506,6 +510,17 @@ a.player-card-grad:hover {
   display: flex;
   flex-direction: row;
 }
+
+/*check if needed - autogen*/
+.history-left-outline {
+  border-right: 1px solid var(--gus-secondary-bck);
+  padding-right: 0.5em;
+}
+.history-right-outline {
+  border-left: 1px solid var(--gus-secondary-bck);
+  padding-left: 0.5em;
+}
+
 
 .history-grid {
   display: grid;
