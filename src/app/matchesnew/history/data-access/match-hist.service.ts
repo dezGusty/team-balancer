@@ -1,17 +1,17 @@
 import { HttpErrorResponse } from '@angular/common/http';
 import { Injectable, OnDestroy } from '@angular/core';
-import { Firestore, docData, setDoc, updateDoc } from '@angular/fire/firestore';
-import { doc } from 'firebase/firestore';
-import { BehaviorSubject, Observable, Subject, Subscription, catchError, combineLatest, from, map, share, shareReplay, startWith, switchMap, tap, throwError } from 'rxjs';
+import { Firestore, collectionData, docData, setDoc } from '@angular/fire/firestore';
+import { collection, doc } from 'firebase/firestore';
+import { Observable, Subject, Subscription, catchError, combineLatest, map, of, shareReplay, switchMap, tap, throwError } from 'rxjs';
 import { MatchDateTitle } from '../match-history.title';
 import { CustomPrevGame } from 'src/app/shared/custom-prev-game.model';
 import { LoadingFlagService } from 'src/app/utils/loading-flag.service';
-import { CreateGameEventRequest } from './create-game-event-request.model';
+import { CreateGameEventRequest, createGameEventDataFromRequest, getEventNameForRequest } from './create-game-event-request.model';
 
 @Injectable({
   providedIn: 'root'
 })
-export class MatchHistService implements OnDestroy {
+export class MatchHistService {
 
   public selectedMatchSubject = new Subject<string>();
   public selectedMatchAction$ = this.selectedMatchSubject.asObservable().pipe(
@@ -20,33 +20,17 @@ export class MatchHistService implements OnDestroy {
     }),
   );
 
-  createGameEventSubject$ = new Subject<CreateGameEventRequest>();
-  public readonly createGameEventAction$ = this.createGameEventSubject$.asObservable().pipe(
-    tap(_ => {
-      this.loadingFlagService.setLoadingFlag(true);
-    }),
-    switchMap((createGameEventRequest) => {
-      console.log('creating game event', createGameEventRequest);
 
-      // Create a new document in the 'games' collection with the match name as the document name.
-      return setDoc(doc(this.firestore, `games/${createGameEventRequest.eventName}`), createGameEventRequest);
-    }),
-    tap((_) => { this.loadingFlagService.setLoadingFlag(false); }),
-  );
 
-  public createGameEvent(createMatchRequest: CreateGameEventRequest) {
-    this.createGameEventSubject$.next(createMatchRequest);
+  constructor(
+    private firestore: Firestore,
+    private loadingFlagService: LoadingFlagService) {
+
   }
 
-  private subscriptions: Subscription[] = [];
 
-  constructor(private firestore: Firestore, private loadingFlagService: LoadingFlagService) {
-    this.subscriptions.push(this.createGameEventAction$.subscribe());
-  }
 
-  ngOnDestroy(): void {
-    this.subscriptions.forEach(sub => sub.unsubscribe());
-  }
+
 
   public readonly matches$ = docData(doc(this.firestore, 'matches/recent')).pipe(
     map(recentMatchesDocContents => {

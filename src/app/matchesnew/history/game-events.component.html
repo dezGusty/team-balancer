@@ -26,7 +26,11 @@
       <input [ngModel]="gameForm.matchDate | date:'yyyy-MM-dd'" (ngModelChange)="this.onCalendarDateSelected($event)" type="date" name="event_date" required
         placeholder="Event Date">
       <label for="event_name"></label>
-      <input [(ngModel)]="gameForm.eventName" type="text" name="event_name" placeholder="(Optional) Name">
+      <input [(ngModel)]="gameForm.suffix" type="text" name="event_name" placeholder="(Optional) Suffix">
+      <div>
+        <label for="name_preview">Name Preview:</label>
+        <input type="text" name="name_preview" placeholder="Select a date" value="{{this.getPreviewName(gameForm.matchDate, gameForm.suffix)}}" readonly disabled>
+      </div>
       <div>
         <button type="button" (click)="this.selectNextTuesdayOrThursday()">Next Tuesday/Thursday</button>
       </div>

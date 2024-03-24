@@ -1,4 +1,4 @@
-import { Component, ChangeDetectionStrategy, inject } from '@angular/core';
+import { Component, ChangeDetectionStrategy, inject, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { MatchHistService } from './data-access/match-hist.service';
 import { MatchDateTitle } from './match-history.title';
@@ -7,9 +7,11 @@ import { SmallLoadingSpinnerComponent } from "../../ui/small-loading-spinner/sma
 import { BehaviorSubject, map, tap } from 'rxjs';
 import { MatchDetailsComponent } from '../details/details.component';
 import { FormAction, FormActionWrapper } from '../form-edit-wrapper';
-import { CreateGameEventRequest } from './data-access/create-game-event-request.model';
+import { CreateGameEventRequest, getEventNameForDateAndSuffix } from './data-access/create-game-event-request.model';
 import { FormsModule } from '@angular/forms';
 import { DatePipe } from '@angular/common';
+import { GameEventsService } from './data-access/game-events.service';
+import { MatchService } from 'src/app/shared/match.service';
 
 @Component({
   selector: 'app-history',
@@ -35,12 +37,14 @@ export class GameEventsComponent {
   );
 
 
-  public matchNames$ = this.matchSvc.matches$.pipe(
+  public matchNames$ = this.matchHistService.matches$.pipe(
     map((recentMatches) => {
       console.log('recent matches', recentMatches);
       return recentMatches.map((match) => this.getMonthDescForMatch(match));
     })
   );
+
+  // matchNames = toSignal(this.matchNames$);
 
   getMonthDescForMatch(match: MatchDateTitle): MatchDateTitle {
     const monthsDesc = ['JAN', 'FEB', 'MAR', 'APR', 'MAY', 'JUN', 'JUL', 'AUG', 'SEP', 'OCT', 'NOV', 'DEC'];
@@ -52,27 +56,20 @@ export class GameEventsComponent {
     } as MatchDateTitle;
   }
 
-  public selectedMatch$ = this.matchSvc.selectedMatch$;
+  public selectedMatch$ = this.matchHistService.selectedMatch$;
 
-  constructor(
-    private matchSvc: MatchHistService
-  ) {
-    console.log('history component constructor');
-  }
+  constructor(private gameEventsService: GameEventsService, private matchHistService: MatchHistService) { }
 
   onAddGameClicked() {
-    console.log('add game clicked');
-
     this.formEditSubject$.next({ action: FormAction.Add } as FormActionWrapper<CreateGameEventRequest>);
   }
 
   onMatchEntryClicked(item: MatchDateTitle) {
-    this.matchSvc.selectedMatchSubject.next(item.title);
-    console.log('match entry clicked', item);
+    this.matchHistService.selectedMatchSubject.next(item.title);
   }
 
   saveMatch(item: FormActionWrapper<CreateGameEventRequest>) {
-    this.matchSvc.createGameEvent(item);
+    this.gameEventsService.createGameEvent(item);
   }
 
   cancelEdit() {
@@ -80,10 +77,8 @@ export class GameEventsComponent {
   }
 
   getFollowingDay(startFrom: Date): Date {
-    console.log('startFrom', startFrom);
     const nextDay = new Date(startFrom);
     nextDay.setDate(startFrom.getDate() + 1);
-    console.log('startFrom:', startFrom, nextDay);
     return nextDay;
   }
 
@@ -126,11 +121,13 @@ export class GameEventsComponent {
     const nextEvent: FormActionWrapper<CreateGameEventRequest> = { ...this.formEditSubject$.value, matchDate: this.getDateAsYYYYMMDD(nextDate) };
     this.formEditSubject$.next(nextEvent);
   }
-  
+
   onCalendarDateSelected(dateAsString: string) {
-    const nextEvent: FormActionWrapper<CreateGameEventRequest> = { ...this.formEditSubject$.value, matchDate: dateAsString};
+    const nextEvent: FormActionWrapper<CreateGameEventRequest> = { ...this.formEditSubject$.value, matchDate: dateAsString };
     this.formEditSubject$.next(nextEvent);
   }
 
-
+  getPreviewName(date: string, suffix: string): string | undefined {
+    return getEventNameForDateAndSuffix(date, suffix);
+  }
 }
