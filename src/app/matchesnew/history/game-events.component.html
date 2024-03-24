@@ -2,7 +2,7 @@
   <div class="history-left-outline">
     <button class="gus-button" type="button" (click)="onAddGameClicked();">Add game ➕</button>
     <ul>
-      @for (matchData of this.matchNames$ | async; track $index) {
+      @for (matchData of this.matchNames(); track $index) {
       <li (click)="onMatchEntryClicked(matchData)"
         class="gus-border match-card player-card-grad date-as-calendar vert-calendar gus-hoverable"
         [class.match-card-active]="matchData?.title === (this.selectedMatch$ | async)?.title"
@@ -18,18 +18,19 @@
   </div>
   <div class="history-right-outline">
 
-    @if(this.formEdit$ | async; as gameForm) {
-    @if (gameForm.action != undefined && gameForm.action != EMPTY) {
-    <form (submit)="this.saveMatch(gameForm)">
-      <h3>{{gameForm.action =="add" ? "Add" : "Edit" }} Game Event</h3>
+    <!-- @if(this.formEdit$ | async; as eventEditForm) { -->
+    @if(this.addEvent(); as eventEditForm) {
+    @if (eventEditForm.action != undefined && eventEditForm.action != EMPTY) {
+    <form (submit)="this.saveMatch(eventEditForm)">
+      <h3>{{eventEditForm.action =="add" ? "Add" : "Edit" }} Game Event</h3>
       <label for="event_date"></label>
-      <input [ngModel]="gameForm.matchDate | date:'yyyy-MM-dd'" (ngModelChange)="this.onCalendarDateSelected($event)" type="date" name="event_date" required
+      <input [ngModel]="eventEditForm.matchDate | date:'yyyy-MM-dd'" (ngModelChange)="this.onCalendarDateSelected($event)" type="date" name="event_date" required
         placeholder="Event Date">
       <label for="event_name"></label>
-      <input [(ngModel)]="gameForm.suffix" type="text" name="event_name" placeholder="(Optional) Suffix">
+      <input [(ngModel)]="eventEditForm.suffix" type="text" name="event_name" placeholder="(Optional) Suffix">
       <div>
         <label for="name_preview">Name Preview:</label>
-        <input type="text" name="name_preview" placeholder="Select a date" value="{{this.getPreviewName(gameForm.matchDate, gameForm.suffix)}}" readonly disabled>
+        <input type="text" name="name_preview" placeholder="Select a date" value="{{this.getPreviewName(eventEditForm.matchDate, eventEditForm.suffix)}}" readonly disabled>
       </div>
       <div>
         <button type="button" (click)="this.selectNextTuesdayOrThursday()">Next Tuesday/Thursday</button>

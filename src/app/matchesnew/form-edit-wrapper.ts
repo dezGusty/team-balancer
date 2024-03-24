@@ -4,6 +4,6 @@ export enum FormAction {
   EMPTY = '',
 };
 
-export type FormActionWrapper<T> = {
+export type Action<T> = {
   action: FormAction;
 } & T;

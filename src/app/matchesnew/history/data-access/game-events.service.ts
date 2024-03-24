@@ -13,6 +13,7 @@ import { CreateGameEventRequest, GameNamesList, createGameEventDataFromRequest, 
 })
 export class GameEventsService implements OnDestroy {
 
+
   createGameEventSubject$ = new Subject<CreateGameEventRequest>();
   public readonly createGameEventAction$ = this.createGameEventSubject$.asObservable().pipe(
     tap(_ => { this.loadingFlagService.setLoadingFlag(true); }),
