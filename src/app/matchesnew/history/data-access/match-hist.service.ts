@@ -3,10 +3,10 @@ import { Injectable, OnDestroy } from '@angular/core';
 import { Firestore, collectionData, docData, setDoc } from '@angular/fire/firestore';
 import { collection, doc } from 'firebase/firestore';
 import { Observable, Subject, Subscription, catchError, combineLatest, map, of, shareReplay, switchMap, tap, throwError } from 'rxjs';
-import { MatchDateTitle } from '../match-history.title';
+import { MatchDateTitle } from '../match-date-title';
 import { CustomPrevGame } from 'src/app/shared/custom-prev-game.model';
 import { LoadingFlagService } from 'src/app/utils/loading-flag.service';
-import { CreateGameEventRequest, createGameEventDataFromRequest, getEventNameForRequest } from './create-game-event-request.model';
+import { CreateGameRequest, createGameEventDataFromRequest, getEventNameForRequest } from './create-game-request.model';
 
 @Injectable({
   providedIn: 'root'

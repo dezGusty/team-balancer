@@ -1,5 +1,5 @@
 import { DatePipe } from '@angular/common';
-import { Component, OnInit } from '@angular/core';
+import { ChangeDetectionStrategy, Component, OnInit } from '@angular/core';
 import pkg from '../../../package.json';
 
 @Component({
@@ -8,6 +8,7 @@ import pkg from '../../../package.json';
   standalone: true,
   styles: [''],
   templateUrl: './about.component.html',
+  changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class AboutComponent implements OnInit {
 

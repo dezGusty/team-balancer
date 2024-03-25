@@ -1,11 +1,11 @@
-export interface CreateGameEventRequest {
+export interface CreateGameRequest {
   matchDate: string;
   suffix: string;
 }
 
-export function getEventNameForDateAndSuffix(date: string, suffix: string): string | undefined {
+export function getEventNameForDateAndSuffix(date: string, suffix: string): string {
   if (!date) {
-    return undefined;
+    return "";
   }
   if (!suffix || suffix.length === 0) {
     return date;
@@ -13,7 +13,7 @@ export function getEventNameForDateAndSuffix(date: string, suffix: string): stri
   return `${date}_${suffix}`;
 }
 
-export function getEventNameForRequest(request: CreateGameEventRequest): string | undefined {
+export function getEventNameForRequest(request: CreateGameRequest): string {
   return getEventNameForDateAndSuffix(request.matchDate, request.suffix);
 }
 
@@ -23,7 +23,7 @@ export interface GameEventData {
   name: string | undefined;
 }
 
-export function createGameEventDataFromRequest(request: CreateGameEventRequest): GameEventData {
+export function createGameEventDataFromRequest(request: CreateGameRequest): GameEventData {
   return {
     matchDate: request.matchDate,
     name: getEventNameForRequest(request)

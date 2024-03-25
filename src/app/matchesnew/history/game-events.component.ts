@@ -1,17 +1,16 @@
-import { Component, ChangeDetectionStrategy, inject, signal } from '@angular/core';
+import { Component, ChangeDetectionStrategy, inject, signal, Signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { MatchHistService } from './data-access/match-hist.service';
-import { MatchDateTitle } from './match-history.title';
+import { MatchDateTitle } from './match-date-title';
 import { RouterModule } from '@angular/router';
 import { SmallLoadingSpinnerComponent } from "../../ui/small-loading-spinner/small-loading-spinner.component";
-import { BehaviorSubject, map, tap } from 'rxjs';
+import { map, tap } from 'rxjs';
 import { MatchDetailsComponent } from '../details/details.component';
 import { FormAction, Action } from '../form-edit-wrapper';
-import { CreateGameEventRequest, getEventNameForDateAndSuffix } from './data-access/create-game-event-request.model';
+import { CreateGameRequest as CreateGameRequest, getEventNameForDateAndSuffix } from './data-access/create-game-request.model';
 import { FormsModule } from '@angular/forms';
 import { DatePipe } from '@angular/common';
 import { GameEventsService } from './data-access/game-events.service';
-import { MatchService } from 'src/app/shared/match.service';
 import { toSignal } from '@angular/core/rxjs-interop';
 
 @Component({
@@ -31,13 +30,12 @@ import { toSignal } from '@angular/core/rxjs-interop';
 export class GameEventsComponent {
   EMPTY: string = FormAction.EMPTY;
 
-  addEvent = signal<Action<CreateGameEventRequest>>({} as Action<CreateGameEventRequest>);
+  private gameEventsService: GameEventsService = inject(GameEventsService); 
+  private matchHistService: MatchHistService = inject(MatchHistService);
 
-  // observables listening to [create match] events, bringing the add/edit form into view via the sub-component.
-  // formEditSubject$ = new BehaviorSubject<Action<CreateGameEventRequest>>({} as Action<CreateGameEventRequest>);
-  // formEdit$ = this.formEditSubject$.asObservable().pipe(
-  //   tap((data) => { console.log("***", data); })
-  // );
+  addEvent = signal<Action<CreateGameRequest>>({} as Action<CreateGameRequest>);
+
+  gameEvents = this.gameEventsService.gameEvents;
 
   private matchNames$ = this.matchHistService.matches$.pipe(
     map((recentMatches) => {
@@ -47,8 +45,6 @@ export class GameEventsComponent {
   );
 
   matchNames = toSignal(this.matchNames$);
-
-  // matchNames = toSignal(this.matchNames$);
 
   getMonthDescForMatch(match: MatchDateTitle): MatchDateTitle {
     const monthsDesc = ['JAN', 'FEB', 'MAR', 'APR', 'MAY', 'JUN', 'JUL', 'AUG', 'SEP', 'OCT', 'NOV', 'DEC'];
@@ -62,25 +58,23 @@ export class GameEventsComponent {
 
   public selectedMatch$ = this.matchHistService.selectedMatch$;
 
-  constructor(private gameEventsService: GameEventsService, private matchHistService: MatchHistService) { }
-
   onAddGameClicked() {
-    // this.formEditSubject$.next({ action: FormAction.Add } as Action<CreateGameEventRequest>);
-    this.addEvent.set({ action: FormAction.Add } as Action<CreateGameEventRequest>);
+    this.addEvent.set({ action: FormAction.Add } as Action<CreateGameRequest>);
   }
 
   onMatchEntryClicked(item: MatchDateTitle) {
     console.log('selected match', item);
-    this.matchHistService.selectedMatchSubject.next(item.title);
+    this.gameEventsService.selectedMatchSubject$.next(item);
+    // this.matchHistService.selectedMatchSubject.next(item.title);
   }
 
-  saveMatch(item: Action<CreateGameEventRequest>) {
+  saveMatch(item: Action<CreateGameRequest>) {
     this.gameEventsService.createGameEvent(item);
+    this.addEvent.set({ action: FormAction.EMPTY } as Action<CreateGameRequest>);
   }
 
   cancelEdit() {
-    // this.formEditSubject$.next({ action: FormAction.EMPTY } as Action<CreateGameEventRequest>);
-    this.addEvent.set({ action: FormAction.EMPTY } as Action<CreateGameEventRequest>);
+    this.addEvent.set({ action: FormAction.EMPTY } as Action<CreateGameRequest>);
   }
 
   getFollowingDay(startFrom: Date): Date {
@@ -117,34 +111,17 @@ export class GameEventsComponent {
     return `${year}-${textMonth}-${textDay}`;
   }
 
-  // getDateAsCalendarString(date: Date): string {
-  //   const year = date.getFullYear();
-  //   const month = date.getMonth() + 1;
-  //   const day = date.getDate();
-  //   let textMonth = month < 10 ? `0${month}` : `${month}`;
-  //   let textDay = day < 10 ? `0${day}` : `${day}`;
-  //   return `${year}/${textMonth}/${textDay}`;
-  // }
-
   selectNextTuesdayOrThursday() {
-    // const startFrom = this.formEditSubject$.value.matchDate ? this.getFollowingDay(new Date(this.formEditSubject$.value.matchDate)) : new Date();
-    // const nextDate = this.getNextTuesdayOrThursday(startFrom);
-    // const nextEvent: Action<CreateGameEventRequest> = { ...this.formEditSubject$.value, matchDate: this.getDateAsYYYYMMDD(nextDate) };
-    // this.formEditSubject$.next(nextEvent);
-
-    const evt: Action<CreateGameEventRequest> = this.addEvent();
+    const evt: Action<CreateGameRequest> = this.addEvent();
     const startFrom = evt.matchDate ? this.getFollowingDay(new Date(evt.matchDate)) : new Date();
     const nextDate = this.getNextTuesdayOrThursday(startFrom);
-    const nextEvent: Action<CreateGameEventRequest> = { ...evt, matchDate: this.getDateAsYYYYMMDD(nextDate) };
+    const nextEvent: Action<CreateGameRequest> = { ...evt, matchDate: this.getDateAsYYYYMMDD(nextDate) };
     this.addEvent.set(nextEvent);
-
   }
 
   onCalendarDateSelected(dateAsString: string) {
-    // const nextEvent: Action<CreateGameEventRequest> = { ...this.formEditSubject$.value, matchDate: dateAsString };
-    // this.formEditSubject$.next(nextEvent);
-    const evt: Action<CreateGameEventRequest> = this.addEvent();
-    const nextEvent: Action<CreateGameEventRequest> = { ...evt, matchDate: dateAsString };
+    const evt: Action<CreateGameRequest> = this.addEvent();
+    const nextEvent: Action<CreateGameRequest> = { ...evt, matchDate: dateAsString };
     this.addEvent.set(nextEvent);
   }
 
