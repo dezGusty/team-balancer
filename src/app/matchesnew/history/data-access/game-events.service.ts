@@ -90,7 +90,7 @@ export class GameEventsService implements OnDestroy {
         if (gamesToKeep.length > 10) {
           gamesToKeep = gamesToKeep.slice(gamesToKeep.length - 10);
         }
-        gamesToKeep.sort();
+        // gamesToKeep.sort();
         return setDoc(
           doc(this.firestore, 'games/_list'),
           { items: gamesToKeep },

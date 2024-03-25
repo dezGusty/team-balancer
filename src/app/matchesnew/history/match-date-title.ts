@@ -3,6 +3,7 @@ export interface MatchDateTitle {
   year: string;
   month: string;
   day: string;
+  suffix?: string;
 
   fromString: (entry: string) => MatchDateTitle;
 }
@@ -12,9 +13,11 @@ export function fromString(entry: string): MatchDateTitle {
   // Strip the optional suffix
   const suffixIndex = entry.indexOf('_');
   let dateEntry = entry;
+  let suffix = '';
   if (suffixIndex >= 0) {
+    suffix = entry.substring(suffixIndex + 1);
     dateEntry = entry.substring(0, suffixIndex);
   }
   const [year, month, day] = dateEntry.split('-');
-  return { title: dateEntry, year, month, day } as MatchDateTitle;
+  return { title: entry, year, month, day, suffix } as MatchDateTitle;
 }

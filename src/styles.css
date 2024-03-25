@@ -430,6 +430,7 @@ a.player-card-grad:hover {
   box-shadow: 2px 2px 2px -2px black;
 }
 
+.date-as-calendar .suffix,
 .date-as-calendar .day,
 .date-as-calendar .month,
 .date-as-calendar .year {
@@ -457,6 +458,7 @@ a.player-card-grad:hover {
   height: 4em;
 }
 
+.vert-calendar.date-as-calendar .suffix,
 .vert-calendar.date-as-calendar .day,
 .vert-calendar.date-as-calendar .month,
 .vert-calendar.date-as-calendar .year {
@@ -473,6 +475,11 @@ a.player-card-grad:hover {
 .vert-calendar.date-as-calendar .day {
   order: 3;
   font-size: 1.5em;
+}
+
+.vert-calendar.date-as-calendar .suffix {
+  order: 6;
+  font-size: 0.5em;
 }
 
 .vert-calendar.date-as-calendar .year {
