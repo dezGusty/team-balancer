@@ -21,7 +21,7 @@
     --gus-panel-text: #f3e5d0;
     --gus-contrast-panel-bck: rgb(2, 12, 27);
     --gus-contrast-panel-alt-bck: #994b0b3d;
-    --gus-secondary-bck: #002e30b6;
+    --gus-secondary-bck: #074146d6;
     --gus-secondary-grad: linear-gradient(135deg, #140258 0%, #111325 100%);
     --gus-pref-icon-size: 28px;
   }
@@ -422,9 +422,7 @@ a.player-card-grad:hover {
   background: var(--gus-secondary-grad);
   color: var(--gus-primary-text-color);
 
-  /* border: 1px solid #888; */
-  /* border-radius: 3px; */
-  border-radius: 0.3rem;
+  /* border-radius: 0.3rem; */
   overflow: hidden;
 
   box-shadow: 2px 2px 2px -2px black;
@@ -454,8 +452,8 @@ a.player-card-grad:hover {
   flex-wrap: nowrap;
   justify-content: space-between;
 
-  width: 4em;
-  height: 4em;
+  /* width: 4em; */
+  height: 3.5em;
 }
 
 .vert-calendar.date-as-calendar .suffix,
@@ -484,7 +482,7 @@ a.player-card-grad:hover {
 
 .vert-calendar.date-as-calendar .year {
   order: 4;
-  font-size: 0.87750em;
+  font-size: 0.5em;
 }
 
 .match-card {
@@ -511,7 +509,27 @@ a.player-card-grad:hover {
   border-width: 1px;
   border-style: solid;
   border-color: var(--gus-secondary-bck);
+  border-radius: 0.2rem;
 }
+
+.gus-button {
+  background: var(--gus-secondary-grad);
+  color: var(--gus-primary-text-color);
+  padding: 0.5rem;
+  margin: 0.1rem;
+
+  cursor: pointer;
+}
+
+.gus-button-narrow {
+  background: var(--gus-secondary-grad);
+  color: var(--gus-primary-text-color);
+  padding: 0;
+  margin: 0.1rem;
+
+  cursor: pointer;
+}
+
 
 .history-area {
   display: flex;
