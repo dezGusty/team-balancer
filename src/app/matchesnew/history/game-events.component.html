@@ -34,11 +34,12 @@
           value="{{this.getPreviewName(eventEditForm.matchDate, eventEditForm.suffix)}}" readonly disabled>
       </div>
       <div>
-        <button type="button" (click)="this.selectNextTuesdayOrThursday()">Next Tuesday/Thursday</button>
+        <button type="button" class="gus-button gus-border gus-hoverable"
+          (click)="this.selectNextTuesdayOrThursday()">Next Tuesday/Thursday</button>
       </div>
       <div>
-        <button class="gus-button" type="submit">Save</button>
-        <button class="gus-button" type="button" (click)="this.cancelEdit()">Cancel</button>
+        <button type="submit" class="gus-button gus-border gus-hoverable">Save</button>
+        <button type="button" class="gus-button gus-border gus-hoverable" (click)="this.cancelEdit()">Cancel</button>
       </div>
     </form>
     }

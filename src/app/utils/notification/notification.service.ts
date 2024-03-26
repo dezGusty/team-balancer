@@ -68,7 +68,7 @@ export class NotificationService implements OnDestroy {
     } as NotificationMessage);
   }
 
-  public show(message: string, options: {}) {
+  public show(message: string, options?: {}) {
     this.emitMessage(message);
   }
 

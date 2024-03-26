@@ -64,8 +64,8 @@ export class GameEventsComponent {
 
   onMatchEntryClicked(item: MatchDateTitle) {
     console.log('selected match', item);
+    this.addEvent.set({ action: FormAction.EMPTY } as Action<CreateGameRequest>);
     this.gameEventsService.selectedMatchSubject$.next(item);
-    // this.matchHistService.selectedMatchSubject.next(item.title);
   }
 
   saveMatch(item: Action<CreateGameRequest>) {

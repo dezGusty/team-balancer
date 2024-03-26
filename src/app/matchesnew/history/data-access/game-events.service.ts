@@ -8,7 +8,8 @@ import { CustomPrevGame } from 'src/app/shared/custom-prev-game.model';
 import { LoadingFlagService } from 'src/app/utils/loading-flag.service';
 import { CreateGameRequest, GameEventData, GameNamesList, createGameEventDataFromRequest, getEventNameForRequest } from './create-game-request.model';
 import { toSignal } from '@angular/core/rxjs-interop';
-import { Result, Result_Err } from '../result';
+import { Result, Result_Err, Result_Ok } from '../result';
+import { NotificationService } from 'src/app/utils/notification/notification.service';
 
 @Injectable({
   providedIn: 'root'
@@ -34,10 +35,9 @@ export class GameEventsService implements OnDestroy {
 
   gameEvents = toSignal(this.recentGames$, { initialValue: [] });
 
-
-
   private readonly addGameToRecentMatchesSubject = new Subject<MatchDateTitle>();
   private readonly addGameToRecentMatches$ = this.addGameToRecentMatchesSubject.asObservable();
+
 
   createGameEventSubject$ = new Subject<CreateGameRequest>();
   public readonly createGameEventAction$ =
@@ -51,7 +51,6 @@ export class GameEventsService implements OnDestroy {
         const docName = getEventNameForRequest(createGameEventRequest);
         if (!docName || docName === "") {
           return of(Result_Err<void>("Invalid name for event request"));
-          throwError(() => "err");
         }
 
         // Ensure the name is not yet added to the list of recent matches.
@@ -59,38 +58,35 @@ export class GameEventsService implements OnDestroy {
         if (storedGameNames.findIndex(x => x == docName) != -1) {
           console.log('Name already exists', docName);
           return of(Result_Err<void>(`Name ${docName} already exists`));
-          // throw (() => "err! already exists!");
         }
 
         this.addGameToRecentMatchesSubject.next(fromString(docName ?? ""));
         console.log('setting doc... [' + docName + ']');
 
         // Create a new document in the 'games' collection with the match name as the document name.
-        return setDoc(
+        return of(setDoc(
           doc(this.firestore, `games/${docName}`),
           createGameEventDataFromRequest(createGameEventRequest),
           { merge: true }
+        )).pipe(
+          map(_ => Result_Ok<string>(docName))
         );
       }),
-      tap(result => { console.log('create game event result', result); }),
-      withLatestFrom(this.addGameToRecentMatches$, this.recentGames$),
-      tap(([result, game, games]) => {
-        console.log('combined with latest from...');
-      }),
-      switchMap(([result, game, games]) => {
-        console.log('switchmap...');
-
-        if (result && result.error) {
+      withLatestFrom(this.recentGames$),
+      switchMap(([result, games]) => {
+        if (result.error) {
           console.warn("create game event failed", result.error);
+          this.notificationService.show("Failed to create game event" + result.error);
           return of(Result_Err<void>(result.error));
         }
+
         // A document was created for the game event. Add it to the list of recent matches.
         // Keep a list of the most recent 10 matches in the 'games/_list' document.
-        let gamesToKeep = [...games.map(x => x.title), game.title];
+        let gamesToKeep = [...games.map(x => x.title), result.data];
         if (gamesToKeep.length > 10) {
           gamesToKeep = gamesToKeep.slice(gamesToKeep.length - 10);
         }
-        // gamesToKeep.sort();
+        gamesToKeep.sort();
         return setDoc(
           doc(this.firestore, 'games/_list'),
           { items: gamesToKeep },
@@ -105,6 +101,7 @@ export class GameEventsService implements OnDestroy {
     );
 
   selectedMatchSubject$ = new Subject<MatchDateTitle>();
+  selectedMatch$ = this.selectedMatchSubject$.asObservable();
 
   public createGameEvent(createMatchRequest: CreateGameRequest) {
     this.createGameEventSubject$.next(createMatchRequest);
@@ -116,6 +113,7 @@ export class GameEventsService implements OnDestroy {
 
   constructor(
     private firestore: Firestore,
+    private notificationService: NotificationService,
     private loadingFlagService: LoadingFlagService) {
     this.subscriptions.push(this.createGameEventAction$.subscribe());
     this.subscriptions.push(this.recentGames$.subscribe());
