@@ -530,6 +530,14 @@ a.player-card-grad:hover {
   cursor: pointer;
 }
 
+.gus-button-active {
+  background: linear-gradient(135deg, #511a85 0%, #541b8a 67%, rgb(95, 31, 128) 100%);
+  color: var(--gus-panel-text);
+}
+.gus-button-active:hover {
+  background: linear-gradient(135deg, #8A2Be2 0%, #8A2Be2 67%, rgb(181, 55, 242) 100%);
+  color: var(--gus-panel-text);
+}
 
 .history-area {
   display: flex;
@@ -541,6 +549,7 @@ a.player-card-grad:hover {
   border-right: 1px solid var(--gus-secondary-bck);
   padding-right: 0.5em;
 }
+
 .history-right-outline {
   border-left: 1px solid var(--gus-secondary-bck);
   padding-left: 0.5em;
@@ -616,7 +625,3 @@ a.player-card-grad:hover {
 .bad-num {
   color: rgb(212, 100, 100);
 }
-
-
-
-

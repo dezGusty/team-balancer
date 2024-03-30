@@ -5,7 +5,7 @@
       @for (matchData of this.gameEvents(); track $index) {
       <li (click)="onMatchEntryClicked(matchData)"
         class="gus-button-narrow gus-border player-card-grad date-as-calendar vert-calendar gus-hoverable"
-        [class.match-card-active]="matchData?.title === (this.selectedMatch$ | async)?.title">
+        [class.gus-button-active]="matchData == this.selectedMatch()">
         <span class="year">{{matchData.year}}</span>
         <span class="month">{{matchData.month}}</span>
         <span class="day">{{matchData.day}}</span>

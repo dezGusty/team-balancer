@@ -17,6 +17,7 @@ import { NotificationService } from 'src/app/utils/notification/notification.ser
 export class GameEventsService implements OnDestroy {
 
   public readonly recentGames$ = docData(doc(this.firestore, 'games/_list')).pipe(
+    tap((_) => { this.loadingFlagService.setLoadingFlag(true); }),
     map(recentMatchesDocContents => {
       const castedItem = recentMatchesDocContents as GameNamesList;
       // Individual string entries are obtained in strings in the YYYY-MM-DD format.
@@ -101,7 +102,14 @@ export class GameEventsService implements OnDestroy {
     );
 
   selectedMatchSubject$ = new Subject<MatchDateTitle>();
-  selectedMatch$ = this.selectedMatchSubject$.asObservable();
+  selectedMatch$ = this.selectedMatchSubject$.asObservable().pipe(
+    tap((selectedMatch) => {
+      console.log('** selected match', selectedMatch);
+    }),
+    shareReplay(1)
+  );
+  
+  selectedMatch = toSignal(this.selectedMatch$, { initialValue: null });
 
   public createGameEvent(createMatchRequest: CreateGameRequest) {
     this.createGameEventSubject$.next(createMatchRequest);
@@ -117,6 +125,7 @@ export class GameEventsService implements OnDestroy {
     private loadingFlagService: LoadingFlagService) {
     this.subscriptions.push(this.createGameEventAction$.subscribe());
     this.subscriptions.push(this.recentGames$.subscribe());
+    this.subscriptions.push(this.selectedMatch$.subscribe());
   }
 
   ngOnDestroy(): void {

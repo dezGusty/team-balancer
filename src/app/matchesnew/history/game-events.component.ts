@@ -17,7 +17,7 @@ import { toSignal } from '@angular/core/rxjs-interop';
   selector: 'app-history',
   standalone: true,
   templateUrl: './game-events.component.html',
-  styles: [`ul { margin: 0em; padding: 0em; }`],
+  styleUrl: 'game-events.component.css',
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     MatchDetailsComponent,
@@ -57,13 +57,14 @@ export class GameEventsComponent {
   }
 
   public selectedMatch$ = this.matchHistService.selectedMatch$;
+  public selectedMatch = this.gameEventsService.selectedMatch;
 
   onAddGameClicked() {
     this.addEvent.set({ action: FormAction.Add } as Action<CreateGameRequest>);
   }
 
   onMatchEntryClicked(item: MatchDateTitle) {
-    console.log('selected match', item);
+    // If the edit form is open, close it.
     this.addEvent.set({ action: FormAction.EMPTY } as Action<CreateGameRequest>);
     this.gameEventsService.selectedMatchSubject$.next(item);
   }
