@@ -1,0 +1,39 @@
+@if (this.selectedMatchContent(); as selectedMatchContent) {
+<h3>{{selectedMatchContent.matchDate}}</h3>
+<div>
+  {{selectedMatchContent.name}}
+</div>
+
+<div class="border-bottom gus-search-box">
+  <input class="form-control searchfield" type="text" [(ngModel)]="this.searchedName"
+    (keyup)="onSearchContentChange($event)" placeholder="Search... ( CTRL + / )" aria-label="Search" #srcNameArea
+    autofocus />
+</div>
+
+<div class="draftPlayersArea">
+  <div class="leftArea">
+
+    Selected players
+    <div class="selectedplayers">
+      @for (player of selectedMatchContent.registeredPlayers; track $index) {
+      <div class="gus-button-narrow gus-border player-card-grad gus-hoverable"
+        (click)="this.onClickToRemovePlayerById(player)">{{$index+1}}. {{player.name}}</div>
+      }
+    </div>
+  </div>
+  <div class="rightArea">
+    Available players
+    <div class="availableplayers">
+      @for (player of this.filteredAvailablePlayers$ | async; track $index) {
+      <div class="gus-button-narrow gus-border player-card-grad gus-hoverable"
+        (click)="this.onClickToAddPlayer(player)">
+        {{player.displayName}}({{player.name}})
+      </div>
+      }
+    </div>
+  </div>
+</div>
+}
+
+@if (this.keyboardCachedPlayer$ | async) {}
+@if (this.enterHandler$ | async) {}

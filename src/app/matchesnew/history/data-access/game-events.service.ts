@@ -6,11 +6,12 @@ import { Observable, Subject, Subscription, catchError, combineLatest, map, of, 
 import { MatchDateTitle, fromString } from '../match-date-title';
 import { CustomPrevGame } from 'src/app/shared/custom-prev-game.model';
 import { LoadingFlagService } from 'src/app/utils/loading-flag.service';
-import { CreateGameRequest, GameEventDBData, GameEventData, GameNamesList, createGameEventDataFromRequest, getEventNameForRequest } from './create-game-request.model';
+import { CreateGameRequest, GameEventDBData, GameEventData, GameNamesList, PlayerWithId, createGameEventDataFromRequest, getEventNameForRequest } from './create-game-request.model';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { Result, Result_Err, Result_Ok } from '../result';
 import { NotificationService } from 'src/app/utils/notification/notification.service';
 import { PlayersService } from 'src/app/shared/players.service';
+import { Player } from 'src/app/shared/player.model';
 
 @Injectable({
   providedIn: 'root'
@@ -123,7 +124,7 @@ export class GameEventsService implements OnDestroy {
       const castedItem = matchDocContents as GameEventDBData;
       return castedItem;
     }),
-    withLatestFrom(this.playersService.currentPlayers$),
+    withLatestFrom(this.playersService.players$),
     map(([gameEventDBData, players]) => {
       let result: GameEventData = {
         matchDate: gameEventDBData.matchDate,
@@ -137,20 +138,75 @@ export class GameEventsService implements OnDestroy {
       };
 
       return result;
-      // const gameEventWithNames = {
-      //    ...gameEventData, 
-      //    registeredPlayer: gameEventData.registeredPlayers.map(id => players.find(p => p.id === id)?.name ?? "") 
-      //   };
     }),
     shareReplay(1)
   );
 
   selectedMatchContent = toSignal(this.selectedMatchContent$, { initialValue: GameEventDBData.DEFAULT });
 
+  addPlayerToMatchSubject$ = new Subject<Player>();
+  addPlayerToMatch$ = this.addPlayerToMatchSubject$.asObservable().pipe(
+    withLatestFrom(this.selectedMatchContent$),
+    map(([player, selectedMatchContent]) => {
+      let newRegisteredPlayers = [...selectedMatchContent.registeredPlayers, { id: player.id, name: player.name }];
+      let newRegisteredPlayerIds = newRegisteredPlayers.map(p => p.id);
+      let newMatchContent: GameEventDBData = {
+        matchDate: selectedMatchContent.matchDate,
+        name: selectedMatchContent.name,
+        registeredPlayerIds: newRegisteredPlayerIds
+      };
+      return newMatchContent;
+    }),
+    switchMap((newMatchContent) => {
+      return setDoc(
+        doc(this.firestore, `games/${newMatchContent.name}`),
+        newMatchContent,
+        { merge: true }
+      );
+    }),
+    catchError((err) => {
+      console.warn("add player to match encountered issue");
+      return of(null);
+    })
+  );
+
+  removePlayerFromMatchSubject$ = new Subject<PlayerWithId>();
+  removePlayerFromMatch$ = this.removePlayerFromMatchSubject$.asObservable().pipe(
+    withLatestFrom(this.selectedMatchContent$),
+    map(([player, selectedMatchContent]) => {
+      let newRegisteredPlayers = selectedMatchContent.registeredPlayers.filter(p => p.id !== player.id);
+      let newRegisteredPlayerIds = newRegisteredPlayers.map(p => p.id);
+      let newMatchContent: GameEventDBData = {
+        matchDate: selectedMatchContent.matchDate,
+        name: selectedMatchContent.name,
+        registeredPlayerIds: newRegisteredPlayerIds
+      };
+      return newMatchContent;
+    }),
+    switchMap((newMatchContent) => {
+      return setDoc(
+        doc(this.firestore, `games/${newMatchContent.name}`),
+        newMatchContent,
+        { merge: true }
+      );
+    }),
+    catchError((err) => {
+      console.warn("remove player from match encountered issue");
+      return of(null);
+    })
+  );
+
   public createGameEvent(createMatchRequest: CreateGameRequest) {
     this.createGameEventSubject$.next(createMatchRequest);
   }
 
+  addPlayerToMatch(player: Player) {
+    this.addPlayerToMatchSubject$.next(player);
+  }
+
+  removePlayerFromMatch(playerWithId: PlayerWithId) {
+    this.removePlayerFromMatchSubject$.next(playerWithId);
+  }
 
 
   private subscriptions: Subscription[] = [];
@@ -163,6 +219,8 @@ export class GameEventsService implements OnDestroy {
     this.subscriptions.push(this.createGameEventAction$.subscribe());
     this.subscriptions.push(this.recentGames$.subscribe());
     this.subscriptions.push(this.selectedMatch$.subscribe());
+    this.subscriptions.push(this.addPlayerToMatch$.subscribe());
+    this.subscriptions.push(this.removePlayerFromMatch$.subscribe());
   }
 
   ngOnDestroy(): void {

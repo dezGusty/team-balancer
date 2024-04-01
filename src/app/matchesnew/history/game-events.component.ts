@@ -1,62 +1,39 @@
-import { Component, ChangeDetectionStrategy, inject, signal, Signal } from '@angular/core';
+import { Component, ChangeDetectionStrategy, inject, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { MatchHistService } from './data-access/match-hist.service';
 import { MatchDateTitle } from './match-date-title';
 import { RouterModule } from '@angular/router';
 import { SmallLoadingSpinnerComponent } from "../../ui/small-loading-spinner/small-loading-spinner.component";
-import { map, tap } from 'rxjs';
 import { MatchDetailsComponent } from '../details/details.component';
 import { FormAction, Action } from '../form-edit-wrapper';
 import { CreateGameRequest as CreateGameRequest, getEventNameForDateAndSuffix } from './data-access/create-game-request.model';
 import { FormsModule } from '@angular/forms';
-import { DatePipe } from '@angular/common';
 import { GameEventsService } from './data-access/game-events.service';
-import { toSignal } from '@angular/core/rxjs-interop';
+import { GameeventdraftComponent } from "../gameeventdraft/gameeventdraft.component";
 
 @Component({
-  selector: 'app-history',
-  standalone: true,
-  templateUrl: './game-events.component.html',
-  styleUrl: 'game-events.component.css',
-  changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [
-    MatchDetailsComponent,
-    CommonModule,
-    FormsModule,
-    RouterModule,
-    SmallLoadingSpinnerComponent
-  ]
+    selector: 'app-history',
+    standalone: true,
+    templateUrl: './game-events.component.html',
+    styleUrl: 'game-events.component.css',
+    changeDetection: ChangeDetectionStrategy.OnPush,
+    imports: [
+        MatchDetailsComponent,
+        CommonModule,
+        FormsModule,
+        RouterModule,
+        SmallLoadingSpinnerComponent,
+        GameeventdraftComponent
+    ]
 })
 export class GameEventsComponent {
   EMPTY: string = FormAction.EMPTY;
 
   private gameEventsService: GameEventsService = inject(GameEventsService); 
-  private matchHistService: MatchHistService = inject(MatchHistService);
 
   addEvent = signal<Action<CreateGameRequest>>({} as Action<CreateGameRequest>);
 
   gameEvents = this.gameEventsService.gameEvents;
 
-  private matchNames$ = this.matchHistService.matches$.pipe(
-    map((recentMatches) => {
-      console.log('recent matches', recentMatches);
-      return recentMatches.map((match) => this.getMonthDescForMatch(match));
-    })
-  );
-
-  matchNames = toSignal(this.matchNames$);
-
-  getMonthDescForMatch(match: MatchDateTitle): MatchDateTitle {
-    const monthsDesc = ['JAN', 'FEB', 'MAR', 'APR', 'MAY', 'JUN', 'JUL', 'AUG', 'SEP', 'OCT', 'NOV', 'DEC'];
-    const numMonth: number = Number.parseInt(match.month);
-    const monthDesc = numMonth < 0 ? "" : numMonth > 12 ? "" : monthsDesc[numMonth - 1];
-    return {
-      ...match,
-      month: monthDesc
-    } as MatchDateTitle;
-  }
-
-  public selectedMatch$ = this.matchHistService.selectedMatch$;
   public selectedMatch = this.gameEventsService.selectedMatch;
 
   public selectedMatchContent = this.gameEventsService.selectedMatchContent;

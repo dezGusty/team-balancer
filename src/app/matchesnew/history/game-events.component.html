@@ -46,18 +46,7 @@
     }
 
     @if (this.selectedMatch(); as selectedMatch) {
-    @if (this.selectedMatchContent(); as selectedMatchContent) {
-    <h3>{{selectedMatchContent.matchDate}}</h3>
-    <div>
-      {{selectedMatchContent.name}}
-    </div>
-    <ul>
-      @for (player of selectedMatchContent.registeredPlayers; track $index) {
-      <li>{{player.id}} : {{player.name}}</li>
-      }
-    </ul>
+      <app-gameeventdraft></app-gameeventdraft>
     }
-    }
-    <app-details />
   </div>
 </div>

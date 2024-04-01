@@ -61,7 +61,7 @@ export class PlayersService {
 
     // An observable for the current players list
     currentPlayersSubject$ = new BehaviorSubject<boolean>(true);
-    public currentPlayers$ = this.currentPlayersSubject$.asObservable().pipe(
+    public players$ = this.currentPlayersSubject$.asObservable().pipe(
         switchMap(_ => docData(doc(this.firestore, '/ratings/current'))),
         // tap((_) => { this.loadingFlagService.setLoadingFlag(true); }),
         map(playersDocContent => {

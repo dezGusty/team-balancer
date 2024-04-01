@@ -5,7 +5,6 @@ import { getAuth, provideAuth } from '@angular/fire/auth';
 import { getFirestore, provideFirestore } from '@angular/fire/firestore';
 import { bootstrapApplication } from '@angular/platform-browser';
 import { provideRouter, Routes, withComponentInputBinding, withDebugTracing } from '@angular/router';
-// import { NgcCookieConsentConfig, NgcCookieConsentModule } from 'ngx-cookieconsent';
 import { AboutComponent } from './app/about/about.component';
 import { AdminComponent } from './app/admin/admin.component';
 import { AppComponent } from './app/app.component';
@@ -15,7 +14,6 @@ import { AuthGuard } from './app/auth/auth-guard.service';
 import { AuthService } from './app/auth/auth.service';
 import { OrganizerGuard } from './app/auth/organizer-guard.service';
 import { SigninComponent } from './app/auth/signin/signin.component';
-import { SignupComponent } from './app/auth/signup/signup.component';
 import { CustomgameComponent } from './app/customgame/customgame.component';
 import { DraftComponent } from './app/draft/draft.component';
 import { PrevMatchDetailComponent } from './app/matches/prev-match-detail/prev-match-detail.component';
@@ -42,23 +40,6 @@ import { CurrentPlayersService } from './app/draft-new/data-access/current-playe
 if (environment.production) {
   enableProdMode();
 }
-
-// const cookieConfig: NgcCookieConsentConfig = {
-//   cookie: {
-//     domain: environment.cookieConsentDomain // it is mandatory to set a domain, for cookies to work properly (see https://goo.gl/S2Hy2A)
-//   },
-//   palette: {
-//     popup: {
-//       background: '#000'
-//     },
-//     button: {
-//       background: '#3CB9FC'
-//     }
-//   },
-//   theme: 'edgeless',
-//   type: 'info'
-// };
-
 
 const appRoutes: Routes = [
   { path: '', redirectTo: '/about', pathMatch: 'full' },
@@ -88,7 +69,6 @@ const appRoutes: Routes = [
   { path: 'about', component: AboutComponent },
   { path: 'admin', canActivate: [AuthGuard, AdminGuard], component: AdminComponent },
   { path: 'signin', component: SigninComponent },
-  { path: 'signup', component: SignupComponent },
   { path: 'privacy', component: PrivacyComponent }
 ];
 
