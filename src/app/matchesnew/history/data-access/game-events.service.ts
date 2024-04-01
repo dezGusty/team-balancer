@@ -6,10 +6,11 @@ import { Observable, Subject, Subscription, catchError, combineLatest, map, of, 
 import { MatchDateTitle, fromString } from '../match-date-title';
 import { CustomPrevGame } from 'src/app/shared/custom-prev-game.model';
 import { LoadingFlagService } from 'src/app/utils/loading-flag.service';
-import { CreateGameRequest, GameEventData, GameNamesList, createGameEventDataFromRequest, getEventNameForRequest } from './create-game-request.model';
+import { CreateGameRequest, GameEventDBData, GameEventData, GameNamesList, createGameEventDataFromRequest, getEventNameForRequest } from './create-game-request.model';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { Result, Result_Err, Result_Ok } from '../result';
 import { NotificationService } from 'src/app/utils/notification/notification.service';
+import { PlayersService } from 'src/app/shared/players.service';
 
 @Injectable({
   providedIn: 'root'
@@ -108,8 +109,43 @@ export class GameEventsService implements OnDestroy {
     }),
     shareReplay(1)
   );
-  
+
   selectedMatch = toSignal(this.selectedMatch$, { initialValue: null });
+
+  selectedMatchContent$ = this.selectedMatch$.pipe(
+    switchMap((selectedMatch) => {
+      if (!selectedMatch) {
+        return of(GameEventDBData.DEFAULT);
+      }
+      return docData(doc(this.firestore, `games/${selectedMatch.title}`));
+    }),
+    map(matchDocContents => {
+      const castedItem = matchDocContents as GameEventDBData;
+      return castedItem;
+    }),
+    withLatestFrom(this.playersService.currentPlayers$),
+    map(([gameEventDBData, players]) => {
+      let result: GameEventData = {
+        matchDate: gameEventDBData.matchDate,
+        name: gameEventDBData.name,
+        registeredPlayers: gameEventDBData.registeredPlayerIds.map(id => {
+          return {
+            id: id,
+            name: players.find(p => p.id === id)?.name ?? ""
+          };
+        })
+      };
+
+      return result;
+      // const gameEventWithNames = {
+      //    ...gameEventData, 
+      //    registeredPlayer: gameEventData.registeredPlayers.map(id => players.find(p => p.id === id)?.name ?? "") 
+      //   };
+    }),
+    shareReplay(1)
+  );
+
+  selectedMatchContent = toSignal(this.selectedMatchContent$, { initialValue: GameEventDBData.DEFAULT });
 
   public createGameEvent(createMatchRequest: CreateGameRequest) {
     this.createGameEventSubject$.next(createMatchRequest);
@@ -122,7 +158,8 @@ export class GameEventsService implements OnDestroy {
   constructor(
     private firestore: Firestore,
     private notificationService: NotificationService,
-    private loadingFlagService: LoadingFlagService) {
+    private loadingFlagService: LoadingFlagService,
+    private playersService: PlayersService) {
     this.subscriptions.push(this.createGameEventAction$.subscribe());
     this.subscriptions.push(this.recentGames$.subscribe());
     this.subscriptions.push(this.selectedMatch$.subscribe());

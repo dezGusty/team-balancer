@@ -59,6 +59,8 @@ export class GameEventsComponent {
   public selectedMatch$ = this.matchHistService.selectedMatch$;
   public selectedMatch = this.gameEventsService.selectedMatch;
 
+  public selectedMatchContent = this.gameEventsService.selectedMatchContent;
+
   onAddGameClicked() {
     this.addEvent.set({ action: FormAction.Add } as Action<CreateGameRequest>);
   }

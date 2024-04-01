@@ -18,16 +18,50 @@ export function getEventNameForRequest(request: CreateGameRequest): string {
 }
 
 
-export interface GameEventData {
+export interface GameEventDBData {
   matchDate: string;
-  name: string | undefined;
+  name: string;
+  registeredPlayerIds: number[];
 }
 
-export function createGameEventDataFromRequest(request: CreateGameRequest): GameEventData {
+export interface PlayerWithId {
+  id: number;
+  name: string;
+}
+
+export interface GameEventData {
+  matchDate: string;
+  name: string;
+  registeredPlayers: PlayerWithId[];
+}
+
+export function createGameEventDataFromRequest(request: CreateGameRequest): GameEventDBData {
   return {
     matchDate: request.matchDate,
-    name: getEventNameForRequest(request)
+    name: getEventNameForRequest(request),
+    registeredPlayerIds: [],
   };
+}
+
+// Function to create default GameEventData object
+export function createDefaultGameEventDBData(): GameEventDBData {
+  return {
+    matchDate: "",
+    name: "",
+    registeredPlayerIds: [],
+  };
+}
+export function createDefaultGameEventData(): GameEventData {
+  return {
+    matchDate: "",
+    name: "",
+    registeredPlayers: [],
+  };
+}
+
+// allow calling GameEventData.DEFAULT
+export namespace GameEventDBData {
+  export const DEFAULT = createDefaultGameEventData();
 }
 
 export interface GameNamesList {

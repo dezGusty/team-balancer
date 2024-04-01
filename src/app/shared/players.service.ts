@@ -1,6 +1,6 @@
 import { Player } from './player.model';
 import { Injectable } from '@angular/core';
-import { BehaviorSubject, Subscription } from 'rxjs';
+import { BehaviorSubject, catchError, map, of, shareReplay, Subscription, switchMap, tap } from 'rxjs';
 import { CustomPrevGame } from './custom-prev-game.model';
 import { AppStorage } from './app-storage';
 
@@ -58,6 +58,26 @@ export class PlayersService {
 
     private currentPlayerList: Player[] = [];
     private archivedPlayerList: Player[] = [];
+
+    // An observable for the current players list
+    currentPlayersSubject$ = new BehaviorSubject<boolean>(true);
+    public currentPlayers$ = this.currentPlayersSubject$.asObservable().pipe(
+        switchMap(_ => docData(doc(this.firestore, '/ratings/current'))),
+        // tap((_) => { this.loadingFlagService.setLoadingFlag(true); }),
+        map(playersDocContent => {
+            const snap: PlayerRatingSnapshot = playersDocContent as PlayerRatingSnapshot;
+            const playersArray: Player[] = snap.players;
+            return playersArray;
+        }),
+        // tap((_) => { this.loadingFlagService.setLoadingFlag(false); }),
+        catchError((err) => {
+            console.log("read game events encountered issue");
+            // this.loadingFlagService.setLoadingFlag(false);
+            return of<Player[]>([]);
+        }),
+        shareReplay(1),
+    );
+
 
     playerDataChangeEvent = new BehaviorSubject<PlayerChangeInfo | undefined>(undefined);
 
