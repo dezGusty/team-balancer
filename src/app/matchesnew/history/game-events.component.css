@@ -7,3 +7,24 @@ ul {
   margin: 0em;
   padding: 0em;
 }
+
+input {
+  background-color: transparent;
+  color: white;
+}
+
+.gus-input {
+  color: var(--gus-primary-text-color);
+  padding: 0.5rem;
+  margin: 0.1rem;
+}
+
+.gus-input:disabled {
+  background-color: transparent;
+  color: white;
+}
+
+.gus-input:read-only {
+  background-color: transparent;
+  color: white;
+}

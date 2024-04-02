@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
+import { ChangeDetectionStrategy, Component, ElementRef, HostListener, ViewChild, inject } from '@angular/core';
 import { GameEventsService } from '../history/data-access/game-events.service';
 import { AsyncPipe } from '@angular/common';
 import { FormsModule } from '@angular/forms';
@@ -20,6 +20,9 @@ export class GameeventdraftComponent {
   private gameEventsService: GameEventsService = inject(GameEventsService);
   private playersService: PlayersService = inject(PlayersService);
   public selectedMatchContent = this.gameEventsService.selectedMatchContent;
+
+  @ViewChild('srcNameArea') srcNameArea!: ElementRef;
+  
   selectedMatchContent$ = this.gameEventsService.selectedMatchContent$;
 
   filterByContentSubject$ = new BehaviorSubject<string>('');
@@ -74,6 +77,13 @@ export class GameeventdraftComponent {
       }
     })
   );
+
+  @HostListener('window:keydown.control./', ['$event'])
+  startSearching(event: KeyboardEvent) {
+    setTimeout(() => { // this will make the execution after the above boolean has changed
+      this.srcNameArea?.nativeElement.focus();
+    }, 0);
+  }
 
   onSearchContentChange($event: any) {
     if ($event.code === 'Enter') {

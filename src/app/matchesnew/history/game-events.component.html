@@ -23,14 +23,15 @@
     <form (submit)="this.saveMatch(eventEditForm)">
       <h3>{{eventEditForm.action =="add" ? "Add" : "Edit" }} Game Event</h3>
       <label for="event_date"></label>
-      <input [ngModel]="eventEditForm.matchDate | date:'yyyy-MM-dd'"
+      <input class="gus-input gus-border" [ngModel]="eventEditForm.matchDate | date:'yyyy-MM-dd'"
         (ngModelChange)="this.onCalendarDateSelected($event)" type="date" name="event_date" required
         placeholder="Event Date">
       <label for="event_name"></label>
-      <input [(ngModel)]="eventEditForm.suffix" type="text" name="event_name" placeholder="(Optional) Suffix">
+      <input class="gus-input gus-border gus-hoverable" [(ngModel)]="eventEditForm.suffix" type="text" name="event_name"
+        placeholder="(Optional) Suffix">
       <div>
         <label for="name_preview">Name Preview:</label>
-        <input type="text" name="name_preview" placeholder="Select a date"
+        <input class="gus-input gus-border" type="text" name="name_preview" placeholder="Select a date"
           value="{{this.getPreviewName(eventEditForm.matchDate, eventEditForm.suffix)}}" readonly disabled>
       </div>
       <div>
@@ -46,7 +47,7 @@
     }
 
     @if (this.selectedMatch(); as selectedMatch) {
-      <app-gameeventdraft></app-gameeventdraft>
+    <app-gameeventdraft></app-gameeventdraft>
     }
   </div>
 </div>

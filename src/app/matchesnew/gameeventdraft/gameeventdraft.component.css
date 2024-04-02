@@ -24,11 +24,12 @@
 
 .leftArea {
   flex-grow: 0;
-
+  min-width: 20em;
 }
 
 .rightArea {
   flex-grow: 1;
+  min-width: 60em;
 }
 
 .selectedplayers {

@@ -27,7 +27,7 @@
       @for (player of this.filteredAvailablePlayers$ | async; track $index) {
       <div class="gus-button-narrow gus-border player-card-grad gus-hoverable"
         (click)="this.onClickToAddPlayer(player)">
-        {{player.displayName}}({{player.name}})
+        {{player.displayName != "" ? player.displayName : player.name}}
       </div>
       }
     </div>
