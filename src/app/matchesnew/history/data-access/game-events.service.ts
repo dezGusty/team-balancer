@@ -114,6 +114,7 @@ export class GameEventsService implements OnDestroy {
   selectedMatch = toSignal(this.selectedMatch$, { initialValue: null });
 
   selectedMatchContent$ = this.selectedMatch$.pipe(
+    tap((_) => { this.loadingFlagService.setLoadingFlag(true); }),
     switchMap((selectedMatch) => {
       if (!selectedMatch) {
         return of(GameEventDBData.DEFAULT);
@@ -126,23 +127,35 @@ export class GameEventsService implements OnDestroy {
     }),
     withLatestFrom(this.playersService.players$),
     map(([gameEventDBData, players]) => {
-      let result: GameEventData = {
-        matchDate: gameEventDBData.matchDate,
-        name: gameEventDBData.name,
-        registeredPlayers: gameEventDBData.registeredPlayerIds.map(id => {
-          return {
-            id: id,
-            name: players.find(p => p.id === id)?.name ?? ""
-          };
-        })
-      };
-
-      return result;
+      try {
+        let result: GameEventData = {
+          matchDate: gameEventDBData.matchDate,
+          name: gameEventDBData.name,
+          registeredPlayers: gameEventDBData.registeredPlayerIds.map(id => {
+            return {
+              id: id,
+              name: players.find(p => p.id === id)?.name ?? ""
+            };
+          })
+        };
+        return result;
+      } catch (err) {
+        console.warn("read game event encountered issue");
+        this.notificationService.show("Failed to read game event");
+      }
+      return GameEventData.DEFAULT;
+    }),
+    tap((_) => { this.loadingFlagService.setLoadingFlag(false); }),
+    catchError((err) => {
+      console.warn("Error encountered while reading game event", err);
+      this.notificationService.show("Error encountered while reading game");
+      this.loadingFlagService.setLoadingFlag(false);
+      return of(GameEventData.DEFAULT);
     }),
     shareReplay(1)
   );
 
-  selectedMatchContent = toSignal(this.selectedMatchContent$, { initialValue: GameEventDBData.DEFAULT });
+  selectedMatchContent = toSignal(this.selectedMatchContent$, { initialValue: GameEventData.DEFAULT });
 
   addPlayerToMatchSubject$ = new Subject<Player>();
   addPlayerToMatch$ = this.addPlayerToMatchSubject$.asObservable().pipe(

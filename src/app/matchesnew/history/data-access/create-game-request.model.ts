@@ -61,6 +61,10 @@ export function createDefaultGameEventData(): GameEventData {
 
 // allow calling GameEventData.DEFAULT
 export namespace GameEventDBData {
+  export const DEFAULT = createDefaultGameEventDBData();
+}
+
+export namespace GameEventData {
   export const DEFAULT = createDefaultGameEventData();
 }
 
