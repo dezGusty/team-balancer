@@ -1,5 +1,5 @@
 import { CommonModule, DatePipe } from '@angular/common';
-import { Component } from '@angular/core';
+import { ChangeDetectionStrategy, Component } from '@angular/core';
 import pkg from '../../../package.json';
 
 @Component({
@@ -8,6 +8,7 @@ import pkg from '../../../package.json';
   standalone: true,
   styles: [''],
   templateUrl: './footer.component.html',
+  changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class FooterComponent {
   public version: string;

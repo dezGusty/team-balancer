@@ -20,7 +20,11 @@
         (click)="this.onClickToRemovePlayerById(player)">{{$index+1}}. {{player.name}}</div>
       }
     </div>
+
+    <button type="button" class="gus-button gus-border gus-hoverable"
+          (click)="this.randomizeOrder()">Randomize</button>
   </div>
+
   <div class="rightArea">
     Available players
     <div class="availableplayers">

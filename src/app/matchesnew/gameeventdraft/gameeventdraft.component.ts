@@ -3,9 +3,9 @@ import { GameEventsService } from '../history/data-access/game-events.service';
 import { AsyncPipe } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { PlayersService } from 'src/app/shared/players.service';
-import { BehaviorSubject, Subject, combineLatest, map, tap, withLatestFrom } from 'rxjs';
+import { BehaviorSubject, Observable, Subject, combineLatest, map, tap, withLatestFrom } from 'rxjs';
 import { Player } from 'src/app/shared/player.model';
-import { PlayerWithId } from '../history/data-access/create-game-request.model';
+import { GameEventData, PlayerWithId } from '../history/data-access/create-game-request.model';
 
 @Component({
   selector: 'app-gameeventdraft',
@@ -22,8 +22,8 @@ export class GameeventdraftComponent {
   public selectedMatchContent = this.gameEventsService.selectedMatchContent;
 
   @ViewChild('srcNameArea') srcNameArea!: ElementRef;
-  
-  selectedMatchContent$ = this.gameEventsService.selectedMatchContent$;
+
+  selectedMatchContent$: Observable<GameEventData> = this.gameEventsService.selectedMatchContent$;
 
   filterByContentSubject$ = new BehaviorSubject<string>('');
 
@@ -108,5 +108,10 @@ export class GameeventdraftComponent {
   onClickToRemovePlayerById(playerWithId: PlayerWithId) {
     console.log('Removing player from match', playerWithId);
     this.gameEventsService.removePlayerFromMatch(playerWithId);
+  }
+
+  randomizeOrder() {
+    // reorder the players in the match.
+    this.gameEventsService.randomizeOrder();
   }
 }

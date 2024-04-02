@@ -209,6 +209,35 @@ export class GameEventsService implements OnDestroy {
     })
   );
 
+  randomizeOrderSubject$ = new Subject<void>();
+  randomizeOrder$ = this.randomizeOrderSubject$.asObservable().pipe(
+    withLatestFrom(this.selectedMatchContent$),
+    tap(([_, selectedMatchContent]) => {
+      console.log('randomize order', selectedMatchContent);
+    }),
+    map(([player, selectedMatchContent]) => {
+      let newRegisteredPlayers = selectedMatchContent.registeredPlayers.sort(() => Math.random() - 0.5); 
+      let newRegisteredPlayerIds = newRegisteredPlayers.map(p => p.id);
+      let newMatchContent: GameEventDBData = {
+        matchDate: selectedMatchContent.matchDate,
+        name: selectedMatchContent.name,
+        registeredPlayerIds: newRegisteredPlayerIds
+      };
+      return newMatchContent;
+    }),
+    switchMap((newMatchContent) => {
+      return setDoc(
+        doc(this.firestore, `games/${newMatchContent.name}`),
+        newMatchContent,
+        { merge: true }
+      );
+    }),
+    catchError((err) => {
+      console.warn("randomize player order encountered issue");
+      return of(null);
+    })
+  );
+
   public createGameEvent(createMatchRequest: CreateGameRequest) {
     this.createGameEventSubject$.next(createMatchRequest);
   }
@@ -219,6 +248,11 @@ export class GameEventsService implements OnDestroy {
 
   removePlayerFromMatch(playerWithId: PlayerWithId) {
     this.removePlayerFromMatchSubject$.next(playerWithId);
+  }
+
+  public randomizeOrder() {
+    // this.notificationService.show("Randomize order not implemented yet");
+    this.randomizeOrderSubject$.next();
   }
 
 
@@ -234,6 +268,7 @@ export class GameEventsService implements OnDestroy {
     this.subscriptions.push(this.selectedMatch$.subscribe());
     this.subscriptions.push(this.addPlayerToMatch$.subscribe());
     this.subscriptions.push(this.removePlayerFromMatch$.subscribe());
+    this.subscriptions.push(this.randomizeOrder$.subscribe());
   }
 
   ngOnDestroy(): void {
