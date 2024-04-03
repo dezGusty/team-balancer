@@ -3,7 +3,7 @@ import { GameEventsService } from '../history/data-access/game-events.service';
 import { AsyncPipe } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { PlayersService } from 'src/app/shared/players.service';
-import { BehaviorSubject, Observable, Subject, combineLatest, map, tap, withLatestFrom } from 'rxjs';
+import { BehaviorSubject, Observable, Subject, combineLatest, interval, map, mergeMap, repeat, skipUntil, switchMap, takeUntil, tap, withLatestFrom } from 'rxjs';
 import { Player } from 'src/app/shared/player.model';
 import { GameEventData, PlayerWithId } from '../history/data-access/create-game-request.model';
 
@@ -20,6 +20,21 @@ export class GameeventdraftComponent {
   private gameEventsService: GameEventsService = inject(GameEventsService);
   private playersService: PlayersService = inject(PlayersService);
   public selectedMatchContent = this.gameEventsService.selectedMatchContent;
+
+  private readonly randomizeMouseDownSubject$: Subject<void> = new Subject<void>();
+  private readonly randomizeMouseUpSubject$: Subject<void> = new Subject<void>();
+  // private readonly randomizeOperationSubject$ = new BehaviorSubject<boolean>(true);
+  protected readonly randomizeOperation$ = this.randomizeMouseDownSubject$.pipe(
+    switchMap(
+      _ => {
+        return interval(100).pipe(
+          takeUntil(this.randomizeMouseUpSubject$),
+          // tap(x => console.log('randomizeOperation$ Inner3', x)),
+          tap(_ => this.randomizeOrder())
+        );
+      }
+    ),
+  );
 
   @ViewChild('srcNameArea') srcNameArea!: ElementRef;
 
@@ -108,6 +123,14 @@ export class GameeventdraftComponent {
   onClickToRemovePlayerById(playerWithId: PlayerWithId) {
     console.log('Removing player from match', playerWithId);
     this.gameEventsService.removePlayerFromMatch(playerWithId);
+  }
+
+  randomizeMouseDown() {
+    this.randomizeMouseDownSubject$.next();
+  }
+
+  randomizeMouseUp() {
+    this.randomizeMouseUpSubject$.next();
   }
 
   randomizeOrder() {

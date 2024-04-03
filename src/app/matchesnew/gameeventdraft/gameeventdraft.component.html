@@ -21,8 +21,11 @@
       }
     </div>
 
-    <button type="button" class="gus-button gus-border gus-hoverable" (click)="this.randomizeOrder()">Randomize
-      🎲</button>
+    <div class="gus-button gus-border gus-hoverable" (mousedown)="this.randomizeMouseDown()"
+      (mouseup)="this.randomizeMouseUp()" (touchstart)="this.randomizeMouseDown()" (touchend)="this.randomizeMouseUp()">
+      Randomize 🎲</div>
+    <!-- <button type="button" class="gus-button gus-border gus-hoverable" (click)="this.randomizeOrder()">Randomize
+      🎲</button> -->
     <button type="button" class="gus-button gus-border gus-hoverable" (click)="this.save()">Save ☁️</button>
   </div>
 
@@ -42,3 +45,4 @@
 
 @if (this.keyboardCachedPlayer$ | async) {}
 @if (this.enterHandler$ | async) {}
+@if (this.randomizeOperation$ | async) {}
