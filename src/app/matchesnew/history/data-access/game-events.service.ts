@@ -2,7 +2,7 @@ import { HttpErrorResponse } from '@angular/common/http';
 import { Injectable, OnDestroy, signal } from '@angular/core';
 import { Firestore, addDoc, collectionData, docData, setDoc } from '@angular/fire/firestore';
 import { collection, doc } from 'firebase/firestore';
-import { Observable, Subject, Subscription, catchError, combineLatest, map, of, shareReplay, switchMap, tap, throwError, withLatestFrom } from 'rxjs';
+import { BehaviorSubject, Observable, Subject, Subscription, catchError, combineLatest, map, of, shareReplay, switchMap, tap, throwError, withLatestFrom } from 'rxjs';
 import { MatchDateTitle, fromString } from '../match-date-title';
 import { CustomPrevGame } from 'src/app/shared/custom-prev-game.model';
 import { LoadingFlagService } from 'src/app/utils/loading-flag.service';
@@ -38,9 +38,34 @@ export class GameEventsService implements OnDestroy {
 
   gameEvents = toSignal(this.recentGames$, { initialValue: [] });
 
-  private readonly addGameToRecentMatchesSubject = new Subject<MatchDateTitle>();
-  private readonly addGameToRecentMatches$ = this.addGameToRecentMatchesSubject.asObservable();
+  private readonly addGameToRecentMatchesSubject$ = new Subject<MatchDateTitle>();
+  private readonly addGameToRecentMatches$ = this.addGameToRecentMatchesSubject$.asObservable();
 
+  autoSaveGameEventSubject$ = new BehaviorSubject<boolean>(false);
+  // autoSaveGameEventSignal = toSignal(this.autoSaveGameEventSubject$, { initialValue: true });
+
+  readonly nextSaveDataSubject$ = new BehaviorSubject<GameEventDBData>(GameEventDBData.DEFAULT);
+
+  readonly triggerSaveDataSubject$ = new Subject<void>();
+  readonly triggerSaveData$ = this.triggerSaveDataSubject$.asObservable().pipe(
+    withLatestFrom(this.nextSaveDataSubject$),
+    switchMap(([_, data]) => {
+      if (data.name !== "") {
+        return setDoc(
+          doc(this.firestore, `games/${data.name}`),
+          data,
+          { merge: true }
+        );
+      }
+      this.notificationService.show("No content to save. Skipping.");
+      return of();
+    }),
+    catchError((err) => {
+      this.notificationService.show("Data save encountered an issue.");
+      console.warn("trigger save data encountered issue");
+      return of();
+    })
+  );
 
   createGameEventSubject$ = new Subject<CreateGameRequest>();
   public readonly createGameEventAction$ =
@@ -63,7 +88,7 @@ export class GameEventsService implements OnDestroy {
           return of(Result_Err<void>(`Name ${docName} already exists`));
         }
 
-        this.addGameToRecentMatchesSubject.next(fromString(docName ?? ""));
+        this.addGameToRecentMatchesSubject$.next(fromString(docName ?? ""));
         console.log('setting doc... [' + docName + ']');
 
         // Create a new document in the 'games' collection with the match name as the document name.
@@ -216,7 +241,10 @@ export class GameEventsService implements OnDestroy {
       console.log('randomize order', selectedMatchContent);
     }),
     map(([player, selectedMatchContent]) => {
-      let newRegisteredPlayers = selectedMatchContent.registeredPlayers.sort(() => Math.random() - 0.5); 
+      // Set a randomization factor between 0.0 and 0.5 for the sort function.
+      let randomizationFactor = Math.random() - 0.5;
+      // Pass a random value to the sort function. This will shuffle the order of the players.
+      let newRegisteredPlayers = selectedMatchContent.registeredPlayers.sort(() => Math.random() - randomizationFactor - 0.25); 
       let newRegisteredPlayerIds = newRegisteredPlayers.map(p => p.id);
       let newMatchContent: GameEventDBData = {
         matchDate: selectedMatchContent.matchDate,
@@ -225,18 +253,53 @@ export class GameEventsService implements OnDestroy {
       };
       return newMatchContent;
     }),
-    switchMap((newMatchContent) => {
-      return setDoc(
-        doc(this.firestore, `games/${newMatchContent.name}`),
-        newMatchContent,
-        { merge: true }
-      );
+    withLatestFrom(this.autoSaveGameEventSubject$),
+    switchMap(([newMatchContent, autoSave]) => {
+      if (autoSave){
+        return setDoc(
+          doc(this.firestore, `games/${newMatchContent.name}`),
+          newMatchContent,
+          { merge: true }
+        );
+      }
+      // if not auto-saving, store the data in another subject
+      this.nextSaveDataSubject$.next(newMatchContent);
+      return of();
     }),
+    tap(x => console.log('randomizeOrder$', x)),
     catchError((err) => {
       console.warn("randomize player order encountered issue");
       return of(null);
     })
   );
+  // randomizeOrderSubject$ = new Subject<void>();
+  // randomizeOrder$ = this.randomizeOrderSubject$.asObservable().pipe(
+  //   withLatestFrom(this.selectedMatchContent$),
+  //   tap(([_, selectedMatchContent]) => {
+  //     console.log('randomize order', selectedMatchContent);
+  //   }),
+  //   map(([player, selectedMatchContent]) => {
+  //     let newRegisteredPlayers = selectedMatchContent.registeredPlayers.sort(() => Math.random() - 0.5); 
+  //     let newRegisteredPlayerIds = newRegisteredPlayers.map(p => p.id);
+  //     let newMatchContent: GameEventDBData = {
+  //       matchDate: selectedMatchContent.matchDate,
+  //       name: selectedMatchContent.name,
+  //       registeredPlayerIds: newRegisteredPlayerIds
+  //     };
+  //     return newMatchContent;
+  //   }),
+  //   switchMap((newMatchContent) => {
+  //     return setDoc(
+  //       doc(this.firestore, `games/${newMatchContent.name}`),
+  //       newMatchContent,
+  //       { merge: true }
+  //     );
+  //   }),
+  //   catchError((err) => {
+  //     console.warn("randomize player order encountered issue");
+  //     return of(null);
+  //   })
+  // );
 
   public createGameEvent(createMatchRequest: CreateGameRequest) {
     this.createGameEventSubject$.next(createMatchRequest);
@@ -255,6 +318,10 @@ export class GameEventsService implements OnDestroy {
     this.randomizeOrderSubject$.next();
   }
 
+  public save() {
+    this.triggerSaveDataSubject$.next();
+  }
+
 
   private subscriptions: Subscription[] = [];
 
@@ -269,6 +336,7 @@ export class GameEventsService implements OnDestroy {
     this.subscriptions.push(this.addPlayerToMatch$.subscribe());
     this.subscriptions.push(this.removePlayerFromMatch$.subscribe());
     this.subscriptions.push(this.randomizeOrder$.subscribe());
+    this.subscriptions.push(this.triggerSaveData$.subscribe());
   }
 
   ngOnDestroy(): void {

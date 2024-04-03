@@ -114,4 +114,8 @@ export class GameeventdraftComponent {
     // reorder the players in the match.
     this.gameEventsService.randomizeOrder();
   }
+
+  save() {
+    this.gameEventsService.save();
+  }
 }
