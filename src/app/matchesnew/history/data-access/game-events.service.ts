@@ -2,7 +2,7 @@ import { HttpErrorResponse } from '@angular/common/http';
 import { Injectable, OnDestroy, signal } from '@angular/core';
 import { Firestore, addDoc, collectionData, docData, setDoc } from '@angular/fire/firestore';
 import { collection, doc } from 'firebase/firestore';
-import { BehaviorSubject, Observable, Subject, Subscription, catchError, combineLatest, map, of, shareReplay, switchMap, tap, throwError, withLatestFrom } from 'rxjs';
+import { BehaviorSubject, Observable, Subject, Subscription, catchError, combineLatest, concat, flatMap, map, merge, mergeAll, mergeMap, of, shareReplay, switchMap, tap, throwError, withLatestFrom } from 'rxjs';
 import { MatchDateTitle, fromString } from '../match-date-title';
 import { CustomPrevGame } from 'src/app/shared/custom-prev-game.model';
 import { LoadingFlagService } from 'src/app/utils/loading-flag.service';
@@ -36,20 +36,22 @@ export class GameEventsService implements OnDestroy {
     shareReplay(1),
   );
 
-  gameEvents = toSignal(this.recentGames$, { initialValue: [] });
+  public readonly gameEvents = toSignal(this.recentGames$, { initialValue: [] });
 
   private readonly addGameToRecentMatchesSubject$ = new Subject<MatchDateTitle>();
   private readonly addGameToRecentMatches$ = this.addGameToRecentMatchesSubject$.asObservable();
 
-  autoSaveGameEventSubject$ = new BehaviorSubject<boolean>(false);
-  // autoSaveGameEventSignal = toSignal(this.autoSaveGameEventSubject$, { initialValue: true });
+  private readonly autoSaveGameEventSubject$ = new BehaviorSubject<boolean>(false);
+  readonly autoSaveGameEventSignal = toSignal(this.autoSaveGameEventSubject$, { initialValue: true });
 
   readonly nextSaveDataSubject$ = new BehaviorSubject<GameEventDBData>(GameEventDBData.DEFAULT);
+  readonly nextSaveDataSignal = toSignal(this.nextSaveDataSubject$, { initialValue: GameEventDBData.DEFAULT });
 
   readonly triggerSaveDataSubject$ = new Subject<void>();
   readonly triggerSaveData$ = this.triggerSaveDataSubject$.asObservable().pipe(
     withLatestFrom(this.nextSaveDataSubject$),
     switchMap(([_, data]) => {
+      console.log('*** trigger save data', data);
       if (data.name !== "") {
         return setDoc(
           doc(this.firestore, `games/${data.name}`),
@@ -138,7 +140,7 @@ export class GameEventsService implements OnDestroy {
 
   selectedMatch = toSignal(this.selectedMatch$, { initialValue: null });
 
-  selectedMatchContent$ = this.selectedMatch$.pipe(
+  selectedMatchOnlineContent$ = this.selectedMatch$.pipe(
     tap((_) => { this.loadingFlagService.setLoadingFlag(true); }),
     switchMap((selectedMatch) => {
       if (!selectedMatch) {
@@ -146,10 +148,23 @@ export class GameEventsService implements OnDestroy {
       }
       return docData(doc(this.firestore, `games/${selectedMatch.title}`));
     }),
-    map(matchDocContents => {
-      const castedItem = matchDocContents as GameEventDBData;
-      return castedItem;
+    map(gameEvent => { return gameEvent as GameEventDBData }),
+    tap((_) => { this.loadingFlagService.setLoadingFlag(false); }),
+    catchError((err) => {
+      console.warn("Error encountered while reading game event", err);
+      this.notificationService.show("Error encountered while reading game. Please REFRESH page.");
+      this.loadingFlagService.setLoadingFlag(false);
+      return of(GameEventDBData.DEFAULT);
     }),
+  );
+
+  // combinedOnlineAndLocalData$ = concat([this.selectedMatchOnlineContent$, this.nextSaveDataSubject$]).pipe(
+  //   mergeAll(),
+  // );
+
+  selectedMatchContent$ = merge([this.selectedMatchOnlineContent$, this.nextSaveDataSubject$]).pipe(
+    tap((data) => console.log('selectedMatchContent$', data)),
+    mergeAll(),
     withLatestFrom(this.playersService.players$),
     map(([gameEventDBData, players]) => {
       try {
@@ -170,7 +185,6 @@ export class GameEventsService implements OnDestroy {
       }
       return GameEventData.DEFAULT;
     }),
-    tap((_) => { this.loadingFlagService.setLoadingFlag(false); }),
     catchError((err) => {
       console.warn("Error encountered while reading game event", err);
       this.notificationService.show("Error encountered while reading game");
@@ -195,12 +209,17 @@ export class GameEventsService implements OnDestroy {
       };
       return newMatchContent;
     }),
-    switchMap((newMatchContent) => {
-      return setDoc(
-        doc(this.firestore, `games/${newMatchContent.name}`),
-        newMatchContent,
-        { merge: true }
-      );
+    withLatestFrom(this.autoSaveGameEventSubject$),
+    switchMap(([newMatchContent, autoSave]) => {
+      if (autoSave) {
+        return setDoc(
+          doc(this.firestore, `games/${newMatchContent.name}`),
+          newMatchContent,
+          { merge: true }
+        );
+      }
+      this.nextSaveDataSubject$.next(newMatchContent);
+      return of();
     }),
     catchError((err) => {
       console.warn("add player to match encountered issue");
@@ -221,16 +240,21 @@ export class GameEventsService implements OnDestroy {
       };
       return newMatchContent;
     }),
-    switchMap((newMatchContent) => {
-      return setDoc(
-        doc(this.firestore, `games/${newMatchContent.name}`),
-        newMatchContent,
-        { merge: true }
-      );
+    withLatestFrom(this.autoSaveGameEventSubject$),
+    switchMap(([newMatchContent, autoSave]) => {
+      if (autoSave) {
+        return setDoc(
+          doc(this.firestore, `games/${newMatchContent.name}`),
+          newMatchContent,
+          { merge: true }
+        );
+      }
+      this.nextSaveDataSubject$.next(newMatchContent);
+      return of();
     }),
     catchError((err) => {
       console.warn("remove player from match encountered issue");
-      return of(null);
+      return of();
     })
   );
 
@@ -244,7 +268,7 @@ export class GameEventsService implements OnDestroy {
       // Set a randomization factor between 0.0 and 0.5 for the sort function.
       let randomizationFactor = Math.random() - 0.5;
       // Pass a random value to the sort function. This will shuffle the order of the players.
-      let newRegisteredPlayers = selectedMatchContent.registeredPlayers.sort(() => Math.random() - randomizationFactor - 0.25); 
+      let newRegisteredPlayers = selectedMatchContent.registeredPlayers.sort(() => Math.random() - randomizationFactor - 0.25);
       let newRegisteredPlayerIds = newRegisteredPlayers.map(p => p.id);
       let newMatchContent: GameEventDBData = {
         matchDate: selectedMatchContent.matchDate,
@@ -255,7 +279,7 @@ export class GameEventsService implements OnDestroy {
     }),
     withLatestFrom(this.autoSaveGameEventSubject$),
     switchMap(([newMatchContent, autoSave]) => {
-      if (autoSave){
+      if (autoSave) {
         return setDoc(
           doc(this.firestore, `games/${newMatchContent.name}`),
           newMatchContent,
@@ -320,6 +344,10 @@ export class GameEventsService implements OnDestroy {
 
   public save() {
     this.triggerSaveDataSubject$.next();
+  }
+
+  public setAutoSave(autoSave: boolean) {
+    this.autoSaveGameEventSubject$.next(autoSave);
   }
 
 

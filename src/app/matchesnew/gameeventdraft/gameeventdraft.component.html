@@ -1,7 +1,13 @@
 @if (this.selectedMatchContent(); as selectedMatchContent) {
 <h3>{{selectedMatchContent.matchDate}}</h3>
-<div>
+<div class="fb-docname-label">
   {{selectedMatchContent.name}}
+</div>
+
+<div>
+  <label for="autosave">Auto-save</label>
+  <input type="checkbox" id="autosave" [ngModel]="this.autoSaveGameEventSignal()"
+    (ngModelChange)="this.onToggleAutoSaveChange($event)">
 </div>
 
 <div class="border-bottom gus-search-box">

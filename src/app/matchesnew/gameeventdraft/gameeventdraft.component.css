@@ -44,3 +44,8 @@
   align-items: flex-start;
   gap: 1em;
 }
+
+.fb-docname-label {
+  font-size: 0.8em;
+  font-weight: lighter;
+}
