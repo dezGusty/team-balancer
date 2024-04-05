@@ -521,6 +521,12 @@ a.player-card-grad:hover {
   cursor: pointer;
 }
 
+.gus-button:disabled {
+  background: var(--gus-secondary-bck-color);
+  color: var(--gus-secondary-text-color);
+  cursor: default;
+}
+
 .gus-button-narrow {
   background: var(--gus-secondary-grad);
   color: var(--gus-primary-text-color);

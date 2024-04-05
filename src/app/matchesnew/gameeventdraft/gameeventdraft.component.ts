@@ -35,6 +35,11 @@ export class GameeventdraftComponent {
     ),
   );
 
+  protected readonly hasDataToSave$: Observable<boolean> = this.gameEventsService.nextSaveDataSubject$.pipe(
+    map(nextSaveData => nextSaveData !== undefined && nextSaveData.matchDate !== undefined && nextSaveData.matchDate != ""),
+    tap(item => console.log('hasDataToSave$', item))
+  );
+
   protected readonly autoSaveGameEventSignal = this.gameEventsService.autoSaveGameEventSignal;
 
   @ViewChild('srcNameArea') srcNameArea!: ElementRef;

@@ -134,6 +134,8 @@ export class GameEventsService implements OnDestroy {
   selectedMatch$ = this.selectedMatchSubject$.asObservable().pipe(
     tap((selectedMatch) => {
       console.log('** selected match', selectedMatch);
+      // also reset any stored data.
+      this.nextSaveDataSubject$.next(GameEventDBData.DEFAULT);
     }),
     shareReplay(1)
   );
