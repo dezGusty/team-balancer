@@ -306,7 +306,7 @@ export class GameEventsService implements OnDestroy {
       // save the list.
       // save the players, so store the star count.
       let newRegisteredPlayers = data.registeredPlayers.slice(12);
-      console.log('newRegisteredPlayers', newRegisteredPlayers);
+      console.log('TODO: assign ⭐ to newRegisteredPlayers', newRegisteredPlayers);
       return of();
     }),
     catchError((err) => {
