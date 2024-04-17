@@ -1,20 +1,18 @@
 <div class="history-area">
-  <div class="history-left-outline">
-    <button class="gus-button gus-border gus-hoverable" type="button" (click)="onAddGameClicked();">Add game ➕</button>
-    <ul>
-      @for (matchData of this.gameEvents(); track $index) {
-      <li (click)="onMatchEntryClicked(matchData)"
-        class="gus-button-narrow gus-border player-card-grad date-as-calendar vert-calendar gus-hoverable"
-        [class.gus-button-active]="matchData == this.selectedMatch()">
-        <span class="year">{{matchData.year}}</span>
-        <span class="month">{{matchData.month}}</span>
-        <span class="day">{{matchData.day}}</span>
-        <span class="suffix">{{matchData.suffix}}</span>
-      </li>
-      } @empty {
-      <li>No recent matches.</li>
-      }
-    </ul>
+  <div class="history-left-outline s-row">
+    <button class="gus-border gus-hoverable" type="button" (click)="onAddGameClicked();">Add ➕</button>
+    @for (matchData of this.gameEvents(); track $index) {
+    <div (click)="onMatchEntryClicked(matchData)"
+      class="gus-button-narrow gus-border player-card-grad date-as-calendar vert-calendar gus-hoverable"
+      [class.gus-button-active]="matchData == this.selectedMatch()">
+      <span class="year">{{matchData.year}}</span>
+      <span class="month">{{matchData.month}}</span>
+      <span class="day">{{matchData.day}}</span>
+      <span class="suffix">{{matchData.suffix}}</span>
+    </div>
+    } @empty {
+    <div>No recent matches.</div>
+    }
   </div>
   <div class="history-right-outline">
 

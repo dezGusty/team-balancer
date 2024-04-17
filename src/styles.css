@@ -452,8 +452,8 @@ a.player-card-grad:hover {
   flex-wrap: nowrap;
   justify-content: space-between;
 
-  /* width: 4em; */
-  height: 3.5em;
+  width: 2.5em;
+  height: 3.75em;
 }
 
 .vert-calendar.date-as-calendar .suffix,
@@ -547,20 +547,26 @@ a.player-card-grad:hover {
 
 .history-area {
   display: flex;
-  flex-direction: row;
+  flex-direction: column;
 }
 
 /*check if needed - autogen*/
 .history-left-outline {
   border-right: 1px solid var(--gus-secondary-bck);
-  padding-right: 0.5em;
+  padding-bottom: 0.5em;
 }
 
 .history-right-outline {
   border-left: 1px solid var(--gus-secondary-bck);
-  padding-left: 0.5em;
+  padding-top: 0.5em;
 }
 
+.s-row {
+  display: grid;
+  gap: 0.25em;
+  grid-template-columns: repeat(auto-fill, 2.5em);
+  justify-content: center;
+}
 
 .history-grid {
   display: grid;

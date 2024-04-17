@@ -40,6 +40,11 @@ export class GameeventdraftComponent {
     tap(item => console.log('hasDataToSave$', item))
   );
 
+  protected readonly hasEnoughPlayersForRandomize$: Observable<boolean> = this.gameEventsService.selectedMatchContent$.pipe(
+    // only return true if there are more than 12 players in the match.
+    map(selectedMatchContent => selectedMatchContent.registeredPlayers.length > 12),
+  );
+
   protected readonly autoSaveGameEventSignal = this.gameEventsService.autoSaveGameEventSignal;
 
   @ViewChild('srcNameArea') srcNameArea!: ElementRef;

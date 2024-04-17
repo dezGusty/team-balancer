@@ -24,12 +24,12 @@
 
 .leftArea {
   flex-grow: 0;
-  min-width: 20em;
+  min-width: 10em;
 }
 
 .rightArea {
   flex-grow: 1;
-  min-width: 60em;
+  min-width: 10em;
 }
 
 .selectedplayers {
@@ -42,7 +42,7 @@
   display: flex;
   flex-direction: row;
   align-items: flex-start;
-  gap: 1em;
+  gap: 0.5em;
 }
 
 .fb-docname-label {
