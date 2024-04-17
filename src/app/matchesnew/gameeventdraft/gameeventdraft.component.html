@@ -1,13 +1,33 @@
 @if (this.selectedMatchContent(); as selectedMatchContent) {
-<h3>{{selectedMatchContent.matchDate}}</h3>
-<div class="fb-docname-label">
-  {{selectedMatchContent.name}}
-</div>
 
-<div>
-  <label for="autosave">Auto-save</label>
-  <input type="checkbox" id="autosave" [ngModel]="this.autoSaveGameEventSignal()"
-    (ngModelChange)="this.onToggleAutoSaveChange($event)">
+<div class="info-and-buttons-area">
+  <div class="left-info">
+    <div>
+      <h3>{{selectedMatchContent.matchDate}}</h3>
+    </div>
+    <div class="fb-docname-label">
+      {{selectedMatchContent.name}}
+    </div>
+
+    <div>
+      <label for="autosave">Auto-save</label>
+      <input type="checkbox" id="autosave" [ngModel]="this.autoSaveGameEventSignal()"
+        (ngModelChange)="this.onToggleAutoSaveChange($event)">
+    </div>
+
+  </div>
+  <div class="right-buttons">
+    <div class="f-row">
+      <div class="gus-button gus-border gus-hoverable pseudo-button" (mousedown)="this.randomizeMouseDown()"
+        (mouseup)="this.randomizeMouseUp()" (touchstart)="this.randomizeMouseDown()"
+        (touchend)="this.randomizeMouseUp()"
+        [class.pseudo-disabled]="(this.hasEnoughPlayersForRandomize$ |async) == false">🎲</div>
+      <button type="button" class="gus-button gus-border gus-hoverable"
+        [disabled]="(this.canStillApplyRandomization$ | async)==false" (click)="this.saveRaffle()">Apply ⭐</button>
+    </div>
+    <button type="button" class="gus-button gus-border gus-hoverable" [disabled]="(this.hasDataToSave$ | async)==false"
+      (click)="this.save()">Save ☁️</button>
+  </div>
 </div>
 
 <div class="border-bottom gus-search-box">
@@ -23,14 +43,12 @@
     <div class="selectedplayers">
       @for (player of selectedMatchContent.registeredPlayers; track $index) {
       <div class="gus-button-narrow gus-border player-card-grad gus-hoverable"
-        (click)="this.onClickToRemovePlayerById(player)">{{$index+1}}. {{player.name}}</div>
+        (click)="this.onClickToRemovePlayerById(player)">{{$index+1}}. {{player.name}}
+        {{player.stars > 0? '⭐' : ''}}
+      </div>
       }
     </div>
 
-    <button class="gus-button gus-border gus-hoverable" (mousedown)="this.randomizeMouseDown()"
-    (mouseup)="this.randomizeMouseUp()" (touchstart)="this.randomizeMouseDown()" (touchend)="this.randomizeMouseUp()"
-    [disabled]="(this.hasEnoughPlayersForRandomize$ |async) == false">Randomize 🎲</button>
-    <button type="button" class="gus-button gus-border gus-hoverable" [disabled]="(this.hasDataToSave$ | async)==false" (click)="this.save()">Save ☁️</button>
   </div>
 
   <div class="rightArea">

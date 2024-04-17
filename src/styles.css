@@ -521,6 +521,16 @@ a.player-card-grad:hover {
   cursor: pointer;
 }
 
+.pseudo-disabled {
+  background: var(--gus-secondary-bck-color);
+  color: var(--gus-secondary-text-color);
+  cursor: default;
+}
+
+.pseudo-button {
+  width: min-content;
+}
+
 .gus-button:disabled {
   background: var(--gus-secondary-bck-color);
   color: var(--gus-secondary-text-color);
@@ -540,6 +550,7 @@ a.player-card-grad:hover {
   background: linear-gradient(135deg, #511a85 0%, #541b8a 67%, rgb(95, 31, 128) 100%);
   color: var(--gus-panel-text);
 }
+
 .gus-button-active:hover {
   background: linear-gradient(135deg, #8A2Be2 0%, #8A2Be2 67%, rgb(181, 55, 242) 100%);
   color: var(--gus-panel-text);
@@ -553,7 +564,7 @@ a.player-card-grad:hover {
 /*check if needed - autogen*/
 .history-left-outline {
   border-right: 1px solid var(--gus-secondary-bck);
-  padding-bottom: 0.5em;
+  padding-bottom: 0.25em;
 }
 
 .history-right-outline {
@@ -565,7 +576,6 @@ a.player-card-grad:hover {
   display: grid;
   gap: 0.25em;
   grid-template-columns: repeat(auto-fill, 2.5em);
-  justify-content: center;
 }
 
 .history-grid {

@@ -1,14 +1,13 @@
 import { HttpErrorResponse } from '@angular/common/http';
-import { Injectable, OnDestroy, signal } from '@angular/core';
-import { Firestore, addDoc, collectionData, docData, setDoc } from '@angular/fire/firestore';
-import { collection, doc } from 'firebase/firestore';
-import { BehaviorSubject, Observable, Subject, Subscription, catchError, combineLatest, concat, flatMap, map, merge, mergeAll, mergeMap, of, shareReplay, switchMap, tap, throwError, withLatestFrom } from 'rxjs';
+import { Injectable, OnDestroy } from '@angular/core';
+import { Firestore, docData, setDoc } from '@angular/fire/firestore';
+import { doc } from 'firebase/firestore';
+import { BehaviorSubject, Observable, Subject, Subscription, catchError, map, merge, mergeAll, of, shareReplay, switchMap, tap, throwError, withLatestFrom } from 'rxjs';
 import { MatchDateTitle, fromString } from '../match-date-title';
-import { CustomPrevGame } from 'src/app/shared/custom-prev-game.model';
 import { LoadingFlagService } from 'src/app/utils/loading-flag.service';
 import { CreateGameRequest, GameEventDBData, GameEventData, GameNamesList, PlayerWithId, createGameEventDataFromRequest, getEventNameForRequest } from './create-game-request.model';
 import { toSignal } from '@angular/core/rxjs-interop';
-import { Result, Result_Err, Result_Ok } from '../result';
+import { Result_Err, Result_Ok } from '../result';
 import { NotificationService } from 'src/app/utils/notification/notification.service';
 import { PlayersService } from 'src/app/shared/players.service';
 import { Player } from 'src/app/shared/player.model';
@@ -17,7 +16,7 @@ import { Player } from 'src/app/shared/player.model';
   providedIn: 'root'
 })
 export class GameEventsService implements OnDestroy {
-
+  
   public readonly recentGames$ = docData(doc(this.firestore, 'games/_list')).pipe(
     tap((_) => { this.loadingFlagService.setLoadingFlag(true); }),
     map(recentMatchesDocContents => {
@@ -62,6 +61,7 @@ export class GameEventsService implements OnDestroy {
       this.notificationService.show("No content to save. Skipping.");
       return of();
     }),
+    tap(() => this.nextSaveDataSubject$.next(GameEventDBData.DEFAULT)),
     catchError((err) => {
       this.notificationService.show("Data save encountered an issue.");
       console.warn("trigger save data encountered issue");
@@ -160,10 +160,6 @@ export class GameEventsService implements OnDestroy {
     }),
   );
 
-  // combinedOnlineAndLocalData$ = concat([this.selectedMatchOnlineContent$, this.nextSaveDataSubject$]).pipe(
-  //   mergeAll(),
-  // );
-
   selectedMatchContent$ = merge([this.selectedMatchOnlineContent$, this.nextSaveDataSubject$]).pipe(
     tap((data) => console.log('selectedMatchContent$', data)),
     mergeAll(),
@@ -171,12 +167,14 @@ export class GameEventsService implements OnDestroy {
     map(([gameEventDBData, players]) => {
       try {
         let result: GameEventData = {
+          appliedRandomization: false,
           matchDate: gameEventDBData.matchDate,
           name: gameEventDBData.name,
           registeredPlayers: gameEventDBData.registeredPlayerIds.map(id => {
             return {
               id: id,
-              name: players.find(p => p.id === id)?.name ?? ""
+              name: players.find(p => p.id === id)?.name ?? "",
+              stars: players.find(p => p.id === id)?.stars ?? 0,
             };
           })
         };
@@ -292,40 +290,33 @@ export class GameEventsService implements OnDestroy {
       this.nextSaveDataSubject$.next(newMatchContent);
       return of();
     }),
-    tap(x => console.log('randomizeOrder$', x)),
     catchError((err) => {
       console.warn("randomize player order encountered issue");
       return of(null);
     })
   );
-  // randomizeOrderSubject$ = new Subject<void>();
-  // randomizeOrder$ = this.randomizeOrderSubject$.asObservable().pipe(
-  //   withLatestFrom(this.selectedMatchContent$),
-  //   tap(([_, selectedMatchContent]) => {
-  //     console.log('randomize order', selectedMatchContent);
-  //   }),
-  //   map(([player, selectedMatchContent]) => {
-  //     let newRegisteredPlayers = selectedMatchContent.registeredPlayers.sort(() => Math.random() - 0.5); 
-  //     let newRegisteredPlayerIds = newRegisteredPlayers.map(p => p.id);
-  //     let newMatchContent: GameEventDBData = {
-  //       matchDate: selectedMatchContent.matchDate,
-  //       name: selectedMatchContent.name,
-  //       registeredPlayerIds: newRegisteredPlayerIds
-  //     };
-  //     return newMatchContent;
-  //   }),
-  //   switchMap((newMatchContent) => {
-  //     return setDoc(
-  //       doc(this.firestore, `games/${newMatchContent.name}`),
-  //       newMatchContent,
-  //       { merge: true }
-  //     );
-  //   }),
-  //   catchError((err) => {
-  //     console.warn("randomize player order encountered issue");
-  //     return of(null);
-  //   })
-  // );
+
+  readonly saveRaffleDataSubject$ = new Subject<void>();
+  readonly saveRaffleData$ = this.saveRaffleDataSubject$.asObservable().pipe(
+    withLatestFrom(this.selectedMatchContent$),
+    switchMap(([_, data]) => {
+      console.log('*** save raffle data', data);
+      // take the current order of the players.
+      // add a star to each player beyond the number of 12 players.
+      // save the list.
+      // save the players, so store the star count.
+      let newRegisteredPlayers = data.registeredPlayers.slice(12);
+      console.log('newRegisteredPlayers', newRegisteredPlayers);
+      return of();
+    }),
+    catchError((err) => {
+      this.notificationService.show("Data save encountered an issue.");
+      console.warn("save raffle data encountered issue");
+      return of();
+    })
+  );
+
+
 
   public createGameEvent(createMatchRequest: CreateGameRequest) {
     this.createGameEventSubject$.next(createMatchRequest);
@@ -348,6 +339,14 @@ export class GameEventsService implements OnDestroy {
     this.triggerSaveDataSubject$.next();
   }
 
+  public saveRaffle() {
+    // take the current order of the players.
+    // add a star to each player beyond the number of 12 players.
+    // save the list.
+    // save the players, so store the star count.
+    this.saveRaffleDataSubject$.next();
+  }
+
   public setAutoSave(autoSave: boolean) {
     this.autoSaveGameEventSubject$.next(autoSave);
   }
@@ -367,6 +366,7 @@ export class GameEventsService implements OnDestroy {
     this.subscriptions.push(this.removePlayerFromMatch$.subscribe());
     this.subscriptions.push(this.randomizeOrder$.subscribe());
     this.subscriptions.push(this.triggerSaveData$.subscribe());
+    this.subscriptions.push(this.saveRaffleData$.subscribe());
   }
 
   ngOnDestroy(): void {

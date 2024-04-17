@@ -44,6 +44,13 @@ export class GameeventdraftComponent {
     // only return true if there are more than 12 players in the match.
     map(selectedMatchContent => selectedMatchContent.registeredPlayers.length > 12),
   );
+  
+  protected readonly canStillApplyRandomization$: Observable<boolean> = this.gameEventsService.selectedMatchContent$.pipe(
+    // only if the match randomization was not saved already in the appliedRandomization field.
+    map(selectedMatchContent => selectedMatchContent.appliedRandomization == false
+       && selectedMatchContent.registeredPlayers.length > 12
+    ),
+  );
 
   protected readonly autoSaveGameEventSignal = this.gameEventsService.autoSaveGameEventSignal;
 
@@ -156,5 +163,9 @@ export class GameeventdraftComponent {
 
   save() {
     this.gameEventsService.save();
+  }
+
+  saveRaffle() {
+    this.gameEventsService.saveRaffle();
   }
 }

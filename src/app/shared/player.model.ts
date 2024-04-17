@@ -9,10 +9,12 @@ export class Player {
     public affinity = 0;
     public mostRecentMatches : Array<{date: string, diff: number}> = new Array<{date: string, diff: number}>();
     public isArchived = false;
+    public stars: number = 0;
 
     constructor(public id: number, public name: string) {
         this.rating = 6;
         this.affinity = 0;
+        this.stars = 0;
     }
 }
 

@@ -49,3 +49,31 @@
   font-size: 0.8em;
   font-weight: lighter;
 }
+
+
+.info-and-buttons-area {
+  display: flex;
+  flex-direction: row;
+  /*split the contained items to the edges*/
+  justify-content: space-between;
+}
+
+.left-info {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25em;
+}
+
+.right-buttons {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25em;
+  /* contained items shall be arranged vertically. align then to the right*/
+  justify-content: flex-end;
+}
+
+.f-row {
+  display: flex;
+  flex-direction: row;
+  gap: 0.25em;
+}

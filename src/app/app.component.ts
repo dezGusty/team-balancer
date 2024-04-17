@@ -21,7 +21,7 @@ import { NotificationComponent } from './utils/notification/notification.compone
   template: `
 <div class="main-layout">
   <app-header />
-  <div class="container-fluid">
+  <div>
     <router-outlet/>
   </div>
   <app-footer/>
