@@ -1,6 +1,6 @@
 import { Player } from './player.model';
-import { Injectable } from '@angular/core';
-import { BehaviorSubject, catchError, map, of, shareReplay, Subscription, switchMap, tap } from 'rxjs';
+import { Injectable, OnDestroy } from '@angular/core';
+import { BehaviorSubject, catchError, map, of, shareReplay, Subject, Subscription, switchMap, tap } from 'rxjs';
 import { CustomPrevGame } from './custom-prev-game.model';
 import { AppStorage } from './app-storage';
 
@@ -16,7 +16,7 @@ import { SettingsService } from './settings.service';
  * Stores and retrieves player related information.
  */
 @Injectable()
-export class PlayersService {
+export class PlayersService implements OnDestroy {
 
     private dataChangeSubscriptions: Subscription[] = [];
     private currentLabel: string = '';
@@ -54,6 +54,14 @@ export class PlayersService {
         if (this.authSvc.isAuthenticated()) {
             this.subscribeToDataSources();
         }
+
+        this.subscriptions.push(this.players$.subscribe());
+        this.subscriptions.push(this.updatePlayers$.subscribe());
+    }
+
+    private readonly subscriptions: Subscription[] = [];
+    ngOnDestroy(): void {
+        this.subscriptions.forEach(sub => sub.unsubscribe());
     }
 
     private currentPlayerList: Player[] = [];
@@ -62,7 +70,8 @@ export class PlayersService {
     // An observable for the current players list
     currentPlayersSubject$ = new BehaviorSubject<boolean>(true);
     public players$ = this.currentPlayersSubject$.asObservable().pipe(
-        switchMap(_ => docData(doc(this.firestore, '/ratings/current'))),
+        tap(_ => console.log("players$ triggered")),
+        switchMap(_ => docData(doc(this.firestore, '/ratings/current2'))),
         // tap((_) => { this.loadingFlagService.setLoadingFlag(true); }),
         map(playersDocContent => {
             const snap: PlayerRatingSnapshot = playersDocContent as PlayerRatingSnapshot;
@@ -78,9 +87,21 @@ export class PlayersService {
         shareReplay(1),
     );
 
+    uplatePlayersSubject$ = new Subject<Player[]>();
+    public updatePlayers$ = this.uplatePlayersSubject$.asObservable().pipe(
+        switchMap(players => setDoc(doc(this.firestore, '/ratings/current2'), { players: players }, { merge: true })),
+        tap(_ => this.currentPlayersSubject$.next(true)),
+        catchError((err) => {
+            console.log("update players encountered issue");
+            return of();
+        })
+    );
+
+    updatePlayersList(allPlayers: Player[]) {
+        this.uplatePlayersSubject$.next(allPlayers);
+    }
 
     playerDataChangeEvent = new BehaviorSubject<PlayerChangeInfo | undefined>(undefined);
-
 
     subscribeToDataSources() {
         console.log('[players] subscribing to data sources');

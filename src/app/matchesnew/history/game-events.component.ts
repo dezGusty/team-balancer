@@ -34,7 +34,7 @@ export class GameEventsComponent {
 
   gameEvents = this.gameEventsService.gameEvents;
 
-  public selectedMatch = this.gameEventsService.selectedMatch;
+  public selectedMatch = this.gameEventsService.selectedMatchSig;
 
   public selectedMatchContent = this.gameEventsService.selectedMatchContent;
 

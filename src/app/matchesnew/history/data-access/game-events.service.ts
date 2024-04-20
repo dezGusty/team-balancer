@@ -2,7 +2,7 @@ import { HttpErrorResponse } from '@angular/common/http';
 import { Injectable, OnDestroy } from '@angular/core';
 import { Firestore, docData, setDoc } from '@angular/fire/firestore';
 import { doc } from 'firebase/firestore';
-import { BehaviorSubject, Observable, Subject, Subscription, catchError, map, merge, mergeAll, of, shareReplay, switchMap, tap, throwError, withLatestFrom } from 'rxjs';
+import { BehaviorSubject, Observable, Subject, Subscription, catchError, map, merge, mergeAll, of, shareReplay, switchMap, take, tap, throwError, withLatestFrom } from 'rxjs';
 import { MatchDateTitle, fromString } from '../match-date-title';
 import { LoadingFlagService } from 'src/app/utils/loading-flag.service';
 import { CreateGameRequest, GameEventDBData, GameEventData, GameNamesList, PlayerWithId, createGameEventDataFromRequest, getEventNameForRequest } from './create-game-request.model';
@@ -16,7 +16,11 @@ import { Player } from 'src/app/shared/player.model';
   providedIn: 'root'
 })
 export class GameEventsService implements OnDestroy {
-  
+
+  public readonly RECENT_MATCHES_LIMIT = 7;
+
+  public readonly players$ = this.playersService.players$;
+
   public readonly recentGames$ = docData(doc(this.firestore, 'games/_list')).pipe(
     tap((_) => { this.loadingFlagService.setLoadingFlag(true); }),
     map(recentMatchesDocContents => {
@@ -111,10 +115,10 @@ export class GameEventsService implements OnDestroy {
         }
 
         // A document was created for the game event. Add it to the list of recent matches.
-        // Keep a list of the most recent 10 matches in the 'games/_list' document.
+        // Keep a list of the most recent RECENT_MATCHES_LIMIT matches in the 'games/_list' document.
         let gamesToKeep = [...games.map(x => x.title), result.data];
-        if (gamesToKeep.length > 10) {
-          gamesToKeep = gamesToKeep.slice(gamesToKeep.length - 10);
+        if (gamesToKeep.length > this.RECENT_MATCHES_LIMIT) {
+          gamesToKeep = gamesToKeep.slice(gamesToKeep.length - this.RECENT_MATCHES_LIMIT);
         }
         gamesToKeep.sort();
         return setDoc(
@@ -140,7 +144,7 @@ export class GameEventsService implements OnDestroy {
     shareReplay(1)
   );
 
-  selectedMatch = toSignal(this.selectedMatch$, { initialValue: null });
+  selectedMatchSig = toSignal(this.selectedMatch$, { initialValue: null });
 
   selectedMatchOnlineContent$ = this.selectedMatch$.pipe(
     tap((_) => { this.loadingFlagService.setLoadingFlag(true); }),
@@ -163,7 +167,7 @@ export class GameEventsService implements OnDestroy {
   selectedMatchContent$ = merge([this.selectedMatchOnlineContent$, this.nextSaveDataSubject$]).pipe(
     tap((data) => console.log('selectedMatchContent$', data)),
     mergeAll(),
-    withLatestFrom(this.playersService.players$),
+    withLatestFrom(this.players$),
     map(([gameEventDBData, players]) => {
       try {
         let result: GameEventData = {
@@ -268,7 +272,14 @@ export class GameEventsService implements OnDestroy {
       // Set a randomization factor between 0.0 and 0.5 for the sort function.
       let randomizationFactor = Math.random() - 0.5;
       // Pass a random value to the sort function. This will shuffle the order of the players.
-      let newRegisteredPlayers = selectedMatchContent.registeredPlayers.sort(() => Math.random() - randomizationFactor - 0.25);
+      let newRegisteredPlayers = selectedMatchContent.registeredPlayers.sort((a, b) => {
+        // sort by start first
+        if (a.stars > b.stars) return -1;
+        if (a.stars < b.stars) return 1;
+        // then by randomization factor
+        return Math.random() - randomizationFactor - 0.25;
+      });
+
       let newRegisteredPlayerIds = newRegisteredPlayers.map(p => p.id);
       let newMatchContent: GameEventDBData = {
         matchDate: selectedMatchContent.matchDate,
@@ -299,15 +310,20 @@ export class GameEventsService implements OnDestroy {
   readonly saveRaffleDataSubject$ = new Subject<void>();
   readonly saveRaffleData$ = this.saveRaffleDataSubject$.asObservable().pipe(
     withLatestFrom(this.selectedMatchContent$),
-    switchMap(([_, data]) => {
-      console.log('*** save raffle data', data);
-      // take the current order of the players.
-      // add a star to each player beyond the number of 12 players.
-      // save the list.
-      // save the players, so store the star count.
-      let newRegisteredPlayers = data.registeredPlayers.slice(12);
-      console.log('TODO: assign ⭐ to newRegisteredPlayers', newRegisteredPlayers);
-      return of();
+    map(([_, data]) => {
+      return data.registeredPlayers;
+    }),
+    withLatestFrom(this.players$),
+    switchMap(([selectedPlayers, allPlayers]) => {
+      allPlayers = allPlayers.map(p => {
+        let foundIdx = selectedPlayers.findIndex(sp => sp.id === p.id);
+        let starsToAdd = foundIdx != -1 ? (foundIdx > 11 ? 1 : -1) : 0;
+        let newStars = (p.stars ? p.stars : 0) + starsToAdd;
+        newStars = newStars < 0 ? 0 : newStars;
+        return { ...p, stars: newStars };
+      });
+      this.playersService.updatePlayersList(allPlayers);
+      return allPlayers;
     }),
     catchError((err) => {
       this.notificationService.show("Data save encountered an issue.");
@@ -331,7 +347,6 @@ export class GameEventsService implements OnDestroy {
   }
 
   public randomizeOrder() {
-    // this.notificationService.show("Randomize order not implemented yet");
     this.randomizeOrderSubject$.next();
   }
 

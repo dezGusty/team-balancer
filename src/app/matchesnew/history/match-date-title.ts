@@ -21,3 +21,11 @@ export function fromString(entry: string): MatchDateTitle {
   const [year, month, day] = dateEntry.split('-');
   return { title: entry, year, month, day, suffix } as MatchDateTitle;
 }
+
+export function createDefaultMatchDateTitle(): MatchDateTitle {
+  return fromString('1970-01-01_undef');
+}
+
+export namespace MatchDateTitle {
+  export const DEFAULT = createDefaultMatchDateTitle();
+}
