@@ -5,7 +5,14 @@ import { FormsModule } from '@angular/forms';
 import { PlayersService } from 'src/app/shared/players.service';
 import { BehaviorSubject, Observable, Subject, combineLatest, interval, map, mergeMap, repeat, skipUntil, startWith, switchMap, takeUntil, tap, withLatestFrom } from 'rxjs';
 import { Player } from 'src/app/shared/player.model';
-import { GameEventData, PlayerWithId } from '../history/data-access/create-game-request.model';
+import { GameEventData, PlayerWithId, PlayerWithIdAndStars } from '../history/data-access/create-game-request.model';
+
+
+export interface Selectable<T> {
+  selected: boolean;
+  data: T;
+};
+
 
 @Component({
   selector: 'app-gameeventdraft',
@@ -20,6 +27,7 @@ export class GameeventdraftComponent {
   private gameEventsService: GameEventsService = inject(GameEventsService);
   private playersService: PlayersService = inject(PlayersService);
   public selectedMatchContent = this.gameEventsService.selectedMatchContent;
+
 
   private readonly randomizeMouseDownSubject$: Subject<void> = new Subject<void>();
   private readonly randomizeMouseUpSubject$: Subject<void> = new Subject<void>();
@@ -44,11 +52,11 @@ export class GameeventdraftComponent {
     // only return true if there are more than 12 players in the match.
     map(selectedMatchContent => selectedMatchContent.registeredPlayers.length > 12),
   );
-  
+
   protected readonly canStillApplyRandomization$: Observable<boolean> = this.gameEventsService.selectedMatchContent$.pipe(
     // only if the match randomization was not saved already in the appliedRandomization field.
     map(selectedMatchContent => selectedMatchContent.appliedRandomization == false
-       && selectedMatchContent.registeredPlayers.length > 12
+      && selectedMatchContent.registeredPlayers.length > 12
     ),
   );
 
@@ -94,6 +102,40 @@ export class GameeventdraftComponent {
       }
     })
   );
+
+  protected readonly selectedMatchContentWithHighlights$ = combineLatest(
+    [this.gameEventsService.selectedMatchContent$, this.filterByContentSubject$, this.players$]).pipe(
+      map(([selectedMatchContent, filterByContent, players]) => {
+        if (filterByContent === '') {
+          return selectedMatchContent.registeredPlayers.map(player => {
+            return {
+              selected: false,
+              data: player
+            };
+          });
+        }
+        
+        let matchingPlayers = players.filter(
+          player => {
+            return player.name.toLowerCase().includes(filterByContent.toLowerCase())
+              || player.displayName.toLowerCase().includes(filterByContent.toLowerCase())
+              || player.keywords.split(' ').some(keyword => keyword.toLowerCase().includes(filterByContent.toLowerCase()));
+          }
+        );
+        // if the item is contained in matchingPlayers, return it with the selected flag set to true, otherwise false.
+        let result: Selectable<PlayerWithIdAndStars>[] = selectedMatchContent.registeredPlayers.map(
+          player => {
+            return {
+              selected: matchingPlayers.some(p => p.id === player.id),
+              data: player
+            };
+          }
+        );
+        return result;
+      }
+      )
+    );
+
 
   keyboardCachedPlayerSubject$: Subject<Player | undefined> = new Subject<Player | undefined>();
   keyboardCachedPlayer$ = this.keyboardCachedPlayerSubject$.asObservable().pipe(
@@ -143,7 +185,7 @@ export class GameeventdraftComponent {
     this.gameEventsService.removePlayerFromMatch(playerWithId);
   }
 
-  onToggleAutoSaveChange(checkboxValue: boolean){
+  onToggleAutoSaveChange(checkboxValue: boolean) {
     console.log('onToggleAutoSaveChange', checkboxValue)
     this.gameEventsService.setAutoSave(checkboxValue);
   }

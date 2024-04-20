@@ -41,10 +41,10 @@
 
     Selected players
     <div class="selectedplayers">
-      @for (player of selectedMatchContent.registeredPlayers; track $index) {
-      <div class="gus-button-narrow gus-border player-card-grad gus-hoverable"
-        (click)="this.onClickToRemovePlayerById(player)">{{$index+1}}. {{player.name}}
-        {{player.stars > 0? '⭐' : ''}}
+      @for (player of (this.selectedMatchContentWithHighlights$ | async); track $index) {
+      <div class="gus-button-narrow gus-border player-card-grad gus-hoverable" [class.highlighted]=player.selected
+        (click)="this.onClickToRemovePlayerById(player.data)">{{$index+1}}. {{player.data.name}}
+        {{player.data.stars > 0? '⭐' : ''}}
       </div>
       }
     </div>
