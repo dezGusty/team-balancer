@@ -17,7 +17,7 @@ import { Player } from 'src/app/shared/player.model';
 })
 export class GameEventsService implements OnDestroy {
 
-  public readonly RECENT_MATCHES_LIMIT = 7;
+  public readonly RECENT_MATCHES_LIMIT = 6;
 
   public readonly players$ = this.playersService.players$;
 

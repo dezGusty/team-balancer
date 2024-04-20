@@ -42,6 +42,10 @@ export class GameEventsComponent {
     this.addEvent.set({ action: FormAction.Add } as Action<CreateGameRequest>);
   }
 
+  onViewSummaryClicked() {
+    console.log("Not implemented yet.")
+  }
+
   onMatchEntryClicked(item: MatchDateTitle) {
     // If the edit form is open, close it.
     this.addEvent.set({ action: FormAction.EMPTY } as Action<CreateGameRequest>);
