@@ -55,9 +55,9 @@
     Available players
     <div class="availableplayers">
       @for (player of this.filteredAvailablePlayers$ | async; track $index) {
-      <div class="gus-button-narrow gus-border player-card-grad gus-hoverable"
-        (click)="this.onClickToAddPlayer(player)">
-        {{player.displayName != "" ? player.displayName : player.name}}
+      <div class="gus-button-narrow gus-border player-card-grad gus-hoverable" [class.with-enter-glyph]=player.selected
+        (click)="this.onClickToAddPlayer(player.data)">
+        {{getDisplayInfo(player.data)}}
       </div>
       }
     </div>
@@ -65,6 +65,5 @@
 </div>
 }
 
-@if (this.keyboardCachedPlayer$ | async) {}
 @if (this.enterHandler$ | async) {}
 @if (this.randomizeOperation$ | async) {}

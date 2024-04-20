@@ -4,7 +4,7 @@ import { AsyncPipe } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { PlayersService } from 'src/app/shared/players.service';
 import { BehaviorSubject, Observable, Subject, combineLatest, interval, map, mergeMap, repeat, skipUntil, startWith, switchMap, takeUntil, tap, withLatestFrom } from 'rxjs';
-import { Player, filterPlayersArrayByContent } from 'src/app/shared/player.model';
+import { Player, filterPlayersArrayByContent, getDisplayName } from 'src/app/shared/player.model';
 import { GameEventData, PlayerWithId, PlayerWithIdAndStars } from '../history/data-access/create-game-request.model';
 
 
@@ -84,16 +84,21 @@ export class GameeventdraftComponent {
     map(([players, filterByContent]) => {
       return filterPlayersArrayByContent(players, filterByContent);
     }),
-    tap(filteredPlayers => {
-      console.log('filteredPlayers', filteredPlayers);
-      if (filteredPlayers.length == 1) {
-        // TODO: add special marker for the 1st matching item?
-        // Maybe only do it from CSS?
-        this.keyboardCachedPlayerSubject$.next(filteredPlayers[0]);
+    map(players => {
+      return players.map(player => {
+        return {
+          selected: false,
+          data: player
+        } as Selectable<Player>;
+      });
+    }),
+    map(players => {
+      // if there are more than 0 players, mark the first with selected = true.
+      if (players.length > 0) {
+        players[0].selected = true;
       }
-      else {
-        this.keyboardCachedPlayerSubject$.next(undefined);
-      }
+
+      return players;
     })
   );
 
@@ -110,7 +115,7 @@ export class GameeventdraftComponent {
         }
 
         let matchingPlayers = filterPlayersArrayByContent(players, filterByContent);
-        
+
         // if the item is contained in matchingPlayers, return it with the selected flag set to true, otherwise false.
         let result: Selectable<PlayerWithIdAndStars>[] = selectedMatchContent.registeredPlayers.map(
           player => {
@@ -126,18 +131,15 @@ export class GameeventdraftComponent {
     );
 
 
-  keyboardCachedPlayerSubject$: Subject<Player | undefined> = new Subject<Player | undefined>();
-  keyboardCachedPlayer$ = this.keyboardCachedPlayerSubject$.asObservable().pipe(
-    tap(x => console.log("keyboardCachedPlayer$", x))
-  );
-
   enterPressedSubject$: Subject<string> = new Subject<string>();
   enterHandler$ = this.enterPressedSubject$.asObservable().pipe(
-    withLatestFrom(this.keyboardCachedPlayer$),
-    tap(([content, player]) => {
-      console.log('enterHandler$', content, player);
-      if (player) {
-        this.onClickToAddPlayer(player);
+    withLatestFrom(this.filteredAvailablePlayers$),
+    tap(([content, players]) => {
+      console.log('enterHandler$', content, players);
+      // Get the first that are selected.
+      let selected = players.find(p => p.selected)?.data;
+      if (selected) {
+        this.onClickToAddPlayer(selected);
       }
     })
   );
@@ -152,10 +154,6 @@ export class GameeventdraftComponent {
   onSearchContentChange($event: any) {
     if ($event.code === 'Enter') {
       // try to get the 1st matching item and move it to the draft.
-      // const filteredPlayers = filterPlayerArray(this.availablePlayerList, $event.target.value);
-      // if (filteredPlayers.length === 1) {
-      //   this.movePlayerToDraft(filteredPlayers[0]);
-      // }
       this.enterPressedSubject$.next($event.target.value);
       this.filterByContentSubject$.next('');
       this.searchedName = '';
@@ -198,5 +196,9 @@ export class GameeventdraftComponent {
 
   saveRaffle() {
     this.gameEventsService.saveRaffle();
+  }
+
+  getDisplayInfo(player: Player): string {
+    return getDisplayName(player);
   }
 }

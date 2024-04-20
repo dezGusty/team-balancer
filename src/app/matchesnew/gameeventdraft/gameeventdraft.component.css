@@ -81,3 +81,12 @@
 .highlighted {
   border-color: red;
 }
+
+.with-enter-glyph {
+  border-color: orangered;
+}
+.with-enter-glyph::after {
+  content: "👈";
+  position: relative;
+  right: 0.5em;
+}
