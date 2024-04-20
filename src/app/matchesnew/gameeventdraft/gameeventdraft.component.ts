@@ -4,7 +4,7 @@ import { AsyncPipe } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { PlayersService } from 'src/app/shared/players.service';
 import { BehaviorSubject, Observable, Subject, combineLatest, interval, map, mergeMap, repeat, skipUntil, startWith, switchMap, takeUntil, tap, withLatestFrom } from 'rxjs';
-import { Player } from 'src/app/shared/player.model';
+import { Player, filterPlayersArrayByContent } from 'src/app/shared/player.model';
 import { GameEventData, PlayerWithId, PlayerWithIdAndStars } from '../history/data-access/create-game-request.model';
 
 
@@ -82,13 +82,7 @@ export class GameeventdraftComponent {
     [this.availablePlayerList$, this.filterByContentSubject$]
   ).pipe(
     map(([players, filterByContent]) => {
-      return players.filter(
-        player => {
-          return player.name.toLowerCase().includes(filterByContent.toLowerCase())
-            || player.displayName.toLowerCase().includes(filterByContent.toLowerCase())
-            || player.keywords.split(' ').some(keyword => keyword.toLowerCase().includes(filterByContent.toLowerCase()));
-        }
-      );
+      return filterPlayersArrayByContent(players, filterByContent);
     }),
     tap(filteredPlayers => {
       console.log('filteredPlayers', filteredPlayers);
@@ -114,14 +108,9 @@ export class GameeventdraftComponent {
             };
           });
         }
+
+        let matchingPlayers = filterPlayersArrayByContent(players, filterByContent);
         
-        let matchingPlayers = players.filter(
-          player => {
-            return player.name.toLowerCase().includes(filterByContent.toLowerCase())
-              || player.displayName.toLowerCase().includes(filterByContent.toLowerCase())
-              || player.keywords.split(' ').some(keyword => keyword.toLowerCase().includes(filterByContent.toLowerCase()));
-          }
-        );
         // if the item is contained in matchingPlayers, return it with the selected flag set to true, otherwise false.
         let result: Selectable<PlayerWithIdAndStars>[] = selectedMatchContent.registeredPlayers.map(
           player => {

@@ -7,7 +7,7 @@ export class Player {
     public keywords = '';
     public displayName = '';
     public affinity = 0;
-    public mostRecentMatches : Array<{date: string, diff: number}> = new Array<{date: string, diff: number}>();
+    public mostRecentMatches: Array<{ date: string, diff: number }> = new Array<{ date: string, diff: number }>();
     public isArchived = false;
     public stars: number = 0;
 
@@ -16,6 +16,20 @@ export class Player {
         this.affinity = 0;
         this.stars = 0;
     }
+}
+
+export function filterPlayersArrayByContent(players: Player[], filterByContent: string): Player[] {
+    const filterTokens = filterByContent.split(' ');
+    // return a filtered list of players that match all the provided filterTokens.
+    // E.g. if the filterByContent is "John Doe", it will return all players that have "John" AND "Doe" in their name.
+    // Johnatan Doe, Johnny Doe, John Doederlein, etc.
+    return players.filter(player => {
+        return filterTokens.every(token => {
+            return player.name.toLowerCase().includes(token.toLowerCase())
+                || player.displayName.toLowerCase().includes(token.toLowerCase())
+                || player.keywords.split(' ').some(keyword => keyword.toLowerCase().includes(token.toLowerCase()));
+        });
+    });
 }
 
 /**
