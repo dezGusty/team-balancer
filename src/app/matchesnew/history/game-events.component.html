@@ -1,5 +1,5 @@
 <div class="history-area">
-  <div class="history-left-outline s-row">
+  <div class="history-top-outline s-row">
     <button class="gus-border gus-hoverable" type="button" (click)="onAddGameClicked();">Add ➕</button>
     @for (matchData of this.gameEvents(); track $index) {
     <div (click)="onMatchEntryClicked(matchData)"
@@ -15,7 +15,7 @@
     }
     <button class="gus-border gus-hoverable" type="button" (click)="onViewSummaryClicked();">View 👁️</button>
   </div>
-  <div class="history-right-outline">
+  <div class="history-bot-outline">
 
     @if(this.addEvent(); as eventEditForm) {
     @if (eventEditForm.action != undefined && eventEditForm.action != EMPTY) {
@@ -49,4 +49,11 @@
     <app-gameeventdraft></app-gameeventdraft>
     }
   </div>
+</div>
+<div id="summary-sidenav" class="gus-sidenav"
+  [ngClass]="this.isSideNavOpen ? 'gus-sidenav-shown' : 'gus-sidenav-hidden'"
+  (click)="onSideNavOuterContainerClicked()">
+
+  <app-summary (onCloseBtnClicked)="onCloseSummaryClicked()"></app-summary>
+  
 </div>

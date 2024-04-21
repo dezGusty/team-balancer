@@ -9,26 +9,28 @@ import { CreateGameRequest as CreateGameRequest, getEventNameForDateAndSuffix } 
 import { FormsModule } from '@angular/forms';
 import { GameEventsService } from './data-access/game-events.service';
 import { GameeventdraftComponent } from "../gameeventdraft/gameeventdraft.component";
+import { SummaryComponent } from "../summary/summary.component";
 
 @Component({
-    selector: 'app-history',
-    standalone: true,
-    templateUrl: './game-events.component.html',
-    styleUrl: 'game-events.component.css',
-    changeDetection: ChangeDetectionStrategy.OnPush,
-    imports: [
-        MatchDetailsComponent,
-        CommonModule,
-        FormsModule,
-        RouterModule,
-        SmallLoadingSpinnerComponent,
-        GameeventdraftComponent
-    ]
+  selector: 'app-history',
+  standalone: true,
+  templateUrl: './game-events.component.html',
+  styleUrl: 'game-events.component.css',
+  changeDetection: ChangeDetectionStrategy.OnPush,
+  imports: [
+    MatchDetailsComponent,
+    CommonModule,
+    FormsModule,
+    RouterModule,
+    SmallLoadingSpinnerComponent,
+    GameeventdraftComponent,
+    SummaryComponent
+  ]
 })
 export class GameEventsComponent {
   EMPTY: string = FormAction.EMPTY;
 
-  private gameEventsService: GameEventsService = inject(GameEventsService); 
+  private gameEventsService: GameEventsService = inject(GameEventsService);
 
   addEvent = signal<Action<CreateGameRequest>>({} as Action<CreateGameRequest>);
 
@@ -43,7 +45,7 @@ export class GameEventsComponent {
   }
 
   onViewSummaryClicked() {
-    console.log("Not implemented yet.")
+    this.isSideNavOpen = true;
   }
 
   onMatchEntryClicked(item: MatchDateTitle) {
@@ -107,6 +109,14 @@ export class GameEventsComponent {
     const evt: Action<CreateGameRequest> = this.addEvent();
     const nextEvent: Action<CreateGameRequest> = { ...evt, matchDate: dateAsString };
     this.addEvent.set(nextEvent);
+  }
+
+  protected isSideNavOpen = false;
+  onSideNavOuterContainerClicked() {
+    this.isSideNavOpen = false;
+  }
+  onCloseSummaryClicked() {
+    this.isSideNavOpen = false;
   }
 
   getPreviewName(date: string, suffix: string): string | undefined {

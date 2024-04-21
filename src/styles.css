@@ -561,13 +561,12 @@ a.player-card-grad:hover {
   flex-direction: column;
 }
 
-/*check if needed - autogen*/
-.history-left-outline {
+.history-top-outline {
   border-right: 1px solid var(--gus-secondary-bck);
   padding-bottom: 0.25em;
 }
 
-.history-right-outline {
+.history-bot-outline {
   border-left: 1px solid var(--gus-secondary-bck);
   padding-top: 0.5em;
 }
@@ -646,4 +645,30 @@ a.player-card-grad:hover {
 
 .bad-num {
   color: rgb(212, 100, 100);
+}
+
+.gus-sidenav {
+  height: 100%;
+  position: fixed;
+  z-index: 1;
+  top: 0;
+  left: 0;
+  background-color: var(--gus-secondary-bck);
+  overflow-x: hidden;
+  transition: 0.2s;
+}
+
+.gus-sidenav-hidden {
+  width: 0;
+}
+
+.gus-sidenav-shown {
+  width: 100%;
+}
+
+.gus-sidenav-container {
+  background-color: var(--gus-primary-bck-color);
+  padding: 10rem 2rem;
+  height: 100%;
+  width: 420px;
 }
