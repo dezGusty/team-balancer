@@ -1,4 +1,4 @@
-export interface MatchDateTitle {
+export class MatchDateTitle {
   title: string;
   year: string;
   month: string;
@@ -6,6 +6,17 @@ export interface MatchDateTitle {
   suffix?: string;
 
   fromString: (entry: string) => MatchDateTitle;
+  constructor() {
+    this.fromString = fromString;
+    this.title = '1970-01-01';
+    this.year = '1970';
+    this.month = '01';
+    this.day = '01';
+  }
+
+  get date(): Date {
+    return new Date(`${this.year}-${this.month}-${this.day}`);
+  }
 }
 
 export function fromString(entry: string): MatchDateTitle {

@@ -1,4 +1,4 @@
-import { Component, ChangeDetectionStrategy, inject, signal } from '@angular/core';
+import { Component, ChangeDetectionStrategy, inject, signal, computed, effect, ModelSignal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { MatchDateTitle, toDate } from './match-date-title';
 import { RouterModule } from '@angular/router';
@@ -35,6 +35,8 @@ export class GameEventsComponent {
   addEvent = signal<Action<CreateGameRequest>>({} as Action<CreateGameRequest>);
 
   gameEventsSig = this.gameEventsService.gameEvents;
+  activeGameEventsSig = computed(() => this.gameEventsSig().filter((matchDateTitle) => !this.isEntryInThePast(matchDateTitle)));
+  
 
   public selectedMatch = this.gameEventsService.selectedMatchSig;
 
@@ -126,7 +128,6 @@ export class GameEventsComponent {
   protected isEntryInThePast(match: MatchDateTitle): boolean {
     const today = new Date();
     const matchDate = toDate(match);
-    console.log('matchDate vs today', matchDate, today);
     return matchDate < today;
   }
 

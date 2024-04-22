@@ -18,6 +18,10 @@ export class Player {
     }
 }
 
+export namespace Player {
+    export const EMPTY = new Player(0, '');
+}
+
 export function filterPlayersArrayByContent(players: Player[], filterByContent: string): Player[] {
     const filterTokens = filterByContent.split(' ');
     // return a filtered list of players that match all the provided filterTokens.

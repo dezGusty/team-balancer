@@ -10,7 +10,7 @@ import { toSignal } from '@angular/core/rxjs-interop';
 import { Result_Err, Result_Ok } from '../result';
 import { NotificationService } from 'src/app/utils/notification/notification.service';
 import { PlayersService } from 'src/app/shared/players.service';
-import { Player } from 'src/app/shared/player.model';
+import { Player, getDisplayName } from 'src/app/shared/player.model';
 
 @Injectable({
   providedIn: 'root'
@@ -146,6 +146,8 @@ export class GameEventsService implements OnDestroy {
 
   selectedMatchSig = toSignal(this.selectedMatch$, { initialValue: null });
 
+  
+
   selectedMatchOnlineContent$ = this.selectedMatch$.pipe(
     tap((_) => { this.loadingFlagService.setLoadingFlag(true); }),
     switchMap((selectedMatch) => {
@@ -177,7 +179,7 @@ export class GameEventsService implements OnDestroy {
           registeredPlayers: gameEventDBData.registeredPlayerIds.map(id => {
             return {
               id: id,
-              name: players.find(p => p.id === id)?.name ?? "",
+              name: getDisplayName(players.find(p => p.id === id)?? Player.EMPTY),
               stars: players.find(p => p.id === id)?.stars ?? 0,
             };
           })
@@ -331,7 +333,6 @@ export class GameEventsService implements OnDestroy {
       return of();
     })
   );
-
 
 
   public createGameEvent(createMatchRequest: CreateGameRequest) {
