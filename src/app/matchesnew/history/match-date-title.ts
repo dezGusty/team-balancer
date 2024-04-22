@@ -22,6 +22,10 @@ export function fromString(entry: string): MatchDateTitle {
   return { title: entry, year, month, day, suffix } as MatchDateTitle;
 }
 
+export function toDate(match: MatchDateTitle): Date {
+  return new Date(`${match.year}-${match.month}-${match.day}`);
+}
+
 export function createDefaultMatchDateTitle(): MatchDateTitle {
   return fromString('1970-01-01_undef');
 }

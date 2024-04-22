@@ -1,6 +1,6 @@
 import { Component, ChangeDetectionStrategy, inject, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { MatchDateTitle } from './match-date-title';
+import { MatchDateTitle, toDate } from './match-date-title';
 import { RouterModule } from '@angular/router';
 import { SmallLoadingSpinnerComponent } from "../../ui/small-loading-spinner/small-loading-spinner.component";
 import { MatchDetailsComponent } from '../details/details.component';
@@ -34,7 +34,7 @@ export class GameEventsComponent {
 
   addEvent = signal<Action<CreateGameRequest>>({} as Action<CreateGameRequest>);
 
-  gameEvents = this.gameEventsService.gameEvents;
+  gameEventsSig = this.gameEventsService.gameEvents;
 
   public selectedMatch = this.gameEventsService.selectedMatchSig;
 
@@ -122,4 +122,12 @@ export class GameEventsComponent {
   getPreviewName(date: string, suffix: string): string | undefined {
     return getEventNameForDateAndSuffix(date, suffix);
   }
+
+  protected isEntryInThePast(match: MatchDateTitle): boolean {
+    const today = new Date();
+    const matchDate = toDate(match);
+    console.log('matchDate vs today', matchDate, today);
+    return matchDate < today;
+  }
+
 }

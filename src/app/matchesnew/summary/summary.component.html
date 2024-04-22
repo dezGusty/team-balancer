@@ -1,20 +1,22 @@
 <div class="gus-sidenav-container" (click)="onSideNavInnerContainerClicked($event)">
-  <button class="gus-button" (click)="onCloseBtnClick()">Close</button>
-  <button class="gus-button">Copy</button>
-  <table>
+  <button class="gus-button gus-border gus-hoverable" (click)="onCloseBtnClick()">Close</button>
+  <button class="gus-button gus-border gus-hoverable" (click)="onCopyBtnClick()">Select & Copy</button>
+  <table class="gus-table" #tab1>
     <thead>
       <tr>
         <th>Event 1</th>
         <th>Event 2</th>
       </tr>
     </thead>
+    @for (index of [1, 2, 3, 4, 5, 6]; track $index) {
     <tr>
       <td>
-        blabla 1
+        blabla {{index}} 1
       </td>
       <td>
-        blabla 2
+        blabla {{index}} 2
       </td>
     </tr>
+    }
   </table>
 </div>

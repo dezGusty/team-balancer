@@ -444,6 +444,11 @@ a.player-card-grad:hover {
   color: var(--gus-primary-text-color);
 }
 
+.gray-calendar .month {
+  background: var(--gus-secondary-bck);
+  color: var(--gus-primary-text-color);
+}
+
 
 /****************************************/
 /* Layout rules using display: inline-flex and relative dimensions using em. */
