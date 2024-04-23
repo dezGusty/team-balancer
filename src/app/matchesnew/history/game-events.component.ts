@@ -35,7 +35,7 @@ export class GameEventsComponent {
   addEvent = signal<Action<CreateGameRequest>>({} as Action<CreateGameRequest>);
 
   gameEventsSig = this.gameEventsService.gameEvents;
-  activeGameEventsSig = computed(() => this.gameEventsSig().filter((matchDateTitle) => !this.isEntryInThePast(matchDateTitle)));
+  activeGameEventsSig = computed(() => this.gameEventsSig().filter((matchDateTitle) => this.isDateActive(matchDateTitle)));
   
 
   public selectedMatch = this.gameEventsService.selectedMatchSig;
@@ -125,10 +125,11 @@ export class GameEventsComponent {
     return getEventNameForDateAndSuffix(date, suffix);
   }
 
-  protected isEntryInThePast(match: MatchDateTitle): boolean {
+  protected isDateActive(match: MatchDateTitle): boolean {
     const today = new Date();
+    today.setHours(0,0,0,0);
     const matchDate = toDate(match);
-    return matchDate < today;
+    return matchDate > today;
   }
 
 }

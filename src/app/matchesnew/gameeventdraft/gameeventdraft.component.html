@@ -25,8 +25,11 @@
       <button type="button" class="gus-button gus-border gus-hoverable"
         [disabled]="(this.canStillApplyRandomization$ | async)==false" (click)="this.saveRaffle()">Apply ⭐</button>
     </div>
-    <button type="button" class="gus-button gus-border gus-hoverable" [disabled]="(this.hasDataToSave$ | async)==false"
-      (click)="this.save()">Save ☁️</button>
+    <div class="f-row">
+      <button class="gus-button gus-border gus-hoverable">xfer</button>
+      <button type="button" class="gus-button gus-border gus-hoverable" [disabled]="(this.hasDataToSave$ | async)==false"
+        (click)="this.save()">Save ☁️</button>
+    </div>
   </div>
 </div>
 
