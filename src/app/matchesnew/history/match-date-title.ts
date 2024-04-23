@@ -7,7 +7,7 @@ export class MatchDateTitle {
 
   fromString: (entry: string) => MatchDateTitle;
   constructor() {
-    this.fromString = fromString;
+    this.fromString = _fromString;
     this.title = '1970-01-01';
     this.year = '1970';
     this.month = '01';
@@ -19,7 +19,7 @@ export class MatchDateTitle {
   }
 }
 
-export function fromString(entry: string): MatchDateTitle {
+function _fromString(entry: string): MatchDateTitle {
   // The entry could be either in the form YYYY-MM-DD, or in the form YYYY-MM-DD_suffix.
   // Strip the optional suffix
   const suffixIndex = entry.indexOf('_');
@@ -38,9 +38,12 @@ export function toDate(match: MatchDateTitle): Date {
 }
 
 export function createDefaultMatchDateTitle(): MatchDateTitle {
-  return fromString('1970-01-01_undef');
+  return _fromString('1970-01-01_undef');
 }
 
 export namespace MatchDateTitle {
   export const DEFAULT = createDefaultMatchDateTitle();
+  export function fromString(entry: string): MatchDateTitle {
+    return _fromString(entry);
+  }
 }

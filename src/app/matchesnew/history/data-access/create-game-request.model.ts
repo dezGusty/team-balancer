@@ -38,6 +38,7 @@ export interface PlayerWithIdAndStars {
 export interface GameEventData {
   appliedRandomization: boolean;
   matchDate: string;
+  label: string;
   name: string;
   registeredPlayers: PlayerWithIdAndStars[];
 }
@@ -63,6 +64,7 @@ export function createDefaultGameEventData(): GameEventData {
     appliedRandomization: false,
     matchDate: "",
     name: "",
+    label: "",
     registeredPlayers: [],
   };
 }

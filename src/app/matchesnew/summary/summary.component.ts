@@ -44,15 +44,12 @@ export class SummaryComponent {
 
   public getMatch = (match: MatchDateTitle) => {
     return docData(doc(this.firestore, `games/${match.title}`)).pipe(
-      tap(data => console.log("*** gm", data)),
       map(gameEvent => { return gameEvent as GameEventDBData }),
     );
   };
 
   activeMatchContents$ = toObservable(this.availableEvents).pipe(
-    tap(data => console.log("*** 1", data)),
     mergeMap(matches => matches.map(match => this.getMatch(match))),
-    tap(data => console.log("*** 2", data)),
     mergeAll(),
     tap(data => console.log("*** 3", data)),
     scan((matches, match) => [...matches, match], [] as GameEventDBData[]),
@@ -67,6 +64,7 @@ export class SummaryComponent {
           appliedRandomization: false,
           matchDate: singleGame.matchDate,
           name: singleGame.name,
+          label: MatchDateTitle.fromString(singleGame.name).suffix??"",
           registeredPlayers: singleGame.registeredPlayerIds.map(id => {
             return {
               id: id,
@@ -98,7 +96,7 @@ export class SummaryComponent {
 
     localMatches.forEach(match => {
       let cells:string[] = [];
-      header.push(match.matchDate + "(" + match.name + ")");
+      header.push(match.matchDate + "(" + match.label + ")");
       match.registeredPlayers.forEach(player => {
         cells.push(player.name + ' ' + (player.stars > 0 ? '⭐' : ''));
       });
@@ -109,22 +107,7 @@ export class SummaryComponent {
       lines = lines[0].map((col, c) => lines.map((row, r) => lines[r][c]));
     }
 
-
-    // let transposedLines = lines[0].map((col, i) => lines.map(row => row[i]));
-    // for (let i = 0; i < localMatches.length; i++) {
-    //   header.push(localMatches[i].matchDate + "(" + localMatches[i].name + ")");
-    //   for (let j = 0; j < localMatches[i].registeredPlayers.length; j++) {
-    //     if (i == 0) lines.push([]);
-    //     lines[j].push(
-    //       localMatches[i].registeredPlayers[j].name
-    //         + ' '
-    //         + localMatches[i].registeredPlayers[j].id
-    //         + (localMatches[i].registeredPlayers[j].stars > 0 ? '⭐' : ''));
-    //   }
-    // }
-    console.log("*** transposedSignal", { header, players: lines } as TransposeData);
     return { header, players: lines } as TransposeData;
-
   });
 
 

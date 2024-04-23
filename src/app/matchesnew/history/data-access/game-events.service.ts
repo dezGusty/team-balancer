@@ -3,7 +3,7 @@ import { Injectable, OnDestroy } from '@angular/core';
 import { Firestore, docData, setDoc } from '@angular/fire/firestore';
 import { doc } from 'firebase/firestore';
 import { BehaviorSubject, Observable, Subject, Subscription, catchError, map, merge, mergeAll, of, shareReplay, switchMap, take, tap, throwError, withLatestFrom } from 'rxjs';
-import { MatchDateTitle, fromString } from '../match-date-title';
+import { MatchDateTitle } from '../match-date-title';
 import { LoadingFlagService } from 'src/app/utils/loading-flag.service';
 import { CreateGameRequest, GameEventDBData, GameEventData, GameNamesList, PlayerWithId, createGameEventDataFromRequest, getEventNameForRequest } from './create-game-request.model';
 import { toSignal } from '@angular/core/rxjs-interop';
@@ -27,7 +27,7 @@ export class GameEventsService implements OnDestroy {
       const castedItem = recentMatchesDocContents as GameNamesList;
       // Individual string entries are obtained in strings in the YYYY-MM-DD format.
       // Map each entry to an object of the type MatchHistoryTitle (with the year, month, and day properties).
-      const matchHistoryTitles = castedItem.items.map(entry => fromString(entry));
+      const matchHistoryTitles = castedItem.items.map(entry => MatchDateTitle.fromString(entry));
       return matchHistoryTitles;
     }),
     tap((_) => { this.loadingFlagService.setLoadingFlag(false); }),
@@ -94,7 +94,7 @@ export class GameEventsService implements OnDestroy {
           return of(Result_Err<void>(`Name ${docName} already exists`));
         }
 
-        this.addGameToRecentMatchesSubject$.next(fromString(docName ?? ""));
+        this.addGameToRecentMatchesSubject$.next(MatchDateTitle.fromString(docName ?? ""));
         console.log('setting doc... [' + docName + ']');
 
         // Create a new document in the 'games' collection with the match name as the document name.
@@ -146,7 +146,7 @@ export class GameEventsService implements OnDestroy {
 
   selectedMatchSig = toSignal(this.selectedMatch$, { initialValue: null });
 
-  
+
 
   selectedMatchOnlineContent$ = this.selectedMatch$.pipe(
     tap((_) => { this.loadingFlagService.setLoadingFlag(true); }),
@@ -176,10 +176,11 @@ export class GameEventsService implements OnDestroy {
           appliedRandomization: false,
           matchDate: gameEventDBData.matchDate,
           name: gameEventDBData.name,
+          label: MatchDateTitle.fromString(gameEventDBData.name).suffix ?? "",
           registeredPlayers: gameEventDBData.registeredPlayerIds.map(id => {
             return {
               id: id,
-              name: getDisplayName(players.find(p => p.id === id)?? Player.EMPTY),
+              name: getDisplayName(players.find(p => p.id === id) ?? Player.EMPTY),
               stars: players.find(p => p.id === id)?.stars ?? 0,
             };
           })
