@@ -71,7 +71,7 @@ export class PlayersService implements OnDestroy {
     currentPlayersSubject$ = new BehaviorSubject<boolean>(true);
     public players$ = this.currentPlayersSubject$.asObservable().pipe(
         tap(_ => console.log("players$ triggered")),
-        switchMap(_ => docData(doc(this.firestore, '/ratings/current2'))),
+        switchMap(_ => docData(doc(this.firestore, '/ratings/current'))),
         // tap((_) => { this.loadingFlagService.setLoadingFlag(true); }),
         map(playersDocContent => {
             const snap: PlayerRatingSnapshot = playersDocContent as PlayerRatingSnapshot;
@@ -89,7 +89,7 @@ export class PlayersService implements OnDestroy {
 
     uplatePlayersSubject$ = new Subject<Player[]>();
     public updatePlayers$ = this.uplatePlayersSubject$.asObservable().pipe(
-        switchMap(players => setDoc(doc(this.firestore, '/ratings/current2'), { players: players }, { merge: true })),
+        switchMap(players => setDoc(doc(this.firestore, '/ratings/current'), { players: players }, { merge: true })),
         tap(_ => this.currentPlayersSubject$.next(true)),
         catchError((err) => {
             console.log("update players encountered issue");

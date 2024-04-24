@@ -23,6 +23,7 @@ export interface Selectable<T> {
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class GameeventdraftComponent {
+
   protected searchedName: string = '';
   private gameEventsService: GameEventsService = inject(GameEventsService);
   private playersService: PlayersService = inject(PlayersService);
@@ -196,6 +197,10 @@ export class GameeventdraftComponent {
 
   saveRaffle() {
     this.gameEventsService.saveRaffle();
+  }
+
+  transferToDraft() {
+    this.gameEventsService.transferToCurrentDraft();
   }
 
   getDisplayInfo(player: Player): string {

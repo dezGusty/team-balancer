@@ -335,6 +335,41 @@ export class GameEventsService implements OnDestroy {
     })
   );
 
+  readonly saveToDraftSubject$ = new Subject<void>();
+  readonly saveToDraft$ = this.saveToDraftSubject$.asObservable().pipe(
+    withLatestFrom(this.selectedMatchContent$),
+    map(([_, data]) => {
+      return data.registeredPlayers;
+    }),
+    withLatestFrom(this.players$),
+    switchMap(([selectedPlayersIds, allPlayers]) => {
+      let selectedPlayers = allPlayers.filter(player => { 
+        let foundIdx = selectedPlayersIds.findIndex(sp => sp.id === player.id);
+        return foundIdx != -1;
+      });
+
+      return setDoc(doc(this.firestore, '/drafts/next'), { players: selectedPlayers }, { merge: true });
+      
+    }),
+    tap(_ => this.notificationService.show("Draft saved")),
+    catchError((err) => {
+      this.notificationService.show("Data save encountered an issue.");
+      console.warn("save raffle data encountered issue");
+      return of();
+    })
+  );
+
+  // async saveSelectedPlayerListAsync(players: Player[]) {
+  //   // Emit an event to signal that the app is fetching / loading data
+  //   const playerInfo = new DraftChangeInfo([], 'loading', 'Fetching draft data...');
+  //   console.log('emitting ', playerInfo);
+  //   this.playerDraftChangeEvent.next(playerInfo);
+
+  //   const docName = '/drafts/next';
+  //   const docRef = doc(this.firestore, docName);
+  //   const obj = { players };
+  //   await setDoc(docRef, obj, { merge: true });
+  // }
 
   public createGameEvent(createMatchRequest: CreateGameRequest) {
     this.createGameEventSubject$.next(createMatchRequest);
@@ -364,6 +399,11 @@ export class GameEventsService implements OnDestroy {
     this.saveRaffleDataSubject$.next();
   }
 
+  transferToCurrentDraft() {
+    this.saveToDraftSubject$.next();
+  }
+
+
   public setAutoSave(autoSave: boolean) {
     this.autoSaveGameEventSubject$.next(autoSave);
   }
@@ -384,6 +424,7 @@ export class GameEventsService implements OnDestroy {
     this.subscriptions.push(this.randomizeOrder$.subscribe());
     this.subscriptions.push(this.triggerSaveData$.subscribe());
     this.subscriptions.push(this.saveRaffleData$.subscribe());
+    this.subscriptions.push(this.saveToDraft$.subscribe());
   }
 
   ngOnDestroy(): void {
