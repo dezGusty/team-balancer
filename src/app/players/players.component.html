@@ -1,16 +1,16 @@
-<div class="row justify-content-center">
-    <div class="col col-auto align-self-center ">
+<div class="f-row f-align-center">
+    <div class="col col-auto ">
         <app-small-loading-spinner *ngIf="showLoading"></app-small-loading-spinner>
     </div>
 
-    <div class="col col-8 col-sm-9 col-md-8 col-lg-6 col-auto align-self-center border-bottom gus-search-box">
+    <div class="col col-8 col-sm-9 col-md-8 col-lg-6 col-auto border-bottom gus-search-box">
         <input class="form-control border-0" type="text" [(ngModel)]="searchedName"
             (keyup)="onSearchContentChange($event)" placeholder="Search..." aria-label="Search" #srcNameArea autofocus>
     </div>
-    <div class="col col-auto align-self-center btn-group " role="group">
+    <div class="col col-auto btn-group " role="group">
         <label class="btn btn-gus-small btn-sm" ngbButtonLabel ngbTooltip="Include archived players">
-            <input type="checkbox" class="btn-check" (click)='onCheckReload($event)' ngbButton [(ngModel)]="loadArchive"
-                >
+            <input type="checkbox" class="btn-check" (click)='onCheckReload($event)' ngbButton
+                [(ngModel)]="loadArchive">
             <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" fill="currentColor"
                 class="bi bi-file-earmark-zip-fill" viewBox="0 0 16 16">
                 <path d="M5.5 9.438V8.5h1v.938a1 1 0 0 0 .03.243l.4 1.598-.93.62-.93-.62.4-1.598a1 1 0 0 0 .03-.243z" />
@@ -20,31 +20,33 @@
     </div>
 </div>
 
-<div class="row justify-content-center">
+<div class="f-row">
     <!-- show the list of players on the left side -->
-    <div class="col-6 col-sm-6 col-md-5 col-lg-4 col-xl-3 left-player-list">
-        <app-player-routed-card
-            *ngFor="let playerItem of players | playerFilter: searchedName; let even = even; let odd = odd"
-            [player]="playerItem" [id]="playerItem.id" [ngClass]="{ odd: odd, even: even }">
-            (playerSelected)="onPlayerSelected($event)"
-        </app-player-routed-card>
+    <div class="half-width f-row-align-right">
+        <div class="col-12 col-md-10 col-lg-8 col-xl-6 left-player-list">
+            <app-player-routed-card
+                *ngFor="let playerItem of players | playerFilter: searchedName; let even = even; let odd = odd"
+                [player]="playerItem" [id]="playerItem.id" [ngClass]="{ odd: odd, even: even }">
+                (playerSelected)="onPlayerSelected($event)"
+            </app-player-routed-card>
 
+        </div>
     </div>
     <!-- show the details panel on the right side -->
-    <div class="col-6 col-sm-6 col-md-5 col-lg-4 col-xl-3 right-player-list">
-        <button class="btn btn-outline-gus btn-grad-gusty btn-cmd-float float-right" *ngIf='canAddPlayers()'
-            (click)='onNewPlayerClicked($event)'>
-            <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" fill="currentColor"
-                class="bi bi-person-plus-fill" viewBox="0 0 16 16">
-                <path d="M1 14s-1 0-1-1 1-4 6-4 6 3 6 4-1 1-1 1H1zm5-6a3 3 0 1 0 0-6 3 3 0 0 0 0 6z" />
-                <path fill-rule="evenodd"
-                    d="M13.5 5a.5.5 0 0 1 .5.5V7h1.5a.5.5 0 0 1 0 1H14v1.5a.5.5 0 0 1-1 0V8h-1.5a.5.5 0 0 1 0-1H13V5.5a.5.5 0 0 1 .5-.5z" />
-            </svg>
-        </button>
+    <div class="half-width">
+        <div class="col-12 col-md-10 col-lg-8 col-xl-6 right-player-list">
+            <button class="btn btn-outline-gus btn-grad-gusty btn-cmd-float float-right" *ngIf='canAddPlayers()'
+                (click)='onNewPlayerClicked($event)'>
+                <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" fill="currentColor"
+                    class="bi bi-person-plus-fill" viewBox="0 0 16 16">
+                    <path d="M1 14s-1 0-1-1 1-4 6-4 6 3 6 4-1 1-1 1H1zm5-6a3 3 0 1 0 0-6 3 3 0 0 0 0 6z" />
+                    <path fill-rule="evenodd"
+                        d="M13.5 5a.5.5 0 0 1 .5.5V7h1.5a.5.5 0 0 1 0 1H14v1.5a.5.5 0 0 1-1 0V8h-1.5a.5.5 0 0 1 0-1H13V5.5a.5.5 0 0 1 .5-.5z" />
+                </svg>
+            </button>
 
-        <!-- <div class="float-right "> -->
-        <router-outlet/>
-        <!-- </div> -->
+            <router-outlet />
+        </div>
     </div>
 </div>
 
