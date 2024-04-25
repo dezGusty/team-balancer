@@ -1,5 +1,5 @@
-<div class="player-card-container">
-  <p class="player-card-tv square">{{ player?.id }}</p>
+<div class="player-card-container gus-border player-shirt-num">
+  <div class="player-num">{{ player?.id }}</div>
   <div class="player-card-panel">
 
     <div class="player-card-name">
@@ -11,7 +11,7 @@
     <div class="player-card-rating">
       {{ player?.rating | number:'1.1-2' }}
     </div>
-    <div class="d-flex">
+    <div class="player-card-content f-row"> <!--d-flex-->
       @for (recentRating of this.getRecentMatches(); track recentRating) {
       <span [ngClass]="this.getDisplayClassForRating(recentRating)">
         {{ this.getDisplayTextForRating(recentRating) }}

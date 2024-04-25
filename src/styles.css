@@ -138,14 +138,11 @@ body {
 }
 
 .player-card-container {
+  display: flex;
   position: relative;
   align-content: center;
-  border-color: var(--gus-secondary-bck);
   background: var(--gus-secondary-grad);
   color: var(--gus-primary-text-color);
-  border-style: solid;
-  border-radius: 0.3rem;
-  border-width: 0.1rem;
   margin: 0.25rem 0;
   box-shadow: 0 10px 20px rgba(0, 0, 0, 0.19), 0 6px 6px rgba(0, 0, 0, 0.23);
 }
@@ -193,33 +190,36 @@ a.player-card-grad:hover {
   padding-left: 0.75rem;
 }
 
-.square {
-  width: 4rem;
+.player-num {
+  position: absolute;
+  left: .25rem;
+  top: 1rem;
+  line-height: 2;
+  color: var(--gus-panel-text);
 }
-
-.square:after {
-  content: "";
-  display: block;
-  padding-bottom: 100%;
-}
-
-.player-card-tv {
+.player-shirt-num {
+  
   background-image: url("assets/tshirt.svg");
   background-repeat: no-repeat;
-  /* background-size: 4rem; */
-  background-position: right top;
-  border-top-left-radius: inherit;
-
-  color: var(--gus-primary-text-color);
-  margin: 0.4rem 0;
-  font-size: large;
-  font-weight: 600;
-  /* padding-left: 0.1rem; */
-  text-align: center;
+  background-size: 80% 120%;
+  background-position: -200% -25%;
 }
 
 .player-card-panel {
   padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.1rem;
+  align-items: flex-end;
+  margin-left: auto;
+  width: 100%;
+}
+
+.player-card-content {
+  width: 100%;
+  background-color: #000000A0;
+  flex-direction: row;
+  justify-content: flex-end;
 }
 
 .player-card-internalid {
@@ -402,10 +402,7 @@ a.player-card-grad:hover {
   border-color: var(--gus-secondary-bck);
   background: var(--gus-secondary-grad);
   color: var(--gus-primary-text-color);
-
-  /* border-radius: 0.3rem; */
   overflow: hidden;
-
   box-shadow: 2px 2px 2px -2px black;
 }
 
