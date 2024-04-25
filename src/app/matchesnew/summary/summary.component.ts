@@ -8,6 +8,7 @@ import { AsyncPipe } from '@angular/common';
 import { GameEventDBData, GameEventData } from '../history/data-access/create-game-request.model';
 import { PlayersService } from 'src/app/shared/players.service';
 import { Player, getDisplayName } from 'src/app/shared/player.model';
+import { environment } from 'src/environments/environment';
 
 export interface TransposeData {
   header: string[];
@@ -51,9 +52,9 @@ export class SummaryComponent {
   activeMatchContents$ = toObservable(this.availableEvents).pipe(
     mergeMap(matches => matches.map(match => this.getMatch(match))),
     mergeAll(),
-    tap(data => console.log("*** 3", data)),
+    // tap(data => console.log("*** 3", data)),
     scan((matches, match) => [...matches, match], [] as GameEventDBData[]),
-    tap(data => console.log("*** 4", data)),
+    // tap(data => console.log("*** 4", data)),
   );
 
   activeMatchPlus$ = this.activeMatchContents$.pipe(
@@ -80,7 +81,7 @@ export class SummaryComponent {
       }
       return GameEventData.DEFAULT;
     })),
-    tap(data => console.log("*** 5", data)),
+    // tap(data => console.log("*** 5", data)),
   );
 
   protected readonly activeMatchesSig = toSignal(this.activeMatchPlus$, { initialValue: [] });
@@ -96,7 +97,8 @@ export class SummaryComponent {
 
     localMatches.forEach(match => {
       let cells:string[] = [];
-      header.push(match.matchDate + "(" + match.label + ")");
+      const sysNewline = String.fromCharCode(0x000A);
+      header.push(match.matchDate + sysNewline + match.label);
       match.registeredPlayers.forEach(player => {
         cells.push(player.name + ' ' + (player.stars > 0 ? '⭐' : ''));
       });

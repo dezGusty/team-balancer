@@ -84,6 +84,7 @@ header {
     flex-direction: column;
     justify-content: center;
     padding-top: 4px;
+    gap: 0.25rem;
   }
 
   .nav>.nav-btn:hover,

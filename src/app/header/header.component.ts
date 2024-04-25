@@ -80,12 +80,12 @@ export class HeaderComponent implements OnInit {
   }
 
   logoAreaClick($event: any) {
-    console.log("*** logoAreaClick ***", $event, "menuDisplayed=", this.menuDisplayed);
+    // console.log("*** logoAreaClick ***", $event, "menuDisplayed=", this.menuDisplayed);
     this.menuDisplayed = !this.menuDisplayed;
   }
 
   navLinkClick($event: any) {
-    console.log("*** navLinkClick ***", $event, "menuDisplayed=", this.menuDisplayed);
+    // console.log("*** navLinkClick ***", $event, "menuDisplayed=", this.menuDisplayed);
     this.menuDisplayed = false;
   }
 }
