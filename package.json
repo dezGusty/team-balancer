@@ -1,6 +1,6 @@
 {
   "name": "team-balancer",
-  "version": "0.9.0",
+  "version": "0.9.1",
   "releaseDate": "2024-04-25",
   "scripts": {
     "ng": "ng",
