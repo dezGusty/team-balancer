@@ -11,9 +11,9 @@
     <div class="player-card-rating">
       {{ player?.rating | number:'1.1-2' }}
     </div>
-    <div class="player-card-content f-row"> <!--d-flex-->
+    <div class="player-card-content f-row">
       @for (recentRating of this.getRecentMatches(); track recentRating) {
-      <span [ngClass]="this.getDisplayClassForRating(recentRating)">
+      <span [ngClass]="this.getDisplayClassForRating(recentRating)" [title]=recentRating.date>
         {{ this.getDisplayTextForRating(recentRating) }}
       </span>
       }

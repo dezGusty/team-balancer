@@ -30,7 +30,8 @@ export class PlayerMiniCardComponent implements OnInit {
     if (!this.player) {
       return [];
     }
-    return this.player.mostRecentMatches?.slice(0, 8);
+
+    return this.player.mostRecentMatches?.slice(0, 8).reverse() || [];
   }
 
   public getDisplayTextForRating(rating: { date: string, diff: number }): string {
