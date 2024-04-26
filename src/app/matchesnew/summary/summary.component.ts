@@ -2,13 +2,13 @@ import { ChangeDetectionStrategy, Component, ElementRef, EventEmitter, Output, c
 import { MatchDateTitle } from '../history/match-date-title';
 import { GameEventsService } from '../history/data-access/game-events.service';
 import { toObservable, toSignal } from '@angular/core/rxjs-interop';
-import { concatAll, concatMap, forkJoin, from, map, mergeAll, mergeMap, of, scan, shareReplay, switchMap, tap, withLatestFrom } from 'rxjs';
+import { Observable, Subject, combineLatest, combineLatestAll, concat, concatAll, concatMap, filter, forkJoin, from, map, mergeAll, mergeMap, of, scan, shareReplay, startWith, switchMap, tap, withLatestFrom } from 'rxjs';
 import { Firestore, doc, docData } from '@angular/fire/firestore';
 import { AsyncPipe } from '@angular/common';
 import { GameEventDBData, GameEventData } from '../history/data-access/create-game-request.model';
 import { PlayersService } from 'src/app/shared/players.service';
 import { Player, getDisplayName } from 'src/app/shared/player.model';
-import { environment } from 'src/environments/environment';
+import { Result } from '../history/result';
 
 export interface TransposeData {
   header: string[];
@@ -43,33 +43,69 @@ export class SummaryComponent {
 
   availableEvents = input.required<MatchDateTitle[]>();
 
-  public getMatch = (match: MatchDateTitle) => {
+  public getMatch = (match: MatchDateTitle): Observable<GameEventDBData> => {
+    console.log("--getting match", match.title);
     return docData(doc(this.firestore, `games/${match.title}`)).pipe(
-      map(gameEvent => { return gameEvent as GameEventDBData }),
+      map(gameEvent => { 
+        if (!gameEvent) {
+          return Result.Err<GameEventDBData>("Game event not found");
+        }
+        return Result.Ok<GameEventDBData>(gameEvent as GameEventDBData);
+      }),
+      filter(Result.isOk),
+      map(data => data.data as GameEventDBData),
+      tap(data => console.log("--got match", data)),
     );
   };
 
-  activeMatchContents$ = toObservable(this.availableEvents).pipe(
+  private readonly availableEvents$ = toObservable(this.availableEvents).pipe(
+    tap(data => console.log("availableEvents", data)),
+    shareReplay(1),
+  );
+
+
+  activeMatchContents$ = this.availableEvents$.pipe(
+    tap(data => console.log("*** 1", data)),
     mergeMap(matches => matches.map(match => this.getMatch(match))),
+    tap(data => console.log("*** 2", data)),
+    // 
+    // concatMap(data => data),
+    // combineLatestAll(),
+    // tap(data => console.log("*** 2", data)),
+    // concatMap(data => data),
     mergeAll(),
-    // tap(data => console.log("*** 3", data)),
+    tap(data => console.log("*** 3", data)),
     scan((matches, match) => [...matches, match], [] as GameEventDBData[]),
     // tap(data => console.log("*** 4", data)),
+    shareReplay(1),
   );
+
+  // alternate implementation via forkJoin
+  // activeMatchContents$ = toObservable(this.availableEvents).pipe(
+  //   tap(data => console.log("*** 1", data)),
+  //   mergeMap(matches => forkJoin(
+  //     matches.map(match => this.getMatch(match))
+  //   ).pipe(
+  //     tap(data => console.log("*** 2", data)),
+  //   )),
+  //   tap(data => console.log("*** 3", data)),
+  //   shareReplay(1),
+  // );
 
   activeMatchPlus$ = this.activeMatchContents$.pipe(
     withLatestFrom(this.players$),
     map(([gameEventDBData, players]) => gameEventDBData.map(singleGame => {
       try {
+        console.log("** singleGame", singleGame);
         let result: GameEventData = {
           appliedRandomization: false,
           matchDate: singleGame.matchDate,
           name: singleGame.name,
-          label: MatchDateTitle.fromString(singleGame.name).suffix??"",
+          label: MatchDateTitle.fromString(singleGame.name).suffix ?? "",
           registeredPlayers: singleGame.registeredPlayerIds.map(id => {
             return {
               id: id,
-              name: getDisplayName(players.find(p => p.id === id)?? Player.EMPTY),
+              name: getDisplayName(players.find(p => p.id === id) ?? Player.EMPTY),
               stars: players.find(p => p.id === id)?.stars ?? 0,
             };
           })
@@ -81,7 +117,7 @@ export class SummaryComponent {
       }
       return GameEventData.DEFAULT;
     })),
-    // tap(data => console.log("*** 5", data)),
+    tap(data => console.log("*** 5", data)),
   );
 
   protected readonly activeMatchesSig = toSignal(this.activeMatchPlus$, { initialValue: [] });
@@ -93,10 +129,10 @@ export class SummaryComponent {
     let header: string[] = [];
     let lines: string[][] = [];
 
-    let localMatches = this.activeMatchesSig();
+    const localMatches = this.activeMatchesSig();
 
     localMatches.forEach(match => {
-      let cells:string[] = [];
+      let cells: string[] = [];
       const sysNewline = String.fromCharCode(0x000A);
       header.push(match.matchDate + sysNewline + match.label);
       match.registeredPlayers.forEach(player => {

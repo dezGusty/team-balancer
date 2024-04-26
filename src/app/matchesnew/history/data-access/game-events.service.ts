@@ -7,7 +7,7 @@ import { MatchDateTitle } from '../match-date-title';
 import { LoadingFlagService } from 'src/app/utils/loading-flag.service';
 import { CreateGameRequest, GameEventDBData, GameEventData, GameNamesList, PlayerWithId, createGameEventDataFromRequest, getEventNameForRequest } from './create-game-request.model';
 import { toSignal } from '@angular/core/rxjs-interop';
-import { Result_Err, Result_Ok } from '../result';
+import { Result } from '../result';
 import { NotificationService } from 'src/app/utils/notification/notification.service';
 import { PlayersService } from 'src/app/shared/players.service';
 import { Player, getDisplayName } from 'src/app/shared/player.model';
@@ -84,14 +84,14 @@ export class GameEventsService implements OnDestroy {
         // Create a document name (typically the date of the match) for the game event.
         const docName = getEventNameForRequest(createGameEventRequest);
         if (!docName || docName === "") {
-          return of(Result_Err<void>("Invalid name for event request"));
+          return of(Result.Err<void>("Invalid name for event request"));
         }
 
         // Ensure the name is not yet added to the list of recent matches.
         let storedGameNames: string[] = games.map(x => x.title);
         if (storedGameNames.findIndex(x => x == docName) != -1) {
           console.log('Name already exists', docName);
-          return of(Result_Err<void>(`Name ${docName} already exists`));
+          return of(Result.Err<void>(`Name ${docName} already exists`));
         }
 
         this.addGameToRecentMatchesSubject$.next(MatchDateTitle.fromString(docName ?? ""));
@@ -103,7 +103,7 @@ export class GameEventsService implements OnDestroy {
           createGameEventDataFromRequest(createGameEventRequest),
           { merge: true }
         )).pipe(
-          map(_ => Result_Ok<string>(docName))
+          map(_ => Result.Ok<string>(docName))
         );
       }),
       withLatestFrom(this.recentGames$),
@@ -111,7 +111,7 @@ export class GameEventsService implements OnDestroy {
         if (result.error) {
           console.warn("create game event failed", result.error);
           this.notificationService.show("Failed to create game event" + result.error);
-          return of(Result_Err<void>(result.error));
+          return of(Result.Err<void>(result.error));
         }
 
         // A document was created for the game event. Add it to the list of recent matches.
