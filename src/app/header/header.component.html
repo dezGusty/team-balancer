@@ -11,11 +11,11 @@
 
   <div class="nav-links" (click)="this.navLinkClick($event)">
     @if(isAuthenticatedAsUser()){
-    <a class="nav-link" routerLink="/recent">Recent Matces (old)</a>
-    <a class="nav-link" routerLink="/games">Games</a>
-    <a class="nav-link" routerLink="/draft">Draft</a>
-    <a class="nav-link" routerLink="/draftnew">Draft (NEW)</a>
-    <a class="nav-link" routerLink="/players">Players</a>
+      <a class="nav-link" routerLink="/games">Games (planned)</a>
+      <a class="nav-link" routerLink="/draft">Next Draft</a>
+      <a class="nav-link" routerLink="/draftnew">Draft (NEW)</a>
+      <a class="nav-link" routerLink="/recent">Recent Matches</a>
+      <a class="nav-link" routerLink="/players">Players</a>
     }
     @if(isAuthenticatedAsAdmin()){
     <a class="nav-link" routerLink="/admin">Admin</a>

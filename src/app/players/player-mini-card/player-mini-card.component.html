@@ -1,22 +1,24 @@
-<div class="player-card-container gus-border player-shirt-num">
-  <div class="player-num">{{ player?.id }}</div>
-  <div class="player-card-panel">
+<div class="player-card-container gus-border">
+  <div class="player-card-sub-container player-shirt-num">
+    <div class="player-num">{{ player?.id }}</div>
+    <div class="player-card-panel">
 
-    <div class="player-card-name">
-      {{ playerDisplayName() }}
-    </div>
-    <div class="player-card-internalid">
-      {{ player?.name }}
-    </div>
-    <div class="player-card-rating">
-      {{ player?.rating | number:'1.1-2' }}
-    </div>
-    <div class="player-card-content f-row">
-      @for (recentRating of this.getRecentMatches(); track recentRating) {
-      <span [ngClass]="this.getDisplayClassForRating(recentRating)" [title]=recentRating.date>
-        {{ this.getDisplayTextForRating(recentRating) }}
-      </span>
-      }
+      <div class="player-card-name">
+        {{ playerDisplayName() }}
+      </div>
+      <div class="player-card-internalid">
+        {{ player?.name }}
+      </div>
+      <div class="player-card-rating">
+        {{ player?.rating | number:'1.1-2' }}
+      </div>
+      <div class="player-card-content f-row">
+        @for (recentRating of this.getRecentMatches(); track recentRating) {
+        <span [ngClass]="this.getDisplayClassForRating(recentRating)" [title]=recentRating.date>
+          {{ this.getDisplayTextForRating(recentRating) }}
+        </span>
+        }
+      </div>
     </div>
   </div>
 </div>
