@@ -88,7 +88,6 @@ export class SummaryComponent {
       }
       return GameEventData.DEFAULT;
     })),
-    tap(data => console.log("*** 5", data)),
   );
 
   protected readonly activeMatchesSig = toSignal(this.activeMatchPlus$, { initialValue: [] });

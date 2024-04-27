@@ -19,6 +19,7 @@ header {
   flex-wrap: nowrap;
   justify-content: flex-start;
   align-items: stretch;
+  background: var(--gus-panel-bck);
 }
 
 .nav-logo {
@@ -28,8 +29,7 @@ header {
 
 .nav {
   width: 100%;
-  background: var(--gus-panel-bck);
-  position: relative;
+  /* position: relative; */
   z-index: 5;
 }
 

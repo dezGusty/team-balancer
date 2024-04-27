@@ -2,7 +2,7 @@ import { HttpErrorResponse } from '@angular/common/http';
 import { Injectable, OnDestroy } from '@angular/core';
 import { Firestore, docData, setDoc } from '@angular/fire/firestore';
 import { doc } from 'firebase/firestore';
-import { BehaviorSubject, Observable, Subject, Subscription, catchError, filter, map, merge, mergeAll, of, shareReplay, switchMap, take, tap, throwError, withLatestFrom } from 'rxjs';
+import { BehaviorSubject, Observable, Subject, Subscription, catchError, filter, finalize, map, merge, mergeAll, of, shareReplay, switchMap, take, tap, throwError, withLatestFrom } from 'rxjs';
 import { MatchDateTitle } from '../match-date-title';
 import { LoadingFlagService } from 'src/app/utils/loading-flag.service';
 import { CreateGameRequest, GameEventDBData, GameEventData, GameNamesList, PlayerWithId, createGameEventDataFromRequest, getEventNameForRequest } from './create-game-request.model';
@@ -223,6 +223,7 @@ export class GameEventsService implements OnDestroy {
     withLatestFrom(this.autoSaveGameEventSubject$),
     switchMap(([newMatchContent, autoSave]) => {
       if (autoSave) {
+        this.loadingFlagService.setLoadingFlag(true);
         return setDoc(
           doc(this.firestore, `games/${newMatchContent.name}`),
           newMatchContent,
@@ -233,6 +234,7 @@ export class GameEventsService implements OnDestroy {
       return of();
     }),
     tap(_ => this.updatedFireData$.next(true)),
+    tap(_ => this.loadingFlagService.setLoadingFlag(false)),
     catchError((err) => {
       console.warn("add player to match encountered issue");
       return of(null);
@@ -255,6 +257,7 @@ export class GameEventsService implements OnDestroy {
     withLatestFrom(this.autoSaveGameEventSubject$),
     switchMap(([newMatchContent, autoSave]) => {
       if (autoSave) {
+        this.loadingFlagService.setLoadingFlag(true);
         return setDoc(
           doc(this.firestore, `games/${newMatchContent.name}`),
           newMatchContent,
@@ -265,6 +268,7 @@ export class GameEventsService implements OnDestroy {
       return of();
     }),
     tap(_ => this.updatedFireData$.next(true)),
+    tap(_ => this.loadingFlagService.setLoadingFlag(false)),
     catchError((err) => {
       console.warn("remove player from match encountered issue");
       return of();
@@ -300,6 +304,7 @@ export class GameEventsService implements OnDestroy {
     withLatestFrom(this.autoSaveGameEventSubject$),
     switchMap(([newMatchContent, autoSave]) => {
       if (autoSave) {
+        this.loadingFlagService.setLoadingFlag(true);
         return setDoc(
           doc(this.firestore, `games/${newMatchContent.name}`),
           newMatchContent,
@@ -311,6 +316,7 @@ export class GameEventsService implements OnDestroy {
       return of();
     }),
     tap(_ => this.updatedFireData$.next(true)),
+    tap(_ => this.loadingFlagService.setLoadingFlag(false)),
     catchError((err) => {
       console.warn("randomize player order encountered issue");
       return of(null);
@@ -356,6 +362,7 @@ export class GameEventsService implements OnDestroy {
       });
 
       this.updatedFireData$.next(true);
+      this.loadingFlagService.setLoadingFlag(true);
       return setDoc(doc(this.firestore, '/drafts/next'), { players: selectedPlayers }, { merge: true });
     }),
     tap(_ => this.notificationService.show("Draft saved")),
@@ -363,7 +370,8 @@ export class GameEventsService implements OnDestroy {
       this.notificationService.show("Data save encountered an issue.");
       console.warn("save raffle data encountered issue");
       return of();
-    })
+    }),
+    finalize(() => this.loadingFlagService.setLoadingFlag(false))
   );
 
 
@@ -378,13 +386,12 @@ export class GameEventsService implements OnDestroy {
       filter(Result.isOk),
       map(data => data.data as GameEventDBData),
       take(1),
-      tap(data => console.log("--got match", data)),
       catchError((err) => {
         console.warn("Error encountered while reading game event", err);
         this.notificationService.show("Error encountered while reading game. Please REFRESH page.");
-        this.loadingFlagService.setLoadingFlag(false);
         return of(GameEventDBData.DEFAULT);
       }),
+      finalize(() => this.loadingFlagService.setLoadingFlag(false))
     );
   };
 

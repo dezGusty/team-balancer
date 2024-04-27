@@ -1,37 +1,41 @@
-import { Auth, authState, browserPopupRedirectResolver, getAuth, GoogleAuthProvider, signInWithPopup, User, UserCredential } from '@angular/fire/auth';
-import { doc, docData, Firestore, setDoc } from '@angular/fire/firestore';
-import { Injectable, OnDestroy, Optional } from "@angular/core";
-import { Router } from "@angular/router";
-import { AppStorage } from '../shared/app-storage';
-import { AppUser } from '../shared/app-user.model';
+import { getAuth, GoogleAuthProvider, signInWithPopup, User, UserCredential } from '@angular/fire/auth';
+import { inject, Injectable, OnDestroy } from "@angular/core";
 import { BehaviorSubject, catchError, defer, from, map, of, shareReplay, Subject, Subscription, switchMap, tap } from 'rxjs';
+import { NotificationService } from '../utils/notification/notification.service';
 
 @Injectable()
 export class UserAuthService implements OnDestroy {
+
+  private readonly notificationService = inject(NotificationService);
 
   dataRetrievalSubject$ = new Subject<void>();
   dataRetrieval$ = this.dataRetrievalSubject$.asObservable().pipe(
     tap(_ => console.log("*** dataRetrievalSubject$")),
     switchMap(_ => defer(() => from(signInWithPopup(getAuth(), new GoogleAuthProvider())))),
-    tap((cred: UserCredential) => { 
+    tap((cred: UserCredential) => {
       const credential = GoogleAuthProvider.credentialFromResult(cred);
       localStorage.setItem("tfl.access.token", credential?.accessToken ?? "");
       localStorage.setItem("tfl.user", JSON.stringify(cred.user));
-     }),
+    }),
     map(usercred => usercred.user),
     tap(user => this.loggedInUserSubject$.next(user)),
-    catchError((err) => { return of(null); }),
+    catchError((err) => {
+      this.notificationService.show("Data save encountered an issue." + err.message);
+      return of(null);
+    }),
     shareReplay(1)
   );
 
   loggedInUserSubject$ = new BehaviorSubject<User | null>(null);
   loggedInUser$ = this.loggedInUserSubject$.asObservable().pipe(
+    tap(data => console.log("*** loggedInUser$", data)),
     shareReplay(1)
   );
 
   constructor() {
-    this.subscribeToObservables();
     console.log("[user-auth-service] constructor");
+    this.subscriptions.push(this.dataRetrieval$.subscribe());
+    this.subscriptions.push(this.loggedInUser$.subscribe());
     this.loggedInUserSubject$.next(this.decodeUserFromStorage());
   }
 
@@ -40,15 +44,7 @@ export class UserAuthService implements OnDestroy {
   }
   private subscriptions: Subscription[] = [];
 
-  /**
-   * Some observables need to be subscribed to in order to be triggered, as they would not be typically used in a template.
-   */
-  private subscribeToObservables() {
-    this.subscriptions.push(
-      this.dataRetrieval$.subscribe(),
-      this.loggedInUser$.subscribe()
-    );
-  }
+
 
   private decodeUserFromStorage(): User | null {
     try {
@@ -80,7 +76,7 @@ export class UserAuthService implements OnDestroy {
      * doGoogleLogin({ successRoute: ['base'] });
      */
   public doGoogleLogin(postNavi: { successRoute: string[] } = { successRoute: ['/'] }) {
-
+    console.log("[user-auth] Logging in via Google Service...");
     this.dataRetrievalSubject$.next();
     // TODO: also use postNavi.successRoute ?
   }

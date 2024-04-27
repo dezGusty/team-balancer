@@ -95,7 +95,7 @@ export class AuthService {
      * doGoogleLogin({ successRoute: ['base'] });
      */
     public async doGoogleLoginAsync(postNavi: { successRoute: string[] } = { successRoute: ['/'] }): Promise<boolean> {
-        console.log('doGoogleLoginAsync entered');
+        console.log("[user-auth] Logging in via Google Service ...");
 
         const userCred = await signInWithPopup(
             this.auth,

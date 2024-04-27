@@ -550,12 +550,12 @@ a.player-card-grad:hover {
 }
 
 .history-top-outline {
-  border-right: 1px solid var(--gus-secondary-bck);
+  border-bottom: 1px solid var(--gus-secondary-bck);
   padding-bottom: 0.25em;
 }
 
 .history-bot-outline {
-  border-left: 1px solid var(--gus-secondary-bck);
+  border-top: 1px solid var(--gus-secondary-bck);
   padding-top: 0.5em;
 }
 
@@ -593,6 +593,7 @@ a.player-card-grad:hover {
   flex-direction: row;
   align-items: flex-start;
   justify-content: center; */
+  min-width: 100%;
   margin-left: auto;
   margin-right: auto;
 }

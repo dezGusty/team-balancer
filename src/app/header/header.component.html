@@ -1,35 +1,39 @@
-<header class="header nav">
-  <input type="checkbox" id="nav-check" placeholder="-" [(ngModel)]="this.menuDisplayed">
-  <div class="nav-btn" (click)="this.logoAreaClick($event)">
-    <img class="nav-logo" src="./../../assets/gusball_logo_256.webp" alt="logo"/>
-    <label class="nav-label" >
-      <span></span>
-      <span></span>
-      <span></span>
-    </label>
-  </div>
+<header class="header">
+  <div class="gus-page-container">
+    <div class="nav">
+      <input type="checkbox" id="nav-check" placeholder="-" [(ngModel)]="this.menuDisplayed">
+      <div class="nav-btn" (click)="this.logoAreaClick($event)">
+        <img class="nav-logo" src="./../../assets/gusball_logo_256.webp" alt="logo" />
+        <label class="nav-label">
+          <span></span>
+          <span></span>
+          <span></span>
+        </label>
+      </div>
 
-  <div class="nav-links" (click)="this.navLinkClick($event)">
-    @if(isAuthenticatedAsUser()){
-      <a class="nav-link" routerLink="/games">Games (planned)</a>
-      <a class="nav-link" routerLink="/draft">Next Draft</a>
-      <a class="nav-link" routerLink="/draftnew">Draft (NEW)</a>
-      <a class="nav-link" routerLink="/recent">Recent Matches</a>
-      <a class="nav-link" routerLink="/players">Players</a>
-    }
-    @if(isAuthenticatedAsAdmin()){
-    <a class="nav-link" routerLink="/admin">Admin</a>
-    }
-    @if(isAuthenticatedAsOrganizer()){
-    <a class="nav-link" routerLink="/custom">Custom Game</a>
-    }
-    <a class="nav-link" routerLink="/about">About</a>
-    @if(this.isAuthenticated()) {
-    <a class="nav-link" (click)="onSignoutBtnClick();">Sign out</a>
-    }@else{
-    <a class="nav-link" routerLink="/signin">Sign in</a>
-    }
+      <div class="nav-links" (click)="this.navLinkClick($event)">
+        @if(isAuthenticatedAsUser()){
+        <a class="nav-link" routerLink="/games">Games (planned)</a>
+        <a class="nav-link" routerLink="/draft">Next Draft</a>
+        <a class="nav-link" routerLink="/draftnew">Draft (NEW)</a>
+        <a class="nav-link" routerLink="/recent">Recent Matches</a>
+        <a class="nav-link" routerLink="/players">Players</a>
+        }
+        @if(isAuthenticatedAsAdmin()){
+        <a class="nav-link" routerLink="/admin">Admin</a>
+        }
+        @if(isAuthenticatedAsOrganizer()){
+        <a class="nav-link" routerLink="/custom">Custom Game</a>
+        }
+        <a class="nav-link" routerLink="/about">About</a>
+        @if(this.isAuthenticated()) {
+        <a class="nav-link" (click)="onSignoutBtnClick();">Sign out</a>
+        }@else{
+        <a class="nav-link" routerLink="/signin">Sign in</a>
+        }
+      </div>
+      <div class="nav-spacer"></div>
+      <app-profile />
+    </div>
   </div>
-  <div class="nav-spacer"></div>
-  <app-profile />
 </header>
