@@ -21,7 +21,7 @@ import { NotificationComponent } from './utils/notification/notification.compone
   template: `
 <div class="main-layout">
   <app-header />
-  <div>
+  <div class="gus-page-container">
     <router-outlet/>
   </div>
   <app-footer/>

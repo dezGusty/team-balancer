@@ -588,6 +588,50 @@ a.player-card-grad:hover {
   margin-right: auto;
 }
 
+.gus-page-container {
+  /* display: flex;
+  flex-direction: row;
+  align-items: flex-start;
+  justify-content: center; */
+  margin-left: auto;
+  margin-right: auto;
+}
+
+@media (max-width: 600px) {
+  .gus-page-container {
+    margin-left: 0;
+    margin-right: 0;
+    /* min-width: min-content;
+    max-width: max-content;
+    min-width: 500px; */
+  }
+}
+@media (min-width: 601px) and (max-width: 900px) {
+  .gus-page-container {
+    min-width: 600px;
+  }
+}
+@media (min-width: 901px) and (max-width: 1200px) {
+  .gus-page-container {
+    min-width: 800px;
+  }
+}
+@media (min-width: 1201px) and (max-width: 1600px) {
+  .gus-page-container {
+    min-width: 900px;
+  }
+}
+@media (min-width: 1601px) and (max-width: 1900px) {
+  .gus-page-container {
+    min-width: 1000px;
+  }
+}
+@media (min-width: 1901px) {
+  .gus-page-container {
+    min-width: 1100px;
+  }
+}
+
 .history-grid {
   display: grid;
   grid-template-columns: 1fr 1fr;
