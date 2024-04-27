@@ -9,6 +9,7 @@ import { GameEventDBData, GameEventData } from '../history/data-access/create-ga
 import { PlayersService } from 'src/app/shared/players.service';
 import { Player, getDisplayName } from 'src/app/shared/player.model';
 import { Result } from '../history/result';
+import { NotificationService } from 'src/app/utils/notification/notification.service';
 
 export interface TransposeData {
   header: string[];
@@ -27,6 +28,7 @@ export class SummaryComponent {
   @Output() onCloseBtnClicked = new EventEmitter<void>();
   private gameEventsService: GameEventsService = inject(GameEventsService);
   private firestore: Firestore = inject(Firestore);
+  private notificationService = inject(NotificationService);
   private playersService: PlayersService = inject(PlayersService);
 
   onSideNavInnerContainerClicked(event: Event) {
@@ -145,6 +147,7 @@ export class SummaryComponent {
     this.selectTable();
     // TODO(Augustin Preda, 2024-04-22): Use the Clipboard API when it is available in all browsers.
     document.execCommand('copy');
+    this.notificationService.show('Copied to clipboard');
   }
 
   private createTableInMemory(): string {
@@ -177,8 +180,6 @@ export class SummaryComponent {
   }
 
   onCopyWithAPIBtnClick() {
-    // const el = this.tab1()?.nativeElement;
-    // console.log("*** el.outerHTML", el.innerHTML);
     const value = this.createTableInMemory();
     console.log("*** value", value);
     const spreadSheetRow = new Blob([value], { type: 'text/html' });
@@ -186,12 +187,17 @@ export class SummaryComponent {
     // Check if ClipboardItem is defined
     if (!navigator.clipboard || !navigator.clipboard.write || !ClipboardItem) {
       console.warn('Clipboard API not available');
-      // TODO(Augustin Preda, 2024-04-27): Show notification.
+      this.notificationService.show('Clipboard API not available');
       return;
     }
 
     // if (ClipboardItem)
     navigator.clipboard.write([new ClipboardItem({ [spreadSheetRow.type]: spreadSheetRow })])
-    // navigator.clipboard.write(this.tab1()?.nativeElement.innerText);
+    .then(() => {
+      this.notificationService.show('Table copied to clipboard');
+    })
+    .catch(err => {
+      this.notificationService.show('Failed to copy table to clipboard');
+    });
   }
 }
