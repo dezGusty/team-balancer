@@ -34,9 +34,9 @@ export class GameEventsComponent {
 
   addEvent = signal<Action<CreateGameRequest>>({} as Action<CreateGameRequest>);
 
-  gameEventsSig = this.gameEventsService.gameEvents;
-  activeGameEventsSig = computed(() => this.gameEventsSig().filter((matchDateTitle) => this.isDateActive(matchDateTitle)));
-  
+  gameEventTitlesSig = this.gameEventsService.recentGameTitlesSig;
+  activeGameEventTitlesSig = computed(() => this.gameEventTitlesSig().filter((matchDateTitle) => this.isDateActive(matchDateTitle)));
+
 
   public selectedMatch = this.gameEventsService.selectedMatchSig;
 
@@ -127,7 +127,7 @@ export class GameEventsComponent {
 
   protected isDateActive(match: MatchDateTitle): boolean {
     const today = new Date();
-    today.setHours(0,0,0,0);
+    today.setHours(0, 0, 0, 0);
     const matchDate = toDate(match);
     return matchDate > today;
   }

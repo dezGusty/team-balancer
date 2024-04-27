@@ -1,7 +1,7 @@
 <div class="history-area">
   <div class="history-top-outline g-row">
     <button class="gus-border gus-hoverable" type="button" (click)="onAddGameClicked();">Add ➕</button>
-    @for (matchData of this.gameEventsSig(); track $index) {
+    @for (matchData of this.gameEventTitlesSig(); track $index) {
     <div (click)="onMatchEntryClicked(matchData)"
       class="gus-button-narrow gus-border player-card-grad date-as-calendar vert-calendar gus-hoverable"
       [class.gus-button-active]="matchData == this.selectedMatch()" [class.gray-calendar]="!isDateActive(matchData)">
@@ -19,7 +19,7 @@
 
     @if(this.addEvent(); as eventEditForm) {
     @if (eventEditForm.action != undefined && eventEditForm.action != EMPTY) {
-    <form (submit)="this.saveMatch(eventEditForm)">
+    <form (submit)="saveMatch(eventEditForm)">
       <h3>{{eventEditForm.action =="add" ? "Add" : "Edit" }} Game Event</h3>
       <label for="event_date"></label>
       <input class="gus-input gus-border" [ngModel]="eventEditForm.matchDate | date:'yyyy-MM-dd'"
@@ -54,6 +54,6 @@
   [ngClass]="this.isSideNavOpen ? 'gus-sidenav-shown' : 'gus-sidenav-hidden'"
   (click)="onSideNavOuterContainerClicked()">
 
-  <app-summary (onCloseBtnClicked)="onCloseSummaryClicked()" [availableEvents]="activeGameEventsSig()"></app-summary>
+  <app-summary (onCloseBtnClicked)="onCloseSummaryClicked()" [availableEvents]="activeGameEventTitlesSig()"></app-summary>
 
 </div>

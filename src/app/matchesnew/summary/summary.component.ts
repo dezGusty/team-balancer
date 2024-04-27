@@ -43,21 +43,6 @@ export class SummaryComponent {
 
   availableEvents = input.required<MatchDateTitle[]>();
 
-  public getMatch = (match: MatchDateTitle): Observable<GameEventDBData> => {
-    console.log("--getting match", match.title);
-    return docData(doc(this.firestore, `games/${match.title}`)).pipe(
-      map(gameEvent => { 
-        if (!gameEvent) {
-          return Result.Err<GameEventDBData>("Game event not found");
-        }
-        return Result.Ok<GameEventDBData>(gameEvent as GameEventDBData);
-      }),
-      filter(Result.isOk),
-      map(data => data.data as GameEventDBData),
-      tap(data => console.log("--got match", data)),
-    );
-  };
-
   private readonly availableEvents$ = toObservable(this.availableEvents).pipe(
     tap(data => console.log("availableEvents", data)),
     shareReplay(1),
@@ -66,31 +51,20 @@ export class SummaryComponent {
 
   activeMatchContents$ = this.availableEvents$.pipe(
     tap(data => console.log("*** 1", data)),
-    mergeMap(matches => matches.map(match => this.getMatch(match))),
+    mergeMap(matches => matches.map(match => this.gameEventsService.getMatchData(match))),
     tap(data => console.log("*** 2", data)),
     // 
     // concatMap(data => data),
     // combineLatestAll(),
     // tap(data => console.log("*** 2", data)),
     // concatMap(data => data),
+    
     mergeAll(),
     tap(data => console.log("*** 3", data)),
     scan((matches, match) => [...matches, match], [] as GameEventDBData[]),
     // tap(data => console.log("*** 4", data)),
     shareReplay(1),
   );
-
-  // alternate implementation via forkJoin
-  // activeMatchContents$ = toObservable(this.availableEvents).pipe(
-  //   tap(data => console.log("*** 1", data)),
-  //   mergeMap(matches => forkJoin(
-  //     matches.map(match => this.getMatch(match))
-  //   ).pipe(
-  //     tap(data => console.log("*** 2", data)),
-  //   )),
-  //   tap(data => console.log("*** 3", data)),
-  //   shareReplay(1),
-  // );
 
   activeMatchPlus$ = this.activeMatchContents$.pipe(
     withLatestFrom(this.players$),

@@ -2,7 +2,7 @@ import { HttpErrorResponse } from '@angular/common/http';
 import { Injectable, OnDestroy } from '@angular/core';
 import { Firestore, docData, setDoc } from '@angular/fire/firestore';
 import { doc } from 'firebase/firestore';
-import { BehaviorSubject, Observable, Subject, Subscription, catchError, map, merge, mergeAll, of, shareReplay, switchMap, take, tap, throwError, withLatestFrom } from 'rxjs';
+import { BehaviorSubject, Observable, Subject, Subscription, catchError, filter, map, merge, mergeAll, of, shareReplay, switchMap, take, tap, throwError, withLatestFrom } from 'rxjs';
 import { MatchDateTitle } from '../match-date-title';
 import { LoadingFlagService } from 'src/app/utils/loading-flag.service';
 import { CreateGameRequest, GameEventDBData, GameEventData, GameNamesList, PlayerWithId, createGameEventDataFromRequest, getEventNameForRequest } from './create-game-request.model';
@@ -21,7 +21,7 @@ export class GameEventsService implements OnDestroy {
 
   public readonly players$ = this.playersService.players$;
 
-  public readonly recentGames$ = docData(doc(this.firestore, 'games/_list')).pipe(
+  public readonly recentGameTitles$ = docData(doc(this.firestore, 'games/_list')).pipe(
     tap((_) => { this.loadingFlagService.setLoadingFlag(true); }),
     map(recentMatchesDocContents => {
       const castedItem = recentMatchesDocContents as GameNamesList;
@@ -39,7 +39,7 @@ export class GameEventsService implements OnDestroy {
     shareReplay(1),
   );
 
-  public readonly gameEvents = toSignal(this.recentGames$, { initialValue: [] });
+  public readonly recentGameTitlesSig = toSignal(this.recentGameTitles$, { initialValue: [] });
 
   private readonly addGameToRecentMatchesSubject$ = new Subject<MatchDateTitle>();
   private readonly addGameToRecentMatches$ = this.addGameToRecentMatchesSubject$.asObservable();
@@ -76,7 +76,7 @@ export class GameEventsService implements OnDestroy {
   createGameEventSubject$ = new Subject<CreateGameRequest>();
   public readonly createGameEventAction$ =
     this.createGameEventSubject$.asObservable().pipe(
-      withLatestFrom(this.recentGames$),
+      withLatestFrom(this.recentGameTitles$),
       tap(_ => { this.loadingFlagService.setLoadingFlag(true); }),
       switchMap(([createGameEventRequest, games]) => {
         console.log('creating game event', createGameEventRequest);
@@ -106,7 +106,7 @@ export class GameEventsService implements OnDestroy {
           map(_ => Result.Ok<string>(docName))
         );
       }),
-      withLatestFrom(this.recentGames$),
+      withLatestFrom(this.recentGameTitles$),
       switchMap(([result, games]) => {
         if (result.error) {
           console.warn("create game event failed", result.error);
@@ -343,13 +343,13 @@ export class GameEventsService implements OnDestroy {
     }),
     withLatestFrom(this.players$),
     switchMap(([selectedPlayersIds, allPlayers]) => {
-      let selectedPlayers = allPlayers.filter(player => { 
+      let selectedPlayers = allPlayers.filter(player => {
         let foundIdx = selectedPlayersIds.findIndex(sp => sp.id === player.id);
         return foundIdx != -1;
       });
 
       return setDoc(doc(this.firestore, '/drafts/next'), { players: selectedPlayers }, { merge: true });
-      
+
     }),
     tap(_ => this.notificationService.show("Draft saved")),
     catchError((err) => {
@@ -359,17 +359,28 @@ export class GameEventsService implements OnDestroy {
     })
   );
 
-  // async saveSelectedPlayerListAsync(players: Player[]) {
-  //   // Emit an event to signal that the app is fetching / loading data
-  //   const playerInfo = new DraftChangeInfo([], 'loading', 'Fetching draft data...');
-  //   console.log('emitting ', playerInfo);
-  //   this.playerDraftChangeEvent.next(playerInfo);
 
-  //   const docName = '/drafts/next';
-  //   const docRef = doc(this.firestore, docName);
-  //   const obj = { players };
-  //   await setDoc(docRef, obj, { merge: true });
-  // }
+  public getMatchData = (match: MatchDateTitle): Observable<GameEventDBData> => {
+    return docData(doc(this.firestore, `games/${match.title}`)).pipe(
+      map(gameEvent => {
+        if (!gameEvent) {
+          return Result.Err<GameEventDBData>("Game event not found");
+        }
+        return Result.Ok<GameEventDBData>(gameEvent as GameEventDBData);
+      }),
+      filter(Result.isOk),
+      map(data => data.data as GameEventDBData),
+      take(1),
+      tap(data => console.log("--got match", data)),
+      catchError((err) => {
+        console.warn("Error encountered while reading game event", err);
+        this.notificationService.show("Error encountered while reading game. Please REFRESH page.");
+        this.loadingFlagService.setLoadingFlag(false);
+        return of(GameEventDBData.DEFAULT);
+      }),
+    );
+  };
+
 
   public createGameEvent(createMatchRequest: CreateGameRequest) {
     this.createGameEventSubject$.next(createMatchRequest);
@@ -417,7 +428,7 @@ export class GameEventsService implements OnDestroy {
     private loadingFlagService: LoadingFlagService,
     private playersService: PlayersService) {
     this.subscriptions.push(this.createGameEventAction$.subscribe());
-    this.subscriptions.push(this.recentGames$.subscribe());
+    this.subscriptions.push(this.recentGameTitles$.subscribe());
     this.subscriptions.push(this.selectedMatch$.subscribe());
     this.subscriptions.push(this.addPlayerToMatch$.subscribe());
     this.subscriptions.push(this.removePlayerFromMatch$.subscribe());
