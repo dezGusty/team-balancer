@@ -2,6 +2,7 @@ import { CommonModule } from '@angular/common';
 import { Component, OnInit } from '@angular/core';
 import { Router, RouterModule } from '@angular/router';
 import { AuthService } from '../auth.service';
+import { UserAuthService } from '../user-auth.service';
 
 @Component({
   imports: [RouterModule, CommonModule],
@@ -14,6 +15,7 @@ export class SigninComponent implements OnInit {
 
   constructor(
     private authSvc: AuthService,
+    private userAuthService: UserAuthService,
     private router: Router) {
   }
 
@@ -22,13 +24,15 @@ export class SigninComponent implements OnInit {
 
   async tryGoogleLogin() {
 
-    const success = await this.authSvc.doGoogleLoginAsync({ successRoute: [] });
-    if (success) {
-      console.log('[signin] navigating to root');
-      this.router.navigate(['/players']);
-    } else {
-      console.log('[signin] failed when logging in');
-    }
+    // const success = await this.authSvc.doGoogleLoginAsync({ successRoute: [] });
+    // if (success) {
+    //   console.log('[signin] navigating to root');
+    //   this.router.navigate(['/players']);
+    // } else {
+    //   console.log('[signin] failed when logging in');
+    // }
+
+    this.userAuthService.doGoogleLogin();
   }
 
   async tryFacebookLogin() {

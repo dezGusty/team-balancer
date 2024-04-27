@@ -1,9 +1,10 @@
 import { CommonModule } from '@angular/common';
-import { Component, OnInit } from '@angular/core';
+import { ChangeDetectionStrategy, Component, OnInit } from '@angular/core';
 import { Router, Event, NavigationStart, RouterModule } from '@angular/router';
 import { AuthService } from '../auth/auth.service';
 import { ProfileComponent } from "./profile/profile.component";
 import { FormsModule } from '@angular/forms';
+import { UserAuthService } from '../auth/user-auth.service';
 
 @Component({
   selector: 'app-header',
@@ -15,13 +16,18 @@ import { FormsModule } from '@angular/forms';
     RouterModule,
     FormsModule,
     ProfileComponent
-  ]
+  ],
+  // changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class HeaderComponent implements OnInit {
+export class HeaderComponent {
   isCollapsed = true;
 
   menuDisplayed = false;
 
+  public readonly authenticatedAsUserSig = this.userAuthService.authenticatedAsUserSig;
+  public readonly authenticatedAsAdminSig = this.userAuthService.authenticatedAsAdminSig;
+  public readonly authenticatedAsOrganizerSig = this.userAuthService.authenticatedAsOrganizerSig;
+  public readonly authenticatedSig = this.userAuthService.authenticatedSig;
 
   /**
    * Constructor.
@@ -31,7 +37,8 @@ export class HeaderComponent implements OnInit {
    */
   constructor(
     private authSvc: AuthService,
-    private router: Router) {
+    private router: Router,
+    private userAuthService: UserAuthService) {
     this.router.events.subscribe((evt: Event) => {
       if (evt instanceof NavigationStart) {
         this.isCollapsed = true;
@@ -39,44 +46,45 @@ export class HeaderComponent implements OnInit {
     });
   }
 
-  ngOnInit() {
-    console.log('[header] ngOnInit');
-
-  }
 
   /**
    * Retrieves the authentication state from the service.
    */
   public isAuthenticated(): boolean {
-    return this.authSvc.isAuthenticated();
+    // return this.authSvc.isAuthenticated();
+    return this.userAuthService.isAuthenticated();
   }
 
   /**
  * Retrieves the authentication state from the service.
  */
   public isAuthenticatedAsUser(): boolean {
-    return this.authSvc.isAuthenticatedAsUser();
+    // return this.authSvc.isAuthenticatedAsUser();
+    return this.userAuthService.isAuthenticatedAsUser();
   }
 
   /**
    * Retrieves the authentication state from the service.
    */
   public isAuthenticatedAsAdmin(): boolean {
-    return this.authSvc.isAuthenticatedAsAdmin();
+    // return this.authSvc.isAuthenticatedAsAdmin();
+    return this.userAuthService.isAuthenticatedAsAdmin();
   }
 
   /**
  * Retrieves the authentication state from the service.
  */
   public isAuthenticatedAsOrganizer(): boolean {
-    return this.authSvc.isAuthenticatedAsOrganizer();
+    // return this.authSvc.isAuthenticatedAsOrganizer();
+    return this.userAuthService.isAuthenticatedAsOrganizer();
   }
 
   /**
    * React to the signout button being clicked from the UI.
    */
   public async onSignoutBtnClick() {
-    await this.authSvc.signOutAsync();
+    // await this.authSvc.signOutAsync();
+    this.userAuthService.signOut();
   }
 
   logoAreaClick($event: any) {

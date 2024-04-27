@@ -12,21 +12,21 @@
       </div>
 
       <div class="nav-links" (click)="this.navLinkClick($event)">
-        @if(isAuthenticatedAsUser()){
+        @if(authenticatedAsUserSig()){
         <a class="nav-link" routerLink="/games">Games (planned)</a>
         <a class="nav-link" routerLink="/draft">Next Draft</a>
         <a class="nav-link" routerLink="/draftnew">Draft (NEW)</a>
         <a class="nav-link" routerLink="/recent">Recent Matches</a>
         <a class="nav-link" routerLink="/players">Players</a>
         }
-        @if(isAuthenticatedAsAdmin()){
+        @if(authenticatedAsAdminSig()){
         <a class="nav-link" routerLink="/admin">Admin</a>
         }
-        @if(isAuthenticatedAsOrganizer()){
+        @if(authenticatedAsOrganizerSig()){
         <a class="nav-link" routerLink="/custom">Custom Game</a>
         }
         <a class="nav-link" routerLink="/about">About</a>
-        @if(this.isAuthenticated()) {
+        @if(this.authenticatedSig()) {
         <a class="nav-link" (click)="onSignoutBtnClick();">Sign out</a>
         }@else{
         <a class="nav-link" routerLink="/signin">Sign in</a>

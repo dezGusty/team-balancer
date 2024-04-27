@@ -52,6 +52,7 @@ header {
   flex-grow: 1;
   justify-content: center;
   align-items: stretch;
+  cursor: pointer;
 }
 
 .nav>.nav-links>a {
@@ -59,7 +60,6 @@ header {
   color: #efefef;
   display: flex;
   align-items: center;
-  /* border: dashed 1px red; */
 }
 
 .nav>.nav-links>a:hover {

@@ -58,8 +58,8 @@ export class AuthService {
      * doGoogleLogin({ successRoute: ['base'] });
      */
     public doGoogleLogin(postNavi: { successRoute: string[] } = { successRoute: ['/'] }) {
+        console.log("[auth.svc] Logging in via Google Service ...");
         return new Promise<any>((resolve, reject) => {
-
             signInWithPopup(this.auth,
                 new GoogleAuthProvider(),
                 browserPopupRedirectResolver).then((res) => {
@@ -95,7 +95,7 @@ export class AuthService {
      * doGoogleLogin({ successRoute: ['base'] });
      */
     public async doGoogleLoginAsync(postNavi: { successRoute: string[] } = { successRoute: ['/'] }): Promise<boolean> {
-        console.log("[user-auth] Logging in via Google Service ...");
+        console.log("[auth.svc] (async) Logging in via Google Service ...");
 
         const userCred = await signInWithPopup(
             this.auth,
@@ -179,11 +179,17 @@ export class AuthService {
 
         this.token = null;
         this.cachedUser = null;
-        this.appStorage.removeAppStorageItem('roles');
 
         await this.auth.signOut();
         console.log('[guard] navigating in place');
         this.appStorage.removeAppStorageItem('roles');
+        this.appStorage.removeAppStorageItem('tfl.access.token');
+        this.appStorage.removeAppStorageItem('tfl.user');
+        this.appStorage.removeAppStorageItem('token');
+        // TODO(Augustin Preda, 2024.04.27): These are old items. Check if still used in code.
+        this.appStorage.removeAppStorageItem('players');
+        this.appStorage.removeAppStorageItem('archived_players');
+
         this.router.navigate(['']);
     }
 
@@ -197,6 +203,7 @@ export class AuthService {
         // Request the token. Store it when received.
         this.token = this.auth?.currentUser?.uid;
         console.log('this.token', this.token);
+        //TODO:XXX:Add more ?
     }
 
     /**
