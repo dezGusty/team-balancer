@@ -41,6 +41,8 @@ export class GameEventsService implements OnDestroy {
 
   public readonly recentGameTitlesSig = toSignal(this.recentGameTitles$, { initialValue: [] });
 
+  public readonly updatedFireData$ = new BehaviorSubject<boolean>(false);
+
   private readonly addGameToRecentMatchesSubject$ = new Subject<MatchDateTitle>();
   private readonly addGameToRecentMatches$ = this.addGameToRecentMatchesSubject$.asObservable();
 
@@ -65,6 +67,7 @@ export class GameEventsService implements OnDestroy {
       this.notificationService.show("No content to save. Skipping.");
       return of();
     }),
+    tap(_ => this.updatedFireData$.next(true)),
     tap(() => this.nextSaveDataSubject$.next(GameEventDBData.DEFAULT)),
     catchError((err) => {
       this.notificationService.show("Data save encountered an issue.");
@@ -126,6 +129,7 @@ export class GameEventsService implements OnDestroy {
           { items: gamesToKeep },
           { merge: true });
       }),
+      tap(_ => this.updatedFireData$.next(true)),
       tap((_) => { this.loadingFlagService.setLoadingFlag(false); }),
       catchError((err) => {
         console.warn("create game encountered issue");
@@ -228,6 +232,7 @@ export class GameEventsService implements OnDestroy {
       this.nextSaveDataSubject$.next(newMatchContent);
       return of();
     }),
+    tap(_ => this.updatedFireData$.next(true)),
     catchError((err) => {
       console.warn("add player to match encountered issue");
       return of(null);
@@ -259,6 +264,7 @@ export class GameEventsService implements OnDestroy {
       this.nextSaveDataSubject$.next(newMatchContent);
       return of();
     }),
+    tap(_ => this.updatedFireData$.next(true)),
     catchError((err) => {
       console.warn("remove player from match encountered issue");
       return of();
@@ -304,6 +310,7 @@ export class GameEventsService implements OnDestroy {
       this.nextSaveDataSubject$.next(newMatchContent);
       return of();
     }),
+    tap(_ => this.updatedFireData$.next(true)),
     catchError((err) => {
       console.warn("randomize player order encountered issue");
       return of(null);
@@ -348,8 +355,8 @@ export class GameEventsService implements OnDestroy {
         return foundIdx != -1;
       });
 
+      this.updatedFireData$.next(true);
       return setDoc(doc(this.firestore, '/drafts/next'), { players: selectedPlayers }, { merge: true });
-
     }),
     tap(_ => this.notificationService.show("Draft saved")),
     catchError((err) => {

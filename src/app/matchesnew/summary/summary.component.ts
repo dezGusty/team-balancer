@@ -48,21 +48,17 @@ export class SummaryComponent {
     shareReplay(1),
   );
 
+  private readonly triggerReload$ = this.gameEventsService.updatedFireData$.pipe();
 
-  activeMatchContents$ = this.availableEvents$.pipe(
-    tap(data => console.log("*** 1", data)),
-    mergeMap(matches => matches.map(match => this.gameEventsService.getMatchData(match))),
-    tap(data => console.log("*** 2", data)),
-    // 
-    // concatMap(data => data),
-    // combineLatestAll(),
-    // tap(data => console.log("*** 2", data)),
-    // concatMap(data => data),
-    
-    mergeAll(),
-    tap(data => console.log("*** 3", data)),
-    scan((matches, match) => [...matches, match], [] as GameEventDBData[]),
-    // tap(data => console.log("*** 4", data)),
+
+  activeMatchContents$ = combineLatest([this.availableEvents$, this.triggerReload$]).pipe(
+    map(([events, _]) => events),
+    switchMap(matches =>
+      forkJoin(matches.map(match => this.gameEventsService.getMatchData(match))).pipe(
+        tap(data => console.log("forkJoin", data),
+        )
+      )
+    ),
     shareReplay(1),
   );
 
@@ -70,7 +66,6 @@ export class SummaryComponent {
     withLatestFrom(this.players$),
     map(([gameEventDBData, players]) => gameEventDBData.map(singleGame => {
       try {
-        console.log("** singleGame", singleGame);
         let result: GameEventData = {
           appliedRandomization: false,
           matchDate: singleGame.matchDate,
