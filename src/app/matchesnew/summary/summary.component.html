@@ -1,19 +1,22 @@
 <div class="gus-sidenav-container" (click)="onSideNavInnerContainerClicked($event)">
   <button class="gus-button gus-border gus-hoverable" (click)="onCloseBtnClick()">Close</button>
-  <button class="gus-button gus-border gus-hoverable" (click)="onCopyBtnClick()">Select & Copy</button>
-  <table style="border: 1px solid" #tab1>
-    <thead>
-      <tr style="border: 1px solid">
+  <button class="gus-button gus-border gus-hoverable" (click)="onCopyBtnClick()">Select & Copy (FFox)</button>
+  <button class="gus-button gus-border gus-hoverable" (click)="onCopyWithAPIBtnClick()">Copy (Chromium)</button>
+  <table style="border: 1px solid;" #tab1>
+    <thead style="background-color: darkgray;">
+      <tr>
+        <th style="border-right: 1px solid">##</th>
         @for (evtdate of transposedSignal().header; track evtdate) {
-        <th>{{evtdate}}</th>
+        <th style="border-right: 1px solid">{{evtdate}}</th>
         }
       </tr>
     </thead>
     <tbody>
       @for (playerLines of transposedSignal().players; track $index) {
       <tr>
+        <td style="border: 1px solid">{{$index + 1}}</td>
         @for (player of playerLines; track player) {
-        <td>{{player}}</td>
+        <td style="border: 1px solid">{{player}}</td>
         }
       </tr>
       }

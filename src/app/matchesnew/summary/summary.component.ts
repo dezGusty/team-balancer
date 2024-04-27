@@ -102,8 +102,8 @@ export class SummaryComponent {
 
     localMatches.forEach(match => {
       let cells: string[] = [];
-      const sysNewline = String.fromCharCode(0x000A);
-      header.push(match.matchDate + sysNewline + match.label);
+      const sysNewline = '\n';
+      header.push('📅' + match.matchDate + ' ' + sysNewline + '🕒' + match.label);
       match.registeredPlayers.forEach(player => {
         cells.push(player.name + ' ' + (player.stars > 0 ? '⭐' : ''));
       });
@@ -145,5 +145,53 @@ export class SummaryComponent {
     this.selectTable();
     // TODO(Augustin Preda, 2024-04-22): Use the Clipboard API when it is available in all browsers.
     document.execCommand('copy');
+  }
+
+  private createTableInMemory(): string {
+    const dataSource = this.transposedSignal();
+    var headersContent = '';
+    headersContent += `<th style="border-right: 1px solid">##</th>`;
+    dataSource.header.forEach(element => {
+      headersContent += `<th style="border-right: 1px solid">${element}</th>`
+    });
+    var rowsContent = '';
+    dataSource.players.forEach((playerLines, index) => {
+      var rowContent = `<tr><td style="border: 1px solid">${index + 1}</td>`;
+      playerLines.forEach(player => {
+        rowContent += `<td style="border: 1px solid">${player ?? ""}</td>`;
+      });
+      rowContent += '</tr>';
+      rowsContent += rowContent;
+    });
+    var result = `<table style="border: 1px solid;" #tab1>
+    <thead style="background-color: darkgray;">
+      <tr>
+        ${headersContent}
+      </tr>
+    </thead>
+    <tbody>
+      ${rowsContent}
+    </tbody>
+  </table>`
+    return result;
+  }
+
+  onCopyWithAPIBtnClick() {
+    // const el = this.tab1()?.nativeElement;
+    // console.log("*** el.outerHTML", el.innerHTML);
+    const value = this.createTableInMemory();
+    console.log("*** value", value);
+    const spreadSheetRow = new Blob([value], { type: 'text/html' });
+
+    // Check if ClipboardItem is defined
+    if (!navigator.clipboard || !navigator.clipboard.write || !ClipboardItem) {
+      console.warn('Clipboard API not available');
+      // TODO(Augustin Preda, 2024-04-27): Show notification.
+      return;
+    }
+
+    // if (ClipboardItem)
+    navigator.clipboard.write([new ClipboardItem({ [spreadSheetRow.type]: spreadSheetRow })])
+    // navigator.clipboard.write(this.tab1()?.nativeElement.innerText);
   }
 }
