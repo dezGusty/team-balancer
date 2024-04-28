@@ -1,5 +1,8 @@
 app-profile {
   margin-right: 0.5em;
+  /* position: fixed;
+  right: 0;
+  top: 0; */
 }
 
 .nav-spacer {
@@ -29,8 +32,9 @@ header {
 
 .nav {
   width: 100%;
-  /* position: relative; */
+  position: relative;
   z-index: 5;
+  display: flex;
 }
 
 .nav-header {
@@ -45,6 +49,8 @@ header {
   display: flex;
   padding: 3px;
   height: 2.5em;
+  margin-top: auto;
+  margin-bottom: auto;
 }
 
 .nav>.nav-links {
@@ -53,6 +59,8 @@ header {
   justify-content: center;
   align-items: stretch;
   cursor: pointer;
+  /* overflow-y: hidden; */
+  z-index: 20;
 }
 
 .nav>.nav-links>a {
@@ -73,10 +81,11 @@ header {
 
 @media (max-width:900px) {
   .nav>.nav-btn {
-    position: absolute;
+    /* position: absolute; */
     left: 0px;
     top: 0px;
     padding: 3px;
+    z-index: 10;
   }
 
   .nav>.nav-btn>.nav-label {
@@ -85,6 +94,7 @@ header {
     justify-content: center;
     padding-top: 4px;
     gap: 0.25rem;
+    z-index: 10;
   }
 
   .nav>.nav-btn:hover,
@@ -99,7 +109,9 @@ header {
   }
 
   .nav>.nav-links {
-    position: absolute;
+    /* position: absolute; */
+    /* gusti, 2024-04-28: enable this for a quick fix to visibility, but breaking layout */
+    position: relative; 
     display: grid;
     grid-template-columns: 1fr 1fr;
 
@@ -107,10 +119,12 @@ header {
     width: 100%;
     background: var(--gus-panel-bck);
     height: 0px;
+    width: 0px;
     /* transition: transform 0.75s ease-in; */
     overflow-y: hidden;
-    top: 50px;
+    top: 48px;
     left: 0px;
+    z-index: 20;
   }
 
   .nav>#nav-check:not(:checked)~.nav-links {
@@ -121,6 +135,9 @@ header {
   .nav>#nav-check:checked~.nav-links {
     transition: height 0.75s ease-in;
     height: auto;
-    overflow: hidden;
+    width: 90%;
+    overflow-x: hidden;
+    z-index: 20;
+    /* overflow: hidden; */
   }
 }
