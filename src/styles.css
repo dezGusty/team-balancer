@@ -582,20 +582,26 @@ a.player-card-grad:hover {
   margin-right: auto;
 }
 
+.footer {
+  text-align: center;
+  align-self: flex-end;
+  flex-shrink: 1;
+}
+
 .gus-centerpiece {
-  /* display: flex;
-  align-items: flex-start;
-  justify-content: center; */
+  display: flex;
+  /* align-items: flex-start; */
+  /* justify-content: center; */
+  max-width: fit-content;
 }
 
 .gus-page-container {
-  /* display: flex;
-  flex-direction: row;
-  align-items: flex-start;
-  justify-content: center; */
   min-width: 100%;
   margin-left: auto;
   margin-right: auto;
+
+  /*temporary*/
+  /* border: 1px dashed blanchedalmond; */
 }
 
 @media (max-width: 600px) {
