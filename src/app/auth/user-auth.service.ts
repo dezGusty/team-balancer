@@ -30,10 +30,14 @@ export class UserAuthService implements OnDestroy {
     shareReplay(1)
   );
 
-  loggedInUserSubject$ = new BehaviorSubject<User | null>(null);
+  // loggedInUserSubject$ = new BehaviorSubject<User | null>(null);
+  loggedInUserSubject$ = new Subject<User | null>();
   loggedInUser$ = this.loggedInUserSubject$.asObservable().pipe(
     // tap(data => console.log("*** loggedInUser$", data)),
-    tap(userOrNull => { if (userOrNull) { this.router.navigate(['']); } }),
+    tap(userOrNull => { if (!userOrNull) { 
+      console.log("*** navigating to root, due to user", userOrNull);
+      this.router.navigate(['']); 
+    } }),
     shareReplay(1)
   );
   loggedInUserSig = toSignal(this.loggedInUser$);
