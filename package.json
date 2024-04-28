@@ -1,7 +1,7 @@
 {
   "name": "team-balancer",
-  "version": "0.9.3",
-  "releaseDate": "2024-04-27",
+  "version": "0.9.4",
+  "releaseDate": "2024-04-28",
   "scripts": {
     "ng": "ng",
     "start": "npm run icon && ng serve",
