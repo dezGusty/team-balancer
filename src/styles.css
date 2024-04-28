@@ -62,7 +62,7 @@
 .main-layout {
   min-height: 100dvh;
   display: grid;
-  grid-template-rows: min-content auto min-content;
+  grid-template-rows: auto 1fr auto;
   grid-template-columns: 1fr;
   grid-template-areas:
     "header"
@@ -375,12 +375,6 @@ a.player-card-grad:hover {
 .right-player-list {
   padding-left: 0.1rem;
   padding-right: 0;
-}
-
-.btn-clear-all-img {
-  display: inline-block;
-  text-align: center;
-  z-index: 10;
 }
 
 .panel-draft-icons {
