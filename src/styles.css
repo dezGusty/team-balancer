@@ -582,6 +582,12 @@ a.player-card-grad:hover {
   margin-right: auto;
 }
 
+.gus-centerpiece {
+  /* display: flex;
+  align-items: flex-start;
+  justify-content: center; */
+}
+
 .gus-page-container {
   /* display: flex;
   flex-direction: row;
