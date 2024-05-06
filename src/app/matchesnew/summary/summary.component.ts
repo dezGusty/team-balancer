@@ -111,6 +111,16 @@ export class SummaryComponent {
       lines.push(cells);
     });
 
+    // Ensure all lines have the same length.
+    const maxLineSize = Math.max(...lines.map(line => line.length));
+    lines = lines.map(line => {
+      while (line.length < maxLineSize) {
+        line.push('');
+      }
+      return line;
+    });
+
+    // Transpose the data.
     if (lines.length > 0) {
       lines = lines[0].map((col, c) => lines.map((row, r) => lines[r][c]));
     }
@@ -192,6 +202,26 @@ export class SummaryComponent {
 
     // if (ClipboardItem)
     navigator.clipboard.write([new ClipboardItem({ [spreadSheetRow.type]: spreadSheetRow })])
+    .then(() => {
+      this.notificationService.show('Table copied to clipboard');
+    })
+    .catch(err => {
+      this.notificationService.show('Failed to copy table to clipboard');
+    });
+  }
+
+  onCopyAsTextClick() {
+    const localMatches = this.activeMatchesSig();
+    let result = '';
+    localMatches.forEach(match => {
+      result += '📅' + match.matchDate + ' ' + '🕒' + match.label + '\n';
+      match.registeredPlayers.forEach((player, index) => {
+        result += index + '. ' + player.name + ' ' + (player.stars > 0 ? '⭐' : '') + '\n';
+      });
+      result += '\n';
+    });
+
+    navigator.clipboard.writeText(result)
     .then(() => {
       this.notificationService.show('Table copied to clipboard');
     })
