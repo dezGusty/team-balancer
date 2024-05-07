@@ -216,7 +216,7 @@ export class SummaryComponent {
     localMatches.forEach(match => {
       result += '📅' + match.matchDate + ' ' + '🕒' + match.label + '\n';
       match.registeredPlayers.forEach((player, index) => {
-        result += index + '. ' + player.name + ' ' + (player.stars > 0 ? '⭐' : '') + '\n';
+        result += '' + (index + 1) + '. ' + player.name + ' ' + (player.stars > 0 ? '⭐' : '') + '\n';
       });
       result += '\n';
     });
