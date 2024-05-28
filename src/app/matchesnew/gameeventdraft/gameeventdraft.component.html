@@ -27,16 +27,20 @@
     </div>
     <div class="f-row">
       <button class="gus-button gus-border gus-hoverable" (click)="transferToDraft()">xfer</button>
-      <button type="button" class="gus-button gus-border gus-hoverable" [disabled]="(this.hasDataToSave$ | async)==false"
-        (click)="this.save()">Save ☁️</button>
+      <button type="button" class="gus-button gus-border gus-hoverable"
+        [disabled]="(this.hasDataToSave$ | async)==false" (click)="this.save()">Save ☁️</button>
     </div>
   </div>
 </div>
 
 <div class="border-bottom gus-search-box">
-  <input class="form-control searchfield" type="text" [(ngModel)]="this.searchedName"
+  <input class="form-control searchfield" type="text" [(ngModel)]="this.searchedNameSg"
     (keyup)="onSearchContentChange($event)" placeholder="Search... ( CTRL + / )" aria-label="Search" #srcNameArea
     autofocus />
+  @if (this.searchedNameSg() != undefined && this.searchedNameSg().length > 0) {
+  <button aria-label="Clear" class="gus-button gus-border gus-hoverable pseudo-button" type="button" (click)="this.searchedNameSg.set('')">
+    ❌</button>
+  }
 </div>
 
 <div class="draftPlayersArea">

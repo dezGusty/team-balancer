@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, ElementRef, HostListener, ViewChild, inject } from '@angular/core';
+import { ChangeDetectionStrategy, Component, ElementRef, HostListener, ViewChild, inject, model } from '@angular/core';
 import { GameEventsService } from '../history/data-access/game-events.service';
 import { AsyncPipe } from '@angular/common';
 import { FormsModule } from '@angular/forms';
@@ -25,6 +25,7 @@ export interface Selectable<T> {
 export class GameeventdraftComponent {
 
   protected searchedName: string = '';
+  protected searchedNameSg = model("");
   private gameEventsService: GameEventsService = inject(GameEventsService);
   private playersService: PlayersService = inject(PlayersService);
   public selectedMatchContent = this.gameEventsService.selectedMatchContent;
@@ -158,6 +159,7 @@ export class GameeventdraftComponent {
       this.enterPressedSubject$.next($event.target.value);
       this.filterByContentSubject$.next('');
       this.searchedName = '';
+      this.searchedNameSg.set('');
     } else {
       this.filterByContentSubject$.next($event.target.value);
     }
