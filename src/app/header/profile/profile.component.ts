@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { ChangeDetectionStrategy, Component } from '@angular/core';
+import { ChangeDetectionStrategy, Component, ElementRef, viewChild } from '@angular/core';
 import { tap } from 'rxjs';
 import { UserAuthService } from 'src/app/auth/user-auth.service';
 import { LoadingFlagService } from 'src/app/utils/loading-flag.service';
@@ -19,10 +19,24 @@ export class ProfileComponent {
   loadingFlag$ = this.loadingFlagService.loadingFlag$.pipe(
     tap(flag => console.log(`[profile] loadingFlag$ = ${flag}`))
   );
-  
+
+  // avatarElement = viewChild<ElementRef>('avatar');
+
   constructor(
     private loadingFlagService: LoadingFlagService,
     private userAuthService: UserAuthService) {
 
   }
+
+  onAvatarClick() {
+    console.log('*** avatar click', this.loadingFlagService.getRecentSources()); 
+  }
+
+  // showPopover() {
+  //   console.log('showPopover');
+  //   const el = this.avatarElement()?.nativeElement;
+
+  //   el.togglePopover();
+
+  // }
 }

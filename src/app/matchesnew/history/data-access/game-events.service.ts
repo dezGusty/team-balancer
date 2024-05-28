@@ -361,6 +361,15 @@ export class GameEventsService implements OnDestroy {
         return foundIdx != -1;
       });
 
+      // re-arrange the selectedPlayers array to match the order of the selectedPlayersIds array.
+      selectedPlayers = selectedPlayers.sort((a, b) => {
+        let aIdx = selectedPlayersIds.findIndex(sp => sp.id === a.id);
+        let bIdx = selectedPlayersIds.findIndex(sp => sp.id === b.id);
+        return aIdx - bIdx;
+      });
+      
+      console.log("*** selectedPlayers", selectedPlayers);
+
       this.updatedFireData$.next(true);
       this.loadingFlagService.setLoadingFlag(true);
       return setDoc(doc(this.firestore, '/drafts/next'), { players: selectedPlayers }, { merge: true });

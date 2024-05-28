@@ -11,10 +11,22 @@ export class LoadingFlagService {
     shareReplay(1)
   );
 
-  public setLoadingFlag(flag: boolean) {
+  // store the latest 10 sources.
+  protected readonly latestSources: string[] = [];
+
+  public setLoadingFlag(flag: boolean, source: string = '') {
     this.loadingFlagSubject$.next(flag);
+
+    this.latestSources.push(source);
+    if (this.latestSources.length > 10) {
+      this.latestSources.shift();
+    }
   }
 
   constructor() { }
+
+  public getRecentSources() {
+    return this.latestSources;
+  }
 
 }

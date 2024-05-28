@@ -21,11 +21,11 @@ export class CurrentPlayersService {
 
   public currentPlayers$ = this.triggerDataRetrieval$.asObservable().pipe(
     switchMap(_ => {
-      this.loadingFlagService.setLoadingFlag(true);
+      this.loadingFlagService.setLoadingFlag(true, "current-player-load");
       return docData(doc(this.firestore, 'ratings/current'))
     }),
     map(currentPlayersData => { return currentPlayersData as CurrentPlayersData }),
-    tap((_) => { this.loadingFlagService.setLoadingFlag(false); }),
+    tap((_) => { this.loadingFlagService.setLoadingFlag(false, "current-player-load"); }),
     catchError(this.handleError),
     shareReplay(1),
   );

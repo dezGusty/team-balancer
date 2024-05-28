@@ -16,7 +16,7 @@ export class MatchHistService {
   public selectedMatchSubject = new Subject<string>();
   public selectedMatchAction$ = this.selectedMatchSubject.asObservable().pipe(
     tap(_ => {
-      this.loadingFlagService.setLoadingFlag(true);
+      this.loadingFlagService.setLoadingFlag(true, 'selected-match');
     }),
   );
 
@@ -43,7 +43,7 @@ export class MatchHistService {
       });
       return matchHistoryTitles;
     }),
-    tap((_) => { this.loadingFlagService.setLoadingFlag(false); }),
+    tap((_) => { this.loadingFlagService.setLoadingFlag(false, 'matches'); }),
     shareReplay(1),
     catchError(this.handleError)
   );
@@ -71,7 +71,7 @@ export class MatchHistService {
     }),
     map(matchDocContents => {
       const castedItem = matchDocContents as CustomPrevGame;
-      this.loadingFlagService.setLoadingFlag(false);
+      this.loadingFlagService.setLoadingFlag(false, 'selected-match-details');
       return castedItem;
     }),
     tap(game => {

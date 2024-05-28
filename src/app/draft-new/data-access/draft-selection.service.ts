@@ -20,14 +20,14 @@ export class DraftSelectionService implements OnDestroy {
 
   public nextMatchDraft$ = this.triggerDataRetrieval$.asObservable().pipe(
     switchMap(_ => {
-      this.loadingFlagService.setLoadingFlag(true);
+      this.loadingFlagService.setLoadingFlag(true, "next-match-draft");
       return docData(doc(this.firestore, 'drafts/next'))
     }),
     map(nextMatchesDocContents => {
       const playerList = nextMatchesDocContents as DraftSelectionData;
       return playerList;
     }),
-    tap((_) => { this.loadingFlagService.setLoadingFlag(false); }),
+    tap((_) => { this.loadingFlagService.setLoadingFlag(false, "next-match-draft"); }),
     catchError(this.handleError),
     shareReplay(1),
   );
@@ -36,11 +36,11 @@ export class DraftSelectionService implements OnDestroy {
   public storedMatch$ = this.triggerStoreMatchSubject$.asObservable().pipe(
     tap(data => console.log("*** upload data ", data)),
     switchMap(data => {
-      this.loadingFlagService.setLoadingFlag(true);
+      this.loadingFlagService.setLoadingFlag(true, "store-match");
       return setDoc(doc(this.firestore, 'drafts/next'), data, { merge: true });
     }),
     tap(data => console.log("*** upload data result", data)),
-    tap((_) => { this.loadingFlagService.setLoadingFlag(false); }),
+    tap((_) => { this.loadingFlagService.setLoadingFlag(false, "store-match"); }),
   );
 
   constructor(

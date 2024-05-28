@@ -1,5 +1,5 @@
 <div class="avatar-outer" [class.avatar-outer-anim]="this.loadingFlag$ | async">
-  <div class="avatar">
+  <div class="avatar" (click)="onAvatarClick()">
     @if (this.user$ | async; as user) {
     <img class="rounded-avatar-img" [src]="user.photoURL" alt="logo" />
     } @else {

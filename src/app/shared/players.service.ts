@@ -73,31 +73,31 @@ export class PlayersService implements OnDestroy {
     currentPlayersSubject$ = new BehaviorSubject<boolean>(true);
     public players$ = this.currentPlayersSubject$.asObservable().pipe(
         tap(_ => console.log("players$ triggered")),
+        tap((_) => { this.loadingFlagService.setLoadingFlag(true, "players-list"); }),
         switchMap(_ => docData(doc(this.firestore, '/ratings/current'))),
-        tap((_) => { this.loadingFlagService.setLoadingFlag(true); }),
         map(playersDocContent => {
             const snap: PlayerRatingSnapshot = playersDocContent as PlayerRatingSnapshot;
             const playersArray: Player[] = snap.players;
             return playersArray;
         }),
+        tap((_) => { this.loadingFlagService.setLoadingFlag(false, "players-list"); }),
         catchError((err) => {
             console.log("read game events encountered issue");
             return of<Player[]>([]);
         }),
-        finalize(() => this.loadingFlagService.setLoadingFlag(false)),
         shareReplay(1),
     );
 
     uplatePlayersSubject$ = new Subject<Player[]>();
     public updatePlayers$ = this.uplatePlayersSubject$.asObservable().pipe(
-        tap(_ => this.loadingFlagService.setLoadingFlag(true)),
+        tap(_ => this.loadingFlagService.setLoadingFlag(true, "players-update")),
         switchMap(players => setDoc(doc(this.firestore, '/ratings/current'), { players: players }, { merge: true })),
         tap(_ => this.currentPlayersSubject$.next(true)),
         catchError((err) => {
             console.log("update players encountered issue");
             return of();
         }),
-        finalize(() => this.loadingFlagService.setLoadingFlag(false)),
+        finalize(() => this.loadingFlagService.setLoadingFlag(false, "players-update")),
     );
 
     updatePlayersList(allPlayers: Player[]) {

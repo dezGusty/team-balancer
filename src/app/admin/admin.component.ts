@@ -155,7 +155,7 @@ export class AdminComponent implements OnInit, OnDestroy {
 
   onToggleAnim($event: any) {
     this.animSubject$.next(!this.animSubject$.value);
-    this.loadingFlagService.setLoadingFlag(!this.animSubject$.value);
+    this.loadingFlagService.setLoadingFlag(!this.animSubject$.value, "admin-toggle-anim");
   }
 
   onAddNotif($event: any) {
