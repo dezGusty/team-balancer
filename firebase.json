@@ -1,6 +1,6 @@
 {
   "hosting": {
-    "public": "dist/team-balancer",
+    "public": "dist/team-balancer/browser",
     "ignore": [
       "firebase.json",
       "**/.*",
