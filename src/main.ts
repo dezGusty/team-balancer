@@ -75,13 +75,13 @@ const appRoutes: Routes = [
 bootstrapApplication(AppComponent, {
   providers: [
     provideRouter(appRoutes, withComponentInputBinding()),
-    importProvidersFrom(provideAuth(() => {
+    provideAuth(() => {
       return getAuth();
-    })),
-    importProvidersFrom(provideFirebaseApp(() => initializeApp(environment.firebase))),
-    importProvidersFrom(provideFirestore(() => {
+    }),
+    provideFirebaseApp(() => initializeApp(environment.firebase)),
+    provideFirestore(() => {
       return getFirestore();
-    })),
+    }),
     // importProvidersFrom(NgcCookieConsentModule.forRoot(cookieConfig)),
     PlayersService,
     MatchService,

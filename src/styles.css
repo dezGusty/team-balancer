@@ -431,12 +431,11 @@ a.player-card-grad:hover {
 /****************************************/
 /* Layout rules using display: inline-flex and relative dimensions using em. */
 .vert-calendar.date-as-calendar {
-  flex-direction: column;
-  flex-wrap: nowrap;
-  justify-content: space-between;
-
-  width: 2.5em;
-  height: 3.75em;
+  /* flex-direction: column; */
+  /* flex-wrap: nowrap; */
+  /* justify-content: space-between; */
+  width: 2.8em;
+  height: 4.0em;
 }
 
 .vert-calendar.date-as-calendar .suffix,
@@ -460,12 +459,12 @@ a.player-card-grad:hover {
 
 .vert-calendar.date-as-calendar .suffix {
   order: 6;
-  font-size: 0.5em;
+  font-size: 0.75em;
 }
 
 .vert-calendar.date-as-calendar .year {
   order: 4;
-  font-size: 0.5em;
+  font-size: 0.6em;
 }
 
 .match-card {
@@ -557,7 +556,7 @@ a.player-card-grad:hover {
 .g-row {
   display: grid;
   gap: 0.25em;
-  grid-template-columns: repeat(auto-fill, 2.5em);
+  grid-template-columns: repeat(auto-fill, 2.75em);
 }
 
 .f-row {
