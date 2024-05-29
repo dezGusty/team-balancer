@@ -564,6 +564,15 @@ a.player-card-grad:hover {
   /* gap: 0.25em; */
 }
 
+.f-row-center {
+  align-items: center;
+}
+
+.f-column {
+  display: flex;
+  flex-direction: column;
+}
+
 .half-width {
   width: 50%;
 }

@@ -173,6 +173,9 @@ export class MatchCombosComponent implements OnInit, OnDestroy {
       }
     }
 
+    console.log("affinityFilter", affinityFilter);
+    console.log("affinityFilterRev", affinityFilterRev);
+
     while (customCounter <= maxValue) {
       customCounter++;
       let stringifiedBinary = customCounter.toString(2);

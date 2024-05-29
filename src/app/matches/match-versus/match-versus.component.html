@@ -1,18 +1,20 @@
-<div class="row">
-  <div class="col-6 col-sm-6 col-md-5 col-lg-4 border-right">
-    team one
-    <ul>
-      <li *ngFor="let leftItem of this.extractedTeam1">
-        {{ this.getDisplayNameForPlayer(leftItem) }}
-      </li>
-    </ul>
+<div class="f-row">
+  <div class="half-width">The Pink Dragons 🐉</div>
+  <div class="half-width">The Ghetto Ducks 🦆</div>
+</div>
+<div class="f-row">
+  <div class="half-width">rating: {{team1Rating| number: '1.2-2'}}</div>
+  <div class="half-width">rating: {{team2Rating| number: '1.2-2'}}</div>
+</div>
+<div class="f-row">
+  <div class="half-width f-column f-row-align-left">
+    @for (leftItem of this.extractedTeam1; track $index) {
+    <div>{{$index+1}}. {{ this.getDisplayNameForPlayer(leftItem) }}</div>
+    }
   </div>
-  <div class="col-6 col-sm-6 col-md-5 col-lg-4">
-    team two
-    <ul>
-      <li *ngFor="let rightItem of this.extractedTeam2">
-        {{ this.getDisplayNameForPlayer(rightItem) }}
-      </li>
-    </ul>
+  <div class="half-width f-column f-row-align-right">
+    @for (rightItem of this.extractedTeam2; track $index) {
+    <div>{{$index+1}}. {{ this.getDisplayNameForPlayer(rightItem) }}</div>
+    }
   </div>
 </div>

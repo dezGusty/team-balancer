@@ -1,15 +1,17 @@
 <ul class="list-group">
-  <li class="player-card"
-    *ngFor="let gameOption of this.displayedMatchCombos; let i = index">
-    <div style="cursor: pointer" (click)="onGameOptionSelected(gameOption, i);">
-      <span class="game-option-index"># {{i+1}}</span>
+  @for (gameOption of this.displayedMatchCombos; track $index) {
+  <li class="player-card">
+    <div style="cursor: pointer" (click)="onGameOptionSelected(gameOption, $index);">
+      <span class="game-option-index"># {{$index+1}}</span>
       <span class="game-option-index">combo-code: {{gameOption.combination}}</span>
       <p class="game-option-index">diff: {{gameOption.diff}}</p>
-      <app-match-versus [contentsIndex]="i" [displayedMatchDetails]="this.displayedMatchDetails"
-        [playerList]="this.playerList" >
+      <app-match-versus [contentsIndex]="$index" [displayedMatchDetails]="this.displayedMatchDetails"
+        [playerList]="this.playerList">
       </app-match-versus>
     </div>
-    <app-match-storage *ngIf="this.showDetailedSelection && this.showDetailedSelectionIndex===i"
-      [customGame]=this.selectionData></app-match-storage>
+    @if (this.showDetailedSelection && this.showDetailedSelectionIndex===$index) {
+    <app-match-storage [customGame]=this.selectionData></app-match-storage>
+    }
   </li>
+  }
 </ul>

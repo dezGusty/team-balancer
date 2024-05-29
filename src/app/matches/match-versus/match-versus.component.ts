@@ -23,6 +23,9 @@ export class MatchVersusComponent implements OnInit {
   extractedTeam1: Array<Player> = [];
   extractedTeam2: Array<Player> = [];
 
+  team1Rating = 0;
+  team2Rating = 0;
+
   constructor() {
   }
 
@@ -30,9 +33,12 @@ export class MatchVersusComponent implements OnInit {
     if (this.displayedMatchDetails[this.contentsIndex]) {
       this.extractedTeam1 = this.displayedMatchDetails[this.contentsIndex].team1;
     }
+    this.team1Rating = this.extractedTeam1.reduce((acc, player) => acc + player.rating, 0);
+
     if (this.displayedMatchDetails[this.contentsIndex]) {
       this.extractedTeam2 = this.displayedMatchDetails[this.contentsIndex].team2;
     }
+    this.team2Rating = this.extractedTeam2.reduce((acc, player) => acc + player.rating, 0);
   }
 
   getDisplayNameForPlayer(player: Player): string {
