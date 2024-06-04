@@ -1,29 +1,15 @@
 <form (submit)="onStoreCliked()">
   <div class="f-row f-row-center">
-    <!-- <div class="col-6 col-sm-6 col-md-5 col-lg-4 btn-toolbar"> -->
-      <button type="button" class="gus-button gus-border gus-hoverable pseudo-button" 
-        #copyToClipBtn
-        placement="top"
-        [copy-clipboard]="customClipTextToClip()" (copied)="notifyCpy($event)"
-        (click)="onCopyClicked();"><span class="align-self-center">
-          <!-- <img src="./../../../assets/clippy.svg"> -->
-          📎📋</span></button>
-      <button type="button" class="gus-button gus-border gus-hoverable pseudo-button"
-      (click)="onStoreCliked()">Store ☁️</button>
-    <!-- </div>
-    <div class="input-group input-group-sm col-6 col-sm-6 col-md-5 col-lg-4"> -->
-      <div>
-        <label for="targetDate">Date:</label>
-        <input class="gus-input gus-border" type="text" name="targetDate" placeholder="Select a date"
-        [(ngModel)]="targetDate" #targetDateInput
-        autofocus>
-      </div>
-
-      <!-- <div class="input-group-prepend">
-        <span class="input-group-text mt-2" id="inputGroup-date">Date</span>
-      </div> -->
-      <!-- <input type="text" class="border-bottom gus-search-box" [(ngModel)]="targetDate" aria-label="Small"
-        aria-describedby="inputGroup-date" #targetDateInput name="targetDate" autofocus> -->
-    <!-- </div> -->
+    <button type="button" class="gus-button gus-border gus-hoverable pseudo-button" #copyToClipBtn placement="top"
+      [copy-clipboard]="customClipTextToClip()" (copied)="notifyCpy($event)" (click)="onCopyClicked();"><span
+        class="align-self-center">
+        📎📋</span></button>
+    <button type="button" class="gus-button gus-border gus-hoverable pseudo-button" (click)="onStoreCliked()">Store
+      ☁️</button>
+    <div>
+      <label for="targetDate">Date:</label>
+      <input class="gus-input gus-border" type="text" name="targetDate" placeholder="Select a date"
+        [(ngModel)]="targetDate" #targetDateInput autofocus>
+    </div>
   </div>
 </form>

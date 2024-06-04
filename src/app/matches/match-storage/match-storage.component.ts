@@ -1,4 +1,4 @@
-import { Component, OnInit, Input, ElementRef, ViewChild } from '@angular/core';
+import { Component, OnInit, Input, ElementRef, ViewChild, inject } from '@angular/core';
 import { CustomGame } from '../../shared/custom-game.model';
 import { Player, getDisplayName } from '../../shared/player.model';
 import { MatchService } from 'src/app/shared/match.service';
@@ -6,6 +6,7 @@ import { CommonModule } from '@angular/common';
 // import { NgbTooltipModule } from '@ng-bootstrap/ng-bootstrap';
 import { CopyClipboardDirective } from 'src/app/shared/copy-clipboard.directive';
 import { FormsModule } from '@angular/forms';
+import { NotificationService } from 'src/app/utils/notification/notification.service';
 
 @Component({
   imports: [
@@ -36,6 +37,8 @@ export class MatchStorageComponent implements OnInit {
     return getDisplayName(player);
   }
 
+  private readonly notificationService = inject(NotificationService);
+
   async onStoreCliked() {
     if (!this.customGame) {
       console.log('no game object stored!');
@@ -50,6 +53,7 @@ export class MatchStorageComponent implements OnInit {
     }
 
     await this.matchAltSvc.saveCustomMatchAsync(this.targetDate, this.customGame);
+    this.notificationService.show('Saved game [' + this.targetDate + '] to recent matches!');
   }
 
   onCopyClicked() {

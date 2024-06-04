@@ -176,6 +176,7 @@ export class MatchService {
   }
 
   public async saveCustomMatchAsync(matchName: string, customGame: CustomGame) {
+    console.log('Saving custom match: ', matchName, customGame);
     const docName = 'matches/' + matchName;
     const docRef = doc(this.firestore, docName);
 
