@@ -498,7 +498,13 @@ export class PlayersService implements OnDestroy {
         player: Player,
         winners: string[],
         losers: string[],
-        difference: number): Player {
+        difference: number,
+        matchRatingsCfg: {
+            takeInitialRatingsIntoAccount: boolean,
+            winnersRatingsTotal: number,
+            losersRatingsTotal: number,
+        }
+    ): Player {
         const playerCpy: Player = { ...player };
         if (difference === 0) {
             return playerCpy;
@@ -510,14 +516,27 @@ export class PlayersService implements OnDestroy {
 
         if (winners.includes(playerCpy.name)) {
             sign = RatingSystemSettings.GetSignMultiplierForWinner();
-
         } else if (losers.includes(playerCpy.name)) {
             sign = RatingSystemSettings.GetSignMultiplierForLoser();
         }
 
-        playerCpy.rating = playerCpy.rating + sign * (
+        let diffToApply = sign * (
             RatingSystemSettings.GetFixedMultiplierForMatch()
             + Math.abs(difference) * RatingSystemSettings.GetGoalMultiplierForMatch());
+
+        if (matchRatingsCfg.takeInitialRatingsIntoAccount
+            && matchRatingsCfg.losersRatingsTotal != 0
+            && matchRatingsCfg.winnersRatingsTotal != 0
+        ) {
+            let ratio = matchRatingsCfg.losersRatingsTotal / matchRatingsCfg.winnersRatingsTotal;
+            // square it to make it more significant
+            ratio = ratio * ratio;
+            diffToApply = diffToApply * ratio;
+            let ratingsDiff = sign * Math.abs(matchRatingsCfg.winnersRatingsTotal - matchRatingsCfg.losersRatingsTotal) / 20;
+            diffToApply = diffToApply + ratingsDiff;
+        }
+
+        playerCpy.rating = playerCpy.rating + diffToApply;
         return playerCpy;
     }
 
@@ -541,15 +560,28 @@ export class PlayersService implements OnDestroy {
         const difference = game.scoreTeam1 - game.scoreTeam2;
         let winners: string[] = [];
         let losers: string[] = [];
+        let winnersRatingsTotal = 0;
+        let losersRatingsTotal = 0;
+
         if (difference > 0) {
             winners = game.team1.map((player) => player.name);
+            winnersRatingsTotal = game.team1.reduce((acc, player) => acc + player.rating, 0);
             losers = game.team2.map((player) => player.name);
+            losersRatingsTotal = game.team2.reduce((acc, player) => acc + player.rating, 0);
         } else {
             losers = game.team1.map((player) => player.name);
+            losersRatingsTotal = game.team1.reduce((acc, player) => acc + player.rating, 0);
             winners = game.team2.map((player) => player.name);
+            winnersRatingsTotal = game.team2.reduce((acc, player) => acc + player.rating, 0);
         }
 
-        return playersCpy.map(player => this.getPlayerWithUpdatedRatingForGame(player, winners, losers, difference));
+        let matchRatingsCfg = {
+            takeInitialRatingsIntoAccount: true,
+            winnersRatingsTotal: winnersRatingsTotal,
+            losersRatingsTotal: losersRatingsTotal,
+        };
+
+        return playersCpy.map(player => this.getPlayerWithUpdatedRatingForGame(player, winners, losers, difference, matchRatingsCfg));
     }
 
     /**
@@ -558,7 +590,7 @@ export class PlayersService implements OnDestroy {
      * @param ratingSystem The rating system to use.
      * @returns The list of players which were part of the game with new ratings (new copy).
      */
-    public getPlayersWithUpdatedRatingsForGame(game: CustomPrevGame): Player[] {
+    public getPlayersWithUpdatedRatingsForGame(game: CustomPrevGame, useDiff: boolean): Player[] {
         if (game.scoreTeam1 == null || game.scoreTeam2 == null
             || game.scoreTeam1 === game.scoreTeam2) {
             // nothing to do
@@ -568,23 +600,35 @@ export class PlayersService implements OnDestroy {
         let playersCpy: Player[] = [...game.team1.concat([...game.team2])];
         // let playersCpy: Player[] = [...game.team1];
         // playersCpy = [...game.team2];
+        let winnersRatingsTotal = 0;
+        let losersRatingsTotal = 0;
 
         const difference = game.scoreTeam1 - game.scoreTeam2;
         let winners: string[] = [];
         let losers: string[] = [];
         if (difference > 0) {
             winners = game.team1.map((player) => player.name);
+            winnersRatingsTotal = game.team1.reduce((acc, player) => acc + player.rating, 0);
             losers = game.team2.map((player) => player.name);
+            losersRatingsTotal = game.team2.reduce((acc, player) => acc + player.rating, 0);
         } else {
             losers = game.team1.map((player) => player.name);
+            losersRatingsTotal = game.team1.reduce((acc, player) => acc + player.rating, 0);
             winners = game.team2.map((player) => player.name);
+            winnersRatingsTotal = game.team2.reduce((acc, player) => acc + player.rating, 0);
         }
 
         console.log('winners', winners);
         console.log('losers', losers);
 
+        
+        let matchRatingsCfg = {
+            takeInitialRatingsIntoAccount: useDiff,
+            winnersRatingsTotal: winnersRatingsTotal,
+            losersRatingsTotal: losersRatingsTotal,
+        };
 
-        return playersCpy.map(player => this.getPlayerWithUpdatedRatingForGame(player, winners, losers, difference));
+        return playersCpy.map(player => this.getPlayerWithUpdatedRatingForGame(player, winners, losers, difference, matchRatingsCfg));
     }
 
 }

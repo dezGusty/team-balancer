@@ -197,7 +197,7 @@ export class PrevMatchDetailComponent implements OnInit, OnDestroy {
     );
 
     // Prepare the difference calculation
-    const updatedPlayers = this.playersSvc.getPlayersWithUpdatedRatingsForGame(this.customGame);
+    const updatedPlayers = this.playersSvc.getPlayersWithUpdatedRatingsForGame(this.customGame, false);
     if (updatedPlayers.length > 0) {
       if (!this.customGame.postResults) {
         this.customGame.postResults = [];
@@ -233,6 +233,82 @@ export class PrevMatchDetailComponent implements OnInit, OnDestroy {
     // Store the 'new' ratings under the 'current' entry.
     await this.playersSvc.savePlayersToListAsync(newPlayers, 'current');
 
+
+    // Store the new data for the match.
+    this.customGame.appliedResults = true;
+    this.matchResultsAppliedToRatings = true;
+    console.log('saving ', this.customGame);
+
+    await this.matchAltSvc.saveCustomPrevMatchAsync(this.matchSearchKey, this.customGame);
+
+    await this.playersSvc.storeRecentMatchToParticipantsHistoryAsync(this.customGame, this.matchSearchKey);
+
+    this.showSpinner = false;
+  }
+
+  /**
+   * New version of the rating update function.
+   * This also applies a multiplier to each rating change based on the initial rating difference between the two teams.
+   * @returns 
+   */
+  async onUpdateRatingsV2Click() {
+    if (!this.authSvc.isAuthenticatedAsOrganizer()) {
+      return;
+    }
+
+    if (!this.customGame) {
+      return;
+    }
+
+    let currentMatch = await this.playersSvc.getCurrentRatingsAsync();
+
+    const newPlayers = this.playersSvc.getAllPlayersUpdatedRatingsForGame(
+      this.playersSvc.getPlayers(), this.customGame
+    );
+
+    // store the team1 sum rating and team2 sum rating
+    let team1Sum = 0;
+    let team2Sum = 0;
+    this.customGame.team1.forEach(player => team1Sum += player.rating);
+    this.customGame.team2.forEach(player => team2Sum += player.rating);
+
+    // Prepare the difference calculation
+    const updatedPlayers = this.playersSvc.getPlayersWithUpdatedRatingsForGame(this.customGame, true);
+
+    if (updatedPlayers.length > 0) {
+      if (!this.customGame.postResults) {
+        this.customGame.postResults = [];
+      }
+      updatedPlayers.forEach(player => {
+        if (!this.customGame) {
+          return;
+        }
+
+        // get old rating from team 1 or team 2, or fail
+        let oldRating = this.customGame.team1.find(x => x.id == player.id)?.rating;
+        if (!oldRating) {
+          oldRating = this.customGame.team2.find(x => x.id == player.id)?.rating;
+        }
+        if (!oldRating) {
+          return;
+        }
+
+        this.customGame.postResults.push({ id: player.id, diff: player.rating - oldRating });
+      })
+    }
+
+    this.showSpinner = true;
+
+    // Store the 'old' ratings under a different entry.
+    if (!currentMatch || !currentMatch.label) {
+      await this.playersSvc.savePlayersToListAsync(this.playersSvc.getPlayers(), this.matchSearchKey);
+    } else {
+      await this.playersSvc.savePlayersToListAsync(this.playersSvc.getPlayers(), this.matchSearchKey + '_' + currentMatch.label);
+      await this.playersSvc.addFieldValueToDocumentAsync("label", currentMatch.label, "current");
+    }
+
+    // Store the 'new' ratings under the 'current' entry.
+    await this.playersSvc.savePlayersToListAsync(newPlayers, 'current');
 
     // Store the new data for the match.
     this.customGame.appliedResults = true;
