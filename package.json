@@ -1,7 +1,7 @@
 {
   "name": "team-balancer",
-  "version": "0.9.8",
-  "releaseDate": "2024-06-04",
+  "version": "0.9.9",
+  "releaseDate": "2024-06-05",
   "scripts": {
     "ng": "ng",
     "start": "npm run icon && ng serve",
@@ -38,11 +38,11 @@
   },
   "devDependencies": {
     "@angular-devkit/build-angular": "^18.0.2",
-    "@angular-eslint/builder": "18.0.0",
-    "@angular-eslint/eslint-plugin": "18.0.0",
-    "@angular-eslint/eslint-plugin-template": "18.0.0",
-    "@angular-eslint/schematics": "18.0.0",
-    "@angular-eslint/template-parser": "18.0.0",
+    "@angular-eslint/builder": "18.0.1",
+    "@angular-eslint/eslint-plugin": "18.0.1",
+    "@angular-eslint/eslint-plugin-template": "18.0.1",
+    "@angular-eslint/schematics": "18.0.1",
+    "@angular-eslint/template-parser": "18.0.1",
     "@angular/cli": "^18.0.2",
     "@angular/compiler-cli": "^18.0.1",
     "@angular/language-service": "^18.0.1",
