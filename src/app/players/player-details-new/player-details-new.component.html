@@ -1,0 +1,75 @@
+<div class="gus-sidenav-container" (click)="onSideNavInnerContainerClicked($event)">
+  <button class="gus-button gus-border gus-hoverable" (click)="onCloseBtnClick()">Close</button>
+
+  @if (player(); as player) {
+
+  <div>
+    <label for="player-id">ID:</label>
+    <input class="gus-input gus-border gus-hoverable" name="player-id" [(ngModel)]="player.id" type="text"
+      placeholder="ID">
+  </div>
+
+  <div>
+    <label for="player-name">Name:</label>
+    <input class="gus-input gus-border gus-hoverable" name="player-name" [(ngModel)]="player.name" type="text"
+      placeholder="Name">
+  </div>
+
+  <div>
+    <label for="player-display-name">Display name:</label>
+    <input class="gus-input gus-border gus-hoverable" name="player-display-name" [(ngModel)]="player.displayName"
+      type="text" placeholder="Display name">
+  </div>
+
+  <div>
+    <label for="player-keywords">Keywords:</label>
+    <input class="gus-input gus-border gus-hoverable" name="player-keywords" [(ngModel)]="player.keywords" type="text"
+      placeholder="Keywords (alternative search criteria)">
+  </div>
+
+  <div>
+    <label for="player-rating">Rating:</label>
+    <input class="gus-input gus-border gus-hoverable" name="player-rating" [(ngModel)]="player.rating" type="number"
+      placeholder="Rating">
+  </div>
+
+  <div>
+    <label for="player-stars">Stars ⭐:</label>
+    <input class="gus-input gus-border gus-hoverable" name="player-stars" [(ngModel)]="player.stars" type="number"
+      placeholder="Stars">
+  </div>
+
+  <button class="gus-button gus-border gus-hoverable" (click)="onSaveBtnClick()">Save</button>
+
+  }
+
+  <!-- <div class="">
+    <div class="player-card-internalid">
+      ID: {{ player?.id }}
+    </div>
+    <br>
+    <div class="pull-left">
+      Rating: {{ player?.rating }}
+    </div>
+    <div class="player-card-name pull-left">
+      {{ playerDisplayName() }}
+    </div>
+    <div class="col-12">({{ player?.name }})</div>
+
+    <div class="col-6 pull-right">
+      <img src="./../../../assets/default_user_pic.svg" alt="pic" height="96em">
+    </div>
+  </div> -->
+
+  <!-- <div class="row mt-2">
+    <div class="col-12">
+      <button class="btn btn-outline-gus btn-grad-gusty position-static" *ngIf="canEditPlayers()"
+        (click)='onEditPlayerClicked($event)'>Edit Player</button>
+        <button class="btn btn-outline-gus btn-grad-gusty position-static" *ngIf="canArchivePlayer()"
+        (click)='onArchivePlayer($event)'>Archive Player</button>
+        <button class="btn btn-outline-gus btn-grad-gusty position-static" *ngIf="canUnarchivePlayer()"
+        (click)='onUnarchivePlayer($event)'>Unarchive Player</button>
+    </div>
+  </div> -->
+
+</div>

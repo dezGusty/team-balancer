@@ -24,7 +24,6 @@ export interface Selectable<T> {
 })
 export class GameeventdraftComponent {
 
-  protected searchedName: string = '';
   protected searchedNameSg = model("");
   private gameEventsService: GameEventsService = inject(GameEventsService);
   private playersService: PlayersService = inject(PlayersService);
@@ -153,12 +152,16 @@ export class GameeventdraftComponent {
     }, 0);
   }
 
+  onSearchContentClear() {
+    this.searchedNameSg.set('');
+    this.filterByContentSubject$.next('');
+  }
+
   onSearchContentChange($event: any) {
     if ($event.code === 'Enter') {
       // try to get the 1st matching item and move it to the draft.
       this.enterPressedSubject$.next($event.target.value);
       this.filterByContentSubject$.next('');
-      this.searchedName = '';
       this.searchedNameSg.set('');
     } else {
       this.filterByContentSubject$.next($event.target.value);

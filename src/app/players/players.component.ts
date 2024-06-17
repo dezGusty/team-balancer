@@ -14,20 +14,25 @@ import { SmallLoadingSpinnerComponent } from '../ui/small-loading-spinner/small-
 import { FormsModule } from '@angular/forms';
 import { PlayerFilterPipe } from '../matches/player-filter.pipe';
 import { PlayerRoutedCardComponent } from './player/player-routed-card.component';
+import { PlayerDetailsNewComponent } from "./player-details-new/player-details-new.component";
+import { PlayerDetailsComponent } from "./player-details/player-details.component";
 
 @Component({
-  imports: [
-    CommonModule,
-    RouterModule,
-    ToastsContainer,
-    SmallLoadingSpinnerComponent,
-    FormsModule,
-    PlayerFilterPipe,
-  PlayerRoutedCardComponent],
-  selector: 'app-players',
-  standalone: true,
-  styles: [''],
-  templateUrl: './players.component.html',
+    selector: 'app-players',
+    standalone: true,
+    styles: [''],
+    templateUrl: './players.component.html',
+    imports: [
+        CommonModule,
+        RouterModule,
+        ToastsContainer,
+        SmallLoadingSpinnerComponent,
+        FormsModule,
+        PlayerFilterPipe,
+        PlayerRoutedCardComponent,
+        PlayerDetailsNewComponent,
+        PlayerDetailsComponent
+    ]
 })
 
 export class PlayersComponent implements OnInit, OnDestroy {
@@ -37,6 +42,8 @@ export class PlayersComponent implements OnInit, OnDestroy {
   private subscriptions: Subscription[] = [];
   public loadArchive: boolean = false;
   public showLoading: boolean = false;
+
+  selectedPlayer: Player | undefined;
 
   searchedName = '';
   loadingConvert = -1;
@@ -119,8 +126,18 @@ export class PlayersComponent implements OnInit, OnDestroy {
     }
   }
 
-  onPlayerSelected($event: any) {
-    console.log('on player selected');
-
+  onPlayerSelected(player: Player) {
+    console.log('*** on player selected', player);
+    this.selectedPlayer = player;
+    this.isSideNavOpen = true;
   }
+
+  protected isSideNavOpen = false;
+  onSideNavOuterContainerClicked() {
+    this.isSideNavOpen = false;
+  }
+  onCloseSideNavBtnClick() {
+    this.isSideNavOpen = false;
+  }
+
 }
