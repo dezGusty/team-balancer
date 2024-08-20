@@ -127,6 +127,7 @@ export class PlayersService implements OnDestroy {
                 // }
                 const snap: PlayerRatingSnapshot = playerListDoc as PlayerRatingSnapshot;
                 const playersArray: Player[] = snap.players; //playerListDoc.get('players');
+                playersArray.forEach(x => x.isArchived = false);
                 this.currentLabel = snap.label; //playerListDoc.get('label');
                 this.currentPlayerList = playersArray;
 

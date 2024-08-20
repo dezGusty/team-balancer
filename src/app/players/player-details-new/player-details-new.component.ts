@@ -1,6 +1,7 @@
 import { CommonModule } from '@angular/common';
 import { Component, EventEmitter, Output, inject, model } from '@angular/core';
 import { FormsModule } from '@angular/forms';
+import { UserAuthService } from 'src/app/auth/user-auth.service';
 import { Player, getDisplayName } from 'src/app/shared/player.model';
 import { PlayersService } from 'src/app/shared/players.service';
 
@@ -14,6 +15,10 @@ import { PlayersService } from 'src/app/shared/players.service';
 export class PlayerDetailsNewComponent {
   @Output() onCloseBtnClicked = new EventEmitter<void>();
   @Output() onSaveBtnClicked = new EventEmitter<void>();
+  @Output() onMovePlayerToArchiveClicked = new EventEmitter<void>();
+  @Output() onMovePlayerToActiveClicked = new EventEmitter<void>();
+
+  private authSvc = inject(UserAuthService);
 
   player = model<Player>();
   playersSvc = inject(PlayersService);
@@ -24,6 +29,14 @@ export class PlayerDetailsNewComponent {
 
   onCloseBtnClick() {
     this.onCloseBtnClicked.emit();
+  }
+
+  onMovePlayerToArchive() {
+    this.onMovePlayerToArchiveClicked.emit();
+  }
+
+  onMovePlayerToActive() {
+    this.onMovePlayerToActiveClicked.emit();
   }
 
   onSaveBtnClick() {
@@ -43,5 +56,25 @@ export class PlayerDetailsNewComponent {
     }
 
     return getDisplayName(player);
+  }
+
+  public canEditPlayers(): boolean {
+    return this.authSvc.isAuthenticatedAsOrganizer();
+  }
+
+  public canArchivePlayer(): boolean {
+    let playerToArchive = this.player();
+    if (!playerToArchive) {
+      return false;
+    }
+    return this.authSvc.isAuthenticatedAsOrganizer() && (!playerToArchive.isArchived);
+  }
+
+  public canUnarchivePlayer(): boolean {
+    let playerToArchive = this.player();
+    if (!playerToArchive) {
+      return false;
+    }
+    return this.authSvc.isAuthenticatedAsOrganizer() && playerToArchive.isArchived;
   }
 }

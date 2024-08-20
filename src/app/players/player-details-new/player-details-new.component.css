@@ -1,0 +1,23 @@
+.grid-2-col {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  grid-template-rows: auto;
+  grid-gap: 0.25em;
+}
+
+.grid-2-col-item-wide {
+  /* width: 100%; */
+  grid-column: span 2;
+}
+
+.grid-2-col-item-narrow {
+  grid-column: span 1;
+}
+
+.grid-2-col-item-tall-2 {
+  grid-row: span 2;
+}
+
+.grid-2-col-item-tall-3 {
+  grid-row: span 3;
+}

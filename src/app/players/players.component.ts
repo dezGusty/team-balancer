@@ -140,4 +140,20 @@ export class PlayersComponent implements OnInit, OnDestroy {
     this.isSideNavOpen = false;
   }
 
+  onMovePlayerToArchive(player?: Player) {
+    if (!player) {
+      return;
+    }
+    this.playersSvc.movePlayerToArchive(player);
+    this.isSideNavOpen = false;
+  }
+  
+  onMovePlayerToActive(player?: Player) {
+    if (!player) {
+      return;
+    }
+    this.playersSvc.pullPlayerFromArchive(player);
+    this.isSideNavOpen = false;
+  }
+
 }

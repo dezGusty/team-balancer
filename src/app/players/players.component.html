@@ -91,6 +91,8 @@
     (click)="onSideNavOuterContainerClicked()">
     <!-- <button type="button" (click)="onCloseSideNavBtnClick()">Close</button> -->
     <app-player-details-new (onCloseBtnClicked)="onCloseSideNavBtnClick()"
+    (onMovePlayerToArchiveClicked)="onMovePlayerToArchive(selectedPlayer)"
+    (onMovePlayerToActiveClicked)="onMovePlayerToActive(selectedPlayer)"
      [player]="selectedPlayer"></app-player-details-new>
     <!-- details -->
     <!-- <app-summary (onCloseBtnClicked)="onCloseSummaryClicked()" [availableEvents]="activeGameEventTitlesSig()"></app-summary> -->
