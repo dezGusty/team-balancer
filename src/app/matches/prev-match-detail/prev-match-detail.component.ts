@@ -1,4 +1,4 @@
-import { Component, OnInit, OnDestroy } from '@angular/core';
+import { Component, OnInit, OnDestroy, input, signal } from '@angular/core';
 import { Player, getDisplayName } from '../../shared/player.model';
 import { ActivatedRoute, Params } from '@angular/router';
 import { CustomPrevGame } from '../../shared/custom-prev-game.model';
@@ -18,6 +18,12 @@ import { SmallLoadingSpinnerComponent } from 'src/app/ui/small-loading-spinner/s
   templateUrl: './prev-match-detail.component.html',
 })
 export class PrevMatchDetailComponent implements OnInit, OnDestroy {
+
+  public players$ = this.playersSvc.players$;
+
+  team1Sum = signal<number>(0);
+  team2Sum = signal<number>(0);
+
 
   public showSpinner = true;
 
@@ -260,6 +266,7 @@ export class PrevMatchDetailComponent implements OnInit, OnDestroy {
       return;
     }
 
+
     let currentMatch = await this.playersSvc.getCurrentRatingsAsync();
 
     const newPlayers = this.playersSvc.getAllPlayersUpdatedRatingsForGame(
@@ -271,6 +278,9 @@ export class PrevMatchDetailComponent implements OnInit, OnDestroy {
     let team2Sum = 0;
     this.customGame.team1.forEach(player => team1Sum += player.rating);
     this.customGame.team2.forEach(player => team2Sum += player.rating);
+
+    this.team1Sum.set(team1Sum);
+    this.team2Sum.set(team2Sum);
 
     // Prepare the difference calculation
     const updatedPlayers = this.playersSvc.getPlayersWithUpdatedRatingsForGame(this.customGame, true);
@@ -297,6 +307,7 @@ export class PrevMatchDetailComponent implements OnInit, OnDestroy {
       })
     }
 
+    console.log("*** new players", newPlayers);
     this.showSpinner = true;
 
     // Store the 'old' ratings under a different entry.
@@ -322,12 +333,36 @@ export class PrevMatchDetailComponent implements OnInit, OnDestroy {
     this.showSpinner = false;
   }
 
+  public async onResetMatchClick() {
+    if (!this.authSvc.isAuthenticatedAsOrganizer()) {
+      return;
+    }
+
+    if (!this.customGame) {
+      return;
+    }
+
+    this.showSpinner = true;
+    this.customGame.appliedResults = false;
+    this.matchResultsAppliedToRatings = false;
+    await this.matchAltSvc.saveCustomPrevMatchAsync(this.matchSearchKey, this.customGame);
+    await this.playersSvc.storeRecentMatchToParticipantsHistoryAsync(this.customGame, this.matchSearchKey);
+
+    this.showSpinner = false;
+  }
+
   public canShowStoreResultsButton(): boolean {
     return !this.matchResultsStored && this.authSvc.isAuthenticatedAsOrganizer();
   }
 
   public canShowApplyResultsButton(): boolean {
     return !this.matchResultsAppliedToRatings && this.authSvc.isAuthenticatedAsOrganizer();
+  }
+
+  public canResetResults(): boolean {
+    return this.matchResultsAppliedToRatings
+      && this.matchResultsStored
+      && this.authSvc.isAuthenticatedAsOrganizer();
   }
 
   public canChangeScore(): boolean {
