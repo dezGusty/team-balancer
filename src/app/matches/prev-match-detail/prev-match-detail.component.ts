@@ -70,7 +70,10 @@ export class PrevMatchDetailComponent implements OnInit, OnDestroy {
       if (game) {
         const updatedPlayers = this.playersSvc.getPlayersWithUpdatedRatingsForGame(game, false);
         if (updatedPlayers.length > 0) {
-          game.postResults = [];
+          if (!game.appliedResults) {
+            game.postResults = [];
+          }
+          
           updatedPlayers.forEach(player => {
             if (!game) {
               return;
