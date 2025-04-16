@@ -1,14 +1,15 @@
-import { Component, OnInit, OnDestroy, input, signal } from '@angular/core';
+import { Component, OnInit, OnDestroy, input, signal, model } from '@angular/core';
 import { Player, getDisplayName } from '../../shared/player.model';
 import { ActivatedRoute, Params } from '@angular/router';
 import { CustomPrevGame } from '../../shared/custom-prev-game.model';
-import { Subscription } from 'rxjs';
+import { combineLatest, filter, map, Subscription, switchMap, tap } from 'rxjs';
 import { PlayersService } from 'src/app/shared/players.service';
 import { MatchService } from 'src/app/shared/match.service';
 import { AuthService } from 'src/app/auth/auth.service';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { SmallLoadingSpinnerComponent } from 'src/app/ui/small-loading-spinner/small-loading-spinner.component';
+import { toObservable, toSignal } from '@angular/core/rxjs-interop';
 
 @Component({
   imports: [CommonModule, FormsModule, SmallLoadingSpinnerComponent],
@@ -30,22 +31,78 @@ export class PrevMatchDetailComponent implements OnInit, OnDestroy {
   customGame: CustomPrevGame | undefined;
   private subscriptions: Subscription[] = [];
 
-  extractedTeam1: Array<Player> = [];
-  extractedTeam2: Array<Player> = [];
+  extractedTeam1 = model<Array<Player>>([]);
+  extractedTeam2 = model<Array<Player>>([]);
 
-  public team1Score = 0;
-  public team2Score = 0;
+  public team1Score = model<number>(0);
+  public team2Score = model<number>(0);
+
+  public team1ScoreObs$ = toObservable(this.team1Score);
+  public team2ScoreObs$ = toObservable(this.team2Score);
 
   public matchResultsStored = true;
   public matchResultsAppliedToRatings = true;
 
   matchSearchKey = '';
 
+  public id = input<string>();
+  public selectedCustomGameObs$ = toObservable(this.id);
+  public selectedCustomGameNonNull$ = this.selectedCustomGameObs$.pipe(
+    filter(id => id !== undefined),
+    switchMap(id => this.matchAltSvc.getMatchForDateAsync(id ?? "")),
+    filter(game => game !== undefined),
+    tap(game => console.log("*** game", game)),
+  );
+
+  public selectedCustomGame$ = combineLatest([
+    this.selectedCustomGameNonNull$,
+    this.team1ScoreObs$,
+    this.team2ScoreObs$
+  ]).pipe(
+    map(([game, score1, score2]) => {
+      let result = game as CustomPrevGame;
+      result.scoreTeam1 = score1;
+      result.scoreTeam2 = score2;
+      return result;
+    }),
+    filter(game => game !== undefined),
+    map(game => {
+      if (game) {
+        const updatedPlayers = this.playersSvc.getPlayersWithUpdatedRatingsForGame(game, false);
+        if (updatedPlayers.length > 0) {
+          game.postResults = [];
+          updatedPlayers.forEach(player => {
+            if (!game) {
+              return;
+            }
+
+            // get old rating from team 1 or team 2, or fail
+            let oldRating = game.team1.find(x => x.id == player.id)?.rating;
+            if (!oldRating) {
+              oldRating = game.team2.find(x => x.id == player.id)?.rating;
+            }
+            if (!oldRating) {
+              return;
+            }
+
+            game.postResults.push({ id: player.id, diff: player.rating - oldRating });
+          })
+        }
+        return game;
+      } else {
+        return undefined
+      }
+    }),
+    tap(game => console.log("*** game", game)),
+  );
+
   constructor(
     private route: ActivatedRoute,
     private matchAltSvc: MatchService,
     private playersSvc: PlayersService,
-    private authSvc: AuthService) { }
+    private authSvc: AuthService) {
+    console.log("*** constructor prev-match-detail", this.id());
+  }
 
   ngOnInit() {
     this.subscriptions.push(this.route.params.subscribe(
@@ -71,21 +128,21 @@ export class PrevMatchDetailComponent implements OnInit, OnDestroy {
     this.showSpinner = false;
     if (gameForMatch) {
       this.customGame = { ...gameForMatch };
-      this.extractedTeam1 = this.customGame.team1;
-      this.extractedTeam2 = this.customGame.team2;
+      this.extractedTeam1.set(this.customGame.team1);
+      this.extractedTeam2.set(this.customGame.team2);
 
       this.matchResultsStored = this.customGame.savedResult;
       if (this.customGame.scoreTeam1 != null) {
-        this.team1Score = this.customGame.scoreTeam1;
+        this.team1Score.set(this.customGame.scoreTeam1);
       } else {
-        this.team1Score = 0;
+        this.team1Score.set(0);
         this.matchResultsStored = false;
       }
 
       if (this.customGame.scoreTeam2 != null) {
-        this.team2Score = this.customGame.scoreTeam2;
+        this.team2Score.set(this.customGame.scoreTeam2);
       } else {
-        this.team2Score = 0;
+        this.team2Score.set(0);
         this.matchResultsStored = false;
       }
 
@@ -122,6 +179,16 @@ export class PrevMatchDetailComponent implements OnInit, OnDestroy {
     return "~ 0.0";
   }
 
+  getPostMatchDiffForPlayerAndGame(player: Player, customGame: CustomPrevGame): string {
+
+    const foundObj = customGame.postResults?.find(x => x.id === player.id);
+    if (foundObj) {
+      return foundObj.diff.toFixed(3);
+    }
+
+    return "~ 0.0";
+  }
+
   onMatchSaveCliked() {
     // handle elsewhere
   }
@@ -138,8 +205,8 @@ export class PrevMatchDetailComponent implements OnInit, OnDestroy {
     // show animation
     this.showSpinner = true;
 
-    this.customGame.scoreTeam1 = this.team1Score;
-    this.customGame.scoreTeam2 = this.team2Score;
+    this.customGame.scoreTeam1 = this.team1Score();
+    this.customGame.scoreTeam2 = this.team2Score();
     this.customGame.savedResult = true;
     await this.matchAltSvc.saveCustomPrevMatchAsync(this.matchSearchKey, this.customGame);
     this.matchResultsStored = this.customGame.savedResult;
@@ -148,15 +215,19 @@ export class PrevMatchDetailComponent implements OnInit, OnDestroy {
 
 
   isGoodRatingDiff(player: Player): boolean {
-    if (!this.customGame) {
+    return this.isGoodRatingDiffForGame(player, this.customGame);
+  }
+
+  isGoodRatingDiffForGame(player: Player, customGame?: CustomPrevGame): boolean {
+
+    if (!customGame) {
       return false;
     }
 
-    if (!this.customGame.postResults) {
+    if (!customGame.postResults) {
       return false;
     }
-    const pair = this.customGame.postResults.find(x => x.id === player.id);
-    //TODO: make dependent on rating system
+    const pair = customGame.postResults.find(x => x.id === player.id);
 
     if (pair && pair.diff > 0) {
       return true;
@@ -165,14 +236,18 @@ export class PrevMatchDetailComponent implements OnInit, OnDestroy {
   }
 
   isBadRatingDiff(player: Player): boolean {
-    if (!this.customGame) {
+    return this.isBadRatingDiffForGame(player, this.customGame);
+  }
+
+  isBadRatingDiffForGame(player: Player, customGame?: CustomPrevGame): boolean {
+    if (!customGame) {
       return false;
     }
 
-    if (!this.customGame.postResults) {
+    if (!customGame.postResults) {
       return false;
     }
-    const pair = this.customGame.postResults.find(x => x.id === player.id);
+    const pair = customGame.postResults.find(x => x.id === player.id);
     //TODO: make dependent on rating system
     if (pair && pair.diff < 0) {
       return true;
@@ -266,18 +341,16 @@ export class PrevMatchDetailComponent implements OnInit, OnDestroy {
       return;
     }
 
-
     let currentMatch = await this.playersSvc.getCurrentRatingsAsync();
 
     const newPlayers = this.playersSvc.getAllPlayersUpdatedRatingsForGame(
       this.playersSvc.getPlayers(), this.customGame
     );
 
-    // store the team1 sum rating and team2 sum rating
-    let team1Sum = 0;
-    let team2Sum = 0;
-    this.customGame.team1.forEach(player => team1Sum += player.rating);
-    this.customGame.team2.forEach(player => team2Sum += player.rating);
+
+    let team1Sum = this.customGame.team1.reduce((acc, player) => acc + player.rating, 0);
+    let team2Sum = this.customGame.team2.reduce((acc, player) => acc + player.rating, 0);
+
 
     this.team1Sum.set(team1Sum);
     this.team2Sum.set(team2Sum);
