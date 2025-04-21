@@ -11,16 +11,15 @@ import { MatchService } from '../shared/match.service';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { ToastsContainer } from '../toast/toast-container.component';
-import { PlayerRoutedCardComponent } from '../players/player/player-routed-card.component';
 import { UserAuthService } from '../auth/user-auth.service';
 import { BehaviorSubject, Subject, scan, shareReplay, tap } from 'rxjs';
 import { NotificationService } from '../utils/notification/notification.service';
 import { LoadingFlagService } from '../utils/loading-flag.service';
 import { ProfileComponent } from "../header/profile/profile.component";
 @Component({
-    selector: 'app-admin',
-    standalone: true,
-    styles: [`
+  selector: 'app-admin',
+  standalone: true,
+  styles: [`
 .profile-pic {
   width: 42px;
   height: 42px;
@@ -29,15 +28,14 @@ import { ProfileComponent } from "../header/profile/profile.component";
   object-position: center;
 }
 `],
-    templateUrl: './admin.component.html',
-    changeDetection: ChangeDetectionStrategy.OnPush,
-    imports: [
-        CommonModule,
-        FormsModule,
-        PlayerRoutedCardComponent,
-        ToastsContainer,
-        ProfileComponent
-    ]
+  templateUrl: './admin.component.html',
+  changeDetection: ChangeDetectionStrategy.OnPush,
+  imports: [
+    CommonModule,
+    FormsModule,
+    ToastsContainer,
+    ProfileComponent
+  ]
 })
 export class AdminComponent implements OnInit, OnDestroy {
 

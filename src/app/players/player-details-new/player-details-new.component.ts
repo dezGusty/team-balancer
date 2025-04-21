@@ -6,11 +6,11 @@ import { Player, getDisplayName } from 'src/app/shared/player.model';
 import { PlayersService } from 'src/app/shared/players.service';
 
 @Component({
-  selector: 'app-player-details-new',
-  standalone: true,
-  imports: [FormsModule, CommonModule],
-  templateUrl: './player-details-new.component.html',
-  styleUrl: './player-details-new.component.css'
+    selector: 'app-player-details-new',
+    standalone: true,
+    imports: [FormsModule, CommonModule],
+    templateUrl: './player-details-new.component.html',
+    styleUrl: './player-details-new.component.css'
 })
 export class PlayerDetailsNewComponent {
   @Output() onCloseBtnClicked = new EventEmitter<void>();

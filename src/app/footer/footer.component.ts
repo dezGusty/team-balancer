@@ -3,12 +3,11 @@ import { ChangeDetectionStrategy, Component } from '@angular/core';
 import pkg from '../../../package.json';
 
 @Component({
-  imports: [CommonModule, DatePipe],
-  selector: 'app-footer',
-  standalone: true,
-  styles: [''],
-  templateUrl: './footer.component.html',
-  changeDetection: ChangeDetectionStrategy.OnPush
+    imports: [CommonModule, DatePipe],
+    selector: 'app-footer',
+    styles: [''],
+    templateUrl: './footer.component.html',
+    changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class FooterComponent {
   public version: string;

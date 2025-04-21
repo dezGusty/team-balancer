@@ -7,17 +7,15 @@ import { FormsModule } from '@angular/forms';
 import { UserAuthService } from '../auth/user-auth.service';
 
 @Component({
-  selector: 'app-header',
-  standalone: true,
-  templateUrl: './header.component.html',
-  styleUrls: ['./header.component.css'],
-  imports: [
-    CommonModule,
-    RouterModule,
-    FormsModule,
-    ProfileComponent
-  ],
-  // changeDetection: ChangeDetectionStrategy.OnPush
+    selector: 'app-header',
+    templateUrl: './header.component.html',
+    styleUrls: ['./header.component.css'],
+    imports: [
+        CommonModule,
+        RouterModule,
+        FormsModule,
+        ProfileComponent
+    ]
 })
 export class HeaderComponent {
   isCollapsed = true;

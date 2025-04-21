@@ -20,8 +20,6 @@ export class ProfileComponent {
     tap(flag => console.log(`[profile] loadingFlag$ = ${flag}`))
   );
 
-  // avatarElement = viewChild<ElementRef>('avatar');
-
   constructor(
     private loadingFlagService: LoadingFlagService,
     private userAuthService: UserAuthService) {
@@ -29,14 +27,7 @@ export class ProfileComponent {
   }
 
   onAvatarClick() {
-    console.log('*** avatar click', this.loadingFlagService.getRecentSources()); 
+    console.log('*** avatar click', this.loadingFlagService.getRecentSources());
   }
 
-  // showPopover() {
-  //   console.log('showPopover');
-  //   const el = this.avatarElement()?.nativeElement;
-
-  //   el.togglePopover();
-
-  // }
 }

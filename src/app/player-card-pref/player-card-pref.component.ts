@@ -4,14 +4,13 @@ import { PlayerMiniCardComponent } from '../players/player-mini-card/player-mini
 import { Player } from '../shared/player.model';
 
 @Component({
-  imports: [
-    CommonModule,
-    PlayerMiniCardComponent
-  ],
-  selector: 'app-player-card-pref',
-  standalone: true,
-  styles: [''],
-  templateUrl: './player-card-pref.component.html',
+    imports: [
+        CommonModule,
+        PlayerMiniCardComponent
+    ],
+    selector: 'app-player-card-pref',
+    styles: [''],
+    templateUrl: './player-card-pref.component.html'
 })
 export class PlayerCardPrefComponent implements OnInit {
   @Input() player: Player | undefined;

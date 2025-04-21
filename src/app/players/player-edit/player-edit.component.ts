@@ -6,11 +6,10 @@ import { PlayersService } from '../../shared/players.service';
 import { CommonModule } from '@angular/common';
 
 @Component({
-  imports: [CommonModule, FormsModule],
-  selector: 'app-player-edit',
-  standalone: true,
-  styleUrls: ['./player-edit.component.css'],
-  templateUrl: './player-edit.component.html',
+    imports: [CommonModule, FormsModule],
+    selector: 'app-player-edit',
+    styleUrls: ['./player-edit.component.css'],
+    templateUrl: './player-edit.component.html'
 })
 export class PlayerEditComponent implements OnInit {
   @Input() player: Player | undefined;

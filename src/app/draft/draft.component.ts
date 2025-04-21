@@ -18,22 +18,21 @@ import { ToastsContainer } from 'src/app/toast/toast-container.component';
 // import { NgbTooltipModule } from '@ng-bootstrap/ng-bootstrap';
 
 @Component({
-  imports: [
-    CommonModule,
-    CopyClipboardDirective,
-    FormsModule,
-    // NgbTooltipModule,
-    NgFor,
-    PlayerCardComponent,
-    PlayerFilterPipe,
-    RouterModule,
-    SmallLoadingSpinnerComponent,
-    ToastsContainer,
-  ],
-  selector: 'app-draft',
-  standalone: true,
-  styles: [''],
-  templateUrl: './draft.component.html',
+    imports: [
+        CommonModule,
+        CopyClipboardDirective,
+        FormsModule,
+        // NgbTooltipModule,
+        NgFor,
+        PlayerCardComponent,
+        PlayerFilterPipe,
+        RouterModule,
+        SmallLoadingSpinnerComponent,
+        ToastsContainer,
+    ],
+    selector: 'app-draft',
+    styles: [''],
+    templateUrl: './draft.component.html'
 })
 export class DraftComponent implements OnInit, OnDestroy {
   protected searchedName: string = '';

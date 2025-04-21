@@ -18,11 +18,9 @@ import { SummaryComponent } from "../summary/summary.component";
   styleUrl: 'game-events.component.css',
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
-    MatchDetailsComponent,
     CommonModule,
     FormsModule,
     RouterModule,
-    SmallLoadingSpinnerComponent,
     GameeventdraftComponent,
     SummaryComponent
   ]

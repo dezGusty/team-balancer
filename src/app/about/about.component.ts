@@ -1,14 +1,13 @@
-import { DatePipe } from '@angular/common';
 import { ChangeDetectionStrategy, Component, OnInit } from '@angular/core';
 import pkg from '../../../package.json';
 
 @Component({
-  imports: [DatePipe],
-  selector: 'app-about',
-  standalone: true,
-  styles: [''],
-  templateUrl: './about.component.html',
-  changeDetection: ChangeDetectionStrategy.OnPush
+    imports: [],
+    selector: 'app-about',
+    standalone: true,
+    styles: [''],
+    templateUrl: './about.component.html',
+    changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class AboutComponent implements OnInit {
 

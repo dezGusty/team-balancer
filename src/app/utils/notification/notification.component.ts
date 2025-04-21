@@ -3,18 +3,17 @@ import { NotificationService } from './notification.service';
 import { CommonModule } from '@angular/common';
 
 @Component({
-  selector: 'app-notification',
-  standalone: true,
-  imports: [CommonModule],
-  changeDetection: ChangeDetectionStrategy.OnPush,
-  template: `
+    selector: 'app-notification',
+    imports: [CommonModule],
+    changeDetection: ChangeDetectionStrategy.OnPush,
+    template: `
 @for (notification of this.notifications$ | async; track $index) {
 <div class='notification' [ngClass]='this.cssClassForIndex($index)'>
   {{notification.message}}
 </div>
 }
 `,
-  styles: `
+    styles: `
 .notification {
   position: absolute;
   background: #448888;
@@ -35,7 +34,7 @@ import { CommonModule } from '@angular/common';
 .notification-8 {bottom: 36em;}
 .notification-9 {bottom: 40em;}
 
-`,
+`
 })
 export class NotificationComponent {
 

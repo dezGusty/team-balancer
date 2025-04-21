@@ -3,11 +3,10 @@ import { Component, OnInit, Input, Output, EventEmitter } from '@angular/core';
 import { Player, getDisplayName } from 'src/app/shared/player.model';
 
 @Component({
-  imports: [CommonModule],
-  selector: 'app-match-versus',
-  standalone: true,
-  styles: [''],
-  templateUrl: './match-versus.component.html',
+    imports: [CommonModule],
+    selector: 'app-match-versus',
+    styles: [''],
+    templateUrl: './match-versus.component.html'
 })
 export class MatchVersusComponent implements OnInit {
 

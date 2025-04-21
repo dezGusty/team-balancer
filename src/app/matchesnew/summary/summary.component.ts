@@ -17,12 +17,12 @@ export interface TransposeData {
 }
 
 @Component({
-  selector: 'app-summary',
-  standalone: true,
-  imports: [AsyncPipe],
-  templateUrl: './summary.component.html',
-  styleUrl: './summary.component.css',
-  changeDetection: ChangeDetectionStrategy.OnPush,
+    selector: 'app-summary',
+    standalone: true,
+    imports: [AsyncPipe],
+    templateUrl: './summary.component.html',
+    styleUrl: './summary.component.css',
+    changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class SummaryComponent {
   @Output() onCloseBtnClicked = new EventEmitter<void>();

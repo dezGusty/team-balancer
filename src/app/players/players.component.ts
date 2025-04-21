@@ -18,21 +18,20 @@ import { PlayerDetailsNewComponent } from "./player-details-new/player-details-n
 import { PlayerDetailsComponent } from "./player-details/player-details.component";
 
 @Component({
-    selector: 'app-players',
-    standalone: true,
-    styles: [''],
-    templateUrl: './players.component.html',
-    imports: [
-        CommonModule,
-        RouterModule,
-        ToastsContainer,
-        SmallLoadingSpinnerComponent,
-        FormsModule,
-        PlayerFilterPipe,
-        PlayerRoutedCardComponent,
-        PlayerDetailsNewComponent,
-        PlayerDetailsComponent
-    ]
+  selector: 'app-players',
+  standalone: true,
+  styles: [''],
+  templateUrl: './players.component.html',
+  imports: [
+    CommonModule,
+    RouterModule,
+    ToastsContainer,
+    SmallLoadingSpinnerComponent,
+    FormsModule,
+    PlayerFilterPipe,
+    PlayerRoutedCardComponent,
+    PlayerDetailsNewComponent
+  ]
 })
 
 export class PlayersComponent implements OnInit, OnDestroy {
@@ -147,7 +146,7 @@ export class PlayersComponent implements OnInit, OnDestroy {
     this.playersSvc.movePlayerToArchive(player);
     this.isSideNavOpen = false;
   }
-  
+
   onMovePlayerToActive(player?: Player) {
     if (!player) {
       return;

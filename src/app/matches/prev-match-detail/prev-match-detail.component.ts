@@ -12,11 +12,11 @@ import { SmallLoadingSpinnerComponent } from 'src/app/ui/small-loading-spinner/s
 import { toObservable, toSignal } from '@angular/core/rxjs-interop';
 
 @Component({
-  imports: [CommonModule, FormsModule, SmallLoadingSpinnerComponent],
   selector: 'app-prev-match-detail',
   standalone: true,
+  imports: [CommonModule, FormsModule, SmallLoadingSpinnerComponent],
   styleUrls: ['./prev-match-detail.component.css'],
-  templateUrl: './prev-match-detail.component.html',
+  templateUrl: './prev-match-detail.component.html'
 })
 export class PrevMatchDetailComponent implements OnInit, OnDestroy {
 

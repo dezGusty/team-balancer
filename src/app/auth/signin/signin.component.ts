@@ -9,7 +9,7 @@ import { UserAuthService } from '../user-auth.service';
   standalone: true,
   selector: 'app-signin',
   styles: [''],
-  templateUrl: './signin.component.html',
+  templateUrl: './signin.component.html'
 })
 export class SigninComponent implements OnInit {
 

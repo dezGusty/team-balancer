@@ -6,11 +6,10 @@ import { Match } from 'src/app/shared/match.model';
 import { MatchService } from 'src/app/shared/match.service';
 
 @Component({
-  imports: [CommonModule, RouterModule],
-  selector: 'app-recent-matches',
-  standalone: true,
-  styleUrls: ['./recent-matches.component.css'],
-  templateUrl: './recent-matches.component.html',
+    imports: [CommonModule, RouterModule],
+    selector: 'app-recent-matches',
+    styleUrls: ['./recent-matches.component.css'],
+    templateUrl: './recent-matches.component.html'
 })
 export class RecentMatchesComponent implements OnInit, OnDestroy {
 

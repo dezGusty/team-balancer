@@ -8,14 +8,14 @@ import { MatchVersusComponent } from '../match-versus/match-versus.component';
 import { MatchStorageComponent } from '../match-storage/match-storage.component';
 
 @Component({
-  imports: [
-    CommonModule,
-    MatchStorageComponent,
-    MatchVersusComponent],
-  selector: 'app-match-combos',
-  standalone: true,
-  styleUrls: ['./match-combos.component.css'],
-  templateUrl: './match-combos.component.html',
+    imports: [
+        CommonModule,
+        MatchStorageComponent,
+        MatchVersusComponent
+    ],
+    selector: 'app-match-combos',
+    styleUrls: ['./match-combos.component.css'],
+    templateUrl: './match-combos.component.html'
 })
 export class MatchCombosComponent implements OnInit, OnDestroy {
   @Input() playerList: Player[] = [];

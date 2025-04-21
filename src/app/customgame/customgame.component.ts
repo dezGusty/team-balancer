@@ -15,18 +15,17 @@ import { PlayerCardPrefComponent } from '../player-card-pref/player-card-pref.co
 import { PlayerFilterPipe } from '../matches/player-filter.pipe';
 
 @Component({
-  imports: [
-    CommonModule,
-    FormsModule,
-    MatchCombosComponent,
-    PlayerCardComponent,
-    PlayerCardPrefComponent,
-    PlayerFilterPipe
-  ],
-  selector: 'app-customgame',
-  standalone: true,
-  styles: [''],
-  templateUrl: './customgame.component.html',
+    imports: [
+        CommonModule,
+        FormsModule,
+        MatchCombosComponent,
+        PlayerCardComponent,
+        PlayerCardPrefComponent,
+        PlayerFilterPipe
+    ],
+    selector: 'app-customgame',
+    styles: [''],
+    templateUrl: './customgame.component.html'
 })
 export class CustomgameComponent implements OnInit, OnDestroy {
 

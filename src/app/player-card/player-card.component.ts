@@ -4,12 +4,11 @@ import { PlayerMiniCardComponent } from '../players/player-mini-card/player-mini
 import { Player } from '../shared/player.model';
 
 @Component({
-  imports: [CommonModule, PlayerMiniCardComponent],
-  selector: 'app-player-card',
-  standalone: true,
-  styles: [''],
-  templateUrl: './player-card.component.html',
-  changeDetection: ChangeDetectionStrategy.OnPush,
+    imports: [CommonModule, PlayerMiniCardComponent],
+    selector: 'app-player-card',
+    styles: [''],
+    templateUrl: './player-card.component.html',
+    changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class PlayerCardComponent {
   @Input() player: Player | undefined;

@@ -8,17 +8,16 @@ import { HeaderComponent } from './header/header.component';
 import { NotificationComponent } from './utils/notification/notification.component';
 
 @Component({
-  imports: [
-    CommonModule,
-    HeaderComponent,
-    FooterComponent,
-    RouterModule,
-    NotificationComponent
-  ],
-  selector: 'app-root',
-  standalone: true,
-  styles: [''],
-  template: `
+    imports: [
+        CommonModule,
+        HeaderComponent,
+        FooterComponent,
+        RouterModule,
+        NotificationComponent
+    ],
+    selector: 'app-root',
+    styles: [''],
+    template: `
 <div class="main-layout">
   <app-header />
   <div class="gus-page-container">
@@ -27,7 +26,7 @@ import { NotificationComponent } from './utils/notification/notification.compone
   <app-footer/>
   <app-notification/>
 </div>
-`,
+`
 })
 export class AppComponent implements OnInit, OnDestroy {
   // keep refs to subscriptions to be able to unsubscribe later

@@ -15,12 +15,12 @@ export interface Selectable<T> {
 
 
 @Component({
-  selector: 'app-gameeventdraft',
-  standalone: true,
-  imports: [AsyncPipe, FormsModule],
-  templateUrl: './gameeventdraft.component.html',
-  styleUrl: './gameeventdraft.component.css',
-  changeDetection: ChangeDetectionStrategy.OnPush
+    selector: 'app-gameeventdraft',
+    standalone: true,
+    imports: [AsyncPipe, FormsModule],
+    templateUrl: './gameeventdraft.component.html',
+    styleUrl: './gameeventdraft.component.css',
+    changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class GameeventdraftComponent {
 

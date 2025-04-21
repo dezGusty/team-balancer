@@ -3,14 +3,14 @@ import { Component, OnInit, Input, ChangeDetectionStrategy } from '@angular/core
 import { Player, getDisplayName } from 'src/app/shared/player.model';
 
 @Component({
-  imports: [
-    CommonModule
-  ],
-  selector: 'app-player-mini-card',
-  standalone: true,
-  styles: [''],
-  templateUrl: './player-mini-card.component.html',
-  changeDetection: ChangeDetectionStrategy.OnPush,
+    imports: [
+        CommonModule
+    ],
+    selector: 'app-player-mini-card',
+    standalone: true,
+    styles: [''],
+    templateUrl: './player-mini-card.component.html',
+    changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class PlayerMiniCardComponent implements OnInit {
   @Input() player: Player | undefined;

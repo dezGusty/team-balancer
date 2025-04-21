@@ -20,12 +20,11 @@ export class PlayerDraftAction {
 }
 
 @Component({
-  selector: 'app-draft-new',
-  changeDetection: ChangeDetectionStrategy.OnPush,
-  standalone: true,
-  templateUrl: './draft-new.component.html',
-  styleUrl: './draft-new.component.css',
-  imports: [CommonModule, FormsModule, PlayerCardComponent]
+    selector: 'app-draft-new',
+    changeDetection: ChangeDetectionStrategy.OnPush,
+    templateUrl: './draft-new.component.html',
+    styleUrl: './draft-new.component.css',
+    imports: [CommonModule, FormsModule, PlayerCardComponent]
 })
 export class DraftNewComponent {
 

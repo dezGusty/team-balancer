@@ -7,11 +7,11 @@ import { AuthService } from 'src/app/auth/auth.service';
 import { CommonModule } from '@angular/common';
 
 @Component({
-  imports: [CommonModule],
-  selector: 'app-player-details',
-  standalone: true,
-  styles: [''],
-  templateUrl: './player-details.component.html',
+    selector: 'app-player-details',
+    standalone: true,
+    imports: [CommonModule],
+    styles: [''],
+    templateUrl: './player-details.component.html'
 })
 export class PlayerDetailsComponent implements OnInit {
   player: Player | undefined;

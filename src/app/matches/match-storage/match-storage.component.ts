@@ -9,16 +9,15 @@ import { FormsModule } from '@angular/forms';
 import { NotificationService } from 'src/app/utils/notification/notification.service';
 
 @Component({
-  imports: [
-    CommonModule,
-    CopyClipboardDirective,
-    FormsModule
-    // ,NgbTooltipModule
-  ],
-  standalone: true,
-  selector: 'app-match-storage',
-  templateUrl: './match-storage.component.html',
-  styles: ['']
+    imports: [
+        CommonModule,
+        CopyClipboardDirective,
+        FormsModule
+        // ,NgbTooltipModule
+    ],
+    selector: 'app-match-storage',
+    templateUrl: './match-storage.component.html',
+    styles: ['']
 })
 export class MatchStorageComponent implements OnInit {
 

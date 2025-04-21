@@ -13,12 +13,11 @@ import { tap } from 'rxjs';
   standalone: true,
   imports: [
     CommonModule,
-    FormsModule,
-    SmallLoadingSpinnerComponent
+    FormsModule
   ],
   templateUrl: './details.component.html',
   styles: [''],
-  changeDetection: ChangeDetectionStrategy.OnPush,
+  changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class MatchDetailsComponent {
 
