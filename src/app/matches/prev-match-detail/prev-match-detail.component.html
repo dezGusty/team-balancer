@@ -1,7 +1,8 @@
 <div class="container px-0">
-  <app-small-loading-spinner *ngIf="showSpinner"></app-small-loading-spinner>
-  <div *ngIf="!showSpinner">
-    <div class="row mx-0">
+  @if (this.showSpinner) {
+    <app-small-loading-spinner></app-small-loading-spinner>
+  } @else {
+    <!-- <div class="row mx-0">
       <div class="col-12">
         Date 🗓️: {{matchSearchKey}}
       </div>
@@ -31,12 +32,11 @@
           </li>
         </ul>
       </div>
-    </div>
+    </div> -->
 
     @if (this.selectedCustomGame$|async; as selectedCustomGame) {
     @if (selectedCustomGame) {
-      <div class="custom-game-details">
-        <h3>Custom Game Details</h3>
+      <div class="row mx-0">
         <div class="col-12">
           Date 🗓️: {{this.id()}}
         </div>
@@ -74,7 +74,6 @@
   
       </div>
     }
-    
     }
 
 
@@ -152,7 +151,6 @@
       }
 
     </div>
-
-
-  </div>
+  }
+  
 </div>

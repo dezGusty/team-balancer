@@ -68,32 +68,9 @@ export class PrevMatchDetailComponent implements OnInit, OnDestroy {
     filter(game => game !== undefined),
     map(game => {
       if (game) {
-        const updatedPlayers = this.playersSvc.getPlayersWithUpdatedRatingsForGame(game, false);
-        if (updatedPlayers.length > 0) {
-          if (!game.appliedResults) {
-            game.postResults = [];
-          }
-          
-          updatedPlayers.forEach(player => {
-            if (!game) {
-              return;
-            }
-
-            // get old rating from team 1 or team 2, or fail
-            let oldRating = game.team1.find(x => x.id == player.id)?.rating;
-            if (!oldRating) {
-              oldRating = game.team2.find(x => x.id == player.id)?.rating;
-            }
-            if (!oldRating) {
-              return;
-            }
-
-            game.postResults.push({ id: player.id, diff: player.rating - oldRating });
-          })
-        }
-        return game;
+        return this.processGamePlayerRatings(game);
       } else {
-        return undefined
+        return undefined;
       }
     }),
     tap(game => console.log("*** game", game)),
@@ -105,6 +82,33 @@ export class PrevMatchDetailComponent implements OnInit, OnDestroy {
     private playersSvc: PlayersService,
     private authSvc: AuthService) {
     console.log("*** constructor prev-match-detail", this.id());
+  }
+
+  private processGamePlayerRatings(game: CustomPrevGame): CustomPrevGame {
+    const updatedPlayers = this.playersSvc.getPlayersWithUpdatedRatingsForGame(game, false);
+    if (updatedPlayers.length > 0) {
+      if (!game.appliedResults) {
+        game.postResults = [];
+      }
+
+      updatedPlayers.forEach(player => {
+        if (!game) {
+          return;
+        }
+
+        // get old rating from team 1 or team 2, or fail
+        let oldRating = game.team1.find(x => x.id == player.id)?.rating;
+        if (!oldRating) {
+          oldRating = game.team2.find(x => x.id == player.id)?.rating;
+        }
+        if (!oldRating) {
+          return;
+        }
+
+        game.postResults.push({ id: player.id, diff: player.rating - oldRating });
+      });
+    }
+    return game;
   }
 
   ngOnInit() {
