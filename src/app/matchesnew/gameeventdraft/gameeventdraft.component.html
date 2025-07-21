@@ -48,10 +48,16 @@
 
     Selected players
     <div class="selectedplayers">
-      @for (player of (this.selectedMatchContentWithHighlights$ | async); track $index) {
-      <div class="gus-button gus-border player-card-grad gus-hoverable" [class.highlighted]=player.selected
-        (click)="this.onClickToRemovePlayerById(player.data)">{{$index+1}}. {{player.data.name}}
-        {{player.data.stars > 0? '⭐' : ''}}
+      @for (player of (this.selectedMatchContentWithHighlights$ | async); track $index ) {
+      <div class="player-with-reserve-marker">
+        <div class="gus-button gus-border gus-hoverable" (click)="this.onToggleReserve(player.data)">
+          {{!player.data.reserve ? '⬇️' : '🔼'}}
+        </div>
+        <div class="gus-button gus-border player-card-grad gus-hoverable" [class.highlighted]=player.selected
+          (click)="this.onClickToRemovePlayerById(player.data)">
+          {{$index+1}}. {{player.data.name}}
+          {{player.data.stars > 0? '⭐' : ''}}
+        </div>
       </div>
       }
     </div>

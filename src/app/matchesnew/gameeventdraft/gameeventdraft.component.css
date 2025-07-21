@@ -38,6 +38,12 @@
   grid-template-columns: repeat(auto-fill, minmax(10em, 1fr));
 }
 
+.player-with-reserve-marker {
+  display: flex;
+  flex-direction: row;
+  background-color: transparent;
+}
+
 .draftPlayersArea {
   display: flex;
   flex-direction: row;

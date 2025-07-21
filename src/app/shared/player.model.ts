@@ -10,11 +10,13 @@ export class Player {
     public mostRecentMatches: Array<{ date: string, diff: number }> = new Array<{ date: string, diff: number }>();
     public isArchived = false;
     public stars: number = 0;
+    public reserve: boolean = false;
 
     constructor(public id: number, public name: string) {
         this.rating = 6;
         this.affinity = 0;
         this.stars = 0;
+        this.reserve = false;
     }
 }
 

@@ -106,6 +106,7 @@ export class GameeventdraftComponent {
   protected readonly selectedMatchContentWithHighlights$ = combineLatest(
     [this.gameEventsService.selectedMatchContent$, this.filterByContentSubject$, this.players$]).pipe(
       map(([selectedMatchContent, filterByContent, players]) => {
+        console.log('selectedMatchContentWithHighlights$', selectedMatchContent);
         if (filterByContent === '') {
           return selectedMatchContent.registeredPlayers.map(player => {
             return {
@@ -176,6 +177,12 @@ export class GameeventdraftComponent {
   onClickToRemovePlayerById(playerWithId: PlayerWithId) {
     console.log('Removing player from match', playerWithId);
     this.gameEventsService.removePlayerFromMatch(playerWithId);
+  }
+
+  onToggleReserve(playerWithId: PlayerWithIdAndStars) {
+    console.log('Toggle player reserve', playerWithId);
+    // playerWithId.reserve = !playerWithId.reserve;
+    this.gameEventsService.makePlayerReserve(playerWithId);
   }
 
   onToggleAutoSaveChange(checkboxValue: boolean) {

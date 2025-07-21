@@ -5,7 +5,7 @@ import { doc } from 'firebase/firestore';
 import { BehaviorSubject, Observable, Subject, Subscription, catchError, filter, finalize, map, merge, mergeAll, of, shareReplay, switchMap, take, tap, throwError, withLatestFrom } from 'rxjs';
 import { MatchDateTitle } from '../match-date-title';
 import { LoadingFlagService } from 'src/app/utils/loading-flag.service';
-import { CreateGameRequest, GameEventDBData, GameEventData, GameNamesList, PlayerWithId, createGameEventDataFromRequest, getEventNameForRequest } from './create-game-request.model';
+import { CreateGameRequest, GameEventDBData, GameEventData, GameNamesList, PlayerWithId, PlayerWithIdAndStars, createGameEventDataFromRequest, getEventNameForRequest } from './create-game-request.model';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { Result } from '../result';
 import { NotificationService } from 'src/app/utils/notification/notification.service';
@@ -181,12 +181,13 @@ export class GameEventsService implements OnDestroy {
           matchDate: gameEventDBData.matchDate,
           name: gameEventDBData.name,
           label: MatchDateTitle.fromString(gameEventDBData.name).suffix ?? "",
-          registeredPlayers: gameEventDBData.registeredPlayerIds.map(id => {
+          registeredPlayers: gameEventDBData.registeredPlayerIds.map((id, index) => {
             return {
               id: id,
               name: getDisplayName(players.find(p => p.id === id) ?? Player.EMPTY),
               stars: players.find(p => p.id === id)?.stars ?? 0,
-            };
+              reserve: gameEventDBData.playerReserveStatus ? gameEventDBData.playerReserveStatus[index] ?? false : false
+            } as PlayerWithIdAndStars;
           })
         };
         return result;
@@ -213,10 +214,12 @@ export class GameEventsService implements OnDestroy {
     map(([player, selectedMatchContent]) => {
       let newRegisteredPlayers = [...selectedMatchContent.registeredPlayers, { id: player.id, name: player.name }];
       let newRegisteredPlayerIds = newRegisteredPlayers.map(p => p.id);
+      let newPlayerReserveStatus = selectedMatchContent.registeredPlayers.map(p => p.reserve);
       let newMatchContent: GameEventDBData = {
         matchDate: selectedMatchContent.matchDate,
         name: selectedMatchContent.name,
-        registeredPlayerIds: newRegisteredPlayerIds
+        registeredPlayerIds: newRegisteredPlayerIds,
+        playerReserveStatus: newPlayerReserveStatus
       };
       return newMatchContent;
     }),
@@ -247,10 +250,12 @@ export class GameEventsService implements OnDestroy {
     map(([player, selectedMatchContent]) => {
       let newRegisteredPlayers = selectedMatchContent.registeredPlayers.filter(p => p.id !== player.id);
       let newRegisteredPlayerIds = newRegisteredPlayers.map(p => p.id);
+      let newPlayerReserveStatus = newRegisteredPlayers.map(p => p.reserve);
       let newMatchContent: GameEventDBData = {
         matchDate: selectedMatchContent.matchDate,
         name: selectedMatchContent.name,
-        registeredPlayerIds: newRegisteredPlayerIds
+        registeredPlayerIds: newRegisteredPlayerIds,
+        playerReserveStatus: newPlayerReserveStatus
       };
       return newMatchContent;
     }),
@@ -286,19 +291,81 @@ export class GameEventsService implements OnDestroy {
       let randomizationFactor = Math.random() - 0.5;
       // Pass a random value to the sort function. This will shuffle the order of the players.
       let newRegisteredPlayers = selectedMatchContent.registeredPlayers.sort((a, b) => {
-        // sort by start first
+        // sort by reserve status first
+        if (a.reserve && !b.reserve) return 1;
+        if (!a.reserve && b.reserve) return -1;
+
+        // sort by stars next
         if (a.stars > b.stars) return -1;
         if (a.stars < b.stars) return 1;
+
         // then by randomization factor
         return Math.random() - randomizationFactor - 0.25;
       });
 
       let newRegisteredPlayerIds = newRegisteredPlayers.map(p => p.id);
+      let newPlayerReserveStatus = newRegisteredPlayers.map(p => p.reserve);
       let newMatchContent: GameEventDBData = {
         matchDate: selectedMatchContent.matchDate,
         name: selectedMatchContent.name,
-        registeredPlayerIds: newRegisteredPlayerIds
+        registeredPlayerIds: newRegisteredPlayerIds,
+        playerReserveStatus: newPlayerReserveStatus
       };
+      return newMatchContent;
+    }),
+    withLatestFrom(this.autoSaveGameEventSubject$),
+    switchMap(([newMatchContent, autoSave]) => {
+      if (autoSave) {
+        this.loadingFlagService.setLoadingFlag(true);
+        return setDoc(
+          doc(this.firestore, `games/${newMatchContent.name}`),
+          newMatchContent,
+          { merge: true }
+        );
+      }
+      // if not auto-saving, store the data in another subject
+      this.nextSaveDataSubject$.next(newMatchContent);
+      return of();
+    }),
+    tap(_ => this.updatedFireData$.next(true)),
+    tap(_ => this.loadingFlagService.setLoadingFlag(false)),
+    catchError((err) => {
+      console.warn("randomize player order encountered issue");
+      return of(null);
+    })
+  );
+
+  reapplyOrderAccordingToReserveStatusSubject$ = new Subject<PlayerWithIdAndStars>();
+  reapplyOrderAccordingToReserveStatus$ = this.reapplyOrderAccordingToReserveStatusSubject$.asObservable().pipe(
+    withLatestFrom(this.selectedMatchContent$),
+    tap(([_, selectedMatchContent]) => {
+      console.log('reapplying order for reserve', selectedMatchContent);
+    }),
+    map(([player, selectedMatchContent]) => {
+      let newRegisteredPlayers = selectedMatchContent.registeredPlayers.map(p => {
+        if (p.id === player.id) {
+          return { ...p, reserve: !player.reserve }; // toggle reserve status
+        }
+        return p;
+      });
+
+      // Reorder the players based on their reserve status.
+      // Players with reserve status should be at the end of the list.
+      newRegisteredPlayers = selectedMatchContent.registeredPlayers.sort((a, b) => {
+        if (a.reserve && !b.reserve) return 1; // a is reserve, b is not
+        if (!a.reserve && b.reserve) return -1; // a is not reserve, b is
+        return 0; // equal reserve status
+      });
+
+      let newRegisteredPlayerIds = newRegisteredPlayers.map(p => p.id);
+      let newPlayerReserveStatus = newRegisteredPlayers.map(p => p.reserve);
+      let newMatchContent: GameEventDBData = {
+        matchDate: selectedMatchContent.matchDate,
+        name: selectedMatchContent.name,
+        registeredPlayerIds: newRegisteredPlayerIds,
+        playerReserveStatus: newPlayerReserveStatus
+      };
+      console.log('reapplyOrderAccordingToReserveStatus$', newMatchContent);
       return newMatchContent;
     }),
     withLatestFrom(this.autoSaveGameEventSubject$),
@@ -417,6 +484,11 @@ export class GameEventsService implements OnDestroy {
     this.removePlayerFromMatchSubject$.next(playerWithId);
   }
 
+  makePlayerReserve(playerWithId: PlayerWithIdAndStars) {
+    playerWithId.reserve = !playerWithId.reserve; // toggle reserve status
+    this.reapplyOrderAccordingToReserveStatusSubject$.next(playerWithId);
+  }
+
   public randomizeOrder() {
     this.randomizeOrderSubject$.next();
   }
@@ -459,6 +531,7 @@ export class GameEventsService implements OnDestroy {
     this.subscriptions.push(this.triggerSaveData$.subscribe());
     this.subscriptions.push(this.saveRaffleData$.subscribe());
     this.subscriptions.push(this.saveToDraft$.subscribe());
+    this.subscriptions.push(this.reapplyOrderAccordingToReserveStatus$.subscribe());
   }
 
   ngOnDestroy(): void {

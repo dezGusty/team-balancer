@@ -73,14 +73,16 @@ export class SummaryComponent {
           matchDate: singleGame.matchDate,
           name: singleGame.name,
           label: MatchDateTitle.fromString(singleGame.name).suffix ?? "",
-          registeredPlayers: singleGame.registeredPlayerIds.map(id => {
+          registeredPlayers: singleGame.registeredPlayerIds.map((id, index) => {
             return {
               id: id,
               name: getDisplayName(players.find(p => p.id === id) ?? Player.EMPTY),
               stars: players.find(p => p.id === id)?.stars ?? 0,
+              reserve: singleGame.playerReserveStatus ? singleGame.playerReserveStatus[index] ?? false : false
             };
           })
         };
+        console.log("activeMatchPlus$", result);
         return result;
       } catch (err) {
         console.warn("read game event encountered issue");
@@ -106,7 +108,9 @@ export class SummaryComponent {
       const sysNewline = '\n';
       header.push('📅' + match.matchDate + ' ' + sysNewline + '🕒' + match.label);
       match.registeredPlayers.forEach(player => {
-        cells.push(player.name + ' ' + (player.stars > 0 ? '⭐' : ''));
+        cells.push(
+          player.name + ' ' + (player.stars > 0 ? '⭐' : '') + (player.reserve ? ' (rez.)' : '')
+        );
       });
       lines.push(cells);
     });
@@ -216,7 +220,11 @@ export class SummaryComponent {
     localMatches.forEach(match => {
       result += '📅' + match.matchDate + ' ' + '🕒' + match.label + '\n';
       match.registeredPlayers.forEach((player, index) => {
-        result += '' + (index + 1) + '. ' + player.name + ' ' + (player.stars > 0 ? '⭐' : '') + '\n';
+        result += '' + (index + 1) + '. ' 
+          + player.name + ' ' 
+          + (player.stars > 0 ? '⭐' : '') 
+          + (player.reserve ? ' (rez.)' : '')
+          + '\n';
       });
       result += '\n';
     });
