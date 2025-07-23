@@ -1,14 +1,12 @@
-import { ChangeDetectionStrategy, Component, ElementRef, EventEmitter, Output, computed, effect, inject, input, model, viewChild } from '@angular/core';
+import { ChangeDetectionStrategy, Component, EventEmitter, Output, computed, inject, input } from '@angular/core';
 import { MatchDateTitle } from '../history/match-date-title';
 import { GameEventsService } from '../history/data-access/game-events.service';
 import { toObservable, toSignal } from '@angular/core/rxjs-interop';
-import { Observable, Subject, combineLatest, combineLatestAll, concat, concatAll, concatMap, filter, forkJoin, from, map, mergeAll, mergeMap, of, scan, shareReplay, startWith, switchMap, tap, withLatestFrom } from 'rxjs';
-import { Firestore, doc, docData } from '@angular/fire/firestore';
+import { combineLatest, forkJoin, map, shareReplay, switchMap, tap, withLatestFrom } from 'rxjs';
 import { AsyncPipe } from '@angular/common';
-import { GameEventDBData, GameEventData } from '../history/data-access/create-game-request.model';
+import { GameEventData } from '../history/data-access/create-game-request.model';
 import { PlayersService } from 'src/app/shared/players.service';
 import { Player, getDisplayName } from 'src/app/shared/player.model';
-import { Result } from '../history/result';
 import { NotificationService } from 'src/app/utils/notification/notification.service';
 
 export interface TransposeData {
@@ -27,7 +25,6 @@ export interface TransposeData {
 export class SummaryComponent {
   @Output() onCloseBtnClicked = new EventEmitter<void>();
   private gameEventsService: GameEventsService = inject(GameEventsService);
-  private firestore: Firestore = inject(Firestore);
   private notificationService = inject(NotificationService);
   private playersService: PlayersService = inject(PlayersService);
 
@@ -40,8 +37,6 @@ export class SummaryComponent {
   }
 
   private readonly players$ = this.playersService.players$;
-
-  tab1 = viewChild<ElementRef>('tab1');
 
   availableEvents = input.required<MatchDateTitle[]>();
 
@@ -131,37 +126,6 @@ export class SummaryComponent {
 
     return { header, players: lines } as TransposeData;
   });
-
-
-
-  selectTable() {
-    const el = this.tab1()?.nativeElement;
-
-    let range: Range;
-    let sel: Selection | null;
-    if (document.createRange && window.getSelection) {
-      range = document.createRange();
-      sel = window.getSelection();
-      if (!sel) {
-        return;
-      }
-      sel.removeAllRanges();
-      try {
-        range.selectNodeContents(el);
-        sel.addRange(range);
-      } catch (e) {
-        range.selectNode(el);
-        sel.addRange(range);
-      }
-    }
-  }
-
-  onCopyBtnClick() {
-    this.selectTable();
-    // TODO(Augustin Preda, 2024-04-22): Use the Clipboard API when it is available in all browsers.
-    document.execCommand('copy');
-    this.notificationService.show('Copied to clipboard');
-  }
 
   private createTableInMemory(): string {
     const dataSource = this.transposedSignal();
