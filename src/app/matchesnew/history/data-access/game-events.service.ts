@@ -212,9 +212,14 @@ export class GameEventsService implements OnDestroy {
   addPlayerToMatch$ = this.addPlayerToMatchSubject$.asObservable().pipe(
     withLatestFrom(this.selectedMatchContent$),
     map(([player, selectedMatchContent]) => {
-      let newRegisteredPlayers = [...selectedMatchContent.registeredPlayers, { id: player.id, name: player.name }];
+      let newRegisteredPlayers = [...selectedMatchContent.registeredPlayers, { id: player.id, name: player.name, stars: player.stars, reserve: false } as PlayerWithIdAndStars];
+      newRegisteredPlayers = newRegisteredPlayers.sort((a, b) => {
+        if (a.reserve && !b.reserve) return 1; // a is reserve, b is not
+        if (!a.reserve && b.reserve) return -1; // a is not reserve, b is
+        return 0; // equal reserve status
+      });
       let newRegisteredPlayerIds = newRegisteredPlayers.map(p => p.id);
-      let newPlayerReserveStatus = selectedMatchContent.registeredPlayers.map(p => p.reserve);
+      let newPlayerReserveStatus = newRegisteredPlayers.map(p => p.reserve);
       let newMatchContent: GameEventDBData = {
         matchDate: selectedMatchContent.matchDate,
         name: selectedMatchContent.name,
@@ -283,9 +288,9 @@ export class GameEventsService implements OnDestroy {
   randomizeOrderSubject$ = new Subject<void>();
   randomizeOrder$ = this.randomizeOrderSubject$.asObservable().pipe(
     withLatestFrom(this.selectedMatchContent$),
-    tap(([_, selectedMatchContent]) => {
-      console.log('randomize order', selectedMatchContent);
-    }),
+    // tap(([_, selectedMatchContent]) => {
+    //   console.log('randomize order', selectedMatchContent);
+    // }),
     map(([player, selectedMatchContent]) => {
       // Set a randomization factor between 0.0 and 0.5 for the sort function.
       let randomizationFactor = Math.random() - 0.5;
@@ -338,9 +343,9 @@ export class GameEventsService implements OnDestroy {
   reapplyOrderAccordingToReserveStatusSubject$ = new Subject<PlayerWithIdAndStars>();
   reapplyOrderAccordingToReserveStatus$ = this.reapplyOrderAccordingToReserveStatusSubject$.asObservable().pipe(
     withLatestFrom(this.selectedMatchContent$),
-    tap(([_, selectedMatchContent]) => {
-      console.log('reapplying order for reserve', selectedMatchContent);
-    }),
+    // tap(([_, selectedMatchContent]) => {
+    //   console.log('reapplying order for reserve', selectedMatchContent);
+    // }),
     map(([player, selectedMatchContent]) => {
       let newRegisteredPlayers = selectedMatchContent.registeredPlayers.map(p => {
         if (p.id === player.id) {
