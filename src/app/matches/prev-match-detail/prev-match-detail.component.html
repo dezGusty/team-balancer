@@ -42,7 +42,7 @@
         </div>
   
         <div class="col-6 border-right">
-          Team one 1️⃣
+          Team one 1️⃣ {{ this.team1Sum() | number: '1.0-2'}}
   
           <ul class="gus-list">
             @for (leftItem of selectedCustomGame.team1; track leftItem) {
@@ -58,7 +58,7 @@
           </ul>
         </div>
         <div class="col-6">
-          Team two 2️⃣
+          Team two 2️⃣ {{ this.team2Sum() | number: '1.0-2' }}
           <ul class="gus-list">
             @for (rightItem of selectedCustomGame.team2; track rightItem) {
             <li class="gus-list-item">

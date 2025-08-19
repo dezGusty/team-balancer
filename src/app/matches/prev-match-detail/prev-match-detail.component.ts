@@ -74,6 +74,7 @@ export class PrevMatchDetailComponent implements OnInit, OnDestroy {
       }
     }),
     tap(game => console.log("*** game", game)),
+    tap(() => this.updateTeamSumsForCurrentGame())
   );
 
   constructor(
@@ -334,6 +335,17 @@ export class PrevMatchDetailComponent implements OnInit, OnDestroy {
     this.showSpinner = false;
   }
 
+  updateTeamSumsForCurrentGame(): void {
+    if (!this.customGame) {
+      return;
+    }
+
+    let team1Sum = this.customGame.team1.reduce((acc, player) => acc + player.rating, 0);
+    let team2Sum = this.customGame.team2.reduce((acc, player) => acc + player.rating, 0);
+    this.team1Sum.set(team1Sum);
+    this.team2Sum.set(team2Sum);
+  }
+
   /**
    * New version of the rating update function.
    * This also applies a multiplier to each rating change based on the initial rating difference between the two teams.
@@ -354,13 +366,7 @@ export class PrevMatchDetailComponent implements OnInit, OnDestroy {
       this.playersSvc.getPlayers(), this.customGame
     );
 
-
-    let team1Sum = this.customGame.team1.reduce((acc, player) => acc + player.rating, 0);
-    let team2Sum = this.customGame.team2.reduce((acc, player) => acc + player.rating, 0);
-
-
-    this.team1Sum.set(team1Sum);
-    this.team2Sum.set(team2Sum);
+    this.updateTeamSumsForCurrentGame();
 
     // Prepare the difference calculation
     const updatedPlayers = this.playersSvc.getPlayersWithUpdatedRatingsForGame(this.customGame, true);
