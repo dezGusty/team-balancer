@@ -2,37 +2,6 @@
   @if (this.showSpinner) {
     <app-small-loading-spinner></app-small-loading-spinner>
   } @else {
-    <!-- <div class="row mx-0">
-      <div class="col-12">
-        Date 🗓️: {{matchSearchKey}}
-      </div>
-      <div class="col-6 border-right">
-        Team one 1️⃣ {{ this.team1Sum() }}
-
-        <ul class="gus-list">
-          <li class="gus-list-item" *ngFor="let leftItem of this.extractedTeam1()">
-            <span class="gus-list-item-name">{{ this.getDisplayNameForPlayer(leftItem) }}</span>
-            <br>
-            <span class="gus-list-item-rating">{{ this.getInitialRatingForPlayer(leftItem) }}</span>
-            <span class="gus-list-item-diff" [class.good-num]="isGoodRatingDiff(leftItem)"
-              [class.bad-num]="isBadRatingDiff(leftItem)">
-              {{ getPostMatchDiffForPlayer(leftItem) }}</span>
-          </li>
-        </ul>
-      </div>
-      <div class="col-6">
-        Team two 2️⃣ {{ this.team2Sum() }}
-        <ul class="gus-list">
-          <li class="gus-list-item" *ngFor="let rightItem of this.extractedTeam2()">
-            <span class="gus-list-item-name">{{ this.getDisplayNameForPlayer(rightItem) }}</span>
-            <br>
-            <span class="gus-list-item-rating">{{ this.getInitialRatingForPlayer(rightItem) }}</span>
-            <span class="gus-list-item-diff" [class.good-num]="isGoodRatingDiff(rightItem)"
-              [class.bad-num]="isBadRatingDiff(rightItem)">{{ this.getPostMatchDiffForPlayer(rightItem) }}</span>
-          </li>
-        </ul>
-      </div>
-    </div> -->
 
     @if (this.selectedCustomGame$|async; as selectedCustomGame) {
     @if (selectedCustomGame) {
