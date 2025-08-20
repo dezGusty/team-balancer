@@ -1,4 +1,4 @@
-import { CommonModule } from '@angular/common';
+
 import { Component, EventEmitter, Output, inject, model } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { UserAuthService } from 'src/app/auth/user-auth.service';
@@ -8,7 +8,7 @@ import { PlayersService } from 'src/app/shared/players.service';
 @Component({
     selector: 'app-player-details-new',
     standalone: true,
-    imports: [FormsModule, CommonModule],
+    imports: [FormsModule],
     templateUrl: './player-details-new.component.html',
     styleUrl: './player-details-new.component.css'
 })

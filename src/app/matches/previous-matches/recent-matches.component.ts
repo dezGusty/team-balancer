@@ -1,4 +1,4 @@
-import { CommonModule } from '@angular/common';
+
 import { Component, OnInit, OnDestroy, signal } from '@angular/core';
 import { RouterModule } from '@angular/router';
 import { EMPTY, Observable, Subscription } from 'rxjs';
@@ -6,7 +6,7 @@ import { Match } from 'src/app/shared/match.model';
 import { MatchService } from 'src/app/shared/match.service';
 
 @Component({
-    imports: [CommonModule, RouterModule],
+    imports: [RouterModule],
     selector: 'app-recent-matches',
     styleUrls: ['./recent-matches.component.css'],
     templateUrl: './recent-matches.component.html'

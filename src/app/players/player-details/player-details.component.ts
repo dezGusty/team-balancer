@@ -4,12 +4,12 @@ import { ActivatedRoute, Params, Router } from '@angular/router';
 import { Player, getDisplayName } from '../../shared/player.model';
 import { PlayersService } from '../../shared/players.service';
 import { AuthService } from 'src/app/auth/auth.service';
-import { CommonModule } from '@angular/common';
+
 
 @Component({
     selector: 'app-player-details',
     standalone: true,
-    imports: [CommonModule],
+    imports: [],
     styles: [''],
     templateUrl: './player-details.component.html'
 })

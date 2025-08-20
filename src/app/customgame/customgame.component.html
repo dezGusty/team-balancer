@@ -1,53 +1,60 @@
-<div *ngIf="!showCombinations">
-  <div class="f-row">
-    <div class="half-width f-row-align-right">
-
-      <div class="col-12 col-md-10 col-lg-8 col-xl-6 align-self-center">
-        <button type="button" class="btn btn-outline-gus btn-grad-gusty" (click)="onMakeTeamsClicked()">
-          <span><img rel="preload" class="align-self-center" src="./../../assets/tshirt.svg" height="40rem"
-              alt="" /></span>
-          Make teams...
-        </button>
+@if (!showCombinations) {
+  <div>
+    <div class="f-row">
+      <div class="half-width f-row-align-right">
+        <div class="col-12 col-md-10 col-lg-8 col-xl-6 align-self-center">
+          <button type="button" class="btn btn-outline-gus btn-grad-gusty" (click)="onMakeTeamsClicked()">
+            <span><img rel="preload" class="align-self-center" src="./../../assets/tshirt.svg" height="40rem"
+            alt="" /></span>
+            Make teams...
+          </button>
+        </div>
       </div>
-    </div>
-    <div class="half-width">
-
-      <div class="col-12 col-md-10 col-lg-8 col-xl-6 border-bottom gus-search-box">
-        <input class="form-control border-0" type="text" [(ngModel)]="searchedName"
-          (keyup)="onSearchContentChange($event)" placeholder="Search..." aria-label="Search" #srcNameArea autofocus />
-      </div>
-    </div>
-  </div>
-  <div class="f-row">
-    <!-- show the list of players on the left side -->
-    <div class="half-width f-row-align-right">
-      <div class="col-12 col-md-10 col-lg-8 col-xl-6 left-player-list">
-        <h5>Selected players</h5>
-        <p>{{ matchData.draftPlayers.length }} players</p>
-        <div>
-          <app-player-card-pref *ngFor="let playerItem of this.matchData.draftPlayers" [player]="playerItem"
-            (playerSelected)="onPlayerSelected($event)" (lockTeam1Selected)="onPlayerLockTeam1($event)"
-            (lockTeam2Selected)="onPlayerLockTeam2($event)">
-          </app-player-card-pref>
+      <div class="half-width">
+        <div class="col-12 col-md-10 col-lg-8 col-xl-6 border-bottom gus-search-box">
+          <input class="form-control border-0" type="text" [(ngModel)]="searchedName"
+            (keyup)="onSearchContentChange($event)" placeholder="Search..." aria-label="Search" #srcNameArea autofocus />
         </div>
       </div>
     </div>
-    <!-- show the list of players on the right side -->
-    <div class="half-width">
-      <div class="col-12 col-md-10 col-lg-8 col-xl-6 right-player-list">
-        <h5>Available players</h5>
-        <p>{{ matchData.availablePlayersPool.length }} players</p>
-        <app-player-card *ngFor="
-          let playerItem of this.matchData.availablePlayersPool
+    <div class="f-row">
+      <!-- show the list of players on the left side -->
+      <div class="half-width f-row-align-right">
+        <div class="col-12 col-md-10 col-lg-8 col-xl-6 left-player-list">
+          <h5>Selected players</h5>
+          <p>{{ matchData.draftPlayers.length }} players</p>
+          <div>
+            @for (playerItem of this.matchData.draftPlayers; track playerItem) {
+              <app-player-card-pref [player]="playerItem"
+                (playerSelected)="onPlayerSelected($event)" (lockTeam1Selected)="onPlayerLockTeam1($event)"
+                (lockTeam2Selected)="onPlayerLockTeam2($event)">
+              </app-player-card-pref>
+            }
+          </div>
+        </div>
+      </div>
+      <!-- show the list of players on the right side -->
+      <div class="half-width">
+        <div class="col-12 col-md-10 col-lg-8 col-xl-6 right-player-list">
+          <h5>Available players</h5>
+          <p>{{ matchData.availablePlayersPool.length }} players</p>
+          @for (
+            playerItem of this.matchData.availablePlayersPool
             | playerFilter: searchedName
-        " [player]="playerItem" (playerSelected)="onPlayerSelected($event)">
-        </app-player-card>
+            ; track
+            playerItem) {
+            <app-player-card [player]="playerItem" (playerSelected)="onPlayerSelected($event)">
+            </app-player-card>
+          }
+        </div>
       </div>
     </div>
   </div>
-</div>
-<div class="f-row f-align-center" *ngIf="showCombinations">
-  <div class="col-12 col-sm-12 col-md-10 col-lg-8 col-xl-6">
-    <app-match-combos [playerList]="matchData.draftPlayers" [makeTeamsEvent]="this.makeTeamsSubject"></app-match-combos>
+}
+@if (showCombinations) {
+  <div class="f-row f-align-center">
+    <div class="col-12 col-sm-12 col-md-10 col-lg-8 col-xl-6">
+      <app-match-combos [playerList]="matchData.draftPlayers" [makeTeamsEvent]="this.makeTeamsSubject"></app-match-combos>
+    </div>
   </div>
-</div>
+}

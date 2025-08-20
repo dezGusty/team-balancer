@@ -3,16 +3,15 @@ import { Player } from 'src/app/shared/player.model';
 import { EMPTY, Observable, Subscription } from 'rxjs';
 import { CustomGame } from 'src/app/shared/custom-game.model';
 import { RatingSystemSettings } from 'src/app/shared/rating-system';
-import { CommonModule } from '@angular/common';
+
 import { MatchVersusComponent } from '../match-versus/match-versus.component';
 import { MatchStorageComponent } from '../match-storage/match-storage.component';
 
 @Component({
     imports: [
-        CommonModule,
-        MatchStorageComponent,
-        MatchVersusComponent
-    ],
+    MatchStorageComponent,
+    MatchVersusComponent
+],
     selector: 'app-match-combos',
     styleUrls: ['./match-combos.component.css'],
     templateUrl: './match-combos.component.html'

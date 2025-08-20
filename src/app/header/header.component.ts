@@ -1,4 +1,4 @@
-import { CommonModule } from '@angular/common';
+
 import { ChangeDetectionStrategy, Component, OnInit } from '@angular/core';
 import { Router, Event, NavigationStart, RouterModule } from '@angular/router';
 import { AuthService } from '../auth/auth.service';
@@ -11,11 +11,10 @@ import { UserAuthService } from '../auth/user-auth.service';
     templateUrl: './header.component.html',
     styleUrls: ['./header.component.css'],
     imports: [
-        CommonModule,
-        RouterModule,
-        FormsModule,
-        ProfileComponent
-    ]
+    RouterModule,
+    FormsModule,
+    ProfileComponent
+]
 })
 export class HeaderComponent {
   isCollapsed = true;

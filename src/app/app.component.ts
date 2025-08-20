@@ -1,4 +1,4 @@
-import { CommonModule } from '@angular/common';
+
 import { Component, OnInit, OnDestroy } from '@angular/core';
 import { RouterModule } from '@angular/router';
 // import { NgcCookieConsentService, NgcInitializingEvent, NgcStatusChangeEvent, NgcNoCookieLawEvent } from 'ngx-cookieconsent';
@@ -9,12 +9,11 @@ import { NotificationComponent } from './utils/notification/notification.compone
 
 @Component({
     imports: [
-        CommonModule,
-        HeaderComponent,
-        FooterComponent,
-        RouterModule,
-        NotificationComponent
-    ],
+    HeaderComponent,
+    FooterComponent,
+    RouterModule,
+    NotificationComponent
+],
     selector: 'app-root',
     styles: [''],
     template: `

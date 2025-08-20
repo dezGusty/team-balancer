@@ -1,100 +1,102 @@
 <div class="f-row f-align-center">
-    <div class="col col-auto ">
-        <app-small-loading-spinner *ngIf="showLoading"></app-small-loading-spinner>
-    </div>
+  <div class="col col-auto ">
+    @if (showLoading) {
+      <app-small-loading-spinner></app-small-loading-spinner>
+    }
+  </div>
 
-    <div class="col col-8 col-sm-9 col-md-8 col-lg-6 col-auto border-bottom gus-search-box">
-        <input class="form-control border-0" type="text" [(ngModel)]="searchedName"
-            (keyup)="onSearchContentChange($event)" placeholder="Search..." aria-label="Search" #srcNameArea autofocus>
+  <div class="col col-8 col-sm-9 col-md-8 col-lg-6 col-auto border-bottom gus-search-box">
+    <input class="form-control border-0" type="text" [(ngModel)]="searchedName"
+      (keyup)="onSearchContentChange($event)" placeholder="Search..." aria-label="Search" #srcNameArea autofocus>
+  </div>
+  <div class="col col-auto btn-group " role="group">
+    <label class="btn btn-gus-small btn-sm" ngbButtonLabel ngbTooltip="Include archived players">
+      <input type="checkbox" class="btn-check" (click)='onCheckReload($event)' ngbButton
+        [(ngModel)]="loadArchive">
+      <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" fill="currentColor"
+        class="bi bi-file-earmark-zip-fill" viewBox="0 0 16 16">
+        <path d="M5.5 9.438V8.5h1v.938a1 1 0 0 0 .03.243l.4 1.598-.93.62-.93-.62.4-1.598a1 1 0 0 0 .03-.243z" />
+        <path
+          d="M9.293 0H4a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h8a2 2 0 0 0 2-2V4.707A1 1 0 0 0 13.707 4L10 .293A1 1 0 0 0 9.293 0zM9.5 3.5v-2l3 3h-2a1 1 0 0 1-1-1zm-4-.5V2h-1V1H6v1h1v1H6v1h1v1H6v1h1v1H5.5V6h-1V5h1V4h-1V3h1zm0 4.5h1a1 1 0 0 1 1 1v.938l.4 1.599a1 1 0 0 1-.416 1.074l-.93.62a1 1 0 0 1-1.109 0l-.93-.62a1 1 0 0 1-.415-1.074l.4-1.599V8.5a1 1 0 0 1 1-1z" />
+      </svg></label>
     </div>
-    <div class="col col-auto btn-group " role="group">
-        <label class="btn btn-gus-small btn-sm" ngbButtonLabel ngbTooltip="Include archived players">
-            <input type="checkbox" class="btn-check" (click)='onCheckReload($event)' ngbButton
-                [(ngModel)]="loadArchive">
-            <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" fill="currentColor"
-                class="bi bi-file-earmark-zip-fill" viewBox="0 0 16 16">
-                <path d="M5.5 9.438V8.5h1v.938a1 1 0 0 0 .03.243l.4 1.598-.93.62-.93-.62.4-1.598a1 1 0 0 0 .03-.243z" />
-                <path
-                    d="M9.293 0H4a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h8a2 2 0 0 0 2-2V4.707A1 1 0 0 0 13.707 4L10 .293A1 1 0 0 0 9.293 0zM9.5 3.5v-2l3 3h-2a1 1 0 0 1-1-1zm-4-.5V2h-1V1H6v1h1v1H6v1h1v1H6v1h1v1H5.5V6h-1V5h1V4h-1V3h1zm0 4.5h1a1 1 0 0 1 1 1v.938l.4 1.599a1 1 0 0 1-.416 1.074l-.93.62a1 1 0 0 1-1.109 0l-.93-.62a1 1 0 0 1-.415-1.074l.4-1.599V8.5a1 1 0 0 1 1-1z" />
-            </svg></label>
-    </div>
-</div>
+  </div>
 
-<div class="f-row">
+  <div class="f-row">
     <!-- show the list of players on the left side -->
     <div class="half-width f-row-align-right">
-        <div class="left-player-list">
-            @for (playerItem of players| playerFilter: searchedName; track $index) {
-            <app-player-routed-card [player]="playerItem" (playerSelected)="onPlayerSelected($event)"
-                [ngClass]="{ odd: $odd, even: $even }"></app-player-routed-card>
-            }
+      <div class="left-player-list">
+        @for (playerItem of players| playerFilter: searchedName; track $index) {
+          <app-player-routed-card [player]="playerItem" (playerSelected)="onPlayerSelected($event)"
+          [ngClass]="{ odd: $odd, even: $even }"></app-player-routed-card>
+        }
 
-            <!-- <app-player-routed-card
-                *ngFor="let playerItem of players | playerFilter: searchedName; let even = even; let odd = odd"
-                [player]="playerItem" [id]="playerItem.id" [ngClass]="{ odd: odd, even: even }">
-                (playerSelected)="onPlayerSelected($event)"
-            </app-player-routed-card> -->
+        <!-- <app-player-routed-card
+        *ngFor="let playerItem of players | playerFilter: searchedName; let even = even; let odd = odd"
+        [player]="playerItem" [id]="playerItem.id" [ngClass]="{ odd: odd, even: even }">
+        (playerSelected)="onPlayerSelected($event)"
+      </app-player-routed-card> -->
 
-        </div>
     </div>
-    <!-- show the details panel on the right side -->
-    <div class="half-width">
-        <div class="right-player-list">
-            @if (canAddPlayers()){
-            <button class="gus-border gus-hoverable" type="button" (click)='onNewPlayerClicked($event)'>Add ➕</button>
-            }
-            <!-- <button class="btn btn-outline-gus btn-grad-gusty btn-cmd-float float-right" *ngIf='canAddPlayers()'
-                (click)='onNewPlayerClicked($event)'>
-                <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" fill="currentColor"
-                    class="bi bi-person-plus-fill" viewBox="0 0 16 16">
-                    <path d="M1 14s-1 0-1-1 1-4 6-4 6 3 6 4-1 1-1 1H1zm5-6a3 3 0 1 0 0-6 3 3 0 0 0 0 6z" />
-                    <path fill-rule="evenodd"
-                        d="M13.5 5a.5.5 0 0 1 .5.5V7h1.5a.5.5 0 0 1 0 1H14v1.5a.5.5 0 0 1-1 0V8h-1.5a.5.5 0 0 1 0-1H13V5.5a.5.5 0 0 1 .5-.5z" />
-                </svg>
-            </button> -->
+  </div>
+  <!-- show the details panel on the right side -->
+  <div class="half-width">
+    <div class="right-player-list">
+      @if (canAddPlayers()){
+        <button class="gus-border gus-hoverable" type="button" (click)='onNewPlayerClicked($event)'>Add ➕</button>
+      }
+      <!-- <button class="btn btn-outline-gus btn-grad-gusty btn-cmd-float float-right" *ngIf='canAddPlayers()'
+      (click)='onNewPlayerClicked($event)'>
+      <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" fill="currentColor"
+        class="bi bi-person-plus-fill" viewBox="0 0 16 16">
+        <path d="M1 14s-1 0-1-1 1-4 6-4 6 3 6 4-1 1-1 1H1zm5-6a3 3 0 1 0 0-6 3 3 0 0 0 0 6z" />
+        <path fill-rule="evenodd"
+          d="M13.5 5a.5.5 0 0 1 .5.5V7h1.5a.5.5 0 0 1 0 1H14v1.5a.5.5 0 0 1-1 0V8h-1.5a.5.5 0 0 1 0-1H13V5.5a.5.5 0 0 1 .5-.5z" />
+      </svg>
+    </button> -->
 
-            <router-outlet />
-        </div>
-    </div>
+    <router-outlet />
+  </div>
+</div>
 </div>
 
 <!-- <div class="draftPlayersArea">
-    <div class="leftArea">
-      @if (this.selectedPlayersData$ | async; as selectedPlayersData) {
-      <h5>Selected players</h5>
-      <p>{{ selectedPlayersData.players.length }} players</p>
-      <div class="selectedplayers">
-        @for (player of selectedPlayersData.players; track player) {
+<div class="leftArea">
+  @if (this.selectedPlayersData$ | async; as selectedPlayersData) {
+    <h5>Selected players</h5>
+    <p>{{ selectedPlayersData.players.length }} players</p>
+    <div class="selectedplayers">
+      @for (player of selectedPlayersData.players; track player) {
         <app-player-card [player]="player" (playerSelected)="onDraftedPlayerClicked($event, player)"></app-player-card>
-        }
-      </div>
       }
     </div>
-    <div class="rightArea">
-      @if (this.filteredAvailablePlayersData$ | async; as playersData) {
-      <h5>Available players</h5>
-      <p>{{playersData.players.length}}</p>
-      <div class="availableplayers">
-        @for (player of playersData.players; track player) {
+  }
+</div>
+<div class="rightArea">
+  @if (this.filteredAvailablePlayersData$ | async; as playersData) {
+    <h5>Available players</h5>
+    <p>{{playersData.players.length}}</p>
+    <div class="availableplayers">
+      @for (player of playersData.players; track player) {
         <app-player-card [player]="player" (playerSelected)="onAvailablePlayerClicked($event, player)"></app-player-card>
-        }
-      </div>
       }
     </div>
-  
-  </div> -->
+  }
+</div>
+
+</div> -->
 
 <app-toasts aria-live="polite" aria-atomic="true"></app-toasts>
 
 <div id="player-details-sidenav" class="gus-sidenav"
-    [ngClass]="this.isSideNavOpen ? 'gus-sidenav-shown' : 'gus-sidenav-hidden'"
-    (click)="onSideNavOuterContainerClicked()">
-    <!-- <button type="button" (click)="onCloseSideNavBtnClick()">Close</button> -->
-    <app-player-details-new (onCloseBtnClicked)="onCloseSideNavBtnClick()"
+  [ngClass]="this.isSideNavOpen ? 'gus-sidenav-shown' : 'gus-sidenav-hidden'"
+  (click)="onSideNavOuterContainerClicked()">
+  <!-- <button type="button" (click)="onCloseSideNavBtnClick()">Close</button> -->
+  <app-player-details-new (onCloseBtnClicked)="onCloseSideNavBtnClick()"
     (onMovePlayerToArchiveClicked)="onMovePlayerToArchive(selectedPlayer)"
     (onMovePlayerToActiveClicked)="onMovePlayerToActive(selectedPlayer)"
-     [player]="selectedPlayer"></app-player-details-new>
-    <!-- details -->
-    <!-- <app-summary (onCloseBtnClicked)="onCloseSummaryClicked()" [availableEvents]="activeGameEventTitlesSig()"></app-summary> -->
+  [player]="selectedPlayer"></app-player-details-new>
+  <!-- details -->
+  <!-- <app-summary (onCloseBtnClicked)="onCloseSummaryClicked()" [availableEvents]="activeGameEventTitlesSig()"></app-summary> -->
 
 </div>

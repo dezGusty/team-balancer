@@ -4,28 +4,34 @@
       ID: {{ player?.id }}
     </div>
     <br>
-    <div class="col-12 pull-left">
-      Rating: {{ player?.rating }}
-    </div>
-    <div class="col-12 player-card-name pull-left">
-      {{ playerDisplayName() }}
-    </div>
-    <div class="col-12">({{ player?.name }})</div>
+      <div class="col-12 pull-left">
+        Rating: {{ player?.rating }}
+      </div>
+      <div class="col-12 player-card-name pull-left">
+        {{ playerDisplayName() }}
+      </div>
+      <div class="col-12">({{ player?.name }})</div>
 
-    <div class="col-6 pull-right">
-      <img src="./../../../assets/default_user_pic.svg" alt="pic" height="96em">
-    </div>
+      <div class="col-6 pull-right">
+        <img src="./../../../assets/default_user_pic.svg" alt="pic" height="96em">
+      </div>
 
+    </div>
+    <div class="row mt-2">
+      <div class="col-12">
+        @if (canEditPlayers()) {
+          <button class="btn btn-outline-gus btn-grad-gusty position-static"
+          (click)='onEditPlayerClicked($event)'>Edit Player</button>
+        }
+        @if (canArchivePlayer()) {
+          <button class="btn btn-outline-gus btn-grad-gusty position-static"
+          (click)='onArchivePlayer($event)'>Archive Player</button>
+        }
+        @if (canUnarchivePlayer()) {
+          <button class="btn btn-outline-gus btn-grad-gusty position-static"
+          (click)='onUnarchivePlayer($event)'>Unarchive Player</button>
+        }
+      </div>
+
+    </div>
   </div>
-  <div class="row mt-2">
-    <div class="col-12">
-      <button class="btn btn-outline-gus btn-grad-gusty position-static" *ngIf="canEditPlayers()"
-        (click)='onEditPlayerClicked($event)'>Edit Player</button>
-        <button class="btn btn-outline-gus btn-grad-gusty position-static" *ngIf="canArchivePlayer()"
-        (click)='onArchivePlayer($event)'>Archive Player</button>
-        <button class="btn btn-outline-gus btn-grad-gusty position-static" *ngIf="canUnarchivePlayer()"
-        (click)='onUnarchivePlayer($event)'>Unarchive Player</button>
-    </div>
-
-  </div>
-</div>

@@ -7,7 +7,7 @@ import { ActivatedRoute } from '@angular/router';
 import { DraftService } from '../shared/draft.service';
 import { ToastService } from '../shared/toasts-service';
 import { PlayerChangeInfo } from '../shared/player-change-info';
-import { CommonModule } from '@angular/common';
+
 import { MatchCombosComponent } from '../matches/match-combos/match-combos.component';
 import { FormsModule } from '@angular/forms';
 import { PlayerCardComponent } from '../player-card/player-card.component';
@@ -16,13 +16,12 @@ import { PlayerFilterPipe } from '../matches/player-filter.pipe';
 
 @Component({
     imports: [
-        CommonModule,
-        FormsModule,
-        MatchCombosComponent,
-        PlayerCardComponent,
-        PlayerCardPrefComponent,
-        PlayerFilterPipe
-    ],
+    FormsModule,
+    MatchCombosComponent,
+    PlayerCardComponent,
+    PlayerCardPrefComponent,
+    PlayerFilterPipe
+],
     selector: 'app-customgame',
     styles: [''],
     templateUrl: './customgame.component.html'

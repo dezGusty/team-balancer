@@ -1,40 +1,46 @@
 <form class="border player-edit-form" (ngSubmit)="onSubmit(f)" #f="ngForm">
-    <div class="row">
-        <div class="form-group col-12">
-            <label class="col-form-label" for="playerid">ID</label>
-            <input type="text" id="playerid" class="form-control" [ngModel]="player?.id" name="playerid" required
-                readonly #playerid="ngModel">
-        </div>
-        <div class="form-group col-12">
-            <label class="col-form-label" for="playername">Name</label>
-            <input type="text" id="playername" class="form-control" [ngModel]="player?.name" name="playername" required
-                #playername="ngModel">
-            <span class="help-block" *ngIf="!playername.valid && playername.touched">Name invalid or already in
-                use.</span>
-        </div>
-        <div class="form-group col-12">
-            <label class="col-form-label" for="displayName">Display Name</label>
-            <input type="text" id="displayName" class="form-control" [ngModel]="player?.displayName" name="displayName"
-                #displayName="ngModel">
-            <span class="help-block" *ngIf="!displayName.valid && displayName.touched">Name invalid or already in
-                use.</span>
-        </div>
-        <div class="form-group col-12">
-            <label class="col-form-label" for="keywords">Keywords (alternative search criteria)</label>
-            <input type="text" id="keywords" class="form-control" [ngModel]="player?.keywords" name="keywords"
-                #keywords="ngModel">
-            <span class="help-block" *ngIf="!keywords.valid && keywords.touched">Keywords: invalid.</span>
-        </div>
-        <div class="form-group col-12">
-            <label class="col-form-label" for="playerrating">Rating</label>
-            <input type="number" min=1 max=10 id="playerrating" class="form-control" [ngModel]="player?.rating" name="playerrating"
-                required #playerrating="ngModel">
-        </div>
-
-        <div class="form-inline col-12">
-            <button class="btn btn-primary mr-2" type="submit" [disabled]="!f.valid">Ok</button>
-            <button class="btn btn-secondary" type="reset" (click)="onCancel($event)">Cancel</button>
-        </div>
+  <div class="row">
+    <div class="form-group col-12">
+      <label class="col-form-label" for="playerid">ID</label>
+      <input type="text" id="playerid" class="form-control" [ngModel]="player?.id" name="playerid" required
+        readonly #playerid="ngModel">
     </div>
+    <div class="form-group col-12">
+      <label class="col-form-label" for="playername">Name</label>
+      <input type="text" id="playername" class="form-control" [ngModel]="player?.name" name="playername" required
+        #playername="ngModel">
+      @if (!playername.valid && playername.touched) {
+        <span class="help-block">Name invalid or already in
+        use.</span>
+      }
+    </div>
+    <div class="form-group col-12">
+      <label class="col-form-label" for="displayName">Display Name</label>
+      <input type="text" id="displayName" class="form-control" [ngModel]="player?.displayName" name="displayName"
+        #displayName="ngModel">
+      @if (!displayName.valid && displayName.touched) {
+        <span class="help-block">Name invalid or already in
+        use.</span>
+      }
+    </div>
+    <div class="form-group col-12">
+      <label class="col-form-label" for="keywords">Keywords (alternative search criteria)</label>
+      <input type="text" id="keywords" class="form-control" [ngModel]="player?.keywords" name="keywords"
+        #keywords="ngModel">
+      @if (!keywords.valid && keywords.touched) {
+        <span class="help-block">Keywords: invalid.</span>
+      }
+    </div>
+    <div class="form-group col-12">
+      <label class="col-form-label" for="playerrating">Rating</label>
+      <input type="number" min=1 max=10 id="playerrating" class="form-control" [ngModel]="player?.rating" name="playerrating"
+        required #playerrating="ngModel">
+    </div>
+
+    <div class="form-inline col-12">
+      <button class="btn btn-primary mr-2" type="submit" [disabled]="!f.valid">Ok</button>
+      <button class="btn btn-secondary" type="reset" (click)="onCancel($event)">Cancel</button>
+    </div>
+  </div>
 
 </form>

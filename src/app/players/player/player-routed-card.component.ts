@@ -1,11 +1,11 @@
-import { CommonModule } from '@angular/common';
+
 import { Component, OnInit, Input, Output, EventEmitter } from '@angular/core';
 import { RouterModule } from '@angular/router';
 import { Player } from '../../shared/player.model';
 import { PlayerMiniCardComponent } from '../player-mini-card/player-mini-card.component';
 
 @Component({
-    imports: [CommonModule, RouterModule, PlayerMiniCardComponent],
+    imports: [RouterModule, PlayerMiniCardComponent],
     selector: 'app-player-routed-card',
     standalone: true,
     styles: [''],

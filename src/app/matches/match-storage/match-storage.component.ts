@@ -2,7 +2,7 @@ import { Component, OnInit, Input, ElementRef, ViewChild, inject } from '@angula
 import { CustomGame } from '../../shared/custom-game.model';
 import { Player, getDisplayName } from '../../shared/player.model';
 import { MatchService } from 'src/app/shared/match.service';
-import { CommonModule } from '@angular/common';
+
 // import { NgbTooltipModule } from '@ng-bootstrap/ng-bootstrap';
 import { CopyClipboardDirective } from 'src/app/shared/copy-clipboard.directive';
 import { FormsModule } from '@angular/forms';
@@ -10,11 +10,9 @@ import { NotificationService } from 'src/app/utils/notification/notification.ser
 
 @Component({
     imports: [
-        CommonModule,
-        CopyClipboardDirective,
-        FormsModule
-        // ,NgbTooltipModule
-    ],
+    CopyClipboardDirective,
+    FormsModule
+],
     selector: 'app-match-storage',
     templateUrl: './match-storage.component.html',
     styles: ['']

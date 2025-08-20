@@ -8,7 +8,7 @@ import { ToastService } from 'src/app/shared/toasts-service';
 import { DraftChangeInfo } from 'src/app/shared/draft-change-info';
 import { AuthService } from 'src/app/auth/auth.service';
 import { SettingsService } from 'src/app/shared/settings.service';
-import { CommonModule, NgFor } from '@angular/common';
+
 import { SmallLoadingSpinnerComponent } from 'src/app/ui/small-loading-spinner/small-loading-spinner.component';
 import { CopyClipboardDirective } from 'src/app/shared/copy-clipboard.directive';
 import { PlayerCardComponent } from 'src/app/player-card/player-card.component';
@@ -19,17 +19,14 @@ import { ToastsContainer } from 'src/app/toast/toast-container.component';
 
 @Component({
     imports: [
-        CommonModule,
-        CopyClipboardDirective,
-        FormsModule,
-        // NgbTooltipModule,
-        NgFor,
-        PlayerCardComponent,
-        PlayerFilterPipe,
-        RouterModule,
-        SmallLoadingSpinnerComponent,
-        ToastsContainer,
-    ],
+    CopyClipboardDirective,
+    FormsModule,
+    PlayerCardComponent,
+    PlayerFilterPipe,
+    RouterModule,
+    SmallLoadingSpinnerComponent,
+    ToastsContainer
+],
     selector: 'app-draft',
     styles: [''],
     templateUrl: './draft.component.html'

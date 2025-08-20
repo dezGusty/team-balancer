@@ -3,93 +3,110 @@
 
     <div class="col-12 col-md-10 col-lg-8 col-xl-6 align-self-cright panel-draft-icons">
 
-      <button type="button" class="btn btn-gus-small" ngbTooltip="Save" (click)="onSaveSelectionClicked()"
-        *ngIf="canChangePlayersInDraft()">
-        <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" fill="currentColor"
-          class="bi bi-cloud-upload-fill" viewBox="0 0 16 16">
-          <path fill-rule="evenodd"
-            d="M8 0a5.53 5.53 0 0 0-3.594 1.342c-.766.66-1.321 1.52-1.464 2.383C1.266 4.095 0 5.555 0 7.318 0 9.366 1.708 11 3.781 11H7.5V5.707L5.354 7.854a.5.5 0 1 1-.708-.708l3-3a.5.5 0 0 1 .708 0l3 3a.5.5 0 0 1-.708.708L8.5 5.707V11h4.188C14.502 11 16 9.57 16 7.773c0-1.636-1.242-2.969-2.834-3.194C12.923 1.999 10.69 0 8 0zm-.5 14.5V11h1v3.5a.5.5 0 0 1-1 0z" />
-        </svg> </button>
+      @if (canChangePlayersInDraft()) {
+        <button type="button" class="btn btn-gus-small" ngbTooltip="Save" (click)="onSaveSelectionClicked()"
+          >
+          <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" fill="currentColor"
+            class="bi bi-cloud-upload-fill" viewBox="0 0 16 16">
+            <path fill-rule="evenodd"
+              d="M8 0a5.53 5.53 0 0 0-3.594 1.342c-.766.66-1.321 1.52-1.464 2.383C1.266 4.095 0 5.555 0 7.318 0 9.366 1.708 11 3.781 11H7.5V5.707L5.354 7.854a.5.5 0 1 1-.708-.708l3-3a.5.5 0 0 1 .708 0l3 3a.5.5 0 0 1-.708.708L8.5 5.707V11h4.188C14.502 11 16 9.57 16 7.773c0-1.636-1.242-2.969-2.834-3.194C12.923 1.999 10.69 0 8 0zm-.5 14.5V11h1v3.5a.5.5 0 0 1-1 0z" />
+          </svg> </button>
+        }
 
 
 
-      <button type="button" class="btn btn-gus-small" ngbTooltip="Clear list (does not save)."
-        (click)="onClearListClicked()" *ngIf="canChangePlayersInDraft()">
-        <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" fill="currentColor" class="bi bi-x-octagon-fill"
-          viewBox="0 0 16 16">
-          <path
-            d="M11.46.146A.5.5 0 0 0 11.107 0H4.893a.5.5 0 0 0-.353.146L.146 4.54A.5.5 0 0 0 0 4.893v6.214a.5.5 0 0 0 .146.353l4.394 4.394a.5.5 0 0 0 .353.146h6.214a.5.5 0 0 0 .353-.146l4.394-4.394a.5.5 0 0 0 .146-.353V4.893a.5.5 0 0 0-.146-.353L11.46.146zm-6.106 4.5L8 7.293l2.646-2.647a.5.5 0 0 1 .708.708L8.707 8l2.647 2.646a.5.5 0 0 1-.708.708L8 8.707l-2.646 2.647a.5.5 0 0 1-.708-.708L7.293 8 4.646 5.354a.5.5 0 1 1 .708-.708z" />
-        </svg>
-      </button>
+        @if (canChangePlayersInDraft()) {
+          <button type="button" class="btn btn-gus-small" ngbTooltip="Clear list (does not save)."
+            (click)="onClearListClicked()">
+            <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" fill="currentColor" class="bi bi-x-octagon-fill"
+              viewBox="0 0 16 16">
+              <path
+                d="M11.46.146A.5.5 0 0 0 11.107 0H4.893a.5.5 0 0 0-.353.146L.146 4.54A.5.5 0 0 0 0 4.893v6.214a.5.5 0 0 0 .146.353l4.394 4.394a.5.5 0 0 0 .353.146h6.214a.5.5 0 0 0 .353-.146l4.394-4.394a.5.5 0 0 0 .146-.353V4.893a.5.5 0 0 0-.146-.353L11.46.146zm-6.106 4.5L8 7.293l2.646-2.647a.5.5 0 0 1 .708.708L8.707 8l2.647 2.646a.5.5 0 0 1-.708.708L8 8.707l-2.646 2.647a.5.5 0 0 1-.708-.708L7.293 8 4.646 5.354a.5.5 0 1 1 .708-.708z" />
+            </svg>
+          </button>
+        }
 
-      <button type="button" class="btn btn-gus-small" ngbTooltip="Copy to clipboard"
-        [copy-clipboard]="customClipTextToClip()" (click)="onCopyClicked();">
-        <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" fill="currentColor"
-          class="bi bi-clipboard-check-fill" viewBox="0 0 16 16">
-          <path
-            d="M6.5 0A1.5 1.5 0 0 0 5 1.5v1A1.5 1.5 0 0 0 6.5 4h3A1.5 1.5 0 0 0 11 2.5v-1A1.5 1.5 0 0 0 9.5 0h-3Zm3 1a.5.5 0 0 1 .5.5v1a.5.5 0 0 1-.5.5h-3a.5.5 0 0 1-.5-.5v-1a.5.5 0 0 1 .5-.5h3Z" />
-          <path
-            d="M4 1.5H3a2 2 0 0 0-2 2V14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V3.5a2 2 0 0 0-2-2h-1v1A2.5 2.5 0 0 1 9.5 5h-3A2.5 2.5 0 0 1 4 2.5v-1Zm6.854 7.354-3 3a.5.5 0 0 1-.708 0l-1.5-1.5a.5.5 0 0 1 .708-.708L7.5 10.793l2.646-2.647a.5.5 0 0 1 .708.708Z" />
-        </svg> </button>
+        <button type="button" class="btn btn-gus-small" ngbTooltip="Copy to clipboard"
+          [copy-clipboard]="customClipTextToClip()" (click)="onCopyClicked();">
+          <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" fill="currentColor"
+            class="bi bi-clipboard-check-fill" viewBox="0 0 16 16">
+            <path
+              d="M6.5 0A1.5 1.5 0 0 0 5 1.5v1A1.5 1.5 0 0 0 6.5 4h3A1.5 1.5 0 0 0 11 2.5v-1A1.5 1.5 0 0 0 9.5 0h-3Zm3 1a.5.5 0 0 1 .5.5v1a.5.5 0 0 1-.5.5h-3a.5.5 0 0 1-.5-.5v-1a.5.5 0 0 1 .5-.5h3Z" />
+            <path
+              d="M4 1.5H3a2 2 0 0 0-2 2V14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V3.5a2 2 0 0 0-2-2h-1v1A2.5 2.5 0 0 1 9.5 5h-3A2.5 2.5 0 0 1 4 2.5v-1Zm6.854 7.354-3 3a.5.5 0 0 1-.708 0l-1.5-1.5a.5.5 0 0 1 .708-.708L7.5 10.793l2.646-2.647a.5.5 0 0 1 .708.708Z" />
+          </svg> </button>
 
-      <button type="button" class="btn btn-gus-small" ngbTooltip="Create match from draft." (click)="onMatchUpClicked()"
-        *ngIf="canChangePlayersInDraft()">
-        <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" fill="currentColor"
-          class="bi bi-file-earmark-person-fill" viewBox="0 0 16 16">
-          <path
-            d="M9.293 0H4a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h8a2 2 0 0 0 2-2V4.707A1 1 0 0 0 13.707 4L10 .293A1 1 0 0 0 9.293 0zM9.5 3.5v-2l3 3h-2a1 1 0 0 1-1-1zM11 8a3 3 0 1 1-6 0 3 3 0 0 1 6 0zm2 5.755V14a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1v-.245S4 12 8 12s5 1.755 5 1.755z" />
-        </svg>
-      </button>
+          @if (canChangePlayersInDraft()) {
+            <button type="button" class="btn btn-gus-small" ngbTooltip="Create match from draft." (click)="onMatchUpClicked()"
+              >
+              <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" fill="currentColor"
+                class="bi bi-file-earmark-person-fill" viewBox="0 0 16 16">
+                <path
+                  d="M9.293 0H4a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h8a2 2 0 0 0 2-2V4.707A1 1 0 0 0 13.707 4L10 .293A1 1 0 0 0 9.293 0zM9.5 3.5v-2l3 3h-2a1 1 0 0 1-1-1zM11 8a3 3 0 1 1-6 0 3 3 0 0 1 6 0zm2 5.755V14a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1v-.245S4 12 8 12s5 1.755 5 1.755z" />
+              </svg>
+            </button>
+          }
 
-      <button type="button" class="btn btn-gus-small" ngbTooltip="Create match from top 12/10 players."
-        (click)="onMatchUpTopClicked()" *ngIf="canChangePlayersInDraft()">
-        <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" fill="currentColor"
-          class="bi bi-file-earmark-person-fill" viewBox="0 0 16 16">
-          <path
-            d="M6 8a3 3 0 1 0 0-6 3 3 0 0 0 0 6zm-5 6s-1 0-1-1 1-4 6-4 6 3 6 4-1 1-1 1H1zM11 3.5a.5.5 0 0 1 .5-.5h4a.5.5 0 0 1 0 1h-4a.5.5 0 0 1-.5-.5zm.5 2.5a.5.5 0 0 0 0 1h4a.5.5 0 0 0 0-1h-4zm2 3a.5.5 0 0 0 0 1h2a.5.5 0 0 0 0-1h-2zm0 3a.5.5 0 0 0 0 1h2a.5.5 0 0 0 0-1h-2z" />
-        </svg>
-      </button>
+          @if (canChangePlayersInDraft()) {
+            <button type="button" class="btn btn-gus-small" ngbTooltip="Create match from top 12/10 players."
+              (click)="onMatchUpTopClicked()">
+              <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" fill="currentColor"
+                class="bi bi-file-earmark-person-fill" viewBox="0 0 16 16">
+                <path
+                  d="M6 8a3 3 0 1 0 0-6 3 3 0 0 0 0 6zm-5 6s-1 0-1-1 1-4 6-4 6 3 6 4-1 1-1 1H1zM11 3.5a.5.5 0 0 1 .5-.5h4a.5.5 0 0 1 0 1h-4a.5.5 0 0 1-.5-.5zm.5 2.5a.5.5 0 0 0 0 1h4a.5.5 0 0 0 0-1h-4zm2 3a.5.5 0 0 0 0 1h2a.5.5 0 0 0 0-1h-2zm0 3a.5.5 0 0 0 0 1h2a.5.5 0 0 0 0-1h-2z" />
+              </svg>
+            </button>
+          }
 
-      <app-small-loading-spinner *ngIf="showLoading"></app-small-loading-spinner>
-    </div>
-  </div>
-
-  <div class="half-width">
-
-    <div class="col-md-10 col-lg-8 col-xl-6 border-bottom gus-search-box">
-      <input class="form-control border-0" type="text" [(ngModel)]="this.searchedName"
-        (keyup)="onSearchContentChange($event)" placeholder="Search... ( CTRL + / )" aria-label="Search" #srcNameArea
-        autofocus />
-    </div>
-  </div>
-</div>
-<div class="f-row">
-  <div class="half-width f-row-align-right">
-    <!-- show the list of players on the left side -->
-    <div class="col-12  col-md-10 col-lg-8 col-xl-6 left-player-list">
-      <h5>Selected players</h5>
-      <p>{{ selectedPlayerList.length }} players</p>
-      <div>
-        <app-player-card *ngFor="let playerItem of this.getDraftedPlayersMainList()" [player]="playerItem"
-          (playerSelected)="onPlayerSelected($event)"></app-player-card>
+          @if (showLoading) {
+            <app-small-loading-spinner></app-small-loading-spinner>
+          }
+        </div>
       </div>
-      <p>Reserves</p>
-      <div>
-        <app-player-card *ngFor="let playerItem of this.getDraftedPlayersReservesList()" [player]="playerItem"
-          (playerSelected)="onPlayerSelected($event)"></app-player-card>
+
+      <div class="half-width">
+
+        <div class="col-md-10 col-lg-8 col-xl-6 border-bottom gus-search-box">
+          <input class="form-control border-0" type="text" [(ngModel)]="this.searchedName"
+            (keyup)="onSearchContentChange($event)" placeholder="Search... ( CTRL + / )" aria-label="Search" #srcNameArea
+            autofocus />
+        </div>
       </div>
     </div>
-  </div>
-  <div class="half-width">
-    <!-- show the list of players on the right side -->
-    <div class="col-md-10 col-lg-8 col-xl-6 right-player-list">
-      <h5>Available players</h5>
-      <p>{{ availablePlayerList.length }} players</p>
-      <app-player-card *ngFor="
-        let playerItem of this.availablePlayerList | playerFilter: searchedName
-      " [player]="playerItem" (playerSelected)="onPlayerSelected($event)">
-      </app-player-card>
+    <div class="f-row">
+      <div class="half-width f-row-align-right">
+        <!-- show the list of players on the left side -->
+        <div class="col-12  col-md-10 col-lg-8 col-xl-6 left-player-list">
+          <h5>Selected players</h5>
+          <p>{{ selectedPlayerList.length }} players</p>
+          <div>
+            @for (playerItem of this.getDraftedPlayersMainList(); track playerItem) {
+              <app-player-card [player]="playerItem"
+              (playerSelected)="onPlayerSelected($event)"></app-player-card>
+            }
+          </div>
+          <p>Reserves</p>
+          <div>
+            @for (playerItem of this.getDraftedPlayersReservesList(); track playerItem) {
+              <app-player-card [player]="playerItem"
+              (playerSelected)="onPlayerSelected($event)"></app-player-card>
+            }
+          </div>
+        </div>
+      </div>
+      <div class="half-width">
+        <!-- show the list of players on the right side -->
+        <div class="col-md-10 col-lg-8 col-xl-6 right-player-list">
+          <h5>Available players</h5>
+          <p>{{ availablePlayerList.length }} players</p>
+          @for (
+            playerItem of this.availablePlayerList | playerFilter: searchedName
+            ; track
+            playerItem) {
+            <app-player-card [player]="playerItem" (playerSelected)="onPlayerSelected($event)">
+            </app-player-card>
+          }
+        </div>
+      </div>
     </div>
-  </div>
-</div>
-<app-toasts aria-live="polite" aria-atomic="true"></app-toasts>
+    <app-toasts aria-live="polite" aria-atomic="true"></app-toasts>

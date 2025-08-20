@@ -3,10 +3,10 @@ import { Player } from './../../shared/player.model';
 import { FormsModule, NgForm } from '@angular/forms';
 import { ActivatedRoute, Params, Router } from '@angular/router';
 import { PlayersService } from '../../shared/players.service';
-import { CommonModule } from '@angular/common';
+
 
 @Component({
-    imports: [CommonModule, FormsModule],
+    imports: [FormsModule],
     selector: 'app-player-edit',
     styleUrls: ['./player-edit.component.css'],
     templateUrl: './player-edit.component.html'

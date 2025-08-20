@@ -1,10 +1,10 @@
-import { CommonModule } from '@angular/common';
+
 import { Component } from '@angular/core';
 
 @Component({
   selector: 'app-player-start',
   standalone: true,
-  imports: [CommonModule],
+  imports: [],
   styles: [''],
   template: `<br>Select a player...`
 })
