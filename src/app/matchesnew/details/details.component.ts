@@ -71,12 +71,13 @@ export class MatchDetailsComponent {
     if (!game.postResults) {
       return false;
     }
-    const pair = game.postResults.find(x => x.id === player.id);
 
-    if (pair && pair.diff > 0) {
-      return true;
+    const foundObj = game.postResults.find(x => x.id === player.id);
+    if (!foundObj) {
+      return false;
     }
-    return false;
+
+    return foundObj.diff > 0;
   }
 
   isBadRatingDiff(game: CustomPrevGame, player: Player): boolean {
@@ -87,11 +88,13 @@ export class MatchDetailsComponent {
     if (!game.postResults) {
       return false;
     }
-    const pair = game.postResults.find(x => x.id === player.id);
-    if (pair && pair.diff < 0) {
-      return true;
+    
+    const foundObj = game.postResults.find(x => x.id === player.id);
+    if (!foundObj) {
+      return false;
     }
-    return false;
+
+    return foundObj.diff < 0;
   }
 
   public canShowStoreResultsButton(game: CustomPrevGame): boolean {

@@ -51,7 +51,6 @@ export class PrevMatchDetailComponent implements OnInit, OnDestroy {
     filter(id => id !== undefined),
     switchMap(id => this.matchAltSvc.getMatchForDateAsync(id ?? "")),
     filter(game => game !== undefined),
-    tap(game => console.log("*** game", game)),
   );
 
   public selectedCustomGame$ = combineLatest([
@@ -73,7 +72,6 @@ export class PrevMatchDetailComponent implements OnInit, OnDestroy {
         return undefined;
       }
     }),
-    tap(game => console.log("*** game", game)),
     tap(() => this.updateTeamSumsForCurrentGame())
   );
 
@@ -82,7 +80,6 @@ export class PrevMatchDetailComponent implements OnInit, OnDestroy {
     private matchAltSvc: MatchService,
     private playersSvc: PlayersService,
     private authSvc: AuthService) {
-    console.log("*** constructor prev-match-detail", this.id());
   }
 
   private processGamePlayerRatings(game: CustomPrevGame): CustomPrevGame {
@@ -227,7 +224,6 @@ export class PrevMatchDetailComponent implements OnInit, OnDestroy {
   }
 
   isGoodRatingDiffForGame(player: Player, customGame?: CustomPrevGame): boolean {
-
     if (!customGame) {
       return false;
     }
@@ -235,12 +231,13 @@ export class PrevMatchDetailComponent implements OnInit, OnDestroy {
     if (!customGame.postResults) {
       return false;
     }
-    const pair = customGame.postResults.find(x => x.id === player.id);
 
-    if (pair && pair.diff > 0) {
-      return true;
+    const pair = customGame.postResults.find(x => x.id === player.id);
+    if (!pair) {
+      return false;
     }
-    return false;
+
+    return pair.diff > 0;
   }
 
   isBadRatingDiff(player: Player): boolean {
@@ -255,12 +252,23 @@ export class PrevMatchDetailComponent implements OnInit, OnDestroy {
     if (!customGame.postResults) {
       return false;
     }
+
+
     const pair = customGame.postResults.find(x => x.id === player.id);
-    //TODO: make dependent on rating system
-    if (pair && pair.diff < 0) {
-      return true;
+    if (!pair) {
+      return false;
     }
-    return false;
+
+    return pair.diff < 0;
+  }
+
+  getCSSClassForPlayerRatingAndGame(player: Player, customGame: CustomPrevGame): string {
+    if (this.isGoodRatingDiffForGame(player, customGame)) {
+      return 'good-num';
+    } else if (this.isBadRatingDiffForGame(player, customGame)) {
+      return 'bad-num';
+    }
+    return '';
   }
 
   /**
@@ -393,7 +401,6 @@ export class PrevMatchDetailComponent implements OnInit, OnDestroy {
       })
     }
 
-    console.log("*** new players", newPlayers);
     this.showSpinner = true;
 
     // Store the 'old' ratings under a different entry.

@@ -529,12 +529,25 @@ export class PlayersService implements OnDestroy {
             && matchRatingsCfg.losersRatingsTotal != 0
             && matchRatingsCfg.winnersRatingsTotal != 0
         ) {
-            let ratio = matchRatingsCfg.losersRatingsTotal / matchRatingsCfg.winnersRatingsTotal;
-            // square it to make it more significant
-            ratio = ratio * ratio;
-            diffToApply = diffToApply * ratio;
-            let ratingsDiff = sign * Math.abs(matchRatingsCfg.winnersRatingsTotal - matchRatingsCfg.losersRatingsTotal) / 20;
-            diffToApply = diffToApply + ratingsDiff;
+            // Determine if this was an upset (weaker team won) or expected outcome (stronger team won)
+            const wasUpset = matchRatingsCfg.winnersRatingsTotal < matchRatingsCfg.losersRatingsTotal;
+            
+            if (wasUpset) {
+                // Upset: weaker team won - apply larger rating changes
+                let ratio = matchRatingsCfg.losersRatingsTotal / matchRatingsCfg.winnersRatingsTotal;
+                // square it to make it more significant
+                ratio = ratio * ratio;
+                diffToApply = diffToApply * ratio;
+                let ratingsDiff = sign * Math.abs(matchRatingsCfg.winnersRatingsTotal - matchRatingsCfg.losersRatingsTotal) / 20;
+                diffToApply = diffToApply + ratingsDiff;
+            } else {
+                // Expected outcome: stronger team won - apply reduced rating changes
+                let ratio = matchRatingsCfg.winnersRatingsTotal / matchRatingsCfg.losersRatingsTotal;
+                // Use inverse ratio to reduce the impact for expected outcomes
+                ratio = 1 / ratio;
+                // Apply a milder multiplier for expected outcomes
+                diffToApply = diffToApply * (0.5 + 0.5 * ratio);
+            }
         }
 
         playerCpy.rating = playerCpy.rating + diffToApply;
@@ -592,15 +605,13 @@ export class PlayersService implements OnDestroy {
      * @returns The list of players which were part of the game with new ratings (new copy).
      */
     public getPlayersWithUpdatedRatingsForGame(game: CustomPrevGame, useDiff: boolean): Player[] {
+        let playersCpy: Player[] = [...game.team1.concat([...game.team2])];
         if (game.scoreTeam1 == null || game.scoreTeam2 == null
             || game.scoreTeam1 === game.scoreTeam2) {
             // nothing to do
-            return [];
+            return playersCpy;
         }
 
-        let playersCpy: Player[] = [...game.team1.concat([...game.team2])];
-        // let playersCpy: Player[] = [...game.team1];
-        // playersCpy = [...game.team2];
         let winnersRatingsTotal = 0;
         let losersRatingsTotal = 0;
 
@@ -619,10 +630,6 @@ export class PlayersService implements OnDestroy {
             winnersRatingsTotal = game.team2.reduce((acc, player) => acc + player.rating, 0);
         }
 
-        console.log('winners', winners);
-        console.log('losers', losers);
-
-        
         let matchRatingsCfg = {
             takeInitialRatingsIntoAccount: useDiff,
             winnersRatingsTotal: winnersRatingsTotal,

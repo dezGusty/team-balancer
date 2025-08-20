@@ -10,14 +10,16 @@
   <div class="history-grid-data-left">
     Team one 1️⃣
     <ul class="gus-list">
-      <li class="gus-list-item" *ngFor="let leftItem of match.team1">
-        <span class="gus-list-item-name">{{ this.getDisplayNameForPlayer(leftItem) }}</span>
-        <br>
-        <span class="gus-list-item-rating">{{ this.getInitialRatingForPlayer(leftItem) }}</span>
-        <span class="gus-list-item-diff" [class.good-num]="isGoodRatingDiff(match, leftItem)"
-          [class.bad-num]="isBadRatingDiff(match, leftItem)">
-          {{ this.getPostMatchDiffForPlayer(match, leftItem) }}</span>
-      </li>
+      @for (leftItem of match.team1; track leftItem) {
+        <li class="gus-list-item">
+          <span class="gus-list-item-name">{{ this.getDisplayNameForPlayer(leftItem) }}</span>
+          <br>
+          <span class="gus-list-item-rating">{{ this.getInitialRatingForPlayer(leftItem) }}</span>
+          <span class="gus-list-item-diff" [class.good-num]="isGoodRatingDiff(match, leftItem)"
+            [class.bad-num]="isBadRatingDiff(match, leftItem)">
+            {{ this.getPostMatchDiffForPlayer(match, leftItem) }}</span>
+        </li>
+      }
     </ul>
     <input aria-label="t1 score" type="number" class="form-control" name="team1Score" id="team1Score"
       [(ngModel)]="this.team1Score" #team1ScoreEntry="ngModel"

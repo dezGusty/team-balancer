@@ -14,14 +14,14 @@
           Team one 1️⃣ {{ this.team1Sum() | number: '1.0-2'}}
   
           <ul class="gus-list">
-            @for (leftItem of selectedCustomGame.team1; track leftItem) {
+            @for (guy of selectedCustomGame.team1; track guy) {
               <li class="gus-list-item">
-              <span class="gus-list-item-name">{{ this.getDisplayNameForPlayer(leftItem) }}</span>
+              <span class="gus-list-item-name">{{ this.getDisplayNameForPlayer(guy) }}</span>
               <br>
-              <span class="gus-list-item-rating">{{ this.getInitialRatingForPlayer(leftItem) }}</span>
-              <span class="gus-list-item-diff" [class.good-num]="isGoodRatingDiffForGame(leftItem, selectedCustomGame)"
-                [class.bad-num]="isBadRatingDiff(leftItem)">
-                {{ getPostMatchDiffForPlayerAndGame(leftItem, selectedCustomGame) }}</span>
+              <span class="gus-list-item-rating">{{ this.getInitialRatingForPlayer(guy) }}</span>
+              <span class="gus-list-item-diff" [class.good-num]="isGoodRatingDiffForGame(guy, selectedCustomGame)"
+                [class.bad-num]="isBadRatingDiffForGame(guy, selectedCustomGame)">
+                {{ getPostMatchDiffForPlayerAndGame(guy, selectedCustomGame) }}</span>
             </li>
             }
           </ul>
@@ -29,13 +29,13 @@
         <div class="col-6">
           Team two 2️⃣ {{ this.team2Sum() | number: '1.0-2' }}
           <ul class="gus-list">
-            @for (rightItem of selectedCustomGame.team2; track rightItem) {
+            @for (guy of selectedCustomGame.team2; track guy) {
             <li class="gus-list-item">
-              <span class="gus-list-item-name">{{ this.getDisplayNameForPlayer(rightItem) }}</span>
+              <span class="gus-list-item-name">{{ this.getDisplayNameForPlayer(guy) }}</span>
               <br>
-              <span class="gus-list-item-rating">{{ this.getInitialRatingForPlayer(rightItem) }}</span>
-              <span class="gus-list-item-diff" [class.good-num]="isGoodRatingDiffForGame(rightItem, selectedCustomGame)"
-                [class.bad-num]="isBadRatingDiff(rightItem)">{{ this.getPostMatchDiffForPlayerAndGame(rightItem, selectedCustomGame) }}</span>
+              <span class="gus-list-item-rating">{{ this.getInitialRatingForPlayer(guy) }}</span>
+              <span class="gus-list-item-diff" [class.good-num]="isGoodRatingDiffForGame(guy, selectedCustomGame)"
+                [class.bad-num]="isBadRatingDiffForGame(guy, selectedCustomGame)">{{ this.getPostMatchDiffForPlayerAndGame(guy, selectedCustomGame) }}</span>
             </li>
             }
           </ul>
