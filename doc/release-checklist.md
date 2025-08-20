@@ -2,9 +2,8 @@
 
 This is a quick list of steps to be performed when performing a new release.
 
-- [ ] increment version number (see src/app/about/about.component.ts)
+- [ ] increment version number (see `package.json` and `src/app/about/about.component.ts`)
 - [ ] update changes / readme file
-- [ ] ensure the file `firebase-messaging-sw.js` exists and is up to date (in the same directory as `firebase-messaging-source.js`)
 - [ ] build the project
   - `ng build --configuration production`
   <!-- - `ng build --configuration production --browser .` for Angular 18. -->
