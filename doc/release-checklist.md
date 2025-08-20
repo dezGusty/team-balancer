@@ -6,7 +6,6 @@ This is a quick list of steps to be performed when performing a new release.
 - [ ] update changes / readme file
 - [ ] build the project
   - `ng build --configuration production`
-  <!-- - `ng build --configuration production --browser .` for Angular 18. -->
 - [ ] deploy to firebase
   - `firebase deploy`
     OR
