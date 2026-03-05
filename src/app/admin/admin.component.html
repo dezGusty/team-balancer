@@ -1,37 +1,63 @@
-<div class="f-row f-align-center">
-    <!-- show the list of players on the left side -->
-    <div class="col-6 col-sm-6 col-md-5 col-lg-4 col-xl-3 left-player-list">
+<div class="admin-settings">
+  <h2>Application Settings</h2>
 
-        <!-- <app-player-routed-card *ngFor="let playerItem of players; let even = even; let odd = odd" [player]="playerItem"
-            [id]="playerItem.id" [ngClass]="{ odd: odd, even: even }">
-        </app-player-routed-card> -->
+  <section class="settings-section">
+    <h3>Auto-Save</h3>
+    <label class="toggle-label">
+      <input type="checkbox" [ngModel]="autoSave()" (ngModelChange)="autoSave.set($event)" />
+      <span>Enable auto-save</span>
+    </label>
+    <p class="settings-hint">
+      When enabled, data is persisted automatically on every change.
+      When disabled, users must manually click the <strong>Save</strong> button to persist changes.
+    </p>
+  </section>
 
-        @if (this.canExportPlayers()) {
-            <button class="btn btn-outline-gus btn-grad-gusty" 
-                (click)='onExportPlayerClicked($event)' download="download.json">Export...</button>
-        }
+  <section class="settings-section">
+    <h3>Default Match Schedule</h3>
+    <p class="settings-hint">
+      These day/time pairs are used when cycling through options with the
+      <em>Next Game Day</em> button in the game events form.
+      The time is inserted as the match suffix.
+    </p>
+
+    <div class="schedule-list">
+      @for (entry of schedule(); track $index) {
+        <div class="schedule-entry gus-border">
+          <select class="gus-input gus-border gus-hoverable"
+                  [ngModel]="entry.dayOfWeek"
+                  (ngModelChange)="updateEntryDay($index, $event)">
+            @for (day of DAY_NAMES; track $index) {
+              <option [value]="$index">{{ day }}</option>
+            }
+          </select>
+          <input class="gus-input gus-border gus-hoverable"
+                 type="time"
+                 [ngModel]="entry.time"
+                 (ngModelChange)="updateEntryTime($index, $event)" />
+          <button class="gus-button gus-border gus-hoverable"
+                  type="button"
+                  (click)="removeScheduleEntry($index)">Remove</button>
+        </div>
+      } @empty {
+        <div class="schedule-empty">No schedule entries. Add one below.</div>
+      }
     </div>
 
-    <div>Test login</div>
-    <button class="btn btn-outline-gus btn-grad-gusty" (click)='onTestLoginClick($event)'>Login with Google</button>
+    <button class="gus-button gus-border gus-hoverable" type="button" (click)="addScheduleEntry()">
+      + Add Day
+    </button>
+  </section>
 
-    <button type="button" (click)='onToggleAnim($event)'>Toggle anim</button>
-    <button type="button" (click)='onAddNotif($event)'>Add notification</button>
-
+  <div class="settings-actions">
+    <button class="gus-button gus-border gus-hoverable"
+            type="button"
+            (click)="saveSettings()"
+            [disabled]="isSaving()">
+      {{ isSaving() ? 'Saving…' : 'Save Settings' }}
+    </button>
+    @if (savedSuccess()) {
+      <span class="save-success">✓ Saved</span>
+    }
+  </div>
 </div>
-
-@if (this.user$ | async; as user) {
-<div style="display: flex;">
-    Hello {{user.displayName}}!
-    <!-- <div class="avatar-outer" [class.avatar-outer-anim]="this.anim$ | async">
-        <div class="avatar">
-            <img class="rounded-avatar-img" [src]="user.photoURL" alt="user photo" />
-        </div>
-    </div> -->
-    <app-profile></app-profile>
-</div>
-}
-<br>
-
-<app-toasts aria-live="polite" aria-atomic="true"
-    style="position: relative; min-height: 200px; z-index: 1;"></app-toasts>

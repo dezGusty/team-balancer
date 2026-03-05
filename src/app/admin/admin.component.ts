@@ -1,164 +1,68 @@
-import { ChangeDetectionStrategy, Component, OnDestroy, OnInit } from '@angular/core';
-import { Subscription } from 'rxjs/internal/Subscription';
-import { AuthService } from '../auth/auth.service';
-import { CustomPrevGame } from '../shared/custom-prev-game.model';
-import { PlayerChangeInfo } from '../shared/player-change-info';
-import { Player } from '../shared/player.model';
-import { PlayersService } from '../shared/players.service';
-import { ToastService } from '../shared/toasts-service';
-import { RatingHist } from '../shared/rating-hist.model';
-import { MatchService } from '../shared/match.service';
+import { ChangeDetectionStrategy, Component, effect, inject, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { ToastsContainer } from '../toast/toast-container.component';
-import { UserAuthService } from '../auth/user-auth.service';
-import { BehaviorSubject, Subject, scan, shareReplay, tap } from 'rxjs';
+import { AppSettings, MatchDaySchedule, SettingsService } from '../shared/settings.service';
 import { NotificationService } from '../utils/notification/notification.service';
-import { LoadingFlagService } from '../utils/loading-flag.service';
-import { ProfileComponent } from "../header/profile/profile.component";
+
 @Component({
   selector: 'app-admin',
   standalone: true,
-  styles: [`
-.profile-pic {
-  width: 42px;
-  height: 42px;
-  border-radius: 50%;
-  object-fit: cover;
-  object-position: center;
-}
-`],
   templateUrl: './admin.component.html',
+  styleUrl: './admin.component.css',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [
-    CommonModule,
-    FormsModule,
-    ToastsContainer,
-    ProfileComponent
-  ]
+  imports: [CommonModule, FormsModule]
 })
-export class AdminComponent implements OnInit, OnDestroy {
+export class AdminComponent {
+  private readonly settingsSvc = inject(SettingsService);
+  private readonly notifSvc = inject(NotificationService);
 
-  user$ = this.userAuthService.loggedInUser$;
+  readonly DAY_NAMES = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
 
-  dataRetrieval$ = this.userAuthService.dataRetrieval$;
+  autoSave = signal<boolean>(true);
+  schedule = signal<MatchDaySchedule[]>([]);
+  isSaving = signal<boolean>(false);
+  savedSuccess = signal<boolean>(false);
 
-  currentLabel: string = "";
-  players: Player[] = [];
-
-  matchHistory: Map<string, CustomPrevGame> = new Map();
-  ratingHistory: Map<string, RatingHist> = new Map();
-  loadingConvert = -1;
-
-
-  private subscriptions: Subscription[] = [];
-
-  constructor(
-    private authSvc: AuthService,
-    private playersSvc: PlayersService,
-    private matchesSvc: MatchService,
-    private toastSvc: ToastService,
-    private userAuthService: UserAuthService,
-    private notificationService: NotificationService,
-    private loadingFlagService: LoadingFlagService) {
-
+  constructor() {
+    effect(() => {
+      const s = this.settingsSvc.settingsSig();
+      this.autoSave.set(s.autoSave ?? true);
+      this.schedule.set((s.defaultMatchSchedule ?? []).map(e => ({ ...e })));
+    }, { allowSignalWrites: true });
   }
 
-  ngOnInit(): void {
-    this.players = this.playersSvc.getPlayers();
-    this.subscriptions.push(this.playersSvc.playerDataChangeEvent
-      .subscribe(
-        (playerChangeInfo: PlayerChangeInfo | undefined) => {
-          if (!playerChangeInfo) {
-            return;
-          }
+  addScheduleEntry(): void {
+    this.schedule.update(entries => [...entries, { dayOfWeek: 2, time: '20:00' }]);
+  }
 
-          this.players = this.playersSvc.getPlayers();
-          this.toastSvc.show('Reloaded all players from service. \n'
-            + playerChangeInfo.messageType + '\n'
-            + playerChangeInfo.messagePayload);
-        }
-      )
+  removeScheduleEntry(index: number): void {
+    this.schedule.update(entries => entries.filter((_, i) => i !== index));
+  }
+
+  updateEntryDay(index: number, value: string): void {
+    this.schedule.update(entries =>
+      entries.map((e, i) => i === index ? { ...e, dayOfWeek: +value } : e)
     );
   }
 
-  ngOnDestroy(): void {
-    this.subscriptions.forEach(subscription => {
-      subscription.unsubscribe()
-    });
+  updateEntryTime(index: number, value: string): void {
+    this.schedule.update(entries =>
+      entries.map((e, i) => i === index ? { ...e, time: value } : e)
+    );
   }
 
-  public canExportPlayers(): boolean {
-    return this.authSvc.isAuthenticatedAsOrganizer();
+  async saveSettings(): Promise<void> {
+    this.isSaving.set(true);
+    this.savedSuccess.set(false);
+    const settings: AppSettings = {
+      autoSave: this.autoSave(),
+      defaultMatchSchedule: this.schedule(),
+    };
+    await this.settingsSvc.saveSettings(settings);
+    this.isSaving.set(false);
+    this.savedSuccess.set(true);
+    this.notifSvc.show('Settings saved successfully.');
+    setTimeout(() => this.savedSuccess.set(false), 3000);
   }
-
-  public canAddPlayers(): boolean {
-    return this.authSvc.isAuthenticatedAsOrganizer();
-  }
-
-
-  public async onConvertRatingClicked($event: any) {
-    this.loadingConvert = 1;
-    // Reset player ratings.
-    for (let player of this.playersSvc.getPlayers()) {
-      player.rating = 5;
-    }
-    this.playersSvc.saveAllPlayers();
-
-    // Create rating entries again, based on the matches whose results were applied.
-    let recentMatchNames = [...this.matchesSvc.getRecentMatchListCached()];
-    recentMatchNames.forEach(async matchName => {
-      const customGame = await this.matchesSvc.getMatchForDateAsync(matchName);
-      if (customGame) {
-
-        if (customGame.appliedResults) {
-          const newPlayers = this.playersSvc.getAllPlayersUpdatedRatingsForGame(
-            this.playersSvc.getPlayers(), customGame
-          );
-
-          await this.playersSvc.savePlayersToListAsync(this.playersSvc.getPlayers(), matchName);
-          await this.playersSvc.savePlayersToListAsync(newPlayers, 'current');
-
-        }
-      };
-    })
-    this.loadingConvert = 0;
-  }
-
-  public onExportPlayerClicked($event: any): void {
-    // export data as json
-    const content: string = JSON.stringify(this.playersSvc.getPlayers(true), null, 2);
-    const blob = new Blob([content], { type: 'application/json' });
-    const url = window.URL.createObjectURL(blob);
-    window.open(url);
-  }
-
-  async checkDropDown(dropdown: boolean) {
-    if (dropdown == true) {
-      this.ratingHistory = await this.playersSvc.getRatingHistoryAsync();
-      this.matchHistory = await this.matchesSvc.getMatchListAsync();
-    }
-  }
-
-  onTestLoginClick($event: any) {
-    this.userAuthService.doGoogleLogin();
-  }
-
-  animSubject$ = new BehaviorSubject<boolean>(true);
-  anim$ = this.animSubject$.asObservable().pipe(
-    tap((anim) => console.log('anim', anim)),
-    tap((anim) => this.notificationService.emitMessage('anim:' + anim)),
-    shareReplay(1)
-  );
-
-  onToggleAnim($event: any) {
-    this.animSubject$.next(!this.animSubject$.value);
-    this.loadingFlagService.setLoadingFlag(!this.animSubject$.value, "admin-toggle-anim");
-  }
-
-  onAddNotif($event: any) {
-    this.toastSvc.show('New notification added');
-    this.notificationService.emitMessage('New notification added');
-  }
-
 }
+

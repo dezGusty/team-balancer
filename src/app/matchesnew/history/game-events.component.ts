@@ -10,6 +10,7 @@ import { FormsModule } from '@angular/forms';
 import { GameEventsService } from './data-access/game-events.service';
 import { GameeventdraftComponent } from "../gameeventdraft/gameeventdraft.component";
 import { SummaryComponent } from "../summary/summary.component";
+import { SettingsService } from 'src/app/shared/settings.service';
 
 @Component({
   selector: 'app-history',
@@ -29,6 +30,7 @@ export class GameEventsComponent {
   EMPTY: string = FormAction.EMPTY;
 
   private gameEventsService: GameEventsService = inject(GameEventsService);
+  private settingsService: SettingsService = inject(SettingsService);
 
   addEvent = signal<Action<CreateGameRequest>>({} as Action<CreateGameRequest>);
 
@@ -97,12 +99,28 @@ export class GameEventsComponent {
     return `${year}-${textMonth}-${textDay}`;
   }
 
-  selectNextTuesdayOrThursday() {
+  selectNextGameDay() {
     const evt: Action<CreateGameRequest> = this.addEvent();
     const startFrom = evt.matchDate ? this.getFollowingDay(new Date(evt.matchDate)) : new Date();
-    const nextDate = this.getNextTuesdayOrThursday(startFrom);
-    const nextEvent: Action<CreateGameRequest> = { ...evt, matchDate: this.getDateAsYYYYMMDD(nextDate) };
-    this.addEvent.set(nextEvent);
+    const schedule = this.settingsService.defaultMatchScheduleSig();
+
+    if (schedule.length === 0) {
+      // Fallback: use hardcoded Tuesday/Thursday when no schedule is configured
+      const nextDate = this.getNextTuesdayOrThursday(startFrom);
+      this.addEvent.set({ ...evt, matchDate: this.getDateAsYYYYMMDD(nextDate) });
+      return;
+    }
+
+    // Scan forward up to 7 days to find the nearest day matching a schedule entry
+    for (let daysAhead = 0; daysAhead <= 7; daysAhead++) {
+      const candidate = new Date(startFrom);
+      candidate.setDate(startFrom.getDate() + daysAhead);
+      const match = schedule.find(e => e.dayOfWeek === candidate.getDay());
+      if (match) {
+        this.addEvent.set({ ...evt, matchDate: this.getDateAsYYYYMMDD(candidate), suffix: match.time });
+        return;
+      }
+    }
   }
 
   onCalendarDateSelected(dateAsString: string) {
