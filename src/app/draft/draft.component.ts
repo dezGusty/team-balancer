@@ -97,7 +97,7 @@ export class DraftComponent implements OnInit, OnDestroy {
   }
 
   @HostListener('window:keydown.control./', ['$event'])
-  startSearching(event: KeyboardEvent) {
+  startSearching(event: Event) {
     setTimeout(() => { // this will make the execution after the above boolean has changed
       this.srcNameArea?.nativeElement.focus();
     }, 0);

@@ -1,5 +1,5 @@
 import { AsyncPipe } from '@angular/common';
-import { enableProdMode, importProvidersFrom } from '@angular/core';
+import { enableProdMode, importProvidersFrom, provideZoneChangeDetection } from '@angular/core';
 import { initializeApp, provideFirebaseApp } from '@angular/fire/app';
 import { getAuth, provideAuth } from '@angular/fire/auth';
 import { getFirestore, provideFirestore } from '@angular/fire/firestore';
@@ -74,7 +74,7 @@ const appRoutes: Routes = [
 
 bootstrapApplication(AppComponent, {
   providers: [
-    provideRouter(appRoutes, withComponentInputBinding()),
+    provideZoneChangeDetection(),provideRouter(appRoutes, withComponentInputBinding()),
     provideAuth(() => {
       return getAuth();
     }),

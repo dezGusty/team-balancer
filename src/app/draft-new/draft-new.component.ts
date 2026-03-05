@@ -128,7 +128,7 @@ export class DraftNewComponent {
 
   searchedName: string = '';
   @HostListener('window:keydown.control./', ['$event'])
-  startSearching(event: KeyboardEvent) {
+  startSearching(event: Event) {
     setTimeout(() => { // this will make the execution after the above boolean has changed
       this.srcNameArea?.nativeElement.focus();
     }, 0);

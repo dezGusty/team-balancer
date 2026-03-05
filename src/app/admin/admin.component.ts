@@ -1,5 +1,5 @@
 import { ChangeDetectionStrategy, Component, effect, inject, signal } from '@angular/core';
-import { CommonModule } from '@angular/common';
+
 import { FormsModule } from '@angular/forms';
 import { AppSettings, MatchDaySchedule, SettingsService } from '../shared/settings.service';
 import { NotificationService } from '../utils/notification/notification.service';
@@ -10,7 +10,7 @@ import { NotificationService } from '../utils/notification/notification.service'
   templateUrl: './admin.component.html',
   styleUrl: './admin.component.css',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [CommonModule, FormsModule]
+  imports: [FormsModule]
 })
 export class AdminComponent {
   private readonly settingsSvc = inject(SettingsService);
