@@ -11,6 +11,7 @@ import { Result } from '../result';
 import { NotificationService } from 'src/app/utils/notification/notification.service';
 import { PlayersService } from 'src/app/shared/players.service';
 import { Player, getDisplayName } from 'src/app/shared/player.model';
+import { SettingsService } from 'src/app/shared/settings.service';
 
 @Injectable({
   providedIn: 'root'
@@ -47,7 +48,8 @@ export class GameEventsService implements OnDestroy {
   private readonly addGameToRecentMatches$ = this.addGameToRecentMatchesSubject$.asObservable();
 
   private readonly autoSaveGameEventSubject$ = new BehaviorSubject<boolean>(false);
-  readonly autoSaveGameEventSignal = toSignal(this.autoSaveGameEventSubject$, { initialValue: true });
+  
+  readonly autoSaveGameEventSignal = toSignal(this.autoSaveGameEventSubject$, { initialValue: false });
 
   readonly nextSaveDataSubject$ = new BehaviorSubject<GameEventDBData>(GameEventDBData.DEFAULT);
   readonly nextSaveDataSignal = toSignal(this.nextSaveDataSubject$, { initialValue: GameEventDBData.DEFAULT });
@@ -526,7 +528,9 @@ export class GameEventsService implements OnDestroy {
     private firestore: Firestore,
     private notificationService: NotificationService,
     private loadingFlagService: LoadingFlagService,
-    private playersService: PlayersService) {
+    private playersService: PlayersService,
+    private settingsService: SettingsService) {
+    this.subscriptions.push(this.autoSaveGameEventSubject$.subscribe());
     this.subscriptions.push(this.createGameEventAction$.subscribe());
     this.subscriptions.push(this.recentGameTitles$.subscribe());
     this.subscriptions.push(this.selectedMatch$.subscribe());
@@ -537,6 +541,8 @@ export class GameEventsService implements OnDestroy {
     this.subscriptions.push(this.saveRaffleData$.subscribe());
     this.subscriptions.push(this.saveToDraft$.subscribe());
     this.subscriptions.push(this.reapplyOrderAccordingToReserveStatus$.subscribe());
+
+    this.autoSaveGameEventSubject$.next(this.settingsService.autoSaveSig());
   }
 
   ngOnDestroy(): void {

@@ -2,7 +2,7 @@ import { Injectable, inject, computed } from '@angular/core';
 import { Firestore, docData, setDoc } from '@angular/fire/firestore';
 import { doc } from 'firebase/firestore';
 import { toSignal } from '@angular/core/rxjs-interop';
-import { catchError, map, of } from 'rxjs';
+import { catchError, map, of, tap } from 'rxjs';
 
 export interface MatchDaySchedule {
   dayOfWeek: number;  // 0=Sunday … 6=Saturday
@@ -31,11 +31,12 @@ export class SettingsService {
   private readonly settings$ = docData(doc(this.firestore, 'settings/app')).pipe(
     map(data => (data ? data as AppSettings : DEFAULT_APP_SETTINGS)),
     catchError(() => of(DEFAULT_APP_SETTINGS)),
+    tap(settings => console.log('[x] Loaded settings:', settings))
   );
 
   readonly settingsSig = toSignal(this.settings$, { initialValue: DEFAULT_APP_SETTINGS });
 
-  readonly autoSaveSig = computed(() => this.settingsSig().autoSave ?? true);
+  readonly autoSaveSig = computed(() => this.settingsSig().autoSave ?? false);
   readonly defaultMatchScheduleSig = computed(() => this.settingsSig().defaultMatchSchedule ?? []);
 
   async saveSettings(settings: AppSettings): Promise<void> {
