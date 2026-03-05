@@ -19,6 +19,7 @@ export class AdminComponent {
   readonly DAY_NAMES = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
 
   autoSave = signal<boolean>(true);
+  showPlayerStatusIcons = signal<boolean>(true);
   schedule = signal<MatchDaySchedule[]>([]);
   isSaving = signal<boolean>(false);
   savedSuccess = signal<boolean>(false);
@@ -27,6 +28,7 @@ export class AdminComponent {
     effect(() => {
       const s = this.settingsSvc.settingsSig();
       this.autoSave.set(s.autoSave ?? true);
+      this.showPlayerStatusIcons.set(s.showPlayerStatusIcons ?? true);
       this.schedule.set((s.defaultMatchSchedule ?? []).map(e => ({ ...e })));
     }, { allowSignalWrites: true });
   }
@@ -56,6 +58,7 @@ export class AdminComponent {
     this.savedSuccess.set(false);
     const settings: AppSettings = {
       autoSave: this.autoSave(),
+      showPlayerStatusIcons: this.showPlayerStatusIcons(),
       defaultMatchSchedule: this.schedule(),
     };
     await this.settingsSvc.saveSettings(settings);

@@ -8,6 +8,7 @@ import { GameEventData } from '../history/data-access/create-game-request.model'
 import { PlayersService } from 'src/app/shared/players.service';
 import { Player, getDisplayName } from 'src/app/shared/player.model';
 import { NotificationService } from 'src/app/utils/notification/notification.service';
+import { SettingsService } from 'src/app/shared/settings.service';
 
 export interface TransposeData {
   header: string[];
@@ -27,6 +28,7 @@ export class SummaryComponent {
   private gameEventsService: GameEventsService = inject(GameEventsService);
   private notificationService = inject(NotificationService);
   private playersService: PlayersService = inject(PlayersService);
+  private settingsService = inject(SettingsService);
 
   onSideNavInnerContainerClicked(event: Event) {
     event.stopPropagation();
@@ -184,10 +186,11 @@ export class SummaryComponent {
     localMatches.forEach(match => {
       result += '📅' + match.matchDate + ' ' + '🕒' + match.label + '\n';
       match.registeredPlayers.forEach((player, index) => {
-        result += '' + (index + 1) + '. ' 
-          + player.name + ' ' 
-          + (player.stars > 0 ? '⭐' : '') 
-          + (player.reserve ? ' (rez.)' : '')
+        const showIcons = this.settingsService.showPlayerStatusIconsSig();
+        result += '' + (index + 1) + '. '
+          + player.name + ' '
+          + (showIcons && player.stars > 0 ? '⭐' : '')
+          + (showIcons && player.reserve ? ' (rez.)' : '')
           + '\n';
       });
       result += '\n';

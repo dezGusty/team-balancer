@@ -14,6 +14,17 @@
   </section>
 
   <section class="settings-section">
+    <h3>Player Status Icons</h3>
+    <label class="toggle-label">
+      <input type="checkbox" [ngModel]="showPlayerStatusIcons()" (ngModelChange)="showPlayerStatusIcons.set($event)" />
+      <span>Show player status icons</span>
+    </label>
+    <p class="settings-hint">
+      When enabled, star (⭐) and reserve indicators are included when copying match data to the clipboard.
+    </p>
+  </section>
+
+  <section class="settings-section">
     <h3>Default Match Schedule</h3>
     <p class="settings-hint">
       These day/time pairs are used when cycling through options with the
