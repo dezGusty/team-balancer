@@ -25,6 +25,18 @@
   </section>
 
   <section class="settings-section">
+    <h3>Clipboard Player Order</h3>
+    <label class="toggle-label">
+      <input type="checkbox" [ngModel]="randomizePlayerOrder()" (ngModelChange)="randomizePlayerOrder.set($event)" />
+      <span>Randomize player order when copying to clipboard</span>
+    </label>
+    <p class="settings-hint">
+      When enabled, players within each team are listed in a random order instead of by rating
+      when copying match details to the clipboard.
+    </p>
+  </section>
+
+  <section class="settings-section">
     <h3>Default Match Schedule</h3>
     <p class="settings-hint">
       These day/time pairs are used when cycling through options with the

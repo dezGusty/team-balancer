@@ -20,6 +20,7 @@ export class AdminComponent {
 
   autoSave = signal<boolean>(true);
   showPlayerStatusIcons = signal<boolean>(true);
+  randomizePlayerOrder = signal<boolean>(false);
   schedule = signal<MatchDaySchedule[]>([]);
   isSaving = signal<boolean>(false);
   savedSuccess = signal<boolean>(false);
@@ -29,6 +30,7 @@ export class AdminComponent {
       const s = this.settingsSvc.settingsSig();
       this.autoSave.set(s.autoSave ?? true);
       this.showPlayerStatusIcons.set(s.showPlayerStatusIcons ?? true);
+      this.randomizePlayerOrder.set(s.randomizePlayerOrder ?? false);
       this.schedule.set((s.defaultMatchSchedule ?? []).map(e => ({ ...e })));
     }, { allowSignalWrites: true });
   }
@@ -59,6 +61,7 @@ export class AdminComponent {
     const settings: AppSettings = {
       autoSave: this.autoSave(),
       showPlayerStatusIcons: this.showPlayerStatusIcons(),
+      randomizePlayerOrder: this.randomizePlayerOrder(),
       defaultMatchSchedule: this.schedule(),
     };
     await this.settingsSvc.saveSettings(settings);

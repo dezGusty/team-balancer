@@ -13,6 +13,7 @@ export interface AppSettings {
   autoSave: boolean;
   defaultMatchSchedule: MatchDaySchedule[];
   showPlayerStatusIcons: boolean;
+  randomizePlayerOrder: boolean;
 }
 
 export const DEFAULT_APP_SETTINGS: AppSettings = {
@@ -22,6 +23,7 @@ export const DEFAULT_APP_SETTINGS: AppSettings = {
     { dayOfWeek: 4, time: '20:00' },  // Thursday
   ],
   showPlayerStatusIcons: true,
+  randomizePlayerOrder: false,
 };
 
 @Injectable({
@@ -41,6 +43,7 @@ export class SettingsService {
   readonly autoSaveSig = computed(() => this.settingsSig().autoSave ?? false);
   readonly defaultMatchScheduleSig = computed(() => this.settingsSig().defaultMatchSchedule ?? []);
   readonly showPlayerStatusIconsSig = computed(() => this.settingsSig().showPlayerStatusIcons ?? true);
+  readonly randomizePlayerOrderSig = computed(() => this.settingsSig().randomizePlayerOrder ?? false);
 
   async saveSettings(settings: AppSettings): Promise<void> {
     await setDoc(doc(this.firestore, 'settings/app'), settings);
