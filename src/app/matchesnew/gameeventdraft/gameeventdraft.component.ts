@@ -85,6 +85,11 @@ export class GameeventdraftComponent {
     map(([players, filterByContent]) => {
       return filterPlayersArrayByContent(players, filterByContent);
     }),
+    map(players => players.sort((a, b) => {
+      const dateA = a.mostRecentMatches?.[0]?.date ?? '';
+      const dateB = b.mostRecentMatches?.[0]?.date ?? '';
+      return dateB > dateA ? 1 : dateB < dateA ? -1 : 0;
+    })),
     map(players => {
       return players.map(player => {
         return {
