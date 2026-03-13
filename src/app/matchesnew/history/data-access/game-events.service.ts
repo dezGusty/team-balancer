@@ -183,6 +183,7 @@ export class GameEventsService implements OnDestroy {
           matchDate: gameEventDBData.matchDate,
           name: gameEventDBData.name,
           label: MatchDateTitle.fromString(gameEventDBData.name).suffix ?? "",
+          inactive: gameEventDBData.inactive ?? false,
           registeredPlayers: gameEventDBData.registeredPlayerIds.map((id, index) => {
             return {
               id: id,
@@ -397,6 +398,24 @@ export class GameEventsService implements OnDestroy {
     })
   );
 
+  toggleInactiveSubject$ = new Subject<void>();
+  toggleInactive$ = this.toggleInactiveSubject$.asObservable().pipe(
+    withLatestFrom(this.selectedMatchContent$),
+    switchMap(([_, selectedMatchContent]) => {
+      const newInactive = !selectedMatchContent.inactive;
+      return setDoc(
+        doc(this.firestore, `games/${selectedMatchContent.name}`),
+        { inactive: newInactive },
+        { merge: true }
+      );
+    }),
+    tap(_ => this.updatedFireData$.next(true)),
+    catchError((err) => {
+      console.warn('toggle inactive encountered issue');
+      return of(null);
+    })
+  );
+
   readonly saveRaffleDataSubject$ = new Subject<void>();
   readonly saveRaffleData$ = this.saveRaffleDataSubject$.asObservable().pipe(
     withLatestFrom(this.selectedMatchContent$),
@@ -517,6 +536,10 @@ export class GameEventsService implements OnDestroy {
   }
 
 
+  public toggleInactive() {
+    this.toggleInactiveSubject$.next();
+  }
+
   public setAutoSave(autoSave: boolean) {
     this.autoSaveGameEventSubject$.next(autoSave);
   }
@@ -541,6 +564,7 @@ export class GameEventsService implements OnDestroy {
     this.subscriptions.push(this.saveRaffleData$.subscribe());
     this.subscriptions.push(this.saveToDraft$.subscribe());
     this.subscriptions.push(this.reapplyOrderAccordingToReserveStatus$.subscribe());
+    this.subscriptions.push(this.toggleInactive$.subscribe());
 
     this.autoSaveGameEventSubject$.next(this.settingsService.autoSaveSig());
   }

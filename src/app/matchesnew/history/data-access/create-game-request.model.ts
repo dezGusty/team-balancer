@@ -23,6 +23,7 @@ export interface GameEventDBData {
   name: string;
   registeredPlayerIds: number[];
   playerReserveStatus: boolean[];
+  inactive?: boolean;
 }
 
 export interface PlayerWithId {
@@ -43,6 +44,7 @@ export interface GameEventData {
   label: string;
   name: string;
   registeredPlayers: PlayerWithIdAndStars[];
+  inactive: boolean;
 }
 
 export function createGameEventDataFromRequest(request: CreateGameRequest): GameEventDBData {
@@ -60,7 +62,8 @@ export function createDefaultGameEventDBData(): GameEventDBData {
     matchDate: "",
     name: "",
     registeredPlayerIds: [],
-    playerReserveStatus: []
+    playerReserveStatus: [],
+    inactive: false
   };
 }
 export function createDefaultGameEventData(): GameEventData {
@@ -70,6 +73,7 @@ export function createDefaultGameEventData(): GameEventData {
     name: "",
     label: "",
     registeredPlayers: [],
+    inactive: false
   };
 }
 

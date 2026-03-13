@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, ElementRef, HostListener, ViewChild, inject, model } from '@angular/core';
+import { ChangeDetectionStrategy, Component, ElementRef, HostListener, ViewChild, inject, model, signal } from '@angular/core';
 import { GameEventsService } from '../history/data-access/game-events.service';
 import { AsyncPipe } from '@angular/common';
 import { FormsModule } from '@angular/forms';
@@ -62,6 +62,8 @@ export class GameeventdraftComponent {
   );
 
   protected readonly autoSaveGameEventSignal = this.gameEventsService.autoSaveGameEventSignal;
+
+  private undoInactiveTimeout: ReturnType<typeof setTimeout> | null = null;
 
   @ViewChild('srcNameArea') srcNameArea!: ElementRef;
 
@@ -156,6 +158,17 @@ export class GameeventdraftComponent {
     setTimeout(() => { // this will make the execution after the above boolean has changed
       this.srcNameArea?.nativeElement.focus();
     }, 0);
+  }
+
+  onToggleInactive() {
+    this.gameEventsService.toggleInactive();
+    if (this.undoInactiveTimeout) clearTimeout(this.undoInactiveTimeout);
+  }
+
+  onUndoToggleInactive() {
+    if (this.undoInactiveTimeout) clearTimeout(this.undoInactiveTimeout);
+    this.undoInactiveTimeout = null;
+    this.gameEventsService.toggleInactive();
   }
 
   onSearchContentClear() {

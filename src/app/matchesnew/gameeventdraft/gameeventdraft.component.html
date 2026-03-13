@@ -23,7 +23,13 @@
         (touchend)="this.randomizeMouseUp()"
         [class.pseudo-disabled]="(this.hasEnoughPlayersForRandomize$ |async) == false">🎲</div>
       <button type="button" class="gus-button gus-border gus-hoverable"
-        [disabled]="(this.canStillApplyRandomization$ | async)==false" (click)="this.saveRaffle()">Apply ⭐</button>
+        [disabled]="(this.canStillApplyRandomization$ | async)==false" [title]="'Apply stars ⭐'"
+        (click)="this.saveRaffle()">⭐</button>
+      <button type="button" class="gus-button gus-border gus-hoverable"
+        [title]="(this.selectedMatchContent().inactive ? 'Activate' : 'Deactivate') + ' this game event for clipboard copy'"
+        (click)="this.onToggleInactive()">
+        {{this.selectedMatchContent().inactive ? '✅ A' : '🚫 D'}}
+      </button>
     </div>
     <div class="f-row">
       <button class="gus-button gus-border gus-hoverable" (click)="transferToDraft()">xfer</button>
@@ -38,7 +44,8 @@
     (keyup)="onSearchContentChange($event)" placeholder="Search... ( CTRL + / )" aria-label="Search" #srcNameArea
     autofocus />
   @if (this.searchedNameSg() != undefined && this.searchedNameSg().length > 0) {
-  <button aria-label="Clear" class="gus-button gus-border gus-hoverable pseudo-button" type="button" (click)="onSearchContentClear()">
+  <button aria-label="Clear" class="gus-button gus-border gus-hoverable pseudo-button" type="button"
+    (click)="onSearchContentClear()">
     ❌</button>
   }
 </div>

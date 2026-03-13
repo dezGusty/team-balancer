@@ -70,6 +70,7 @@ export class SummaryComponent {
           matchDate: singleGame.matchDate,
           name: singleGame.name,
           label: MatchDateTitle.fromString(singleGame.name).suffix ?? "",
+          inactive: singleGame.inactive ?? false,
           registeredPlayers: singleGame.registeredPlayerIds.map((id, index) => {
             return {
               id: id,
@@ -98,7 +99,7 @@ export class SummaryComponent {
     let header: string[] = [];
     let lines: string[][] = [];
 
-    const localMatches = this.activeMatchesSig();
+    const localMatches = this.activeMatchesSig().filter(m => !m.inactive);
 
     localMatches.forEach(match => {
       let cells: string[] = [];
@@ -181,7 +182,7 @@ export class SummaryComponent {
   }
 
   onCopyAsTextClick() {
-    const localMatches = this.activeMatchesSig();
+    const localMatches = this.activeMatchesSig().filter(m => !m.inactive);
     let result = '';
     localMatches.forEach(match => {
       result += '📅' + match.matchDate + ' ' + '🕒' + match.label + '\n';
