@@ -1,5 +1,5 @@
 import { HttpErrorResponse } from '@angular/common/http';
-import { Injectable, OnDestroy } from '@angular/core';
+import { Injectable, Injector, OnDestroy, runInInjectionContext } from '@angular/core';
 import { Firestore, docData, setDoc } from '@angular/fire/firestore';
 import { doc } from 'firebase/firestore';
 import { BehaviorSubject, Observable, Subject, Subscription, catchError, filter, finalize, map, merge, mergeAll, of, shareReplay, switchMap, take, tap, throwError, withLatestFrom } from 'rxjs';
@@ -160,7 +160,7 @@ export class GameEventsService implements OnDestroy {
       if (!selectedMatch) {
         return of(GameEventDBData.DEFAULT);
       }
-      return docData(doc(this.firestore, `games/${selectedMatch.title}`));
+      return runInInjectionContext(this.injector, () => docData(doc(this.firestore, `games/${selectedMatch.title}`)));
     }),
     map(gameEvent => { return gameEvent as GameEventDBData }),
     tap((_) => { this.loadingFlagService.setLoadingFlag(false); }),
@@ -478,7 +478,7 @@ export class GameEventsService implements OnDestroy {
 
 
   public getMatchData = (match: MatchDateTitle): Observable<GameEventDBData> => {
-    return docData(doc(this.firestore, `games/${match.title}`)).pipe(
+    return runInInjectionContext(this.injector, () => docData(doc(this.firestore, `games/${match.title}`))).pipe(
       map(gameEvent => {
         if (!gameEvent) {
           return Result.Err<GameEventDBData>("Game event not found");
@@ -552,7 +552,8 @@ export class GameEventsService implements OnDestroy {
     private notificationService: NotificationService,
     private loadingFlagService: LoadingFlagService,
     private playersService: PlayersService,
-    private settingsService: SettingsService) {
+    private settingsService: SettingsService,
+    private injector: Injector) {
     this.subscriptions.push(this.autoSaveGameEventSubject$.subscribe());
     this.subscriptions.push(this.createGameEventAction$.subscribe());
     this.subscriptions.push(this.recentGameTitles$.subscribe());

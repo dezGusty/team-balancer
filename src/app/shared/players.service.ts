@@ -1,5 +1,5 @@
 import { Player } from './player.model';
-import { Injectable, OnDestroy } from '@angular/core';
+import { Injectable, Injector, OnDestroy, runInInjectionContext } from '@angular/core';
 import { BehaviorSubject, catchError, finalize, map, of, shareReplay, Subject, Subscription, switchMap, tap } from 'rxjs';
 import { CustomPrevGame } from './custom-prev-game.model';
 import { AppStorage } from './app-storage';
@@ -28,7 +28,8 @@ export class PlayersService implements OnDestroy {
         private authSvc: AuthService,
         private appStorage: AppStorage,
         private settingsSvc: SettingsService,
-        private loadingFlagService: LoadingFlagService) {
+        private loadingFlagService: LoadingFlagService,
+        private injector: Injector) {
 
         if (!this.authSvc.isAuthenticated()) {
             console.log('[players] waiting for login...');
@@ -74,7 +75,7 @@ export class PlayersService implements OnDestroy {
     public players$ = this.currentPlayersSubject$.asObservable().pipe(
         tap(_ => console.log("players$ triggered")),
         tap((_) => { this.loadingFlagService.setLoadingFlag(true, "players-list"); }),
-        switchMap(_ => docData(doc(this.firestore, '/ratings/current'))),
+        switchMap(_ => runInInjectionContext(this.injector, () => docData(doc(this.firestore, '/ratings/current')))),
         map(playersDocContent => {
             const snap: PlayerRatingSnapshot = playersDocContent as PlayerRatingSnapshot;
             const playersArray: Player[] = snap.players;

@@ -1,5 +1,5 @@
 import { HttpErrorResponse } from '@angular/common/http';
-import { Injectable } from '@angular/core';
+import { Injectable, Injector, runInInjectionContext } from '@angular/core';
 import { Firestore, doc, docData } from '@angular/fire/firestore';
 import { BehaviorSubject, Observable, catchError, map, shareReplay, switchMap, tap, throwError } from 'rxjs';
 import { Player } from 'src/app/shared/player.model';
@@ -22,7 +22,7 @@ export class CurrentPlayersService {
   public currentPlayers$ = this.triggerDataRetrieval$.asObservable().pipe(
     switchMap(_ => {
       this.loadingFlagService.setLoadingFlag(true, "current-player-load");
-      return docData(doc(this.firestore, 'ratings/current'))
+      return runInInjectionContext(this.injector, () => docData(doc(this.firestore, 'ratings/current')));
     }),
     map(currentPlayersData => { return currentPlayersData as CurrentPlayersData }),
     tap((_) => { this.loadingFlagService.setLoadingFlag(false, "current-player-load"); }),
@@ -32,7 +32,8 @@ export class CurrentPlayersService {
 
   constructor(
     private firestore: Firestore,
-    private loadingFlagService: LoadingFlagService
+    private loadingFlagService: LoadingFlagService,
+    private injector: Injector
   ) { }
 
 

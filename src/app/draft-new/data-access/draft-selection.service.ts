@@ -1,5 +1,5 @@
 import { HttpErrorResponse } from '@angular/common/http';
-import { Injectable, OnDestroy } from '@angular/core';
+import { Injectable, Injector, OnDestroy, runInInjectionContext } from '@angular/core';
 import { Firestore, doc, docData, setDoc } from '@angular/fire/firestore';
 import { BehaviorSubject, Observable, Subject, Subscription, catchError, map, shareReplay, switchMap, tap, throwError } from 'rxjs';
 import { DraftChangeInfo } from 'src/app/shared/draft-change-info';
@@ -21,7 +21,7 @@ export class DraftSelectionService implements OnDestroy {
   public nextMatchDraft$ = this.triggerDataRetrieval$.asObservable().pipe(
     switchMap(_ => {
       this.loadingFlagService.setLoadingFlag(true, "next-match-draft");
-      return docData(doc(this.firestore, 'drafts/next'))
+      return runInInjectionContext(this.injector, () => docData(doc(this.firestore, 'drafts/next')));
     }),
     map(nextMatchesDocContents => {
       const playerList = nextMatchesDocContents as DraftSelectionData;
@@ -46,7 +46,8 @@ export class DraftSelectionService implements OnDestroy {
   constructor(
     private firestore: Firestore,
     private loadingFlagService: LoadingFlagService,
-    private settingsSvc: SettingsService) {
+    private settingsSvc: SettingsService,
+    private injector: Injector) {
     this.subscriptions.push(this.storedMatch$.subscribe());
   }
 
