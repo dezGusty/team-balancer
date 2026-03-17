@@ -191,7 +191,7 @@ export class SummaryComponent {
         result += '' + (index + 1) + '. '
           + player.name + ' '
           + (showIcons && player.stars > 0 ? '⭐' : '')
-          + (showIcons && player.reserve ? ' (rez.)' : '')
+          + (player.reserve ? ' (rez.)' : '')
           + '\n';
       });
       result += '\n';
