@@ -4,7 +4,7 @@ import { MatchHistService } from '../history/data-access/match-hist.service';
 import { SmallLoadingSpinnerComponent } from "../../ui/small-loading-spinner/small-loading-spinner.component";
 import { Player, getDisplayName } from 'src/app/shared/player.model';
 import { CustomPrevGame } from 'src/app/shared/custom-prev-game.model';
-import { AuthService } from 'src/app/auth/auth.service';
+import { UserAuthService } from 'src/app/auth/user-auth.service';
 import { FormsModule } from '@angular/forms';
 import { tap } from 'rxjs';
 
@@ -30,7 +30,7 @@ export class MatchDetailsComponent {
 
   constructor(
     private matchSvc: MatchHistService,
-    private authSvc: AuthService,
+    private authSvc: UserAuthService,
   ) {
     console.log('history component constructor');
   }

@@ -11,7 +11,6 @@ import { AppComponent } from './app/app.component';
 
 import { AdminGuard } from './app/auth/admin-guard.service';
 import { AuthGuard } from './app/auth/auth-guard.service';
-import { AuthService } from './app/auth/auth.service';
 import { OrganizerGuard } from './app/auth/organizer-guard.service';
 import { SigninComponent } from './app/auth/signin/signin.component';
 import { CustomgameComponent } from './app/customgame/customgame.component';
@@ -85,7 +84,6 @@ bootstrapApplication(AppComponent, {
     // importProvidersFrom(NgcCookieConsentModule.forRoot(cookieConfig)),
     PlayersService,
     MatchService,
-    AuthService,
     CurrentPlayersService,
     UserAuthService,
     ToastService,

@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { Subscription, BehaviorSubject, map, tap, shareReplay, catchError } from 'rxjs';
 import { getDisplayName, Player } from './player.model';
 import { DraftChangeInfo } from './draft-change-info';
-import { AuthService } from '../auth/auth.service';
+import { UserAuthService } from '../auth/user-auth.service';
 import { doc, docData, Firestore, setDoc } from '@angular/fire/firestore';
 import { SettingsService } from './settings.service';
 
@@ -15,14 +15,14 @@ export class DraftService {
 
   constructor(
     private firestore: Firestore,
-    private authSvc: AuthService,
+    private authSvc: UserAuthService,
     private settingsSvc: SettingsService) {
     this.selectedDraftPlayers = [];
     if (!this.authSvc.isAuthenticated()) {
       console.log('[matches] waiting for login...');
     }
 
-    this.authSvc.onSignInOut.subscribe((message) => {
+    this.authSvc.onSignInOut$.subscribe((message) => {
       if (message === 'signout-pending') {
         this.unsubscribeFromDataSources();
       } else if (message === 'signin-done') {

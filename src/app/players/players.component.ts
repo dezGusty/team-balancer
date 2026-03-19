@@ -7,7 +7,7 @@ import { CustomPrevGame } from '../shared/custom-prev-game.model';
 import { ToastService } from '../shared/toasts-service';
 import { PlayerChangeInfo } from '../shared/player-change-info';
 import { RatingHist } from '../shared/rating-hist.model';
-import { AuthService } from '../auth/auth.service';
+import { UserAuthService } from '../auth/user-auth.service';
 import { CommonModule } from '@angular/common';
 import { ToastsContainer } from '../toast/toast-container.component';
 import { SmallLoadingSpinnerComponent } from '../ui/small-loading-spinner/small-loading-spinner.component';
@@ -51,7 +51,7 @@ export class PlayersComponent implements OnInit, OnDestroy {
   matchHistory: Map<string, CustomPrevGame> = new Map<string, CustomPrevGame>();
 
   constructor(
-    private authSvc: AuthService,
+    private authSvc: UserAuthService,
     private playersSvc: PlayersService,
     private toastSvc: ToastService,
     private router: Router,

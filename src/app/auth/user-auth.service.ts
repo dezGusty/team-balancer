@@ -1,10 +1,11 @@
-import { Auth, getAuth, GoogleAuthProvider, signInWithPopup, signOut, User, UserCredential } from '@angular/fire/auth';
-import { computed, inject, Injectable, OnDestroy, Optional } from "@angular/core";
-import { BehaviorSubject, catchError, defer, from, map, of, shareReplay, Subject, Subscription, switchMap, tap } from 'rxjs';
+import { Auth, authState, FacebookAuthProvider, getAuth, GoogleAuthProvider, signInWithPopup, signOut, User, UserCredential } from '@angular/fire/auth';
+import { computed, inject, Injectable, OnDestroy } from "@angular/core";
+import { catchError, defer, from, map, of, shareReplay, Subject, Subscription, switchMap, tap } from 'rxjs';
 import { NotificationService } from '../utils/notification/notification.service';
 import { Router } from '@angular/router';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { AppUser, UserRoles } from '../shared/app-user.model';
+import { doc, Firestore, getDoc, setDoc } from '@angular/fire/firestore';
 
 @Injectable()
 export class UserAuthService implements OnDestroy {
@@ -12,6 +13,13 @@ export class UserAuthService implements OnDestroy {
   private readonly notificationService = inject(NotificationService);
   private readonly auth = inject(Auth);
   private readonly router = inject(Router);
+  private readonly firestore = inject(Firestore);
+
+  /**
+   * Emits 'signin-done' after a successful login and 'signout-pending' before a signout.
+   * Data services subscribe to this to manage their Firestore subscriptions.
+   */
+  public onSignInOut$ = new Subject<string>();
 
   dataRetrievalSubject$ = new Subject<void>();
   dataRetrieval$ = this.dataRetrievalSubject$.asObservable().pipe(
@@ -22,31 +30,41 @@ export class UserAuthService implements OnDestroy {
       localStorage.setItem("tfl.user", JSON.stringify(cred.user));
     }),
     map(usercred => usercred.user),
-    tap(user => this.loggedInUserSubject$.next(user)),
+    switchMap(user => from(this.updateAndCacheUserAfterLogin(user)).pipe(map(() => user))),
+    tap(user => {
+      this.loggedInUserSubject$.next(user);
+      this.onSignInOut$.next('signin-done');
+    }),
     catchError((err) => {
-      this.notificationService.show("Data save encountered an issue." + err.message);
+      this.notificationService.show("Login encountered an issue: " + err.message);
       return of(null);
     }),
     shareReplay(1)
   );
 
-  // loggedInUserSubject$ = new BehaviorSubject<User | null>(null);
   loggedInUserSubject$ = new Subject<User | null>();
   loggedInUser$ = this.loggedInUserSubject$.asObservable().pipe(
-    // tap(data => console.log("*** loggedInUser$", data)),
-    tap(userOrNull => { if (!userOrNull) { 
-      console.log("*** navigating to root, due to user", userOrNull);
-      this.router.navigate(['']); 
+    tap(userOrNull => { if (!userOrNull) {
+      this.router.navigate(['']);
     } }),
     shareReplay(1)
   );
   loggedInUserSig = toSignal(this.loggedInUser$);
 
   constructor() {
-    console.log("[user-auth-service] constructor");
     this.subscriptions.push(this.dataRetrieval$.subscribe());
     this.subscriptions.push(this.loggedInUser$.subscribe());
     this.loggedInUserSubject$.next(this.decodeUserFromStorage());
+
+    // Listen to Firebase auth state changes (e.g. page refresh with persisted session)
+    this.subscriptions.push(
+      authState(this.auth).subscribe(profile => {
+        if (profile) {
+          localStorage.setItem("tfl.user", JSON.stringify(profile));
+          this.updateAndCacheUserAfterLogin(profile);
+        }
+      })
+    );
   }
 
   ngOnDestroy(): void {
@@ -54,15 +72,13 @@ export class UserAuthService implements OnDestroy {
   }
   private subscriptions: Subscription[] = [];
 
-
-
   private decodeUserFromStorage(): User | null {
     try {
-      let userData = localStorage.getItem("tfl.user");
+      const userData = localStorage.getItem("tfl.user");
       if (!userData) {
         return null;
       }
-      let userObj = JSON.parse(userData ?? "") as User;
+      const userObj = JSON.parse(userData) as User;
       return userObj;
     } catch (err) {
       console.warn("error when decoding user from storage", err);
@@ -71,45 +87,80 @@ export class UserAuthService implements OnDestroy {
   }
 
   /**
-     * Perform the login into the application via Google.
-     * @param postNavi: navigation route to be applied upon a successful log-in.
-     * It consists of an array of strings. Defaults to : ['/'].
-     * To avoid any redirect upon log-in, set this to an empty array:
-     * @example
-     * // login without redirect
-     * doGoogleLogin({ successRoute: [] });
-     * @example
-     * // login with default redirect to root.
-     * doGoogleLogin();
-     * @example
-     * // login with default redirect to /base.
-     * doGoogleLogin({ successRoute: ['base'] });
-     */
+   * Fetch the user document from Firestore and cache the user's roles.
+   */
+  private async updateAndCacheUserAfterLogin(authdata: User): Promise<void> {
+    const userData = new AppUser({ email: authdata.email as string, photoURL: authdata.photoURL as string });
+    const userPath = authdata.uid;
+    const userDocRef = doc(this.firestore, 'users/' + userPath);
+    const userDocSnap = await getDoc(userDocRef);
+
+    if (userDocSnap.exists()) {
+      const castedUser = userDocSnap.data() as AppUser;
+      const originalRoles: UserRoles = castedUser.roles;
+      if (originalRoles) {
+        userData.roles = originalRoles;
+      }
+
+      if (!originalRoles || !originalRoles.standard) {
+        userData.roles.standard = true;
+        await setDoc(userDocRef, { ...userData }, { merge: true });
+      }
+    } else {
+      // New user — create the user document.
+      userData.roles.standard = true;
+      await setDoc(userDocRef, { ...userData }, { merge: true });
+    }
+
+    this.cachedUser = { ...userData };
+    localStorage.setItem('roles', JSON.stringify(this.cachedUser.roles));
+  }
+
+  /**
+   * Perform the login into the application via Google.
+   */
   public doGoogleLogin(postNavi: { successRoute: string[] } = { successRoute: ['/'] }) {
-    console.log("[user-auth-service] Logging in via Google Service...");
     this.dataRetrievalSubject$.next();
-    // TODO: also use postNavi.successRoute ?
+  }
+
+  /**
+   * Perform the login into the application via Facebook.
+   */
+  public async doFacebookLoginAsync(postNavi: { successRoute: string[] } = { successRoute: ['/'] }): Promise<boolean> {
+    try {
+      const userCred = await signInWithPopup(this.auth, new FacebookAuthProvider());
+      if (userCred) {
+        localStorage.setItem("tfl.user", JSON.stringify(userCred.user));
+        await this.updateAndCacheUserAfterLogin(userCred.user);
+        this.loggedInUserSubject$.next(userCred.user);
+        this.onSignInOut$.next('signin-done');
+        if (postNavi?.successRoute?.length > 0) {
+          this.router.navigate(postNavi.successRoute);
+        }
+        return true;
+      }
+      return false;
+    } catch (err: any) {
+      this.notificationService.show("Facebook login encountered an issue: " + err.message);
+      return false;
+    }
   }
 
   signOut() {
-    console.log("[user-auth-service] Signing out...");
+    this.onSignInOut$.next('signout-pending');
     signOut(this.auth)
       .then(() => {
-
         localStorage.removeItem('roles');
         localStorage.removeItem('tfl.access.token');
         localStorage.removeItem('tfl.user');
         localStorage.removeItem('token');
-        // TODO(Augustin Preda, 2024.04.27): These are old items. Check if still used in code.
         localStorage.removeItem('players');
         localStorage.removeItem('archived_players');
 
+        this.cachedUser = null;
         this.loggedInUserSubject$.next(null);
-
-        // console.log('[guard] navigating in place');
         this.router.navigate(['']);
       }).catch((error) => {
-        console.log('error when signing out', error);
         this.notificationService.show("Error when signing out: " + error.message);
       });
   }

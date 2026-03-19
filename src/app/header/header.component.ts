@@ -1,7 +1,6 @@
 
 import { ChangeDetectionStrategy, Component, OnInit } from '@angular/core';
 import { Router, Event, NavigationStart, RouterModule } from '@angular/router';
-import { AuthService } from '../auth/auth.service';
 import { ProfileComponent } from "./profile/profile.component";
 import { FormsModule } from '@angular/forms';
 import { UserAuthService } from '../auth/user-auth.service';
@@ -33,7 +32,6 @@ export class HeaderComponent {
    * and collapse the navbar.
    */
   constructor(
-    private authSvc: AuthService,
     private router: Router,
     private userAuthService: UserAuthService) {
     this.router.events.subscribe((evt: Event) => {

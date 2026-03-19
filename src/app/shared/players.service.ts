@@ -7,7 +7,7 @@ import { AppStorage } from './app-storage';
 import { RatingSystemSettings } from './rating-system';
 import { PlayerChangeInfo } from './player-change-info';
 import { RatingHist } from './rating-hist.model';
-import { AuthService } from '../auth/auth.service';
+import { UserAuthService } from '../auth/user-auth.service';
 import { collection, doc, docData, Firestore, getDoc, getDocs, setDoc } from '@angular/fire/firestore';
 import { PlayerRatingSnapshot } from './player-rating-snapshot.model';
 import { SettingsService } from './settings.service';
@@ -25,7 +25,7 @@ export class PlayersService implements OnDestroy {
     // constructor.
     constructor(
         private firestore: Firestore,
-        private authSvc: AuthService,
+        private authSvc: UserAuthService,
         private appStorage: AppStorage,
         private settingsSvc: SettingsService,
         private loadingFlagService: LoadingFlagService,
@@ -42,7 +42,7 @@ export class PlayersService implements OnDestroy {
         }
 
         // Subscribe to the login-logout events.
-        this.authSvc.onSignInOut.subscribe((message) => {
+        this.authSvc.onSignInOut$.subscribe((message) => {
             if (message === 'signout-pending') {
                 this.unsubscribeFromDataSources();
             } else if (message === 'signin-done') {

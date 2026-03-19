@@ -5,7 +5,7 @@ import { CustomPrevGame } from '../../shared/custom-prev-game.model';
 import { combineLatest, filter, map, Subscription, switchMap, tap } from 'rxjs';
 import { PlayersService } from 'src/app/shared/players.service';
 import { MatchService } from 'src/app/shared/match.service';
-import { AuthService } from 'src/app/auth/auth.service';
+import { UserAuthService } from 'src/app/auth/user-auth.service';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { SmallLoadingSpinnerComponent } from 'src/app/ui/small-loading-spinner/small-loading-spinner.component';
@@ -79,7 +79,7 @@ export class PrevMatchDetailComponent implements OnInit, OnDestroy {
     private route: ActivatedRoute,
     private matchAltSvc: MatchService,
     private playersSvc: PlayersService,
-    private authSvc: AuthService) {
+    private authSvc: UserAuthService) {
   }
 
   private processGamePlayerRatings(game: CustomPrevGame): CustomPrevGame {

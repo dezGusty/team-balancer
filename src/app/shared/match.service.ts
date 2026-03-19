@@ -4,7 +4,7 @@ import { collection, doc, getDoc, getDocs, docData, Firestore, setDoc } from '@a
 import { Player } from './player.model';
 import { BehaviorSubject, Observable, Subscription, catchError, shareReplay, switchMap, tap, throwError } from 'rxjs';
 import { CustomGame } from './custom-game.model';
-import { AuthService } from '../auth/auth.service';
+import { UserAuthService } from '../auth/user-auth.service';
 import { HttpErrorResponse } from '@angular/common/http';
 
 @Injectable({
@@ -18,13 +18,13 @@ export class MatchService {
   private recentMatchNames: string[];
   public maxNumberOfRecentMatches = 5;
 
-  constructor(private firestore: Firestore, private authSvc: AuthService) {
+  constructor(private firestore: Firestore, private authSvc: UserAuthService) {
     this.recentMatchNames = [];
     if (!this.authSvc.isAuthenticated()) {
       console.log('[matches] waiting for login...');
     }
 
-    this.authSvc.onSignInOut.subscribe((message) => {
+    this.authSvc.onSignInOut$.subscribe((message) => {
       if (message === 'signout-pending') {
         this.unsubscribeFromDataSources();
       } else if (message === 'signin-done') {

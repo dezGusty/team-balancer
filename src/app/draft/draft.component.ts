@@ -6,7 +6,7 @@ import { DraftService } from 'src/app/shared/draft.service';
 import { Router, RouterModule } from '@angular/router';
 import { ToastService } from 'src/app/shared/toasts-service';
 import { DraftChangeInfo } from 'src/app/shared/draft-change-info';
-import { AuthService } from 'src/app/auth/auth.service';
+import { UserAuthService } from 'src/app/auth/user-auth.service';
 import { SettingsService } from 'src/app/shared/settings.service';
 
 import { SmallLoadingSpinnerComponent } from 'src/app/ui/small-loading-spinner/small-loading-spinner.component';
@@ -44,7 +44,7 @@ export class DraftComponent implements OnInit, OnDestroy {
   constructor(
     private playersSvc: PlayersService,
     private draftSvc: DraftService,
-    private authSvc: AuthService,
+    private authSvc: UserAuthService,
     private router: Router,
     private settingsSvc: SettingsService,
     private toastSvc: ToastService) {

@@ -1,7 +1,7 @@
 import { ActivatedRouteSnapshot, RouterStateSnapshot } from '@angular/router';
 import { Observable } from 'rxjs';
 import { Injectable } from '@angular/core';
-import { AuthService } from './auth.service';
+import { UserAuthService } from './user-auth.service';
 
 /**
  * @description
@@ -11,7 +11,7 @@ import { AuthService } from './auth.service';
 export class AdminGuard  {
 
     constructor(
-        private authSvc: AuthService) { }
+        private authSvc: UserAuthService) { }
 
     canActivate(route: ActivatedRouteSnapshot, state: RouterStateSnapshot):
         Observable<boolean> | Promise<boolean> | boolean {
