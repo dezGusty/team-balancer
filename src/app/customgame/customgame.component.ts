@@ -9,6 +9,7 @@ import { ToastService } from '../shared/toasts-service';
 import { PlayerChangeInfo } from '../shared/player-change-info';
 
 import { MatchCombosComponent } from '../matches/match-combos/match-combos.component';
+import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { PlayerCardComponent } from '../player-card/player-card.component';
 import { PlayerCardPrefComponent } from '../player-card-pref/player-card-pref.component';
@@ -16,6 +17,7 @@ import { PlayerFilterPipe } from '../matches/player-filter.pipe';
 
 @Component({
     imports: [
+    CommonModule,
     FormsModule,
     MatchCombosComponent,
     PlayerCardComponent,
@@ -23,7 +25,7 @@ import { PlayerFilterPipe } from '../matches/player-filter.pipe';
     PlayerFilterPipe
 ],
     selector: 'app-customgame',
-    styles: [''],
+    styleUrl: './customgame.component.css',
     templateUrl: './customgame.component.html'
 })
 export class CustomgameComponent implements OnInit, OnDestroy {
@@ -146,6 +148,11 @@ export class CustomgameComponent implements OnInit, OnDestroy {
     }
   }
 
+  onRemoveSelectedPlayer(player: Player) {
+    this.matchData.movePlayerBackToPool(player);
+    this.searchedName = '';
+  }
+
   onPlayerLockTeam1($event: any) {
     const selectedPlayer: Player = $event;
     if (!selectedPlayer) {
@@ -178,6 +185,24 @@ export class CustomgameComponent implements OnInit, OnDestroy {
 
     selectedPlayer.affinity = 2;
     return;
+  }
+
+  public isAddPlayerSideNavOpen = false;
+
+  openAddPlayerSideNav() {
+    this.isAddPlayerSideNavOpen = true;
+  }
+
+  closeAddPlayerSideNav() {
+    this.isAddPlayerSideNavOpen = false;
+  }
+
+  onAvailablePlayerSelected($event: any) {
+    const selectedPlayer: Player = $event;
+    if (!selectedPlayer) return;
+    this.matchData.movePlayerToDraft(selectedPlayer);
+    this.searchedName = '';
+    this.isAddPlayerSideNavOpen = false;
   }
 
   onMakeTeamsClicked() {

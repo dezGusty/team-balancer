@@ -1,60 +1,57 @@
 @if (!showCombinations) {
-  <div>
-    <div class="f-row">
-      <div class="half-width f-row-align-right">
-        <div class="col-12 col-md-10 col-lg-8 col-xl-6 align-self-center">
-          <button type="button" class="btn btn-outline-gus btn-grad-gusty" (click)="onMakeTeamsClicked()">
-            <span><img rel="preload" class="align-self-center" src="./../../assets/tshirt.svg" height="40rem"
-            alt="" /></span>
-            Make teams...
-          </button>
-        </div>
-      </div>
-      <div class="half-width">
-        <div class="col-12 col-md-10 col-lg-8 col-xl-6 border-bottom gus-search-box">
-          <input class="form-control border-0" type="text" [(ngModel)]="searchedName"
-            (keyup)="onSearchContentChange($event)" placeholder="Search..." aria-label="Search" #srcNameArea autofocus />
-        </div>
-      </div>
-    </div>
-    <div class="f-row">
-      <!-- show the list of players on the left side -->
-      <div class="half-width f-row-align-right">
-        <div class="col-12 col-md-10 col-lg-8 col-xl-6 left-player-list">
-          <h5>Selected players</h5>
-          <p>{{ matchData.draftPlayers.length }} players</p>
-          <div>
-            @for (playerItem of this.matchData.draftPlayers; track playerItem) {
-              <app-player-card-pref [player]="playerItem"
-                (playerSelected)="onPlayerSelected($event)" (lockTeam1Selected)="onPlayerLockTeam1($event)"
-                (lockTeam2Selected)="onPlayerLockTeam2($event)">
-              </app-player-card-pref>
-            }
-          </div>
-        </div>
-      </div>
-      <!-- show the list of players on the right side -->
-      <div class="half-width">
-        <div class="col-12 col-md-10 col-lg-8 col-xl-6 right-player-list">
-          <h5>Available players</h5>
-          <p>{{ matchData.availablePlayersPool.length }} players</p>
-          @for (
-            playerItem of this.matchData.availablePlayersPool
-            | playerFilter: searchedName
-            ; track
-            playerItem) {
-            <app-player-card [player]="playerItem" (playerSelected)="onPlayerSelected($event)">
-            </app-player-card>
-          }
-        </div>
-      </div>
+<div>
+  <div class="customgame-toolbar f-row ">
+    <div class="toolbar-actions">
+      <button type="button" class="gus-button gus-border gus-hoverable toolbar-btn" (click)="openAddPlayerSideNav()">➕ <span class="toolbar-btn-label">Add</span></button>
+      <button type="button" class="gus-button gus-border gus-hoverable toolbar-btn" (click)="onMakeTeamsClicked()">
+        <img rel="preload" class="align-self-center" src="./../../assets/tshirt.svg" height="20rem" alt="" />
+        <span class="toolbar-btn-label">Make teams...</span>
+      </button>
     </div>
   </div>
+  <div class="f-row">
+
+    <div class="col-12 col-md-10 col-lg-8 col-xl-6 left-player-list">
+      <h5>Selected players ({{ matchData.draftPlayers.length }})</h5>
+      <div>
+        @for (playerItem of this.matchData.draftPlayers; track playerItem) {
+        <div class="selected-player-row">
+          <button type="button" class="gus-button gus-border gus-hoverable remove-player-btn"
+            (click)="onRemoveSelectedPlayer(playerItem)" title="Remove">❌</button>
+          <app-player-card-pref [player]="playerItem" (lockTeam1Selected)="onPlayerLockTeam1($event)"
+            (lockTeam2Selected)="onPlayerLockTeam2($event)">
+          </app-player-card-pref>
+        </div>
+        }
+      </div>
+    </div>
+
+  </div>
+</div>
 }
 @if (showCombinations) {
-  <div class="f-row f-align-center">
-    <div class="col-12 col-sm-12 col-md-10 col-lg-8 col-xl-6">
-      <app-match-combos [playerList]="matchData.draftPlayers" [makeTeamsEvent]="this.makeTeamsSubject"></app-match-combos>
-    </div>
+<div class="f-row f-align-center">
+  <div class="col-12 col-sm-12 col-md-10 col-lg-8 col-xl-6">
+    <app-match-combos [playerList]="matchData.draftPlayers" [makeTeamsEvent]="this.makeTeamsSubject"></app-match-combos>
   </div>
+</div>
 }
+
+<div id="available-players-sidenav" class="gus-sidenav"
+  [ngClass]="isAddPlayerSideNavOpen ? 'gus-sidenav-shown' : 'gus-sidenav-hidden'" (click)="closeAddPlayerSideNav()">
+  <div class="gus-sidenav-container" (click)="$event.stopPropagation()">
+    <button type="button" class="gus-button gus-border gus-hoverable" (click)="closeAddPlayerSideNav()">Close ❌</button>
+    <h5>Available players ({{ matchData.availablePlayersPool.length }})</h5>
+    <div class="col-12 col-md-10 col-lg-8 col-xl-6 border-bottom gus-search-box">
+      <input class="form-control border-0" type="text" [(ngModel)]="searchedName"
+        (keyup)="onSearchContentChange($event)" placeholder="Search..." aria-label="Search" />
+    </div>
+    @for (
+    playerItem of this.matchData.availablePlayersPool
+    | playerFilter: searchedName
+    ; track playerItem) {
+    <app-player-card [player]="playerItem" (playerSelected)="onAvailablePlayerSelected($event)">
+    </app-player-card>
+    }
+  </div>
+</div>

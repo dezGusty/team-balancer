@@ -1,0 +1,46 @@
+.customgame-toolbar {
+  padding: 0.5rem 0;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+  align-items: center;
+}
+
+.toolbar-actions {
+  display: flex;
+  gap: 0.25rem;
+  flex-shrink: 0;
+}
+
+.toolbar-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  white-space: nowrap;
+}
+
+.toolbar-btn-label {
+  display: none;
+}
+
+@media (min-width: 600px) {
+  .toolbar-btn-label {
+    display: inline;
+  }
+}
+
+
+  display: flex;
+  align-items: center;
+  gap: 0.25rem;
+}
+
+.selected-player-row app-player-card-pref {
+  flex: 1;
+}
+
+.remove-player-btn {
+  flex-shrink: 0;
+  padding: 0.25rem 0.4rem;
+  font-size: 0.8rem;
+  line-height: 1;
+}
