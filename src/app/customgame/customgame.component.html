@@ -9,18 +9,24 @@
       </button>
     </div>
   </div>
-  <div class="f-row">
+  <div class="f-row f-align-center">
 
-    <div class="col-12 col-md-10 col-lg-8 col-xl-6 left-player-list">
+    <div class="col-12 col-md-10 col-lg-8 col-xl-6">
       <h5>Selected players ({{ matchData.draftPlayers.length }})</h5>
       <div>
         @for (playerItem of this.matchData.draftPlayers; track playerItem) {
         <div class="selected-player-row">
-          <button type="button" class="gus-button gus-border gus-hoverable remove-player-btn"
-            (click)="onRemoveSelectedPlayer(playerItem)" title="Remove">❌</button>
-          <app-player-card-pref [player]="playerItem" (lockTeam1Selected)="onPlayerLockTeam1($event)"
-            (lockTeam2Selected)="onPlayerLockTeam2($event)">
-          </app-player-card-pref>
+          <div class="player-card-wrapper"
+            [class.team1-locked]="playerItem.affinity === 1"
+            [class.team2-locked]="playerItem.affinity === 2"
+            (touchstart)="onCardTouchStart($event, playerItem)"
+            (touchend)="onCardTouchEnd($event, playerItem)">
+            <button type="button" class="gus-button gus-border gus-hoverable remove-player-btn"
+              (click)="onRemoveSelectedPlayer(playerItem)" title="Remove">❌</button>
+            <app-player-card-pref [player]="playerItem" (lockTeam1Selected)="onPlayerLockTeam1($event)"
+              (lockTeam2Selected)="onPlayerLockTeam2($event)">
+            </app-player-card-pref>
+          </div>
         </div>
         }
       </div>

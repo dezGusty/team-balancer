@@ -29,12 +29,41 @@
 }
 
 
+.left-player-list {
+  overflow: hidden;
+}
+
+.selected-player-row {
+  display: flex;
+  justify-content: center;
+  overflow: visible;
+  padding: 0.1rem 0;
+}
+
+.player-card-wrapper {
   display: flex;
   align-items: center;
   gap: 0.25rem;
+  width: 72%;
+  transition: transform 0.25s ease;
+  transform: translateX(0);
 }
 
-.selected-player-row app-player-card-pref {
+.player-card-wrapper.team1-locked {
+  transform: translateX(-20%);
+}
+
+.player-card-wrapper.team2-locked {
+  transform: translateX(20%);
+}
+
+@media (min-width: 600px) {
+  .player-card-wrapper {
+    width: 90%;
+  }
+}
+
+.player-card-wrapper app-player-card-pref {
   flex: 1;
 }
 

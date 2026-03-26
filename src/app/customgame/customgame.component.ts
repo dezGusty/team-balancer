@@ -209,4 +209,32 @@ export class CustomgameComponent implements OnInit, OnDestroy {
     this.showCombinations = true;
     this.emitMakeTeamsEventToChild();
   }
+
+  private touchStartX = 0;
+
+  onCardTouchStart($event: TouchEvent, _player: Player) {
+    this.touchStartX = $event.touches[0].clientX;
+  }
+
+  onCardTouchEnd($event: TouchEvent, player: Player) {
+    const deltaX = $event.changedTouches[0].clientX - this.touchStartX;
+    const threshold = 50;
+    if (Math.abs(deltaX) < threshold) return;
+
+    if (deltaX < 0) {
+      // Swipe left → assign to team1 (or reset if crossing from team2)
+      if (player.affinity === 2) {
+        player.affinity = 0;
+      } else {
+        player.affinity = player.affinity === 1 ? 0 : 1;
+      }
+    } else {
+      // Swipe right → assign to team2 (or reset if crossing from team1)
+      if (player.affinity === 1) {
+        player.affinity = 0;
+      } else {
+        player.affinity = player.affinity === 2 ? 0 : 2;
+      }
+    }
+  }
 }
