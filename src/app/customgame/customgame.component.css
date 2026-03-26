@@ -47,6 +47,13 @@
   width: 72%;
   transition: transform 0.25s ease;
   transform: translateX(0);
+  cursor: grab;
+  user-select: none;
+}
+
+.player-card-wrapper.is-dragging {
+  cursor: grabbing;
+  transition: none;
 }
 
 .player-card-wrapper.team1-locked {

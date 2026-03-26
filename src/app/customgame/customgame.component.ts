@@ -1,4 +1,4 @@
-import { Component, OnInit, OnDestroy, Input } from '@angular/core';
+import { Component, NgZone, OnInit, OnDestroy, Input } from '@angular/core';
 import { Subscription, Subject } from 'rxjs';
 import { Match } from '../shared/match.model';
 import { Player, filterPlayerArray } from '../shared/player.model';
@@ -53,7 +53,8 @@ export class CustomgameComponent implements OnInit, OnDestroy {
     private playersSvc: PlayersService,
     private draftSvc: DraftService,
     private toastSvc: ToastService,
-    private route: ActivatedRoute) {
+    private route: ActivatedRoute,
+    private ngZone: NgZone) {
     this.matchData.availablePlayersPool = this.playersSvc.getPlayers();
     this.matchData.draftPlayers.forEach(element => {
       this.matchData.removePlayerFromPool(element);
@@ -182,6 +183,44 @@ export class CustomgameComponent implements OnInit, OnDestroy {
   onMakeTeamsClicked() {
     this.showCombinations = true;
     this.emitMakeTeamsEventToChild();
+  }
+
+  onCardMouseDown($event: MouseEvent, player: Player) {
+    if ($event.button !== 0) return;
+    $event.preventDefault();
+    const startX = $event.clientX;
+    const wrapperEl = ($event.currentTarget as HTMLElement);
+    wrapperEl.classList.add('is-dragging');
+
+    this.ngZone.runOutsideAngular(() => {
+      const onMouseMove = (e: MouseEvent) => {
+        const delta = Math.max(-130, Math.min(130, e.clientX - startX));
+        wrapperEl.style.transform = `translateX(${delta}px)`;
+      };
+
+      const onMouseUp = (e: MouseEvent) => {
+        document.removeEventListener('mousemove', onMouseMove);
+        document.removeEventListener('mouseup', onMouseUp);
+        wrapperEl.style.transform = '';
+        wrapperEl.classList.remove('is-dragging');
+
+        const delta = e.clientX - startX;
+        if (Math.abs(delta) < 50) return;
+
+        this.ngZone.run(() => {
+          if (delta < 0) {
+            if (player.affinity === 2) { player.affinity = 0; }
+            else { this.onPlayerLockTeam1(player); }
+          } else {
+            if (player.affinity === 1) { player.affinity = 0; }
+            else { this.onPlayerLockTeam2(player); }
+          }
+        });
+      };
+
+      document.addEventListener('mousemove', onMouseMove);
+      document.addEventListener('mouseup', onMouseUp);
+    });
   }
 
   private touchStartX = 0;

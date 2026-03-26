@@ -19,6 +19,7 @@
           <div class="player-card-wrapper"
             [class.team1-locked]="playerItem.affinity === 1"
             [class.team2-locked]="playerItem.affinity === 2"
+            (mousedown)="onCardMouseDown($event, playerItem)"
             (touchstart)="onCardTouchStart($event, playerItem)"
             (touchend)="onCardTouchEnd($event, playerItem)">
             <app-player-mini-card [player]="playerItem"></app-player-mini-card>
@@ -26,14 +27,14 @@
               <button type="button" class="gus-button gus-border gus-hoverable player-action-btn"
                 [class.gus-button-active]="playerItem.affinity === 1"
                 (click)="onPlayerLockTeam1(playerItem)" title="Assign to team 1">
-                👈 <span class="player-action-label">Move left</span>
+                👈 <span class="player-action-label">Left</span>
               </button>
               <button type="button" class="gus-button gus-border gus-hoverable player-action-btn"
                 (click)="onRemoveSelectedPlayer(playerItem)" title="Remove">❌</button>
               <button type="button" class="gus-button gus-border gus-hoverable player-action-btn"
                 [class.gus-button-active]="playerItem.affinity === 2"
                 (click)="onPlayerLockTeam2(playerItem)" title="Assign to team 2">
-                <span class="player-action-label">Move right</span> 👉
+                <span class="player-action-label">Right</span> 👉
               </button>
             </div>
           </div>
