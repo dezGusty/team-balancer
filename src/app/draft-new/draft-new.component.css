@@ -2,12 +2,29 @@
   padding: 0.25em 0.5em;
 }
 
-.panel-draft-icons {
+.toolbar-actions {
   display: flex;
   flex-direction: row;
   justify-content: flex-start;
-  align-items: flex-start;
-  gap: 0.5em;
+  align-items: center;
+  gap: 0.25rem;
+}
+
+.toolbar-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  white-space: nowrap;
+}
+
+.toolbar-btn-label {
+  display: none;
+}
+
+@media (min-width: 600px) {
+  .toolbar-btn-label {
+    display: inline;
+  }
 }
 
 .searchfield {

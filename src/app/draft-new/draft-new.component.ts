@@ -142,6 +142,12 @@ export class DraftNewComponent {
     this.actionSubject$.next({ action: DraftAction.RemoveAllPlayers, player: null! });
   }
 
+  onReloadClicked() {
+    this.actionSubject$.next({ action: DraftAction.None, player: null! });
+    this.draftService.triggerDataRetrieval$.next(true);
+    this.playersService.triggerDataRetrieval$.next(true);
+  }
+
   onSaveSelectionClicked() {
     this.uploadDataSubject$.next();
     // this.showLoading = true;
