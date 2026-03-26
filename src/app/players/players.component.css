@@ -1,0 +1,110 @@
+.players-toolbar {
+  padding: 0.5rem 0;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+  align-items: center;
+}
+
+.toolbar-actions {
+  display: flex;
+  gap: 0.25rem;
+  flex-shrink: 0;
+}
+
+.toolbar-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  white-space: nowrap;
+}
+
+/* Hide text label on small screens, show only on larger ones */
+.toolbar-btn-label {
+  display: none;
+}
+
+@media (min-width: 600px) {
+  .toolbar-btn-label {
+    display: inline;
+  }
+}
+
+.players-table-wrapper {
+  width: 100%;
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+}
+
+.players-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.9rem;
+}
+
+.players-table thead th {
+  background: var(--gus-secondary-grad, #333);
+  color: var(--gus-primary-text-color, #fff);
+  padding: 0.5rem 0.75rem;
+  text-align: left;
+  white-space: nowrap;
+  border-bottom: 2px solid var(--gus-border-color, #555);
+}
+
+.players-table thead th.sortable {
+  cursor: pointer;
+  user-select: none;
+}
+
+.players-table thead th.sortable:hover {
+  opacity: 0.8;
+}
+
+.players-table tbody tr.player-row {
+  cursor: pointer;
+  border-bottom: 1px solid var(--gus-border-color, #444);
+  transition: background 0.15s;
+}
+
+.players-table tbody tr.player-row:hover {
+  background: var(--gus-hover-bg, rgba(255, 255, 255, 0.08));
+}
+
+.players-table tbody tr.player-row.archived {
+  opacity: 0.5;
+  font-style: italic;
+}
+
+.players-table td {
+  padding: 0.4rem 0.75rem;
+  vertical-align: middle;
+}
+
+.col-id {
+  width: 3rem;
+  text-align: center;
+}
+
+.col-rating {
+  width: 5rem;
+  text-align: right;
+}
+
+.col-recent {
+  white-space: nowrap;
+}
+
+/* Make the table rows more compact on smaller screens */
+@media (max-width: 600px) {
+  .players-table {
+    font-size: 0.8rem;
+  }
+
+  .players-table td,
+  .players-table thead th {
+    padding: 0.3rem 0.4rem;
+  }
+
+  .col-displayname {
+    display: none;
+  }
+}

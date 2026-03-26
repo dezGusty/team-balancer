@@ -43,7 +43,10 @@ export class PlayerDetailsNewComponent {
     const player = this.player();
     console.log("Save button clicked. Player is: ", player);
     if (player) {
-      this.playersSvc.updatePlayerById(player.id, player);
+      const updated = this.playersSvc.updatePlayerById(player.id, player);
+      if (!updated) {
+        this.playersSvc.addPlayer(player);
+      }
     }
 
     this.onCloseBtnClicked.emit();
