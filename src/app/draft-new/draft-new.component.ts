@@ -6,7 +6,9 @@ import { NotificationService } from '../utils/notification/notification.service'
 import { CurrentPlayersService } from './data-access/current-players.service';
 import { PlayerCardComponent } from "../player-card/player-card.component";
 import { Player } from '../shared/player.model';
-import { BehaviorSubject, Subject, combineLatest, map, shareReplay, tap, withLatestFrom } from 'rxjs';
+import { BehaviorSubject, Subject, combineLatest, firstValueFrom, map, shareReplay, tap, withLatestFrom } from 'rxjs';
+import { Router } from '@angular/router';
+import { DraftService } from '../shared/draft.service';
 
 export enum DraftAction {
   None = 0,
@@ -123,7 +125,9 @@ export class DraftNewComponent {
   constructor(
     private draftService: DraftSelectionService,
     private playersService: CurrentPlayersService,
-    private notificationService: NotificationService) {
+    private notificationService: NotificationService,
+    private sharedDraftSvc: DraftService,
+    private router: Router) {
   }
 
   searchedName: string = '';
@@ -171,33 +175,28 @@ export class DraftNewComponent {
     }
   }
 
-  onMatchUpClicked() {
+  async onMatchUpClicked() {
     console.log('[draft] creating match from draft ...');
-    // this.draftSvc.storePlayersInMemoryOnly(this.selectedPlayerList);
-    // this.router.navigate(['/custom'], { queryParams: { draft: true } });
+    const { players } = await firstValueFrom(this.selectedPlayersData$);
+    this.sharedDraftSvc.storePlayersInMemoryOnly(players);
+    this.router.navigate(['/custom'], { queryParams: { draft: true } });
   }
 
   /**
    * Use a match with only the top 12 (if 12 or more players available) or the top 10 players (if 10 or 11 players are available).
    */
-  onMatchUpTopClicked() {
+  async onMatchUpTopClicked() {
     console.log('[draft] filtering to top 12/10 players and creating match from draft ...');
+    const { players } = await firstValueFrom(this.selectedPlayersData$);
 
-    // if (this.selectedPlayerList.length < 10) {
-    //   // Cannot use this functionaliry
-    //   this.toastSvc.showWithHeader('Insufficient players', `Cannot use this functionality with only ${this.selectedPlayerList.length} players.`);
-    //   return;
-    // }
+    if (players.length < 10) {
+      this.notificationService.emitMessage(`Insufficient players: cannot use this functionality with only ${players.length} players.`);
+      return;
+    }
 
-    // if (this.selectedPlayerList.length >= 12) {
-    //   // limit to 12
-    //   this.draftSvc.storePlayersInMemoryOnly(this.selectedPlayerList.slice(0, 12));
-    // }
-    // else {
-    //   // limit to 10
-    //   this.draftSvc.storePlayersInMemoryOnly(this.selectedPlayerList.slice(0, 10));
-    // }
-    // this.router.navigate(['/custom'], { queryParams: { draft: true } });
+    const topPlayers = players.length >= 12 ? players.slice(0, 12) : players.slice(0, 10);
+    this.sharedDraftSvc.storePlayersInMemoryOnly(topPlayers);
+    this.router.navigate(['/custom'], { queryParams: { draft: true } });
   }
 
   onAvailablePlayerClicked($event: any, player: Player) {
