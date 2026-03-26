@@ -42,7 +42,7 @@
 
 .player-card-wrapper {
   display: flex;
-  align-items: center;
+  flex-direction: column;
   gap: 0.25rem;
   width: 72%;
   transition: transform 0.25s ease;
@@ -63,8 +63,38 @@
   }
 }
 
-.player-card-wrapper app-player-card-pref {
+.player-card-wrapper app-player-mini-card {
   flex: 1;
+  min-width: 0;
+}
+
+.player-card-actions {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  gap: 0.25rem;
+  padding-top: 0.25rem;
+}
+
+.player-action-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.2rem;
+  flex: 1;
+  justify-content: center;
+  white-space: nowrap;
+  padding: 0.25rem 0.4rem;
+  font-size: 0.85rem;
+}
+
+.player-action-label {
+  display: none;
+}
+
+@media (min-width: 480px) {
+  .player-action-label {
+    display: inline;
+  }
 }
 
 .remove-player-btn {

@@ -21,11 +21,21 @@
             [class.team2-locked]="playerItem.affinity === 2"
             (touchstart)="onCardTouchStart($event, playerItem)"
             (touchend)="onCardTouchEnd($event, playerItem)">
-            <button type="button" class="gus-button gus-border gus-hoverable remove-player-btn"
-              (click)="onRemoveSelectedPlayer(playerItem)" title="Remove">❌</button>
-            <app-player-card-pref [player]="playerItem" (lockTeam1Selected)="onPlayerLockTeam1($event)"
-              (lockTeam2Selected)="onPlayerLockTeam2($event)">
-            </app-player-card-pref>
+            <app-player-mini-card [player]="playerItem"></app-player-mini-card>
+            <div class="player-card-actions">
+              <button type="button" class="gus-button gus-border gus-hoverable player-action-btn"
+                [class.gus-button-active]="playerItem.affinity === 1"
+                (click)="onPlayerLockTeam1(playerItem)" title="Assign to team 1">
+                👈 <span class="player-action-label">Move left</span>
+              </button>
+              <button type="button" class="gus-button gus-border gus-hoverable player-action-btn"
+                (click)="onRemoveSelectedPlayer(playerItem)" title="Remove">❌</button>
+              <button type="button" class="gus-button gus-border gus-hoverable player-action-btn"
+                [class.gus-button-active]="playerItem.affinity === 2"
+                (click)="onPlayerLockTeam2(playerItem)" title="Assign to team 2">
+                <span class="player-action-label">Move right</span> 👉
+              </button>
+            </div>
           </div>
         </div>
         }

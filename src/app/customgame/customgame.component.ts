@@ -12,7 +12,7 @@ import { MatchCombosComponent } from '../matches/match-combos/match-combos.compo
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { PlayerCardComponent } from '../player-card/player-card.component';
-import { PlayerCardPrefComponent } from '../player-card-pref/player-card-pref.component';
+import { PlayerMiniCardComponent } from '../players/player-mini-card/player-mini-card.component';
 import { PlayerFilterPipe } from '../matches/player-filter.pipe';
 
 @Component({
@@ -21,7 +21,7 @@ import { PlayerFilterPipe } from '../matches/player-filter.pipe';
     FormsModule,
     MatchCombosComponent,
     PlayerCardComponent,
-    PlayerCardPrefComponent,
+    PlayerMiniCardComponent,
     PlayerFilterPipe
 ],
     selector: 'app-customgame',
@@ -153,38 +153,12 @@ export class CustomgameComponent implements OnInit, OnDestroy {
     this.searchedName = '';
   }
 
-  onPlayerLockTeam1($event: any) {
-    const selectedPlayer: Player = $event;
-    if (!selectedPlayer) {
-      return;
-    }
-
-    console.log('onPlayerLockTeam1');
-    if (selectedPlayer.affinity === 1) {
-      // toggle back
-      selectedPlayer.affinity = 0;
-      return;
-    }
-
-    selectedPlayer.affinity = 1;
-    return;
+  onPlayerLockTeam1(player: Player) {
+    player.affinity = player.affinity === 1 ? 0 : 1;
   }
 
-  onPlayerLockTeam2($event: any) {
-    const selectedPlayer: Player = $event;
-    if (!selectedPlayer) {
-      return;
-    }
-
-    console.log('onPlayerLockTeam2');
-    if (selectedPlayer.affinity === 2) {
-      // toggle back
-      selectedPlayer.affinity = 0;
-      return;
-    }
-
-    selectedPlayer.affinity = 2;
-    return;
+  onPlayerLockTeam2(player: Player) {
+    player.affinity = player.affinity === 2 ? 0 : 2;
   }
 
   public isAddPlayerSideNavOpen = false;
@@ -226,14 +200,14 @@ export class CustomgameComponent implements OnInit, OnDestroy {
       if (player.affinity === 2) {
         player.affinity = 0;
       } else {
-        player.affinity = player.affinity === 1 ? 0 : 1;
+        this.onPlayerLockTeam1(player);
       }
     } else {
       // Swipe right → assign to team2 (or reset if crossing from team1)
       if (player.affinity === 1) {
         player.affinity = 0;
       } else {
-        player.affinity = player.affinity === 2 ? 0 : 2;
+        this.onPlayerLockTeam2(player);
       }
     }
   }
