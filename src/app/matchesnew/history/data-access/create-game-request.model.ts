@@ -1,3 +1,5 @@
+import { MatchStatus } from '../../match-status';
+
 export interface CreateGameRequest {
   matchDate: string;
   suffix: string;
@@ -24,6 +26,7 @@ export interface GameEventDBData {
   registeredPlayerIds: number[];
   playerReserveStatus: boolean[];
   inactive?: boolean;
+  matchStatus?: MatchStatus;
 }
 
 export interface PlayerWithId {
@@ -45,6 +48,7 @@ export interface GameEventData {
   name: string;
   registeredPlayers: PlayerWithIdAndStars[];
   inactive: boolean;
+  matchStatus: MatchStatus;
 }
 
 export function createGameEventDataFromRequest(request: CreateGameRequest): GameEventDBData {
@@ -63,7 +67,8 @@ export function createDefaultGameEventDBData(): GameEventDBData {
     name: "",
     registeredPlayerIds: [],
     playerReserveStatus: [],
-    inactive: false
+    inactive: false,
+    matchStatus: MatchStatus.Unknown,
   };
 }
 export function createDefaultGameEventData(): GameEventData {
@@ -73,7 +78,8 @@ export function createDefaultGameEventData(): GameEventData {
     name: "",
     label: "",
     registeredPlayers: [],
-    inactive: false
+    inactive: false,
+    matchStatus: MatchStatus.Unknown,
   };
 }
 

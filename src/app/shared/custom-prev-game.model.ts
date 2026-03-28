@@ -1,6 +1,9 @@
 import { Player, getDisplayName } from './player.model';
+import { MatchStatus } from '../matchesnew/match-status';
 
 export class CustomPrevGame {
+
+  public status?: MatchStatus;
 
   constructor(
     public team1: Array<Player>,

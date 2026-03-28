@@ -37,7 +37,6 @@ export class GameEventsComponent {
   gameEventTitlesSig = this.gameEventsService.recentGameTitlesSig;
   activeGameEventTitlesSig = computed(() => this.gameEventTitlesSig().filter((matchDateTitle) => this.isDateActive(matchDateTitle)));
 
-
   public selectedMatch = this.gameEventsService.selectedMatchSig;
 
   public selectedMatchContent = this.gameEventsService.selectedMatchContent;

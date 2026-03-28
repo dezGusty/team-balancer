@@ -4,6 +4,7 @@ import { RouterModule } from '@angular/router';
 import { EMPTY, Observable, Subscription } from 'rxjs';
 import { Match } from 'src/app/shared/match.model';
 import { MatchService } from 'src/app/shared/match.service';
+import { MatchStatus } from 'src/app/matchesnew/match-status';
 
 @Component({
     imports: [RouterModule],
@@ -25,6 +26,9 @@ export class RecentMatchesComponent implements OnInit, OnDestroy {
 
   public selectedIndex = -1;
   private recentMatchNames: string[] = [];
+
+  readonly MatchStatus = MatchStatus;
+
   private recentMatchDescriptions: string[] = [];
 
 
@@ -57,6 +61,30 @@ export class RecentMatchesComponent implements OnInit, OnDestroy {
    * Retrieves the display name / text for a match name.
    * @param matchName The name of the match-name / document id
    */
+  getStatusForIndex(index: number): MatchStatus | undefined {
+    const matchName = this.recentMatchNames[index];
+    if (!matchName) return undefined;
+    return this.matchSvc.getStatusForMatch(matchName.substring(0, 10));
+  }
+
+  matchStatusIcon(status: MatchStatus | undefined): string {
+    switch (status) {
+      case MatchStatus.Valid:      return '✅';
+      case MatchStatus.Unbalanced: return '⚠️';
+      case MatchStatus.NotPlayed:  return '🚫';
+      default:                     return '❓';
+    }
+  }
+
+  matchStatusTitle(status: MatchStatus | undefined): string {
+    switch (status) {
+      case MatchStatus.Valid:      return 'Result valid';
+      case MatchStatus.Unbalanced: return 'Match played – very unbalanced';
+      case MatchStatus.NotPlayed:  return 'Match not played';
+      default:                     return 'Result unknown';
+    }
+  }
+
   public getDisplayTextForMatch(matchName: string): string {
     // THe name of the match should be the date in iso format
     // E.g. 2022-12-01

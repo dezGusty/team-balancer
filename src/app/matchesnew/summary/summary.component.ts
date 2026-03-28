@@ -5,6 +5,7 @@ import { toObservable, toSignal } from '@angular/core/rxjs-interop';
 import { combineLatest, forkJoin, map, shareReplay, switchMap, tap, withLatestFrom } from 'rxjs';
 import { AsyncPipe } from '@angular/common';
 import { GameEventData } from '../history/data-access/create-game-request.model';
+import { MatchStatus } from '../match-status';
 import { PlayersService } from 'src/app/shared/players.service';
 import { Player, getDisplayName } from 'src/app/shared/player.model';
 import { NotificationService } from 'src/app/utils/notification/notification.service';
@@ -71,6 +72,7 @@ export class SummaryComponent {
           name: singleGame.name,
           label: MatchDateTitle.fromString(singleGame.name).suffix ?? "",
           inactive: singleGame.inactive ?? false,
+          matchStatus: singleGame.matchStatus ?? MatchStatus.Unknown,
           registeredPlayers: singleGame.registeredPlayerIds.map((id, index) => {
             return {
               id: id,

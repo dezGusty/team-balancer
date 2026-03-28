@@ -36,3 +36,29 @@
 .bad-num {
   color: rgb(212, 100, 100);
 }
+
+.neutral-num {
+  color: rgb(140, 140, 140);
+}
+
+.status-row {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 0.5em;
+  padding: 0.5em 0;
+}
+
+.match-status-label {
+  font-size: 0.85rem;
+  white-space: nowrap;
+}
+
+.match-status-select {
+  flex: 1;
+  background: var(--gus-secondary-grad, #333);
+  color: var(--gus-primary-text-color, #fff);
+  border: 1px solid var(--gus-border-color, #555);
+  border-radius: 3px;
+  cursor: pointer;
+}

@@ -263,6 +263,11 @@ a.player-card-grad:hover {
   text-shadow: 0 0 0 gray;
 }
 
+.player-card-recent-matches-manual {
+  color: #A0A0FF99;
+  text-shadow: 0 0 0 #6060cc;
+}
+
 
 .player-card-name {
   font-size: medium;

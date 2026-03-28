@@ -6,6 +6,7 @@
     <span class="year">{{match.year}}</span>
     <span class="month">{{match.month}}</span>
     <span class="day">{{match.day}}</span>
+    <span class="match-status-icon" [title]="matchStatusTitle(getStatusForIndex($index))">{{matchStatusIcon(getStatusForIndex($index))}}</span>
   </div>
   } @empty {
   <div>No recent matches.</div>

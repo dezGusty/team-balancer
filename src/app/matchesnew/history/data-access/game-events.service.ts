@@ -6,6 +6,7 @@ import { BehaviorSubject, Observable, Subject, Subscription, catchError, filter,
 import { MatchDateTitle } from '../match-date-title';
 import { LoadingFlagService } from 'src/app/utils/loading-flag.service';
 import { CreateGameRequest, GameEventDBData, GameEventData, GameNamesList, PlayerWithId, PlayerWithIdAndStars, createGameEventDataFromRequest, getEventNameForRequest } from './create-game-request.model';
+import { MatchStatus } from '../../match-status';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { Result } from '../result';
 import { NotificationService } from 'src/app/utils/notification/notification.service';
@@ -26,10 +27,7 @@ export class GameEventsService implements OnDestroy {
     tap((_) => { this.loadingFlagService.setLoadingFlag(true); }),
     map(recentMatchesDocContents => {
       const castedItem = recentMatchesDocContents as GameNamesList;
-      // Individual string entries are obtained in strings in the YYYY-MM-DD format.
-      // Map each entry to an object of the type MatchHistoryTitle (with the year, month, and day properties).
-      const matchHistoryTitles = castedItem.items.map(entry => MatchDateTitle.fromString(entry));
-      return matchHistoryTitles;
+      return castedItem.items.map(entry => MatchDateTitle.fromString(entry));
     }),
     tap((_) => { this.loadingFlagService.setLoadingFlag(false); }),
     catchError((err) => {
@@ -184,6 +182,7 @@ export class GameEventsService implements OnDestroy {
           name: gameEventDBData.name,
           label: MatchDateTitle.fromString(gameEventDBData.name).suffix ?? "",
           inactive: gameEventDBData.inactive ?? false,
+          matchStatus: gameEventDBData.matchStatus ?? MatchStatus.Unknown,
           registeredPlayers: gameEventDBData.registeredPlayerIds.map((id, index) => {
             return {
               id: id,
@@ -543,6 +542,7 @@ export class GameEventsService implements OnDestroy {
   public setAutoSave(autoSave: boolean) {
     this.autoSaveGameEventSubject$.next(autoSave);
   }
+
 
 
   private subscriptions: Subscription[] = [];

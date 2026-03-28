@@ -1,4 +1,4 @@
-import { Injectable } from '@angular/core';
+import { Injectable, Injector, runInInjectionContext } from '@angular/core';
 import { CustomPrevGame } from './custom-prev-game.model';
 import { collection, doc, getDoc, getDocs, docData, Firestore, setDoc } from '@angular/fire/firestore';
 import { Player } from './player.model';
@@ -6,6 +6,8 @@ import { BehaviorSubject, Observable, Subscription, catchError, shareReplay, swi
 import { CustomGame } from './custom-game.model';
 import { UserAuthService } from '../auth/user-auth.service';
 import { HttpErrorResponse } from '@angular/common/http';
+import { MatchStatus } from '../matchesnew/match-status';
+import { NotificationService } from '../utils/notification/notification.service';
 
 @Injectable({
   providedIn: 'root'
@@ -18,7 +20,9 @@ export class MatchService {
   private recentMatchNames: string[];
   public maxNumberOfRecentMatches = 5;
 
-  constructor(private firestore: Firestore, private authSvc: UserAuthService) {
+  private recentMatchStatuses: Record<string, MatchStatus> = {};
+
+  constructor(private firestore: Firestore, private authSvc: UserAuthService, private notificationService: NotificationService, private injector: Injector) {
     this.recentMatchNames = [];
     if (!this.authSvc.isAuthenticated()) {
       console.log('[matches] waiting for login...');
@@ -39,6 +43,16 @@ export class MatchService {
     if (this.authSvc.isAuthenticated()) {
       this.subscribeToDataSources();
     }
+  }
+
+  public getStatusForMatch(dateKey: string): MatchStatus | undefined {
+    return this.recentMatchStatuses[dateKey];
+  }
+
+  public async updateMatchStatus(dateKey: string, status: MatchStatus): Promise<void> {
+    await setDoc(doc(this.firestore, `matches/${dateKey}`), { status }, { merge: true });
+    await setDoc(doc(this.firestore, 'matches/recent'), { statuses: { [dateKey]: status } }, { merge: true });
+    this.notificationService.show('Match status updated.');
   }
 
   public getRecentMatchListCached(): string[] {
@@ -78,8 +92,9 @@ export class MatchService {
 
     this.dataChangeSubscription = docData(docRef).subscribe({
       next: recentMatchesDocContents => {
-        const castedItem = recentMatchesDocContents as { items: string[] };
+        const castedItem = recentMatchesDocContents as { items: string[], statuses?: Record<string, string> };
         this.recentMatchNames = [...castedItem.items];
+        this.recentMatchStatuses = (castedItem.statuses ?? {}) as Record<string, MatchStatus>;
         this.recentMatchesChangeEvent.next(this.recentMatchNames);
       },
       error: err => console.log('some error encountered', err),
@@ -109,7 +124,7 @@ export class MatchService {
     const docName = 'matches/' + matchName;
 
     const docRef = doc(this.firestore, docName);
-    const docSnap = await getDoc(docRef);
+    const docSnap = await runInInjectionContext(this.injector, () => getDoc(docRef));
     if (docSnap.exists()) {
       myResult = docSnap.data() as CustomPrevGame;
     }
@@ -133,7 +148,7 @@ export class MatchService {
 
   public async getMatchListAsync(): Promise<Map<string, CustomPrevGame>> {
     const collectionRef = collection(this.firestore, 'matches');
-    const docsSnap = await getDocs(collectionRef);
+    const docsSnap = await runInInjectionContext(this.injector, () => getDocs(collectionRef));
     let matchList = new Map<string, CustomPrevGame>();
     docsSnap.forEach(
       myDoc => {

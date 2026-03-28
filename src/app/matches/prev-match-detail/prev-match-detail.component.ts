@@ -10,6 +10,7 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { SmallLoadingSpinnerComponent } from 'src/app/ui/small-loading-spinner/small-loading-spinner.component';
 import { toObservable, toSignal } from '@angular/core/rxjs-interop';
+import { MatchStatus } from 'src/app/matchesnew/match-status';
 
 @Component({
   selector: 'app-prev-match-detail',
@@ -42,6 +43,15 @@ export class PrevMatchDetailComponent implements OnInit, OnDestroy {
 
   public matchResultsStored = true;
   public matchResultsAppliedToRatings = true;
+
+  matchStatus = signal<MatchStatus>(MatchStatus.Unknown);
+  readonly MatchStatus = MatchStatus;
+  readonly matchStatusOptions: { value: MatchStatus; label: string; icon: string }[] = [
+    { value: MatchStatus.Unknown,    label: 'Unknown',         icon: '❓' },
+    { value: MatchStatus.Valid,      label: 'Result valid',    icon: '✅' },
+    { value: MatchStatus.Unbalanced, label: 'Very unbalanced', icon: '⚠️' },
+    { value: MatchStatus.NotPlayed,  label: 'Not played',      icon: '🚫' },
+  ];
 
   matchSearchKey = '';
 
@@ -152,6 +162,11 @@ export class PrevMatchDetailComponent implements OnInit, OnDestroy {
       }
 
       this.matchResultsAppliedToRatings = this.customGame.appliedResults;
+      this.matchStatus.set(
+        this.customGame.status
+        ?? this.matchAltSvc.getStatusForMatch(matchSearchKey.substring(0, 10))
+        ?? MatchStatus.Unknown
+      );
     }
   }
 
@@ -185,12 +200,13 @@ export class PrevMatchDetailComponent implements OnInit, OnDestroy {
   }
 
   getPostMatchDiffForPlayerAndGame(player: Player, customGame: CustomPrevGame): string {
-
+    if (this.matchStatus() === MatchStatus.Unbalanced) {
+      return '~0';
+    }
     const foundObj = customGame.postResults?.find(x => x.id === player.id);
     if (foundObj) {
       return foundObj.diff.toFixed(3);
     }
-
     return "~ 0.0";
   }
 
@@ -214,6 +230,7 @@ export class PrevMatchDetailComponent implements OnInit, OnDestroy {
     this.customGame.scoreTeam2 = this.team2Score();
     this.customGame.savedResult = true;
     await this.matchAltSvc.saveCustomPrevMatchAsync(this.matchSearchKey, this.customGame);
+    await this.matchAltSvc.updateMatchStatus(this.matchSearchKey.substring(0, 10), this.matchStatus());
     this.matchResultsStored = this.customGame.savedResult;
     this.showSpinner = false;
   }
@@ -224,6 +241,7 @@ export class PrevMatchDetailComponent implements OnInit, OnDestroy {
   }
 
   isGoodRatingDiffForGame(player: Player, customGame?: CustomPrevGame): boolean {
+    if (this.matchStatus() === MatchStatus.Unbalanced) return false;
     if (!customGame) {
       return false;
     }
@@ -245,6 +263,7 @@ export class PrevMatchDetailComponent implements OnInit, OnDestroy {
   }
 
   isBadRatingDiffForGame(player: Player, customGame?: CustomPrevGame): boolean {
+    if (this.matchStatus() === MatchStatus.Unbalanced) return false;
     if (!customGame) {
       return false;
     }
@@ -343,6 +362,21 @@ export class PrevMatchDetailComponent implements OnInit, OnDestroy {
     this.showSpinner = false;
   }
 
+  onMatchStatusChange(status: string) {
+    const newStatus = status as MatchStatus;
+    this.matchStatus.set(newStatus);
+    if (newStatus === MatchStatus.NotPlayed) {
+      this.team1Score.set(0);
+      this.team2Score.set(0);
+    }
+  }
+
+  onScoreChange() {
+    if (this.matchStatus() === MatchStatus.Unknown) {
+      this.matchStatus.set(MatchStatus.Valid);
+    }
+  }
+
   updateTeamSumsForCurrentGame(): void {
     if (!this.customGame) {
       return;
@@ -437,6 +471,8 @@ export class PrevMatchDetailComponent implements OnInit, OnDestroy {
 
     this.showSpinner = true;
     this.customGame.appliedResults = false;
+    this.customGame.savedResult = false;
+    this.matchResultsStored = false;
     this.matchResultsAppliedToRatings = false;
     await this.matchAltSvc.saveCustomPrevMatchAsync(this.matchSearchKey, this.customGame);
     await this.playersSvc.storeRecentMatchToParticipantsHistoryAsync(this.customGame, this.matchSearchKey);
@@ -459,6 +495,6 @@ export class PrevMatchDetailComponent implements OnInit, OnDestroy {
   }
 
   public canChangeScore(): boolean {
-    return !this.matchResultsStored;
+    return !this.matchResultsStored && this.matchStatus() !== MatchStatus.NotPlayed;
   }
 }

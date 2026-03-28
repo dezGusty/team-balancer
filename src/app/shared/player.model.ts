@@ -1,5 +1,25 @@
 
 /**
+ * Type of a recent history entry for a player.
+ * Missing/undefined means a regular match entry (outcome derived from diff value).
+ */
+export enum RecentEntryType {
+  /** Played but result deliberately ignored (e.g. wrong evaluation) */
+  Ignored = 'ignored',
+  /** Match did not take place for this player */
+  NotPlayed = 'not_played',
+  /** Rating was manually adjusted by an admin */
+  ManualEdit = 'manual_edit',
+}
+
+export interface RecentEntry {
+  date: string;
+  diff: number;
+  /** When absent the entry is a regular match result; outcome is inferred from diff. */
+  type?: RecentEntryType;
+}
+
+/**
  * Defines a player.
  */
 export class Player {
@@ -7,7 +27,7 @@ export class Player {
     public keywords = '';
     public displayName = '';
     public affinity = 0;
-    public mostRecentMatches: Array<{ date: string, diff: number }> = new Array<{ date: string, diff: number }>();
+    public mostRecentMatches: RecentEntry[] = [];
     public isArchived = false;
     public stars: number = 0;
     public reserve: boolean = false;

@@ -7,7 +7,6 @@ import { BehaviorSubject, Observable, Subject, combineLatest, interval, map, mer
 import { Player, filterPlayersArrayByContent, getDisplayName } from 'src/app/shared/player.model';
 import { GameEventData, PlayerWithId, PlayerWithIdAndStars } from '../history/data-access/create-game-request.model';
 
-
 export interface Selectable<T> {
   selected: boolean;
   data: T;
@@ -28,7 +27,6 @@ export class GameeventdraftComponent {
   private gameEventsService: GameEventsService = inject(GameEventsService);
   private playersService: PlayersService = inject(PlayersService);
   public selectedMatchContent = this.gameEventsService.selectedMatchContent;
-
 
   private readonly randomizeMouseDownSubject$: Subject<void> = new Subject<void>();
   private readonly randomizeMouseUpSubject$: Subject<void> = new Subject<void>();

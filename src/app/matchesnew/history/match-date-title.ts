@@ -1,9 +1,12 @@
+import { MatchStatus } from '../match-status';
+
 export class MatchDateTitle {
   title: string;
   year: string;
   month: string;
   day: string;
   suffix?: string;
+  matchStatus?: MatchStatus;
 
   fromString: (entry: string) => MatchDateTitle;
   constructor() {

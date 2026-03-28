@@ -8,3 +8,10 @@ ul {
 .match-details-right-container {
   margin: 1.5em 0em;
 }
+
+.match-status-icon {
+  display: block;
+  font-size: 0.85em;
+  text-align: center;
+  line-height: 1.2;
+}

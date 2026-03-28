@@ -1,4 +1,4 @@
-import { Player } from './player.model';
+import { Player, RecentEntryType } from './player.model';
 import { Injectable, Injector, OnDestroy, runInInjectionContext } from '@angular/core';
 import { BehaviorSubject, catchError, finalize, map, of, shareReplay, Subject, Subscription, switchMap, tap } from 'rxjs';
 import { CustomPrevGame } from './custom-prev-game.model';
@@ -337,21 +337,25 @@ export class PlayersService implements OnDestroy {
 
             } else {
                 if (playerToUpdate.mostRecentMatches == null) {
-                    playerToUpdate.mostRecentMatches = new Array<{ date: string, diff: number }>;
+                    playerToUpdate.mostRecentMatches = [];
                 }
                 playerToUpdate.mostRecentMatches.push({ date: matchKey, diff: 0 });
 
-                // don't keep all ratings, just the most recent ones, so sort them.
-                playerToUpdate.mostRecentMatches.sort((a, b) => a.date > b.date ? -1 : 1);
-                if (playerToUpdate.mostRecentMatches.length > this.settingsSvc.getMaxStoredRecentMatchesCount()) {
-                    playerToUpdate.mostRecentMatches = playerToUpdate.mostRecentMatches.slice(0, this.settingsSvc.getMaxStoredRecentMatchesCount());
-                }
+                this.trimAndSortRecentMatches(playerToUpdate);
             }
 
             // search for player by id
             this.updateCachedPlayerById(playerToUpdate.id, playerToUpdate);
             await this.saveAllPlayersToFirebaseAsync();
         });
+    }
+
+    private trimAndSortRecentMatches(player: Player) {
+        player.mostRecentMatches.sort((a, b) => a.date > b.date ? -1 : 1);
+        const max = this.settingsSvc.getMaxStoredRecentMatchesCount();
+        if (player.mostRecentMatches.length > max) {
+            player.mostRecentMatches = player.mostRecentMatches.slice(0, max);
+        }
     }
 
     public async storeRecentMatchToParticipantsHistoryAsync(gameObj: CustomPrevGame, matchKey: string) {
@@ -375,21 +379,35 @@ export class PlayersService implements OnDestroy {
 
             } else {
                 if (playerToUpdate.mostRecentMatches == null) {
-                    playerToUpdate.mostRecentMatches = new Array<{ date: string, diff: number }>;
+                    playerToUpdate.mostRecentMatches = [];
                 }
                 playerToUpdate.mostRecentMatches.push({ date: matchKey, diff: diffPair.diff });
 
-                // don't keep all ratings, just the most recent ones, so sort them.
-                playerToUpdate.mostRecentMatches.sort((a, b) => a.date > b.date ? -1 : 1);
-                if (playerToUpdate.mostRecentMatches.length > this.settingsSvc.getMaxStoredRecentMatchesCount()) {
-                    playerToUpdate.mostRecentMatches = playerToUpdate.mostRecentMatches.slice(0, this.settingsSvc.getMaxStoredRecentMatchesCount());
-                }
+                this.trimAndSortRecentMatches(playerToUpdate);
             }
 
             // search for player by id
             this.updateCachedPlayerById(diffPair.id, playerToUpdate);
             await this.saveAllPlayersToFirebaseAsync();
         });
+    }
+
+    /**
+     * Records a manual rating adjustment in the player's recent entry history.
+     */
+    addManualRatingEntry(player: Player, oldRating: number, newRating: number) {
+        const diff = +(newRating - oldRating).toFixed(4);
+        if (diff === 0) return;
+        const today = new Date().toISOString().slice(0, 10);
+        if (player.mostRecentMatches == null) {
+            player.mostRecentMatches = [];
+        }
+        // Replace any existing manual entry for the same day to avoid duplicates.
+        player.mostRecentMatches = player.mostRecentMatches.filter(
+            e => !(e.date === today && e.type === RecentEntryType.ManualEdit)
+        );
+        player.mostRecentMatches.push({ date: today, diff, type: RecentEntryType.ManualEdit });
+        this.trimAndSortRecentMatches(player);
     }
 
 

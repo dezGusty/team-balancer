@@ -43,9 +43,13 @@ export class PlayerDetailsNewComponent {
     const player = this.player();
     console.log("Save button clicked. Player is: ", player);
     if (player) {
+      const existing = this.playersSvc.getPlayerById(player.id);
+      const oldRating = existing?.rating ?? player.rating;
       const updated = this.playersSvc.updatePlayerById(player.id, player);
       if (!updated) {
         this.playersSvc.addPlayer(player);
+      } else {
+        this.playersSvc.addManualRatingEntry(player, oldRating, player.rating);
       }
     }
 

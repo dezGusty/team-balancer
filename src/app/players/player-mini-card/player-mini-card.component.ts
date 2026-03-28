@@ -1,6 +1,6 @@
 import { CommonModule } from '@angular/common';
 import { Component, OnInit, Input, ChangeDetectionStrategy } from '@angular/core';
-import { Player, getDisplayName } from 'src/app/shared/player.model';
+import { Player, RecentEntry, RecentEntryType, getDisplayName } from 'src/app/shared/player.model';
 
 @Component({
     imports: [
@@ -26,7 +26,7 @@ export class PlayerMiniCardComponent implements OnInit {
     return getDisplayName(this.player);
   }
 
-  public getRecentMatches(): Array<{ date: string, diff: number }> {
+  public getRecentMatches(): RecentEntry[] {
     if (!this.player) {
       return [];
     }
@@ -34,40 +34,44 @@ export class PlayerMiniCardComponent implements OnInit {
     return this.player.mostRecentMatches?.slice(0, 8).reverse() || [];
   }
 
-  public getDisplayTextForRating(rating: { date: string, diff: number }): string {
-    if (rating.diff > 0) {
-      if (rating.diff > 0.1) {
-        return '⬆️';
-      }
-      return '↗️';
-    } else if (rating.diff === 0) {
+  public getDisplayTextForRating(entry: RecentEntry): string {
+    switch (entry.type) {
+      case RecentEntryType.ManualEdit: return '✋';
+      case RecentEntryType.Ignored:    return '−';
+      case RecentEntryType.NotPlayed:  return '✕';
+    }
+    // Regular match entry — derive from diff
+    if (entry.diff > 0) {
+      return entry.diff > 0.1 ? '⬆️' : '↗️';
+    } else if (entry.diff === 0) {
       return '➡️';
     } else {
-      if (rating.diff < -0.1) {
-        return '⬇️';
-      }
-      return '↘️';
+      return entry.diff < -0.1 ? '⬇️' : '↘️';
     }
   }
 
-  public getDisplayClassForRating(rating: { date: string, diff: number }): string {
-    if (rating.diff > 0) {
-      if (rating.diff > 0.1) {
-        return 'player-card-recent-matches player-card-recent-matches-very-good';
-      }
-      return 'player-card-recent-matches player-card-recent-matches-good';
-    } else if (rating.diff === 0) {
+  public getDisplayClassForRating(entry: RecentEntry): string {
+    switch (entry.type) {
+      case RecentEntryType.ManualEdit: return 'player-card-recent-matches player-card-recent-matches-manual';
+      case RecentEntryType.Ignored:    return 'player-card-recent-matches player-card-recent-matches-neutral';
+      case RecentEntryType.NotPlayed:  return 'player-card-recent-matches player-card-recent-matches-neutral';
+    }
+    if (entry.diff > 0) {
+      return entry.diff > 0.1
+        ? 'player-card-recent-matches player-card-recent-matches-very-good'
+        : 'player-card-recent-matches player-card-recent-matches-good';
+    } else if (entry.diff === 0) {
       return 'player-card-recent-matches player-card-recent-matches-neutral';
     } else {
-      if (rating.diff < -0.1) {
-        return 'player-card-recent-matches player-card-recent-matches-very-bad';
-      }
-      return 'player-card-recent-matches player-card-recent-matches-bad';
+      return entry.diff < -0.1
+        ? 'player-card-recent-matches player-card-recent-matches-very-bad'
+        : 'player-card-recent-matches player-card-recent-matches-bad';
     }
   }
 
-  public getDisplayTooltipForRating(rating: { date: string, diff: number }): string {
-    return '📅' + rating.date + ' 👉   ' + rating.diff.toPrecision(2);
+  public getDisplayTooltipForRating(entry: RecentEntry): string {
+    const typeLabel = entry.type ? ` [${entry.type}]` : '';
+    return '📅' + entry.date + ' 👉   ' + entry.diff.toPrecision(2) + typeLabel;
   }
 
 }
