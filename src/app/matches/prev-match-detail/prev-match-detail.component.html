@@ -52,12 +52,13 @@
           <div class="col-6 input-group-lg">
             <input aria-label="t1 score" type="number" class="form-control" [(ngModel)]="this.team1Score"
           (ngModelChange)="onScoreChange()"
-          [attr.disabled]="!this.canChangeScore()? '' : null">
+          [disabled]="!this.canChangeScore()"
+          >
           </div>
           <div class="col-6 input-group-lg">
             <input aria-label="t2 score" type="number" class="form-control" [(ngModel)]="this.team2Score"
           (ngModelChange)="onScoreChange()"
-          [attr.disabled]="!this.canChangeScore()? '' : null">
+          [disabled]="!this.canChangeScore()">
           </div>
         </div>
 
@@ -67,7 +68,7 @@
           <label for="prev-match-status" class="match-status-label">Status:</label>
           <select id="prev-match-status" class="gus-input gus-border match-status-select"
             [ngModel]="matchStatus()"
-            [attr.disabled]="matchResultsStored ? '' : null"
+            [disabled]="!canSelectStatus()"
             (ngModelChange)="onMatchStatusChange($event)">
             @for (opt of matchStatusOptions; track opt.value) {
               <option [value]="opt.value">{{opt.icon}} {{opt.label}}</option>
@@ -132,7 +133,7 @@
               <path
                 d="M12.438 8.668V14H11.39V9.684h-.051l-1.211.859v-.969l1.262-.906h1.046zM4.5 13.5a.5.5 0 0 1-1 0V3.707L2.354 4.854a.5.5 0 1 1-.708-.708l2-1.999.007-.007a.498.498 0 0 1 .7.006l2 2a.5.5 0 1 1-.707.708L4.5 3.707V13.5z" />
             </svg></span>
-            Reset Ratings
+            Reset Ratings & State
           </button>
         </div>
       }

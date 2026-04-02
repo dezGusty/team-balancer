@@ -44,6 +44,8 @@ export class PrevMatchDetailComponent implements OnInit, OnDestroy {
   public matchResultsStored = true;
   public matchResultsAppliedToRatings = true;
 
+  canSelectStatus = signal<boolean>(false);
+
   matchStatus = signal<MatchStatus>(MatchStatus.Unknown);
   readonly MatchStatus = MatchStatus;
   readonly matchStatusOptions: { value: MatchStatus; label: string; icon: string }[] = [
@@ -162,6 +164,7 @@ export class PrevMatchDetailComponent implements OnInit, OnDestroy {
       }
 
       this.matchResultsAppliedToRatings = this.customGame.appliedResults;
+      this.updateCanSelectStatus();
       this.matchStatus.set(
         this.customGame.status
         ?? this.matchAltSvc.getStatusForMatch(matchSearchKey.substring(0, 10))
@@ -232,6 +235,7 @@ export class PrevMatchDetailComponent implements OnInit, OnDestroy {
     await this.matchAltSvc.saveCustomPrevMatchAsync(this.matchSearchKey, this.customGame);
     await this.matchAltSvc.updateMatchStatus(this.matchSearchKey.substring(0, 10), this.matchStatus());
     this.matchResultsStored = this.customGame.savedResult;
+    this.updateCanSelectStatus();
     this.showSpinner = false;
   }
 
@@ -353,6 +357,7 @@ export class PrevMatchDetailComponent implements OnInit, OnDestroy {
     // Store the new data for the match.
     this.customGame.appliedResults = true;
     this.matchResultsAppliedToRatings = true;
+    this.updateCanSelectStatus();
     console.log('saving ', this.customGame);
 
     await this.matchAltSvc.saveCustomPrevMatchAsync(this.matchSearchKey, this.customGame);
@@ -451,6 +456,7 @@ export class PrevMatchDetailComponent implements OnInit, OnDestroy {
     // Store the new data for the match.
     this.customGame.appliedResults = true;
     this.matchResultsAppliedToRatings = true;
+    this.updateCanSelectStatus();
     console.log('saving ', this.customGame);
 
     await this.matchAltSvc.saveCustomPrevMatchAsync(this.matchSearchKey, this.customGame);
@@ -474,6 +480,7 @@ export class PrevMatchDetailComponent implements OnInit, OnDestroy {
     this.customGame.savedResult = false;
     this.matchResultsStored = false;
     this.matchResultsAppliedToRatings = false;
+    this.updateCanSelectStatus();
     await this.matchAltSvc.saveCustomPrevMatchAsync(this.matchSearchKey, this.customGame);
     await this.playersSvc.storeRecentMatchToParticipantsHistoryAsync(this.customGame, this.matchSearchKey);
 
@@ -489,12 +496,16 @@ export class PrevMatchDetailComponent implements OnInit, OnDestroy {
   }
 
   public canResetResults(): boolean {
-    return this.matchResultsAppliedToRatings
-      && this.matchResultsStored
+    return this.matchResultsStored
       && this.authSvc.isAuthenticatedAsOrganizer();
   }
 
   public canChangeScore(): boolean {
     return !this.matchResultsStored && this.matchStatus() !== MatchStatus.NotPlayed;
+  }
+
+  private updateCanSelectStatus(): void {
+    this.canSelectStatus.set(!this.matchResultsStored && !this.matchResultsAppliedToRatings);
+    console.log('canSelectStatus updated to ', this.canSelectStatus());
   }
 }
