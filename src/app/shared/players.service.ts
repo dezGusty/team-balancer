@@ -12,6 +12,7 @@ import { collection, doc, docData, Firestore, getDoc, getDocs, setDoc } from '@a
 import { PlayerRatingSnapshot } from './player-rating-snapshot.model';
 import { SettingsService } from './settings.service';
 import { LoadingFlagService } from '../utils/loading-flag.service';
+import { NotificationService } from '../utils/notification/notification.service';
 
 /**
  * Stores and retrieves player related information.
@@ -29,6 +30,7 @@ export class PlayersService implements OnDestroy {
         private appStorage: AppStorage,
         private settingsSvc: SettingsService,
         private loadingFlagService: LoadingFlagService,
+        private notificationService: NotificationService,
         private injector: Injector) {
 
         if (!this.authSvc.isAuthenticated()) {
@@ -174,10 +176,10 @@ export class PlayersService implements OnDestroy {
         }
     }
 
-    addPlayer(player: Player) {
+    async addPlayer(player: Player) {
         console.log('[playerssvc] added player');
         this.currentPlayerList.push(player);
-        this.saveSinglePlayerToFirebase(player);
+        await this.saveSinglePlayerToFirebase(player);
     }
 
     getCurrentLabel() {
@@ -431,23 +433,31 @@ export class PlayersService implements OnDestroy {
 
     public async savePlayersArrayToDocAsync(playersArr: Player[], listName: string): Promise<void> {
         const docName = 'ratings/' + listName;
-        const obj = { players: playersArr };
+        const plainPlayers = playersArr.map(p => ({ ...p }));
+        const obj = { players: plainPlayers };
         const docRef = doc(this.firestore, docName);
-        console.log('setting data in ' + docName, obj);
-        await setDoc(docRef, obj, { merge: true });
+        console.log('[players-svc] setting data in ' + docName, obj);
+        try {
+            await setDoc(docRef, obj, { merge: true });
+            console.log('[players-svc] successfully saved to ' + docName);
+        } catch (err) {
+            console.error('[players-svc] FAILED to save to ' + docName, err);
+            this.notificationService.emitMessage('Failed to save players to ' + listName + ': ' + err);
+            throw err;
+        }
     }
 
     public async savePlayersToListAsync(playersArr: Player[], listName: string): Promise<void> {
-        return this.savePlayersArrayToDocAsync(playersArr, listName)
-            .then(_ => {
-                const playerInfo = new PlayerChangeInfo(playersArr, 'info', 'Saved players to list ' + listName);
-                console.log('emitting ', playerInfo);
-
-                this.playerDataChangeEvent.next(playerInfo);
-            }
-            ).catch(reason =>
-                this.playerDataChangeEvent.next(new PlayerChangeInfo(playersArr, 'error', 'Failed to save player list because of ' + reason))
-            );
+        try {
+            await this.savePlayersArrayToDocAsync(playersArr, listName);
+            const playerInfo = new PlayerChangeInfo(playersArr, 'info', 'Saved players to list ' + listName);
+            console.log('emitting ', playerInfo);
+            this.playerDataChangeEvent.next(playerInfo);
+        } catch (reason) {
+            console.error('[players-svc] savePlayersToListAsync failed for ' + listName, reason);
+            this.playerDataChangeEvent.next(new PlayerChangeInfo(playersArr, 'error', 'Failed to save player list because of ' + reason));
+            this.notificationService.emitMessage('Error saving player list (' + listName + '). Check console for details.');
+        }
     }
 
     public async addFieldValueToDocumentAsync(fieldName: string, value: any, documentName: string) {
@@ -473,15 +483,15 @@ export class PlayersService implements OnDestroy {
     }
 
     saveSinglePlayerToFirebase(player: Player) {
-        this.saveAllPlayers();
+        return this.saveAllPlayers();
     }
 
     updateSinglePlayerToFirebase(player: Player) {
-        this.saveAllPlayers();
+        return this.saveAllPlayers();
     }
 
     saveAllPlayersToFirebaseAsync() {
-        this.savePlayersToListAsync(this.currentPlayerList, 'current');
+        return this.savePlayersToListAsync(this.currentPlayerList, 'current');
     }
 
     public async getRatingHistoryAsync(): Promise<Map<string, RatingHist>> {

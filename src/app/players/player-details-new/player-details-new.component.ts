@@ -39,17 +39,17 @@ export class PlayerDetailsNewComponent {
     this.onMovePlayerToActiveClicked.emit();
   }
 
-  onSaveBtnClick() {
+  async onSaveBtnClick() {
     const player = this.player();
     console.log("Save button clicked. Player is: ", player);
     if (player) {
       const existing = this.playersSvc.getPlayerById(player.id);
-      const oldRating = existing?.rating ?? player.rating;
-      const updated = this.playersSvc.updatePlayerById(player.id, player);
-      if (!updated) {
-        this.playersSvc.addPlayer(player);
-      } else {
+      if (existing) {
+        const oldRating = existing.rating;
+        this.playersSvc.updatePlayerById(player.id, player);
         this.playersSvc.addManualRatingEntry(player, oldRating, player.rating);
+      } else {
+        await this.playersSvc.addPlayer(player);
       }
     }
 

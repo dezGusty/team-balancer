@@ -1,0 +1,114 @@
+{
+  "exportDate": "2023-04-07T16:09:49.645Z",
+  "players": [
+    {
+      "id": 2,
+      "name": "Player 1",
+      "rating": 7.880320057051556,
+      "displayName": "",
+      "keywords": "",
+      "affinity": 0,
+      "stars": 9976
+    },
+    {
+      "id": 10,
+      "name": "Player 2",
+      "rating": 9.02726582598926,
+      "displayName": "",
+      "keywords": "",
+      "affinity": 0,
+      "stars": 0
+    },
+    {
+      "id": 31,
+      "name": "Player 3",
+      "rating": 8.871434979911573,
+      "displayName": "",
+      "keywords": "",
+      "stars": 0
+    },
+    {
+      "id": 36,
+      "name": "Player 4",
+      "rating": 5.731789156585709,
+      "displayName": "",
+      "keywords": "",
+      "affinity": 2,
+      "stars": 0
+    },
+    {
+      "id": 53,
+      "name": "Player 5",
+      "rating": 6.525331082714834,
+      "displayName": "",
+      "keywords": "",
+      "affinity": 0,
+      "stars": 0
+    },
+    {
+      "id": 106,
+      "name": "Player 6",
+      "rating": 7.258571127844775,
+      "displayName": "",
+      "keywords": "",
+      "affinity": 0,
+      "stars": 0
+    },
+    {
+      "id": 107,
+      "name": "Player 7",
+      "rating": 8.423246241183367,
+      "displayName": "",
+      "keywords": "",
+      "affinity": 0,
+      "stars": 0
+    },
+    {
+      "id": 111,
+      "name": "Player 8",
+      "rating": 6.969096992106466,
+      "displayName": "",
+      "keywords": "",
+      "affinity": 0,
+      "stars": 1
+    },
+    {
+      "id": 113,
+      "name": "Player 9",
+      "rating": 8.18006678251405,
+      "displayName": "",
+      "keywords": "",
+      "affinity": 0,
+      "stars": 0
+    },
+    {
+      "id": 123,
+      "name": "Player 10",
+      "rating": 7.8204393434750905,
+      "displayName": "",
+      "keywords": "",
+      "affinity": 0,
+      "stars": 0
+    },
+    {
+      "id": 129,
+      "name": "Player 11",
+      "rating": 6.75,
+      "displayName": "",
+      "keywords": "",
+      "affinity": 0,
+      "stars": 0,
+      "reserve": false
+    },
+    {
+      "id": 133,
+      "name": "Player 12",
+      "rating": 7.011004359467986,
+      "displayName": "",
+      "keywords": "",
+      "affinity": 0,
+      "stars": 0,
+      "reserve": false
+    }
+  ]
+}

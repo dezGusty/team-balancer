@@ -7,6 +7,7 @@ import { CurrentPlayersService } from './data-access/current-players.service';
 import { PlayerCardComponent } from "../player-card/player-card.component";
 import { Player } from '../shared/player.model';
 import { BehaviorSubject, Subject, combineLatest, firstValueFrom, map, shareReplay, tap, withLatestFrom } from 'rxjs';
+import { exportPlayersToJsonFile } from './export-players';
 import { Router } from '@angular/router';
 import { DraftService } from '../shared/draft.service';
 
@@ -120,6 +121,15 @@ export class DraftNewComponent {
     }),
   );
 
+  exportToJsonSubject$ = new Subject<void>();
+  exportToJson$ = this.exportToJsonSubject$.asObservable().pipe(
+    withLatestFrom(this.selectedPlayersData$),
+    tap(([_, selectedPlayersData]) => {
+      exportPlayersToJsonFile(selectedPlayersData.players);
+      this.notificationService.emitMessage(`Exported ${selectedPlayersData.players.length} players to JSON file.`);
+    }),
+  );
+
 
   @ViewChild('srcNameArea') srcNameArea: ElementRef | undefined;
   constructor(
@@ -159,6 +169,10 @@ export class DraftNewComponent {
     this.copyToClipboardSubject$.next();
     // this.customClipTextToClip = this.draftService.getDraftPlainTextFormat(this.selectedPlayerList);
     // this.toastSvc.showWithHeader('Copied to clipboard.', this.customClipText);
+  }
+
+  onExportToJsonClicked() {
+    this.exportToJsonSubject$.next();
   }
 
   customClipTextToClip(): string {
