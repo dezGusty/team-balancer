@@ -456,7 +456,7 @@ export class PrevMatchDetailComponent implements OnInit, OnDestroy {
     this.updateCanSelectStatus();
     this.customGameState$.next(this.customGame);
     await this.matchAltSvc.saveCustomPrevMatchAsync(this.matchSearchKey, this.customGame);
-    await this.playersSvc.storeRecentMatchToParticipantsHistoryAsync(this.customGame, this.matchSearchKey);
+    await this.playersSvc.removeRecentMatchFromParticipantsHistoryAsync(this.customGame, this.matchSearchKey);
 
     this.showSpinner = false;
   }

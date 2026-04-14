@@ -324,32 +324,84 @@ export class PlayersService implements OnDestroy {
     }
 
     public async tryToStoreRecentDrawInHistory(gameObj: CustomPrevGame, matchKey: string) {
-        // Go through each player and add the results to a separate item.
-        gameObj.team1.concat(gameObj.team2).forEach(async playerItem => {
-            let playerToUpdate = this.getPlayerById(playerItem.id);
+        const participantEntries = [...new Set(gameObj.team1.concat(gameObj.team2).map(player => player.id))]
+            .map(id => ({ id, diff: 0 }));
+        await this.updateRecentMatchEntriesForPlayersAsync(participantEntries, matchKey);
+    }
+
+    private upsertRecentMatchEntry(player: Player, matchKey: string, diff: number): void {
+        if (player.mostRecentMatches == null) {
+            player.mostRecentMatches = [];
+        }
+
+        const existingEntry = player.mostRecentMatches.find(
+            entry => entry.date === matchKey && entry.type !== RecentEntryType.ManualEdit
+        );
+
+        if (existingEntry) {
+            existingEntry.diff = diff;
+            delete existingEntry.type;
+        } else {
+            player.mostRecentMatches.push({ date: matchKey, diff });
+        }
+
+        this.trimAndSortRecentMatches(player);
+    }
+
+    private removeRecentMatchEntry(player: Player, matchKey: string): boolean {
+        if (!player.mostRecentMatches?.length) {
+            return false;
+        }
+
+        const originalLength = player.mostRecentMatches.length;
+        player.mostRecentMatches = player.mostRecentMatches.filter(
+            entry => !(entry.date === matchKey && entry.type !== RecentEntryType.ManualEdit)
+        );
+
+        return player.mostRecentMatches.length !== originalLength;
+    }
+
+    private async updateRecentMatchEntriesForPlayersAsync(entries: Array<{ id: number, diff: number }>, matchKey: string): Promise<void> {
+        let hasChanges = false;
+
+        entries.forEach(entry => {
+            const playerToUpdate = this.getPlayerById(entry.id);
             if (!playerToUpdate) {
                 return;
             }
 
-            const existingEntry = playerToUpdate.mostRecentMatches?.find(x => x.date == matchKey);
-            if (existingEntry) {
-                // update or ignore?
-                // ignore 
-                console.log('existing entry', existingEntry);
+            this.upsertRecentMatchEntry(playerToUpdate, matchKey, entry.diff);
+            this.updateCachedPlayerById(entry.id, playerToUpdate);
+            hasChanges = true;
+        });
 
-            } else {
-                if (playerToUpdate.mostRecentMatches == null) {
-                    playerToUpdate.mostRecentMatches = [];
-                }
-                playerToUpdate.mostRecentMatches.push({ date: matchKey, diff: 0 });
+        if (hasChanges) {
+            await this.saveAllPlayersToFirebaseAsync();
+        }
+    }
 
-                this.trimAndSortRecentMatches(playerToUpdate);
+    public async removeRecentMatchFromParticipantsHistoryAsync(gameObj: CustomPrevGame, matchKey: string): Promise<void> {
+        const participantIds = [...new Set(gameObj.team1.concat(gameObj.team2).map(player => player.id))];
+        let hasChanges = false;
+
+        participantIds.forEach(id => {
+            const playerToUpdate = this.getPlayerById(id);
+            if (!playerToUpdate) {
+                return;
             }
 
-            // search for player by id
-            this.updateCachedPlayerById(playerToUpdate.id, playerToUpdate);
-            await this.saveAllPlayersToFirebaseAsync();
+            const removed = this.removeRecentMatchEntry(playerToUpdate, matchKey);
+            if (!removed) {
+                return;
+            }
+
+            this.updateCachedPlayerById(id, playerToUpdate);
+            hasChanges = true;
         });
+
+        if (hasChanges) {
+            await this.saveAllPlayersToFirebaseAsync();
+        }
     }
 
     private trimAndSortRecentMatches(player: Player) {
@@ -362,36 +414,11 @@ export class PlayersService implements OnDestroy {
 
     public async storeRecentMatchToParticipantsHistoryAsync(gameObj: CustomPrevGame, matchKey: string) {
 
-        if (gameObj && !gameObj.postResults && gameObj.appliedResults && gameObj.savedResult) {
+        if (gameObj && (!gameObj.postResults || gameObj.postResults.length === 0) && gameObj.appliedResults && gameObj.savedResult) {
             return this.tryToStoreRecentDrawInHistory(gameObj, matchKey);
         }
 
-        // Go through each player and add the results to a separate item.
-        gameObj.postResults?.forEach(async diffPair => {
-            let playerToUpdate = this.getPlayerById(diffPair.id);
-            if (!playerToUpdate) {
-                return;
-            }
-
-            const existingEntry = playerToUpdate.mostRecentMatches?.find(x => x.date == matchKey);
-            if (existingEntry) {
-                // update or ignore?
-                // ignore 
-                console.log('existing entry', existingEntry);
-
-            } else {
-                if (playerToUpdate.mostRecentMatches == null) {
-                    playerToUpdate.mostRecentMatches = [];
-                }
-                playerToUpdate.mostRecentMatches.push({ date: matchKey, diff: diffPair.diff });
-
-                this.trimAndSortRecentMatches(playerToUpdate);
-            }
-
-            // search for player by id
-            this.updateCachedPlayerById(diffPair.id, playerToUpdate);
-            await this.saveAllPlayersToFirebaseAsync();
-        });
+        await this.updateRecentMatchEntriesForPlayersAsync(gameObj.postResults ?? [], matchKey);
     }
 
     /**
