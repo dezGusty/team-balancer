@@ -62,3 +62,18 @@
   border-radius: 3px;
   cursor: pointer;
 }
+
+.match-rating-summary {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem 1rem;
+  margin: 0.5rem 0 1rem;
+  padding: 0.65rem 0.75rem;
+  background: var(--gus-secondary-grad, #333);
+  color: var(--gus-primary-text-color, #fff);
+}
+
+.match-rating-summary-item {
+  font-size: 0.9rem;
+  font-weight: 600;
+}

@@ -194,6 +194,24 @@ export class PrevMatchDetailComponent implements OnInit, OnDestroy {
     return player.rating.toFixed(3);
   }
 
+  getPlayerCountForGame(customGame: CustomPrevGame): number {
+    return customGame.team1.length + customGame.team2.length;
+  }
+
+  getAverageRatingForGame(customGame: CustomPrevGame): number {
+    const players = customGame.team1.concat(customGame.team2);
+    if (players.length === 0) {
+      return 0;
+    }
+
+    const totalRating = players.reduce((sum, player) => sum + player.rating, 0);
+    return totalRating / players.length;
+  }
+
+  getMeanRatingForGame(customGame: CustomPrevGame): number {
+    return this.getAverageRatingForGame(customGame);
+  }
+
   getPostMatchDiffForPlayer(player: Player): string {
     if (!this.customGame) {
       return '';

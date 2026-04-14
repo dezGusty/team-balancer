@@ -14,7 +14,12 @@ export interface AppSettings {
   defaultMatchSchedule: MatchDaySchedule[];
   showPlayerStatusIcons: boolean;
   randomizePlayerOrder: boolean;
+  recentMatchesToStore: number;
 }
+
+export const MIN_RECENT_MATCHES_TO_STORE = 4;
+export const MAX_RECENT_MATCHES_TO_STORE = 12;
+export const DEFAULT_RECENT_MATCHES_TO_STORE = 8;
 
 export const DEFAULT_APP_SETTINGS: AppSettings = {
   autoSave: true,
@@ -24,6 +29,7 @@ export const DEFAULT_APP_SETTINGS: AppSettings = {
   ],
   showPlayerStatusIcons: true,
   randomizePlayerOrder: false,
+  recentMatchesToStore: DEFAULT_RECENT_MATCHES_TO_STORE,
 };
 
 @Injectable({
@@ -33,7 +39,7 @@ export class SettingsService {
   private readonly firestore: Firestore = inject(Firestore);
 
   private readonly settings$ = docData(doc(this.firestore, 'settings/app')).pipe(
-    map(data => (data ? data as AppSettings : DEFAULT_APP_SETTINGS)),
+    map(data => this.normalizeSettings(data as Partial<AppSettings> | undefined)),
     catchError(() => of(DEFAULT_APP_SETTINGS)),
     tap(settings => console.log('[x] Loaded settings:', settings))
   );
@@ -44,17 +50,39 @@ export class SettingsService {
   readonly defaultMatchScheduleSig = computed(() => this.settingsSig().defaultMatchSchedule ?? []);
   readonly showPlayerStatusIconsSig = computed(() => this.settingsSig().showPlayerStatusIcons ?? true);
   readonly randomizePlayerOrderSig = computed(() => this.settingsSig().randomizePlayerOrder ?? false);
+  readonly recentMatchesToStoreSig = computed(() =>
+    this.clampRecentMatchesToStoreCount(this.settingsSig().recentMatchesToStore)
+  );
 
   async saveSettings(settings: AppSettings): Promise<void> {
-    await setDoc(doc(this.firestore, 'settings/app'), settings);
+    await setDoc(doc(this.firestore, 'settings/app'), this.normalizeSettings(settings));
   }
 
   public getMaxStoredRecentMatchesCount(): number {
-    return 10;
+    return this.recentMatchesToStoreSig();
   }
 
   public getPreferredPlayerCount(): number {
     return 12;
+  }
+
+  public clampRecentMatchesToStoreCount(value: number | null | undefined): number {
+    if (value == null || Number.isNaN(value)) {
+      return DEFAULT_RECENT_MATCHES_TO_STORE;
+    }
+
+    const rounded = Math.round(value);
+    return Math.min(MAX_RECENT_MATCHES_TO_STORE, Math.max(MIN_RECENT_MATCHES_TO_STORE, rounded));
+  }
+
+  private normalizeSettings(settings?: Partial<AppSettings>): AppSettings {
+    return {
+      autoSave: settings?.autoSave ?? DEFAULT_APP_SETTINGS.autoSave,
+      defaultMatchSchedule: settings?.defaultMatchSchedule ?? DEFAULT_APP_SETTINGS.defaultMatchSchedule,
+      showPlayerStatusIcons: settings?.showPlayerStatusIcons ?? DEFAULT_APP_SETTINGS.showPlayerStatusIcons,
+      randomizePlayerOrder: settings?.randomizePlayerOrder ?? DEFAULT_APP_SETTINGS.randomizePlayerOrder,
+      recentMatchesToStore: this.clampRecentMatchesToStoreCount(settings?.recentMatchesToStore),
+    };
   }
 
   constructor() { }

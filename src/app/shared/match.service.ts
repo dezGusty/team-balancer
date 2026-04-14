@@ -8,6 +8,7 @@ import { UserAuthService } from '../auth/user-auth.service';
 import { HttpErrorResponse } from '@angular/common/http';
 import { MatchStatus } from '../matchesnew/match-status';
 import { NotificationService } from '../utils/notification/notification.service';
+import { SettingsService } from './settings.service';
 
 @Injectable({
   providedIn: 'root'
@@ -18,11 +19,16 @@ export class MatchService {
 
   private recentMatchesChangeEvent = new BehaviorSubject<string[]>([]);
   private recentMatchNames: string[];
-  public maxNumberOfRecentMatches = 5;
 
   private recentMatchStatuses: Record<string, MatchStatus> = {};
 
-  constructor(private firestore: Firestore, private authSvc: UserAuthService, private notificationService: NotificationService, private injector: Injector) {
+  constructor(
+    private firestore: Firestore,
+    private authSvc: UserAuthService,
+    private notificationService: NotificationService,
+    private injector: Injector,
+    private settingsSvc: SettingsService
+  ) {
     this.recentMatchNames = [];
     if (!this.authSvc.isAuthenticated()) {
       console.log('[matches] waiting for login...');
@@ -168,25 +174,24 @@ export class MatchService {
      * @param matchName Match name to save into the 'recent' list.
      */
   public async saveMatchNameToRecentList(matchName: string) {
-    let newRecentMatches: string[] = [];
-    if (this.recentMatchNames) {
-      const index = this.recentMatchNames.findIndex((game) => game === matchName);
-      if (index !== -1) {
-        // Found.
-        return;
-      }
-
-      newRecentMatches = this.recentMatchNames.slice();
+    const newRecentMatches = this.recentMatchNames ? [...this.recentMatchNames] : [];
+    const existingIndex = newRecentMatches.findIndex((game) => game === matchName);
+    if (existingIndex === -1) {
+      newRecentMatches.push(matchName);
     }
 
-    newRecentMatches.push(matchName);
+    const maxRecentMatches = this.settingsSvc.getMaxStoredRecentMatchesCount();
+    const trimmedRecentMatches = newRecentMatches.slice(-maxRecentMatches);
+    const listChanged = trimmedRecentMatches.length !== this.recentMatchNames.length
+      || trimmedRecentMatches.some((item, index) => item !== this.recentMatchNames[index]);
 
-    if (newRecentMatches.length > this.maxNumberOfRecentMatches) {
-      newRecentMatches.splice(0, 1);
+    if (!listChanged) {
+      return;
     }
+
     const docName = '/matches/recent';
     const docRef = doc(this.firestore, docName);
-    const obj = { items: newRecentMatches };
+    const obj = { items: trimmedRecentMatches };
     await setDoc(docRef, obj, { merge: true });
   }
 

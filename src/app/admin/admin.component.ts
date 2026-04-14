@@ -1,7 +1,14 @@
-import { ChangeDetectionStrategy, Component, effect, inject, signal } from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, effect, inject, signal } from '@angular/core';
 
 import { FormsModule } from '@angular/forms';
-import { AppSettings, MatchDaySchedule, SettingsService } from '../shared/settings.service';
+import {
+  AppSettings,
+  DEFAULT_RECENT_MATCHES_TO_STORE,
+  MAX_RECENT_MATCHES_TO_STORE,
+  MIN_RECENT_MATCHES_TO_STORE,
+  MatchDaySchedule,
+  SettingsService
+} from '../shared/settings.service';
 import { NotificationService } from '../utils/notification/notification.service';
 
 @Component({
@@ -22,8 +29,24 @@ export class AdminComponent {
   showPlayerStatusIcons = signal<boolean>(true);
   randomizePlayerOrder = signal<boolean>(false);
   schedule = signal<MatchDaySchedule[]>([]);
+  recentMatchesToStore = signal<number | null>(DEFAULT_RECENT_MATCHES_TO_STORE);
   isSaving = signal<boolean>(false);
   savedSuccess = signal<boolean>(false);
+
+  readonly recentMatchesRangeText = `${MIN_RECENT_MATCHES_TO_STORE} to ${MAX_RECENT_MATCHES_TO_STORE}`;
+  readonly recentMatchesValidationMessage = computed(() => {
+    const value = this.recentMatchesToStore();
+    if (value == null || Number.isNaN(value)) {
+      return 'Recent matches to store must be a number.';
+    }
+    if (!Number.isInteger(value)) {
+      return 'Recent matches to store must be a whole number.';
+    }
+    if (value < MIN_RECENT_MATCHES_TO_STORE || value > MAX_RECENT_MATCHES_TO_STORE) {
+      return `Recent matches to store must be between ${MIN_RECENT_MATCHES_TO_STORE} and ${MAX_RECENT_MATCHES_TO_STORE}.`;
+    }
+    return '';
+  });
 
   constructor() {
     effect(() => {
@@ -32,7 +55,18 @@ export class AdminComponent {
       this.showPlayerStatusIcons.set(s.showPlayerStatusIcons ?? true);
       this.randomizePlayerOrder.set(s.randomizePlayerOrder ?? false);
       this.schedule.set((s.defaultMatchSchedule ?? []).map(e => ({ ...e })));
+      this.recentMatchesToStore.set(s.recentMatchesToStore ?? DEFAULT_RECENT_MATCHES_TO_STORE);
     }, { allowSignalWrites: true });
+  }
+
+  updateRecentMatchesToStore(value: number | string | null): void {
+    if (value === '' || value == null) {
+      this.recentMatchesToStore.set(null);
+      return;
+    }
+
+    const parsedValue = typeof value === 'number' ? value : Number(value);
+    this.recentMatchesToStore.set(Number.isNaN(parsedValue) ? null : parsedValue);
   }
 
   addScheduleEntry(): void {
@@ -56,6 +90,12 @@ export class AdminComponent {
   }
 
   async saveSettings(): Promise<void> {
+    const validationMessage = this.recentMatchesValidationMessage();
+    if (validationMessage) {
+      this.notifSvc.show(validationMessage);
+      return;
+    }
+
     this.isSaving.set(true);
     this.savedSuccess.set(false);
     const settings: AppSettings = {
@@ -63,6 +103,7 @@ export class AdminComponent {
       showPlayerStatusIcons: this.showPlayerStatusIcons(),
       randomizePlayerOrder: this.randomizePlayerOrder(),
       defaultMatchSchedule: this.schedule(),
+      recentMatchesToStore: this.recentMatchesToStore() ?? DEFAULT_RECENT_MATCHES_TO_STORE,
     };
     await this.settingsSvc.saveSettings(settings);
     this.isSaving.set(false);

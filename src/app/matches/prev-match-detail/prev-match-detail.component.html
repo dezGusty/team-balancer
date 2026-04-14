@@ -10,6 +10,14 @@
             Date 🗓️: {{this.id()}}
           </div>
 
+          <div class="col-12">
+            <div class="match-rating-summary gus-border">
+              <span class="match-rating-summary-item">Players 👥 {{ getPlayerCountForGame(selectedCustomGame) }}</span>
+              <span class="match-rating-summary-item">Average rating ⭐ {{ getAverageRatingForGame(selectedCustomGame) | number: '1.2-3' }}</span>
+              <span class="match-rating-summary-item">Mean rating 📈 {{ getMeanRatingForGame(selectedCustomGame) | number: '1.2-3' }}</span>
+            </div>
+          </div>
+
           <div class="col-6 border-right">
             Team one 1️⃣ {{ this.team1Sum() | number: '1.0-2'}}
 

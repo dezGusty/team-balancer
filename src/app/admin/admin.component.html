@@ -37,6 +37,24 @@
   </section>
 
   <section class="settings-section">
+    <h3>Recent Matches To Store</h3>
+    <input class="gus-input gus-border gus-hoverable settings-number-input"
+           type="number"
+           [ngModel]="recentMatchesToStore()"
+           (ngModelChange)="updateRecentMatchesToStore($event)"
+           [min]="4"
+           [max]="12"
+           step="1" />
+    <p class="settings-hint">
+      Controls how many recent matches are kept in the recent match list and in each player's recent match history.
+      Allowed range: {{ recentMatchesRangeText }}. Default: 8.
+    </p>
+    @if (recentMatchesValidationMessage()) {
+      <p class="settings-error">{{ recentMatchesValidationMessage() }}</p>
+    }
+  </section>
+
+  <section class="settings-section">
     <h3>Default Match Schedule</h3>
     <p class="settings-hint">
       These day/time pairs are used when cycling through options with the
@@ -76,7 +94,7 @@
     <button class="gus-button gus-border gus-hoverable"
             type="button"
             (click)="saveSettings()"
-            [disabled]="isSaving()">
+          [disabled]="isSaving() || !!recentMatchesValidationMessage()">
       {{ isSaving() ? 'Saving…' : 'Save Settings' }}
     </button>
     @if (savedSuccess()) {

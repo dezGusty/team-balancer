@@ -744,7 +744,7 @@ a.player-card-grad:hover {
 
 .gus-sidenav-container {
   background-color: var(--gus-primary-bck-color);
-  padding: 10rem 2rem;
+  padding: 6rem 2rem;
   height: 100%;
   width: 420px;
 }

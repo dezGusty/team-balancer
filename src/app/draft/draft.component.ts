@@ -23,13 +23,13 @@ export class PlayerDraftAction {
 }
 
 @Component({
-    selector: 'app-draft-new',
+  selector: 'app-draft',
     changeDetection: ChangeDetectionStrategy.OnPush,
-    templateUrl: './draft-new.component.html',
-    styleUrl: './draft-new.component.css',
+  templateUrl: './draft.component.html',
+  styleUrl: './draft.component.css',
     imports: [CommonModule, FormsModule, PlayerCardComponent]
 })
-export class DraftNewComponent {
+export class DraftComponent {
 
   public customClipboardText = '';
 
