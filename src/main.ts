@@ -14,7 +14,6 @@ import { AuthGuard } from './app/auth/auth-guard.service';
 import { OrganizerGuard } from './app/auth/organizer-guard.service';
 import { SigninComponent } from './app/auth/signin/signin.component';
 import { CustomgameComponent } from './app/customgame/customgame.component';
-import { DraftComponent } from './app/draft/draft.component';
 import { PrevMatchDetailComponent } from './app/matches/prev-match-detail/prev-match-detail.component';
 import { RecentMatchesComponent } from './app/matches/previous-matches/recent-matches.component';
 import { PlayerDetailsComponent } from './app/players/player-details/player-details.component';
@@ -60,7 +59,6 @@ const appRoutes: Routes = [
       { path: ':id', component: MatchDetailsComponent }
     ]
   },
-  { path: 'draft', canActivate: [AuthGuard], component: DraftComponent },
   { path: 'draftnew', canActivate: [AuthGuard], component: DraftNewComponent },
   {
     path: 'custom', canActivate: [AuthGuard, OrganizerGuard], component: CustomgameComponent
