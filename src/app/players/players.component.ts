@@ -120,7 +120,6 @@ export class PlayersComponent {
   }
 
   onPlayerSelected(player: Player) {
-    console.log('*** on player selected', player);
     this.selectedPlayerSig.set(player);
     this.isSideNavOpenSig.set(true);
   }

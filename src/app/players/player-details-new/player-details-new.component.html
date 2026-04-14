@@ -25,11 +25,29 @@
 
     <label class="grid-2-col-item-narrow" for="player-rating">Rating:</label>
     <input class="grid-2-col-item-narrow gus-input gus-border gus-hoverable" name="player-rating"
-      [(ngModel)]="player.rating" type="number" placeholder="Rating">
+      [(ngModel)]="player.rating" (ngModelChange)="onRatingChanged()" type="number" placeholder="Rating">
 
     <label class="grid-2-col-item-narrow" for="player-stars">Stars ⭐:</label>
     <input class="grid-2-col-item-narrow gus-input gus-border gus-hoverable" name="player-stars"
       [(ngModel)]="player.stars" type="number" placeholder="Stars">
+
+    <section class="grid-2-col-item-wide rating-history-panel gus-border">
+      <div class="rating-history-header">
+        <div>
+          <h3 class="rating-history-title">Recent Rating Trend</h3>
+          <p class="rating-history-caption">{{ getRecentHistoryCaption() }}</p>
+        </div>
+        <div class="rating-history-current">Current {{ getCurrentRatingText() }}</div>
+      </div>
+
+      @if (hasRecentRatingHistory()) {
+      <div class="rating-history-chart-wrapper">
+        <canvas #ratingHistoryChart aria-label="Chart showing the player's recent rating evolution"></canvas>
+      </div>
+      } @else {
+      <p class="rating-history-empty">Play and save a few matches to populate the chart.</p>
+      }
+    </section>
 
     @if (canEditPlayers()) {
     <button class="grid-2-col-item-wide gus-button gus-border gus-hoverable" (click)="onSaveBtnClick()">Save ☁️</button>
