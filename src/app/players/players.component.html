@@ -67,12 +67,9 @@
 <div id="player-details-sidenav" class="gus-sidenav"
   [ngClass]="isSideNavOpenSig() ? 'gus-sidenav-shown' : 'gus-sidenav-hidden'"
   (click)="onSideNavOuterContainerClicked()">
-  <!-- <button type="button" (click)="onCloseSideNavBtnClick()">Close</button> -->
   <app-player-details-new (onCloseBtnClicked)="onCloseSideNavBtnClick()"
     (onMovePlayerToArchiveClicked)="onMovePlayerToArchive(selectedPlayerSig())"
     (onMovePlayerToActiveClicked)="onMovePlayerToActive(selectedPlayerSig())"
   [player]="selectedPlayerSig()"></app-player-details-new>
-  <!-- details -->
-  <!-- <app-summary (onCloseBtnClicked)="onCloseSummaryClicked()" [availableEvents]="activeGameEventTitlesSig()"></app-summary> -->
 
 </div>
