@@ -5,8 +5,8 @@ import { Player, filterPlayerArray } from '../shared/player.model';
 import { PlayersService } from '../shared/players.service';
 import { ActivatedRoute } from '@angular/router';
 import { DraftService } from '../shared/draft.service';
-import { ToastService } from '../shared/toasts-service';
 import { PlayerChangeInfo } from '../shared/player-change-info';
+import { NotificationService } from '../utils/notification/notification.service';
 
 import { MatchCombosComponent } from '../matches/match-combos/match-combos.component';
 import { CommonModule } from '@angular/common';
@@ -52,7 +52,7 @@ export class CustomgameComponent implements OnInit, OnDestroy {
   constructor(
     private playersSvc: PlayersService,
     private draftSvc: DraftService,
-    private toastSvc: ToastService,
+    private notificationService: NotificationService,
     private route: ActivatedRoute,
     private ngZone: NgZone) {
     this.matchData.availablePlayersPool = this.playersSvc.getPlayers();
@@ -72,7 +72,7 @@ export class CustomgameComponent implements OnInit, OnDestroy {
           }
           this.reloadInternal();
 
-          this.toastSvc.show('Reloaded all players from service. \n'
+          this.notificationService.show('Reloaded all players from service. \n'
             + playerChangeInfo.messageType + '\n'
             + playerChangeInfo.messagePayload);
 

@@ -27,6 +27,7 @@ export class AdminComponent {
 
   autoSave = signal<boolean>(true);
   showPlayerStatusIcons = signal<boolean>(true);
+  autoNavigateToTransferredDraft = signal<boolean>(true);
   randomizePlayerOrder = signal<boolean>(false);
   schedule = signal<MatchDaySchedule[]>([]);
   recentMatchesToStore = signal<number | null>(DEFAULT_RECENT_MATCHES_TO_STORE);
@@ -53,6 +54,7 @@ export class AdminComponent {
       const s = this.settingsSvc.settingsSig();
       this.autoSave.set(s.autoSave ?? true);
       this.showPlayerStatusIcons.set(s.showPlayerStatusIcons ?? true);
+      this.autoNavigateToTransferredDraft.set(s.autoNavigateToTransferredDraft ?? true);
       this.randomizePlayerOrder.set(s.randomizePlayerOrder ?? false);
       this.schedule.set((s.defaultMatchSchedule ?? []).map(e => ({ ...e })));
       this.recentMatchesToStore.set(s.recentMatchesToStore ?? DEFAULT_RECENT_MATCHES_TO_STORE);
@@ -101,6 +103,7 @@ export class AdminComponent {
     const settings: AppSettings = {
       autoSave: this.autoSave(),
       showPlayerStatusIcons: this.showPlayerStatusIcons(),
+      autoNavigateToTransferredDraft: this.autoNavigateToTransferredDraft(),
       randomizePlayerOrder: this.randomizePlayerOrder(),
       defaultMatchSchedule: this.schedule(),
       recentMatchesToStore: this.recentMatchesToStore() ?? DEFAULT_RECENT_MATCHES_TO_STORE,

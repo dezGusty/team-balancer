@@ -13,6 +13,7 @@ export interface AppSettings {
   autoSave: boolean;
   defaultMatchSchedule: MatchDaySchedule[];
   showPlayerStatusIcons: boolean;
+  autoNavigateToTransferredDraft: boolean;
   randomizePlayerOrder: boolean;
   recentMatchesToStore: number;
 }
@@ -28,6 +29,7 @@ export const DEFAULT_APP_SETTINGS: AppSettings = {
     { dayOfWeek: 4, time: '20:00' },  // Thursday
   ],
   showPlayerStatusIcons: true,
+  autoNavigateToTransferredDraft: true,
   randomizePlayerOrder: false,
   recentMatchesToStore: DEFAULT_RECENT_MATCHES_TO_STORE,
 };
@@ -49,6 +51,7 @@ export class SettingsService {
   readonly autoSaveSig = computed(() => this.settingsSig().autoSave ?? false);
   readonly defaultMatchScheduleSig = computed(() => this.settingsSig().defaultMatchSchedule ?? []);
   readonly showPlayerStatusIconsSig = computed(() => this.settingsSig().showPlayerStatusIcons ?? true);
+  readonly autoNavigateToTransferredDraftSig = computed(() => this.settingsSig().autoNavigateToTransferredDraft ?? true);
   readonly randomizePlayerOrderSig = computed(() => this.settingsSig().randomizePlayerOrder ?? false);
   readonly recentMatchesToStoreSig = computed(() =>
     this.clampRecentMatchesToStoreCount(this.settingsSig().recentMatchesToStore)
@@ -80,6 +83,7 @@ export class SettingsService {
       autoSave: settings?.autoSave ?? DEFAULT_APP_SETTINGS.autoSave,
       defaultMatchSchedule: settings?.defaultMatchSchedule ?? DEFAULT_APP_SETTINGS.defaultMatchSchedule,
       showPlayerStatusIcons: settings?.showPlayerStatusIcons ?? DEFAULT_APP_SETTINGS.showPlayerStatusIcons,
+      autoNavigateToTransferredDraft: settings?.autoNavigateToTransferredDraft ?? DEFAULT_APP_SETTINGS.autoNavigateToTransferredDraft,
       randomizePlayerOrder: settings?.randomizePlayerOrder ?? DEFAULT_APP_SETTINGS.randomizePlayerOrder,
       recentMatchesToStore: this.clampRecentMatchesToStoreCount(settings?.recentMatchesToStore),
     };

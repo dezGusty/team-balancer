@@ -3,13 +3,12 @@ import { toSignal } from '@angular/core/rxjs-interop';
 import { Player, filterPlayerArray, getDisplayName } from '../shared/player.model';
 import { PlayersService } from '../shared/players.service';
 import { Router, ActivatedRoute, RouterModule } from '@angular/router';
-import { ToastService } from '../shared/toasts-service';
 import { UserAuthService } from '../auth/user-auth.service';
 import { CommonModule } from '@angular/common';
-import { ToastsContainer } from '../toast/toast-container.component';
 import { SmallLoadingSpinnerComponent } from '../ui/small-loading-spinner/small-loading-spinner.component';
 import { FormsModule } from '@angular/forms';
 import { PlayerDetailsNewComponent } from "./player-details-new/player-details-new.component";
+import { NotificationService } from '../utils/notification/notification.service';
 
 @Component({
   selector: 'app-players',
@@ -20,7 +19,6 @@ import { PlayerDetailsNewComponent } from "./player-details-new/player-details-n
   imports: [
     CommonModule,
     RouterModule,
-    ToastsContainer,
     SmallLoadingSpinnerComponent,
     FormsModule,
     PlayerDetailsNewComponent
@@ -29,7 +27,7 @@ import { PlayerDetailsNewComponent } from "./player-details-new/player-details-n
 export class PlayersComponent {
   private readonly playersSvc = inject(PlayersService);
   private readonly authSvc = inject(UserAuthService);
-  private readonly toastSvc = inject(ToastService);
+  private readonly notificationSvc = inject(NotificationService);
   private readonly router = inject(Router);
   private readonly route = inject(ActivatedRoute);
 
@@ -100,7 +98,7 @@ export class PlayersComponent {
         return;
       }
       this.showLoadingSig.set(false);
-      this.toastSvc.show('Reloaded all players from service. \n'
+      this.notificationSvc.show('Reloaded all players from service. \n'
         + info.messageType + '\n' + info.messagePayload);
     });
   }
@@ -116,7 +114,7 @@ export class PlayersComponent {
   }
 
   onLoadArchiveChange(val: boolean): void {
-    this.toastSvc.show(val ? 'Including archived players' : 'Excluding archived players');
+    this.notificationSvc.show(val ? 'Including archived players' : 'Excluding archived players');
   }
 
   onPlayerSelected(player: Player) {

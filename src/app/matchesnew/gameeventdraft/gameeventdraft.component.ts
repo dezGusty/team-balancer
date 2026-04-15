@@ -1,8 +1,10 @@
 import { ChangeDetectionStrategy, Component, ElementRef, HostListener, ViewChild, inject, model, signal } from '@angular/core';
+import { Router } from '@angular/router';
 import { GameEventsService } from '../history/data-access/game-events.service';
 import { AsyncPipe } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { PlayersService } from 'src/app/shared/players.service';
+import { SettingsService } from 'src/app/shared/settings.service';
 import { BehaviorSubject, Observable, Subject, combineLatest, interval, map, mergeMap, repeat, skipUntil, startWith, switchMap, takeUntil, tap, withLatestFrom } from 'rxjs';
 import { Player, filterPlayersArrayByContent, getDisplayName } from 'src/app/shared/player.model';
 import { GameEventData, PlayerWithId, PlayerWithIdAndStars } from '../history/data-access/create-game-request.model';
@@ -26,6 +28,8 @@ export class GameeventdraftComponent {
   protected searchedNameSg = model("");
   private gameEventsService: GameEventsService = inject(GameEventsService);
   private playersService: PlayersService = inject(PlayersService);
+  private settingsService: SettingsService = inject(SettingsService);
+  private router: Router = inject(Router);
   public selectedMatchContent = this.gameEventsService.selectedMatchContent;
 
   private readonly randomizeMouseDownSubject$: Subject<void> = new Subject<void>();
@@ -227,8 +231,12 @@ export class GameeventdraftComponent {
     this.gameEventsService.saveRaffle();
   }
 
-  transferToDraft() {
-    this.gameEventsService.transferToCurrentDraft();
+  async transferToDraft() {
+    const wasTransferred = await this.gameEventsService.transferToCurrentDraft();
+
+    if (wasTransferred && this.settingsService.autoNavigateToTransferredDraftSig()) {
+      await this.router.navigate(['/nextdraft']);
+    }
   }
 
   getDisplayInfo(player: Player): string {

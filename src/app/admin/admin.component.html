@@ -25,6 +25,17 @@
   </section>
 
   <section class="settings-section">
+    <h3>Draft Transfer Navigation</h3>
+    <label class="toggle-label">
+      <input type="checkbox" [ngModel]="autoNavigateToTransferredDraft()" (ngModelChange)="autoNavigateToTransferredDraft.set($event)" />
+      <span>Automatically go to the new draft when a game is transferred</span>
+    </label>
+    <p class="settings-hint">
+      When enabled, using <strong>xfer</strong> in Games saves the draft and then opens the Next Draft page.
+    </p>
+  </section>
+
+  <section class="settings-section">
     <h3>Clipboard Player Order</h3>
     <label class="toggle-label">
       <input type="checkbox" [ngModel]="randomizePlayerOrder()" (ngModelChange)="randomizePlayerOrder.set($event)" />

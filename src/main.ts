@@ -23,7 +23,6 @@ import { PlayersComponent } from './app/players/players.component';
 import { AppStorage } from './app/shared/app-storage';
 import { MatchService } from './app/shared/match.service';
 import { PlayersService } from './app/shared/players.service';
-import { ToastService } from './app/shared/toasts-service';
 import { environment } from './environments/environment';
 import { PrivacyComponent } from './app/auth/privacy/privacy.component';
 import { GameEventsComponent } from './app/matchesnew/history/game-events.component';
@@ -79,12 +78,10 @@ bootstrapApplication(AppComponent, {
     provideFirestore(() => {
       return getFirestore();
     }),
-    // importProvidersFrom(NgcCookieConsentModule.forRoot(cookieConfig)),
     PlayersService,
     MatchService,
     CurrentPlayersService,
     UserAuthService,
-    ToastService,
     NotificationService,
     DraftSelectionService,
     LoadingFlagService,

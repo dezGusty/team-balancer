@@ -8,7 +8,7 @@ import { CommonModule } from '@angular/common';
     changeDetection: ChangeDetectionStrategy.OnPush,
     template: `
 @for (notification of this.notifications$ | async; track $index) {
-<div class='notification' [ngClass]='this.cssClassForIndex($index)'>
+<div class='notification gus-border' [ngClass]='this.cssClassForIndex($index)'>
   {{notification.message}}
 </div>
 }

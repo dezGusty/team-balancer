@@ -2,7 +2,7 @@ import { HttpErrorResponse } from '@angular/common/http';
 import { Injectable, Injector, OnDestroy, runInInjectionContext } from '@angular/core';
 import { Firestore, docData, setDoc } from '@angular/fire/firestore';
 import { doc } from 'firebase/firestore';
-import { BehaviorSubject, Observable, Subject, Subscription, catchError, filter, finalize, map, merge, mergeAll, of, shareReplay, switchMap, take, tap, throwError, withLatestFrom } from 'rxjs';
+import { BehaviorSubject, Observable, Subject, Subscription, catchError, filter, finalize, firstValueFrom, map, merge, mergeAll, of, shareReplay, switchMap, take, tap, throwError, withLatestFrom } from 'rxjs';
 import { MatchDateTitle } from '../match-date-title';
 import { LoadingFlagService } from 'src/app/utils/loading-flag.service';
 import { CreateGameRequest, GameEventDBData, GameEventData, GameNamesList, PlayerWithId, PlayerWithIdAndStars, createGameEventDataFromRequest, getEventNameForRequest } from './create-game-request.model';
@@ -440,41 +440,6 @@ export class GameEventsService implements OnDestroy {
     })
   );
 
-  readonly saveToDraftSubject$ = new Subject<void>();
-  readonly saveToDraft$ = this.saveToDraftSubject$.asObservable().pipe(
-    withLatestFrom(this.selectedMatchContent$),
-    map(([_, data]) => {
-      return data.registeredPlayers;
-    }),
-    withLatestFrom(this.players$),
-    switchMap(([selectedPlayersIds, allPlayers]) => {
-      let selectedPlayers = allPlayers.filter(player => {
-        let foundIdx = selectedPlayersIds.findIndex(sp => sp.id === player.id);
-        return foundIdx != -1;
-      });
-
-      // re-arrange the selectedPlayers array to match the order of the selectedPlayersIds array.
-      selectedPlayers = selectedPlayers.sort((a, b) => {
-        let aIdx = selectedPlayersIds.findIndex(sp => sp.id === a.id);
-        let bIdx = selectedPlayersIds.findIndex(sp => sp.id === b.id);
-        return aIdx - bIdx;
-      });
-      
-      console.log("*** selectedPlayers", selectedPlayers);
-
-      this.updatedFireData$.next(true);
-      this.loadingFlagService.setLoadingFlag(true);
-      return setDoc(doc(this.firestore, '/drafts/next'), { players: selectedPlayers }, { merge: true });
-    }),
-    tap(_ => this.notificationService.show("Draft saved")),
-    catchError((err) => {
-      this.notificationService.show("Data save encountered an issue.");
-      console.warn("save raffle data encountered issue");
-      return of();
-    }),
-    finalize(() => this.loadingFlagService.setLoadingFlag(false))
-  );
-
 
   public getMatchData = (match: MatchDateTitle): Observable<GameEventDBData> => {
     return runInInjectionContext(this.injector, () => docData(doc(this.firestore, `games/${match.title}`))).pipe(
@@ -530,8 +495,34 @@ export class GameEventsService implements OnDestroy {
     this.saveRaffleDataSubject$.next();
   }
 
-  transferToCurrentDraft() {
-    this.saveToDraftSubject$.next();
+  async transferToCurrentDraft(): Promise<boolean> {
+    const selectedMatchContent = await firstValueFrom(this.selectedMatchContent$.pipe(take(1)));
+    const allPlayers = await firstValueFrom(this.players$.pipe(take(1)));
+
+    const selectedPlayersById = new Map(
+      allPlayers.map(player => [player.id, player])
+    );
+
+    const selectedPlayers = selectedMatchContent.registeredPlayers
+      .map(selectedPlayer => selectedPlayersById.get(selectedPlayer.id))
+      .filter((player): player is Player => player !== undefined);
+
+    console.log('*** selectedPlayers', selectedPlayers);
+
+    this.updatedFireData$.next(true);
+    this.loadingFlagService.setLoadingFlag(true);
+
+    try {
+      await setDoc(doc(this.firestore, '/drafts/next'), { players: selectedPlayers }, { merge: true });
+      this.notificationService.show('Draft saved');
+      return true;
+    } catch (err) {
+      this.notificationService.show('Data save encountered an issue.');
+      console.warn('save draft encountered issue', err);
+      return false;
+    } finally {
+      this.loadingFlagService.setLoadingFlag(false);
+    }
   }
 
 
@@ -563,7 +554,6 @@ export class GameEventsService implements OnDestroy {
     this.subscriptions.push(this.randomizeOrder$.subscribe());
     this.subscriptions.push(this.triggerSaveData$.subscribe());
     this.subscriptions.push(this.saveRaffleData$.subscribe());
-    this.subscriptions.push(this.saveToDraft$.subscribe());
     this.subscriptions.push(this.reapplyOrderAccordingToReserveStatus$.subscribe());
     this.subscriptions.push(this.toggleInactive$.subscribe());
 
