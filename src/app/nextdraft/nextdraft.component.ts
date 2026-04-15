@@ -25,11 +25,11 @@ export class PlayerDraftAction {
 @Component({
   selector: 'app-draft',
     changeDetection: ChangeDetectionStrategy.OnPush,
-  templateUrl: './draft.component.html',
-  styleUrl: './draft.component.css',
+  templateUrl: './nextdraft.component.html',
+  styleUrl: './nextdraft.component.css',
     imports: [CommonModule, FormsModule, PlayerCardComponent]
 })
-export class DraftComponent {
+export class NextDraftComponent {
 
   public customClipboardText = '';
 
@@ -78,8 +78,10 @@ export class DraftComponent {
 
   selectedPlayersData$ = combineLatest([this.playersData$, this.nextMatchDraft$]).pipe(
     map(([playersData, draftData]) => {
-      const selectedPlayers = playersData.players.filter(
-        draftPl => draftData.players.findIndex(p => draftPl.id == p.id) != -1);
+      const playersById = new Map(playersData.players.map(player => [player.id, player]));
+      const selectedPlayers = draftData.players
+        .map(draftPlayer => playersById.get(draftPlayer.id))
+        .filter((player): player is Player => player !== undefined);
       return { players: selectedPlayers, label: playersData.label, version: playersData.version };
     }),
     tap(x => console.log("*** selected players data", x)),

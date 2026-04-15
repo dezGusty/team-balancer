@@ -1,5 +1,5 @@
 import { Player } from 'src/app/shared/player.model';
-import { PlayersExport } from 'src/app/draft/export-players';
+import { PlayersExport } from 'src/app/nextdraft/export-players';
 import { MatchCombosComponent } from './match-combos.component';
 import playersInput from './players-input-12.json';
 

@@ -14,15 +14,15 @@
       <div class="nav-links" (click)="this.navLinkClick($event)">
         @if(authenticatedAsUserSig()){
         <a class="nav-link" routerLink="/games">Games (planned)</a>
-        <a class="nav-link" routerLink="/draftnew">Next Draft</a>
+        <a class="nav-link" routerLink="/nextdraft">Next Draft</a>
+        @if(authenticatedAsOrganizerSig()){
+        <a class="nav-link" routerLink="/custom">Custom Game</a>
+        }
         <a class="nav-link" routerLink="/recent">Recent Matches</a>
         <a class="nav-link" routerLink="/players">Players</a>
         }
         @if(authenticatedAsAdminSig()){
         <a class="nav-link" routerLink="/admin">Admin</a>
-        }
-        @if(authenticatedAsOrganizerSig()){
-        <a class="nav-link" routerLink="/custom">Custom Game</a>
         }
         <a class="nav-link" routerLink="/about">About</a>
         @if(this.authenticatedSig()) {
