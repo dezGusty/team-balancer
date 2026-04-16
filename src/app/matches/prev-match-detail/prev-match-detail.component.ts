@@ -208,8 +208,33 @@ export class PrevMatchDetailComponent implements OnInit, OnDestroy {
     return totalRating / players.length;
   }
 
-  getMeanRatingForGame(customGame: CustomPrevGame): number {
-    return this.getAverageRatingForGame(customGame);
+  getMeanRatingsForGame(customGame: CustomPrevGame): number[] {
+    const ratings = customGame.team1
+      .concat(customGame.team2)
+      .map(player => player.rating)
+      .sort((ratingA, ratingB) => ratingA - ratingB);
+
+    if (ratings.length === 0) {
+      return [];
+    }
+
+    const lowerMiddleIndex = Math.floor((ratings.length - 1) / 2);
+    const upperMiddleIndex = Math.ceil((ratings.length - 1) / 2);
+
+    if (lowerMiddleIndex === upperMiddleIndex) {
+      return [ratings[lowerMiddleIndex]];
+    }
+
+    return [ratings[lowerMiddleIndex], ratings[upperMiddleIndex]];
+  }
+
+  getMeanRatingsDisplayForGame(customGame: CustomPrevGame): string {
+    const meanRatings = this.getMeanRatingsForGame(customGame);
+    if (meanRatings.length === 0) {
+      return '0.000';
+    }
+
+    return meanRatings.map(rating => rating.toFixed(3)).join(' ');
   }
 
   getPostMatchDiffForPlayer(player: Player): string {
