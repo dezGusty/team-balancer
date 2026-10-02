@@ -41,3 +41,11 @@ Still, such a scenario would allow the user access to the routes which should be
 The application is meant to be used mobile-first, so any UI components should be designed with mobile devices in mind, while still being responsive and functional on larger screens.
 
 The app uses plain CSS for styling. Most of the styles are defined in the `styles.css` file, but component-specific styles can be defined in the respective component's CSS file.
+
+## Agents
+
+The repository includes an Angular update agent for safely upgrading dependencies.
+
+- Location: `.agents/agents/angular-update/`
+- Trigger: `/angular-update` (opencode CLI)
+- Function: Upgrades `@angular/*`, `@angular/fire`, and `firebase` dependencies, fetches migration guides, runs updates, verifies with `ng build`, and reports results for manual review.

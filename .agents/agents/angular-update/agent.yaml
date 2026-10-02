@@ -1,0 +1,4 @@
+name: "angular-update"
+description: "Upgrade Angular and Firebase dependencies safely, handling breaking changes and migration steps."
+trigger: "/angular-update"
+model: default
