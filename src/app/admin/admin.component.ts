@@ -10,6 +10,8 @@ import {
   SettingsService
 } from '../shared/settings.service';
 import { NotificationService } from '../utils/notification/notification.service';
+import { EmailNotificationService } from '../shared/email-notification.service';
+import { UserAuthService } from '../auth/user-auth.service';
 
 @Component({
   selector: 'app-admin',
@@ -22,6 +24,8 @@ import { NotificationService } from '../utils/notification/notification.service'
 export class AdminComponent {
   private readonly settingsSvc = inject(SettingsService);
   private readonly notifSvc = inject(NotificationService);
+  private readonly emailSvc = inject(EmailNotificationService);
+  private readonly authSvc = inject(UserAuthService);
 
   readonly DAY_NAMES = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
 
@@ -33,6 +37,14 @@ export class AdminComponent {
   recentMatchesToStore = signal<number | null>(DEFAULT_RECENT_MATCHES_TO_STORE);
   isSaving = signal<boolean>(false);
   savedSuccess = signal<boolean>(false);
+
+  // Email & Mailing List settings
+  emailDistributionList = signal<string[]>([]);
+  mailerScriptUrl = signal<string>('');
+  mailerSecretToken = signal<string>('');
+  newEmailInput = signal<string>('');
+  testEmailRecipient = signal<string>('');
+  isSendingTest = signal<boolean>(false);
 
   readonly recentMatchesRangeText = `${MIN_RECENT_MATCHES_TO_STORE} to ${MAX_RECENT_MATCHES_TO_STORE}`;
   readonly recentMatchesValidationMessage = computed(() => {
@@ -58,6 +70,16 @@ export class AdminComponent {
       this.randomizePlayerOrder.set(s.randomizePlayerOrder ?? false);
       this.schedule.set((s.defaultMatchSchedule ?? []).map(e => ({ ...e })));
       this.recentMatchesToStore.set(s.recentMatchesToStore ?? DEFAULT_RECENT_MATCHES_TO_STORE);
+      this.emailDistributionList.set([...(s.emailDistributionList ?? [])]);
+      this.mailerScriptUrl.set(s.mailerScriptUrl ?? '');
+      this.mailerSecretToken.set(s.mailerSecretToken ?? '');
+    }, { allowSignalWrites: true });
+
+    effect(() => {
+      const currentUser = this.authSvc.loggedInUserSig();
+      if (currentUser?.email && !this.testEmailRecipient()) {
+        this.testEmailRecipient.set(currentUser.email);
+      }
     }, { allowSignalWrites: true });
   }
 
@@ -91,6 +113,63 @@ export class AdminComponent {
     );
   }
 
+  addEmailsFromInput(): void {
+    const raw = this.newEmailInput().trim();
+    if (!raw) return;
+
+    // Split by commas, semicolons, whitespace, or newlines
+    const parsed = raw
+      .split(/[\s,;]+/)
+      .map(e => e.trim().toLowerCase())
+      .filter(e => e.length > 0 && e.includes('@'));
+
+    if (parsed.length === 0) {
+      this.notifSvc.show('No valid email addresses found.');
+      return;
+    }
+
+    this.emailDistributionList.update(current => {
+      const set = new Set([...current, ...parsed]);
+      return Array.from(set).sort();
+    });
+
+    this.newEmailInput.set('');
+    this.notifSvc.show(`Added ${parsed.length} email(s) to the distribution list.`);
+  }
+
+  removeEmail(email: string): void {
+    this.emailDistributionList.update(current => current.filter(e => e !== email));
+  }
+
+  clearAllEmails(): void {
+    if (confirm('Clear all email addresses from the distribution list?')) {
+      this.emailDistributionList.set([]);
+    }
+  }
+
+  async sendTestEmail(): Promise<void> {
+    const target = this.testEmailRecipient().trim();
+    if (!target) {
+      this.notifSvc.show('Please provide a recipient for the test email.');
+      return;
+    }
+
+    // Temporarily save current mailer settings if modified
+    this.isSendingTest.set(true);
+    try {
+      const res = await this.emailSvc.sendEmailUpdate({
+        subject: '⚽ Team Balancer: Test Email',
+        plainText: `This is a test email sent from Team Balancer to verify your Google Apps Script integration.\r\nTimestamp: ${new Date().toLocaleString()}`,
+        recipients: [target]
+      });
+      if (res.success) {
+        this.notifSvc.show('Test email dispatched successfully.');
+      }
+    } finally {
+      this.isSendingTest.set(false);
+    }
+  }
+
   async saveSettings(): Promise<void> {
     const validationMessage = this.recentMatchesValidationMessage();
     if (validationMessage) {
@@ -107,6 +186,9 @@ export class AdminComponent {
       randomizePlayerOrder: this.randomizePlayerOrder(),
       defaultMatchSchedule: this.schedule(),
       recentMatchesToStore: this.recentMatchesToStore() ?? DEFAULT_RECENT_MATCHES_TO_STORE,
+      emailDistributionList: this.emailDistributionList(),
+      mailerScriptUrl: this.mailerScriptUrl().trim(),
+      mailerSecretToken: this.mailerSecretToken().trim(),
     };
     await this.settingsSvc.saveSettings(settings);
     this.isSaving.set(false);

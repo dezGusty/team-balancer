@@ -54,3 +54,4 @@ src/favicon.svg
 firebase-debug.log
 ui-debug.log
 .firebase/*.cache
+src/environments/mailer-config.ts

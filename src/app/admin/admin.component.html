@@ -101,6 +101,99 @@
     </button>
   </section>
 
+  <section class="settings-section">
+    <h3>Google Apps Script Mailer Configuration</h3>
+    <p class="settings-hint">
+      Connects the application to your personal Google Apps Script Web App endpoint.
+      Emails will be sent from your Gmail account, appear in your "Sent" folder, and list all recipients in the <em>To:</em> field.
+      Consult <code>doc/email-setup.md</code> for setup instructions.
+    </p>
+
+    <div class="form-group mb-3">
+      <label for="mailerUrl"><strong>Web App URL:</strong></label>
+      <input id="mailerUrl"
+             class="gus-input gus-border gus-hoverable settings-text-input"
+             type="url"
+             placeholder="https://script.google.com/macros/s/.../exec"
+             [ngModel]="mailerScriptUrl()"
+             (ngModelChange)="mailerScriptUrl.set($event)" />
+    </div>
+
+    <div class="form-group mb-3">
+      <label for="mailerSecret"><strong>Secret Token:</strong></label>
+      <input id="mailerSecret"
+             class="gus-input gus-border gus-hoverable settings-text-input"
+             type="password"
+             placeholder="Your shared secret key"
+             [ngModel]="mailerSecretToken()"
+             (ngModelChange)="mailerSecretToken.set($event)" />
+      <p class="settings-hint">
+        Matches the <code>expectedSecret</code> in your Google Apps Script to prevent unauthorized calls.
+      </p>
+    </div>
+
+    <div class="test-email-box gus-border">
+      <h4>Send Test Email</h4>
+      <p class="settings-hint">Verify your Google Apps Script connection before sending match updates.</p>
+      <div class="test-email-row">
+        <input class="gus-input gus-border gus-hoverable"
+               type="email"
+               placeholder="test-recipient@example.com"
+               [ngModel]="testEmailRecipient()"
+               (ngModelChange)="testEmailRecipient.set($event)" />
+        <button class="gus-button gus-border gus-hoverable"
+                type="button"
+                [disabled]="isSendingTest() || !mailerScriptUrl()"
+                (click)="sendTestEmail()">
+          {{ isSendingTest() ? 'Sending…' : '✉️ Send Test' }}
+        </button>
+      </div>
+    </div>
+  </section>
+
+  <section class="settings-section">
+    <h3>Email Distribution List ({{ emailDistributionList().length }} recipients)</h3>
+    <p class="settings-hint">
+      Stored in Firestore. Recipients will receive match and draft updates and can see each other's addresses in the email header.
+    </p>
+
+    <div class="email-input-box">
+      <textarea class="gus-input gus-border gus-hoverable email-textarea"
+                rows="3"
+                placeholder="Paste email addresses separated by commas, spaces, or newlines..."
+                [ngModel]="newEmailInput()"
+                (ngModelChange)="newEmailInput.set($event)"></textarea>
+      <div class="email-input-actions">
+        <button class="gus-button gus-border gus-hoverable"
+                type="button"
+                (click)="addEmailsFromInput()">
+          + Add to List
+        </button>
+        @if (emailDistributionList().length > 0) {
+          <button class="gus-button gus-border gus-hoverable btn-danger-soft"
+                  type="button"
+                  (click)="clearAllEmails()">
+            Clear List
+          </button>
+        }
+      </div>
+    </div>
+
+    <div class="email-chips-container">
+      @for (email of emailDistributionList(); track email) {
+        <span class="email-chip gus-border">
+          {{ email }}
+          <button class="email-chip-remove"
+                  type="button"
+                  (click)="removeEmail(email)"
+                  title="Remove email">×</button>
+        </span>
+      } @empty {
+        <div class="schedule-empty">No email addresses in the distribution list. Add some above.</div>
+      }
+    </div>
+  </section>
+
   <div class="settings-actions">
     <button class="gus-button gus-border gus-hoverable"
             type="button"

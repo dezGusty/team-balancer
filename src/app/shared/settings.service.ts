@@ -16,6 +16,9 @@ export interface AppSettings {
   autoNavigateToTransferredDraft: boolean;
   randomizePlayerOrder: boolean;
   recentMatchesToStore: number;
+  emailDistributionList?: string[];
+  mailerScriptUrl?: string;
+  mailerSecretToken?: string;
 }
 
 export const MIN_RECENT_MATCHES_TO_STORE = 4;
@@ -32,6 +35,9 @@ export const DEFAULT_APP_SETTINGS: AppSettings = {
   autoNavigateToTransferredDraft: true,
   randomizePlayerOrder: false,
   recentMatchesToStore: DEFAULT_RECENT_MATCHES_TO_STORE,
+  emailDistributionList: [],
+  mailerScriptUrl: '',
+  mailerSecretToken: '',
 };
 
 @Injectable({
@@ -56,6 +62,9 @@ export class SettingsService {
   readonly recentMatchesToStoreSig = computed(() =>
     this.clampRecentMatchesToStoreCount(this.settingsSig().recentMatchesToStore)
   );
+  readonly emailDistributionListSig = computed(() => this.settingsSig().emailDistributionList ?? []);
+  readonly mailerScriptUrlSig = computed(() => this.settingsSig().mailerScriptUrl ?? '');
+  readonly mailerSecretTokenSig = computed(() => this.settingsSig().mailerSecretToken ?? '');
 
   async saveSettings(settings: AppSettings): Promise<void> {
     await setDoc(doc(this.firestore, 'settings/app'), this.normalizeSettings(settings));
@@ -86,6 +95,9 @@ export class SettingsService {
       autoNavigateToTransferredDraft: settings?.autoNavigateToTransferredDraft ?? DEFAULT_APP_SETTINGS.autoNavigateToTransferredDraft,
       randomizePlayerOrder: settings?.randomizePlayerOrder ?? DEFAULT_APP_SETTINGS.randomizePlayerOrder,
       recentMatchesToStore: this.clampRecentMatchesToStoreCount(settings?.recentMatchesToStore),
+      emailDistributionList: Array.isArray(settings?.emailDistributionList) ? settings!.emailDistributionList : [],
+      mailerScriptUrl: settings?.mailerScriptUrl ?? '',
+      mailerSecretToken: settings?.mailerSecretToken ?? '',
     };
   }
 

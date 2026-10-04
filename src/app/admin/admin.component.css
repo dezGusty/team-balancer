@@ -64,6 +64,90 @@
   width: min(100%, 12rem);
 }
 
+.settings-text-input {
+  width: 100%;
+}
+
+.test-email-box {
+  padding: 0.75rem;
+  border-radius: 4px;
+  background: rgba(0, 0, 0, 0.05);
+  margin-top: 1rem;
+}
+
+.test-email-box h4 {
+  margin: 0 0 0.25rem 0;
+  font-size: 1rem;
+}
+
+.test-email-row {
+  display: flex;
+  gap: 0.5rem;
+  align-items: center;
+  flex-wrap: wrap;
+}
+
+.test-email-row input {
+  flex: 1;
+  min-width: 200px;
+}
+
+.email-input-box {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  margin-bottom: 1rem;
+}
+
+.email-textarea {
+  width: 100%;
+  resize: vertical;
+}
+
+.email-input-actions {
+  display: flex;
+  gap: 0.5rem;
+}
+
+.email-chips-container {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  max-height: 250px;
+  overflow-y: auto;
+  padding: 0.5rem;
+  background: rgba(0, 0, 0, 0.02);
+  border-radius: 4px;
+}
+
+.email-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.25rem;
+  padding: 0.2rem 0.5rem;
+  border-radius: 12px;
+  font-size: 0.85rem;
+  background-color: var(--standard-secondary-bg-color, #f0f0f0);
+}
+
+.email-chip-remove {
+  background: none;
+  border: none;
+  font-size: 1rem;
+  cursor: pointer;
+  line-height: 1;
+  padding: 0 0.2rem;
+  color: #888;
+}
+
+.email-chip-remove:hover {
+  color: #d73a49;
+}
+
+.btn-danger-soft {
+  color: #d73a49;
+}
+
 .settings-error {
   margin-top: 0.5rem;
   color: #d73a49;

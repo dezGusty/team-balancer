@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, EventEmitter, Output, computed, inject, input } from '@angular/core';
+import { ChangeDetectionStrategy, Component, EventEmitter, Output, computed, inject, input, signal } from '@angular/core';
 import { MatchDateTitle } from '../history/match-date-title';
 import { GameEventsService } from '../history/data-access/game-events.service';
 import { toObservable, toSignal } from '@angular/core/rxjs-interop';
@@ -10,6 +10,8 @@ import { PlayersService } from 'src/app/shared/players.service';
 import { Player, getDisplayName } from 'src/app/shared/player.model';
 import { NotificationService } from 'src/app/utils/notification/notification.service';
 import { SettingsService } from 'src/app/shared/settings.service';
+import { EmailNotificationService } from 'src/app/shared/email-notification.service';
+import { generateEmailSubjectForMatches } from './summary-email-utils';
 
 export interface TransposeData {
   header: string[];
@@ -30,6 +32,9 @@ export class SummaryComponent {
   private notificationService = inject(NotificationService);
   private playersService: PlayersService = inject(PlayersService);
   private settingsService = inject(SettingsService);
+  private emailService = inject(EmailNotificationService);
+
+  readonly isSendingAutoMail = signal<boolean>(false);
 
   onSideNavInnerContainerClicked(event: Event) {
     event.stopPropagation();
@@ -183,7 +188,7 @@ export class SummaryComponent {
     });
   }
 
-  onCopyAsTextClick() {
+  public generateSummaryText(): string {
     const localMatches = this.activeMatchesSig().filter(m => !m.inactive);
     let result = '';
     localMatches.forEach(match => {
@@ -198,6 +203,15 @@ export class SummaryComponent {
       });
       result += '\n';
     });
+    return result;
+  }
+
+  public getEmailSubject(): string {
+    return generateEmailSubjectForMatches(this.activeMatchesSig());
+  }
+
+  onCopyAsTextClick() {
+    const result = this.generateSummaryText();
 
     navigator.clipboard.writeText(result)
     .then(() => {
@@ -206,5 +220,53 @@ export class SummaryComponent {
     .catch(err => {
       this.notificationService.show('Failed to copy table to clipboard');
     });
+  }
+
+  async onAutoMailClick() {
+    if (!this.emailService.isConfigured()) {
+      this.notificationService.show('Mailer is not configured. Please set the Web App URL in Admin settings.');
+      return;
+    }
+
+    const recipients = this.emailService.getDistributionList();
+    if (!recipients || recipients.length === 0) {
+      this.notificationService.show('No recipients found in the email distribution list. Please add them in Admin settings.');
+      return;
+    }
+
+    const localMatches = this.activeMatchesSig().filter(m => !m.inactive);
+    if (localMatches.length === 0) {
+      this.notificationService.show('No active matches found to send.');
+      return;
+    }
+
+    const subject = this.getEmailSubject();
+    const confirmed = confirm(`Send auto-mail to ${recipients.length} recipient(s)?\n\nSubject: ${subject}`);
+    if (!confirmed) {
+      return;
+    }
+
+    this.isSendingAutoMail.set(true);
+    try {
+      const body = this.generateSummaryText();
+      await this.emailService.sendEmailUpdate({
+        subject,
+        plainText: body
+      });
+    } finally {
+      this.isSendingAutoMail.set(false);
+    }
+  }
+
+  onSendEmailClientClick() {
+    const recipients = this.emailService.getDistributionList();
+    const subject = this.getEmailSubject();
+    const body = this.generateSummaryText();
+
+    const toParam = (recipients && recipients.length > 0) ? recipients.join(',') : '';
+    const mailtoUrl = `mailto:${toParam}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
+
+    this.notificationService.show('Opening default email client...');
+    window.location.href = mailtoUrl;
   }
 }
