@@ -63,7 +63,7 @@ describe('summary-email-utils', () => {
       ];
 
       const subject = generateEmailSubjectForMatches(matches);
-      expect(subject).toBe('[fotbal] ⚽  M,J oct 06,08- 8, 5');
+      expect(subject).toBe('[fotbal] ⚽ M,J oct 06,08- 8, 5');
     });
 
     it('should generate subject for 2 events spanning two months', () => {

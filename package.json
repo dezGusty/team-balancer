@@ -1,7 +1,7 @@
 {
   "name": "team-balancer",
-  "version": "0.9.27",
-  "releaseDate": "2026-04-15",
+  "version": "0.10.2",
+  "releaseDate": "2026-10-04",
   "scripts": {
     "ng": "ng",
     "start": "npm run icon && ng serve",
@@ -18,7 +18,7 @@
     "@angular/common": "^21.2.8",
     "@angular/compiler": "^21.2.8",
     "@angular/core": "^21.2.8",
-    "@angular/fire": "^21.0.0-rc.0",
+    "@angular/fire": "^21.0.0-rc.1",
     "@angular/forms": "^21.2.8",
     "@angular/localize": "^21.2.8",
     "@angular/platform-browser": "^21.2.8",
