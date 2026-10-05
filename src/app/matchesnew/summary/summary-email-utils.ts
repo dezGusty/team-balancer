@@ -66,8 +66,24 @@ export function formatEventsDatePart(dates: { month: number; day: number }[]): s
 }
 
 /**
+ * Formats the player count for a match, distinguishing any reserves with a '+' sign.
+ * E.g.
+ * - 8 players, 0 reserves: "8"
+ * - 8 players (7 regular, 1 reserve): "7+1"
+ * - 9 players (7 regular, 2 reserves): "7+2"
+ * - 3 players (0 regular, 3 reserves): "0+3"
+ */
+export function formatPlayerCount(players?: { reserve?: boolean }[]): string {
+  const list = players ?? [];
+  const reserveCount = list.filter(p => Boolean(p.reserve)).length;
+  const regularCount = list.length - reserveCount;
+  return reserveCount > 0 ? `${regularCount}+${reserveCount}` : `${regularCount}`;
+}
+
+/**
  * Generates the email subject for a list of active matches.
- * Format: [fotbal] M,J oct 06,08- 8, 5
+ * Format: [fotbal] ⚽ M,J oct 06,08- 8, 5
+ * With reserves: [fotbal] ⚽ M,J oct 06,08- 7+1, 5
  */
 export function generateEmailSubjectForMatches(matches: GameEventData[]): string {
   const localMatches = matches.filter(m => !m.inactive);
@@ -81,7 +97,7 @@ export function generateEmailSubjectForMatches(matches: GameEventData[]): string
       match: m,
       comp,
       initial: ROMANIAN_DAY_INITIALS[comp.dayOfWeek] ?? '',
-      playerCount: m.registeredPlayers?.length ?? 0
+      playerCount: formatPlayerCount(m.registeredPlayers)
     };
   });
 

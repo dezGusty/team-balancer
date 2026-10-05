@@ -1,9 +1,9 @@
-import { formatEventsDatePart, generateEmailSubjectForMatches, parseDateComponents } from './summary-email-utils';
+import { formatEventsDatePart, formatPlayerCount, generateEmailSubjectForMatches, parseDateComponents } from './summary-email-utils';
 import { GameEventData } from '../history/data-access/create-game-request.model';
 import { MatchStatus } from '../match-status';
 
 describe('summary-email-utils', () => {
-  function createMockMatch(date: string, playerCount: number, inactive = false): GameEventData {
+  function createMockMatch(date: string, playerCount: number, inactive = false, reserveCount = 0): GameEventData {
     return {
       appliedRandomization: false,
       matchDate: date,
@@ -15,7 +15,7 @@ describe('summary-email-utils', () => {
         id: i + 1,
         name: `Player ${i + 1}`,
         stars: 0,
-        reserve: false
+        reserve: i >= (playerCount - reserveCount)
       }))
     };
   }
@@ -54,6 +54,30 @@ describe('summary-email-utils', () => {
     });
   });
 
+  describe('formatPlayerCount', () => {
+    it('should return 0 when players array is undefined or empty', () => {
+      expect(formatPlayerCount(undefined)).toBe('0');
+      expect(formatPlayerCount([])).toBe('0');
+    });
+
+    it('should return plain count when there are no reserves', () => {
+      expect(formatPlayerCount([{ reserve: false }, { reserve: false }])).toBe('2');
+    });
+
+    it('should distinguish reserves with + sign', () => {
+      expect(formatPlayerCount([{ reserve: false }, { reserve: true }])).toBe('1+1');
+      expect(formatPlayerCount([
+        { reserve: false }, { reserve: false }, { reserve: false },
+        { reserve: false }, { reserve: false }, { reserve: false },
+        { reserve: false }, { reserve: true }
+      ])).toBe('7+1');
+    });
+
+    it('should handle all players being reserves', () => {
+      expect(formatPlayerCount([{ reserve: true }, { reserve: true }, { reserve: true }])).toBe('0+3');
+    });
+  });
+
   describe('generateEmailSubjectForMatches', () => {
     it('should generate subject for 2 events in the same month (Tuesday, Thursday)', () => {
       // 2026-10-06 is Tuesday (M), 2026-10-08 is Thursday (J)
@@ -64,6 +88,36 @@ describe('summary-email-utils', () => {
 
       const subject = generateEmailSubjectForMatches(matches);
       expect(subject).toBe('[fotbal] ⚽ M,J oct 06,08- 8, 5');
+    });
+
+    it('should distinguish reserves when 1 player on first event is reserve', () => {
+      const matches = [
+        createMockMatch('2026-10-06', 8, false, 1),
+        createMockMatch('2026-10-08', 5, false, 0)
+      ];
+
+      const subject = generateEmailSubjectForMatches(matches);
+      expect(subject).toBe('[fotbal] ⚽ M,J oct 06,08- 7+1, 5');
+    });
+
+    it('should distinguish reserves when multiple events have reserves', () => {
+      const matches = [
+        createMockMatch('2026-10-06', 9, false, 2),
+        createMockMatch('2026-10-08', 5, false, 1)
+      ];
+
+      const subject = generateEmailSubjectForMatches(matches);
+      expect(subject).toBe('[fotbal] ⚽ M,J oct 06,08- 7+2, 4+1');
+    });
+
+    it('should format single event with only reserves', () => {
+      // 2026-10-08 is Thursday (J)
+      const matches = [
+        createMockMatch('2026-10-08', 3, false, 3)
+      ];
+
+      const subject = generateEmailSubjectForMatches(matches);
+      expect(subject).toBe('[fotbal] ⚽ J oct 08- 0+3');
     });
 
     it('should generate subject for 2 events spanning two months', () => {
