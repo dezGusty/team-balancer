@@ -1,4 +1,4 @@
-import { Component, OnInit, Input } from '@angular/core';
+import { Component, OnInit, Input, ChangeDetectionStrategy } from '@angular/core';
 import { Player } from './../../shared/player.model';
 import { FormsModule, NgForm } from '@angular/forms';
 import { ActivatedRoute, Params, Router } from '@angular/router';
@@ -9,6 +9,7 @@ import { PlayersService } from '../../shared/players.service';
     imports: [FormsModule],
     selector: 'app-player-edit',
     styleUrls: ['./player-edit.component.css'],
+    changeDetection: ChangeDetectionStrategy.Eager,
     templateUrl: './player-edit.component.html'
 })
 export class PlayerEditComponent implements OnInit {

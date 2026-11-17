@@ -98,26 +98,62 @@ export class GameEventsComponent {
     return `${year}-${textMonth}-${textDay}`;
   }
 
+  private parseYYYYMMDD(dateStr: string): Date {
+    const [year, month, day] = dateStr.split('-').map(Number);
+    return new Date(year, month - 1, day);
+  }
+
   selectNextGameDay() {
     const evt: Action<CreateGameRequest> = this.addEvent();
-    const startFrom = evt.matchDate ? this.getFollowingDay(new Date(evt.matchDate)) : new Date();
+    const hasCurrentDate = Boolean(evt.matchDate);
+    const startFrom = hasCurrentDate ? this.parseYYYYMMDD(evt.matchDate) : new Date();
     const schedule = this.settingsService.defaultMatchScheduleSig();
+    const existingGames = this.gameEventTitlesSig();
 
     if (schedule.length === 0) {
       // Fallback: use hardcoded Tuesday/Thursday when no schedule is configured
-      const nextDate = this.getNextTuesdayOrThursday(startFrom);
-      this.addEvent.set({ ...evt, matchDate: this.getDateAsYYYYMMDD(nextDate) });
+      const fallbackStart = hasCurrentDate ? this.getFollowingDay(startFrom) : startFrom;
+      let candidate = this.getNextTuesdayOrThursday(fallbackStart);
+      for (let i = 0; i < 104; i++) {
+        const dateStr = this.getDateAsYYYYMMDD(candidate);
+        const hasGameOnDate = existingGames.some(
+          g => `${g.year}-${g.month}-${g.day}` === dateStr
+        );
+        if (!hasGameOnDate) {
+          this.addEvent.set({ ...evt, matchDate: dateStr });
+          return;
+        }
+        candidate = this.getNextTuesdayOrThursday(this.getFollowingDay(candidate));
+      }
       return;
     }
 
-    // Scan forward up to 7 days to find the nearest day matching a schedule entry
-    for (let daysAhead = 0; daysAhead <= 7; daysAhead++) {
+    const existingTitles = new Set(existingGames.map(g => g.title));
+    const maxScanDays = 365;
+
+    // Scan forward to find the nearest scheduled date/time combo without an existing game
+    for (let daysAhead = 0; daysAhead <= maxScanDays; daysAhead++) {
+      if (daysAhead === 0 && hasCurrentDate && !evt.suffix) {
+        continue;
+      }
+
       const candidate = new Date(startFrom);
       candidate.setDate(startFrom.getDate() + daysAhead);
-      const match = schedule.find(e => e.dayOfWeek === candidate.getDay());
-      if (match) {
-        this.addEvent.set({ ...evt, matchDate: this.getDateAsYYYYMMDD(candidate), suffix: match.time });
-        return;
+      const dateStr = this.getDateAsYYYYMMDD(candidate);
+
+      const dayMatches = schedule
+        .filter(e => e.dayOfWeek === candidate.getDay())
+        .sort((a, b) => a.time.localeCompare(b.time));
+
+      for (const match of dayMatches) {
+        if (daysAhead === 0 && hasCurrentDate && evt.suffix && match.time <= evt.suffix) {
+          continue;
+        }
+        const candidateName = getEventNameForDateAndSuffix(dateStr, match.time);
+        if (!existingTitles.has(candidateName)) {
+          this.addEvent.set({ ...evt, matchDate: dateStr, suffix: match.time });
+          return;
+        }
       }
     }
   }

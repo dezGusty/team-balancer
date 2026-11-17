@@ -6,7 +6,7 @@ import { NotificationService } from '../utils/notification/notification.service'
 import { CurrentPlayersService } from './data-access/current-players.service';
 import { PlayerCardComponent } from "../player-card/player-card.component";
 import { Player } from '../shared/player.model';
-import { BehaviorSubject, Subject, combineLatest, firstValueFrom, map, shareReplay, tap, withLatestFrom } from 'rxjs';
+import { BehaviorSubject, Subject, combineLatest, firstValueFrom, map, scan, shareReplay, startWith, switchMap, tap, withLatestFrom } from 'rxjs';
 import { exportPlayersToJsonFile } from './export-players';
 import { Router } from '@angular/router';
 import { DraftService } from '../shared/draft.service';
@@ -33,28 +33,36 @@ export class NextDraftComponent {
 
   public customClipboardText = '';
 
-  // TODO: combine with add player / remove player, remove all
-  actionSubject$ = new BehaviorSubject<PlayerDraftAction>({ action: DraftAction.None, player: null! });
+  actionSubject$ = new Subject<PlayerDraftAction>();
   action$ = this.actionSubject$.asObservable().pipe(
     tap(x => console.log("*** action", x)),
-    shareReplay(1)
   );
 
-  nextMatchDraft$ = combineLatest([this.draftService.nextMatchDraft$, this.action$]).pipe(
-    map(([draftData, action]) => {
-      switch (action.action) {
-        case DraftAction.AddPlayer:
-          draftData.players.push(action.player);
-          break;
-        case DraftAction.RemovePlayer:
-          draftData.players = draftData.players.filter(p => p.id !== action.player.id);
-          break;
-        case DraftAction.RemoveAllPlayers:
-          draftData.players = [];
-          break;
-      }
-      return draftData;
-    }),
+  nextMatchDraft$ = this.draftService.nextMatchDraft$.pipe(
+    switchMap(initialDraft =>
+      this.action$.pipe(
+        startWith({ action: DraftAction.None, player: null! }),
+        scan((draftData, action) => {
+          switch (action.action) {
+            case DraftAction.AddPlayer:
+              if (draftData.players.some(p => p.id === action.player.id)) {
+                return draftData;
+              }
+              return { ...draftData, players: [...draftData.players, action.player] };
+            case DraftAction.RemovePlayer:
+              return {
+                ...draftData,
+                players: draftData.players.filter(p => p.id !== action.player.id),
+              };
+            case DraftAction.RemoveAllPlayers:
+              return { ...draftData, players: [] };
+            default:
+              return draftData;
+          }
+        }, { ...initialDraft, players: [...(initialDraft?.players ?? [])] })
+      )
+    ),
+    shareReplay(1)
   );
 
   filterByContentSubject$ = new BehaviorSubject<string>('');

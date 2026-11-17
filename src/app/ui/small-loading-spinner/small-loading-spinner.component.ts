@@ -1,10 +1,11 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ChangeDetectionStrategy } from '@angular/core';
 
 @Component({
     imports: [],
     selector: 'app-small-loading-spinner',
     standalone: true,
     styleUrls: ['./small-loading-spinner.component.css'],
+    changeDetection: ChangeDetectionStrategy.Eager,
     template: `<div class="spinner">
   <div class="rect1"></div>
   <div class="rect2"></div>

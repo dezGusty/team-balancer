@@ -10,7 +10,7 @@
         {{ player?.name }}
       </div>
       <div class="player-card-rating">
-        {{ player?.rating | number:'1.1-2' }}
+        {{ $safeNavigationMigration(player?.rating) | number:'1.1-2' }}
       </div>
       <div class="player-card-content f-row">
         @for (recentRating of this.getRecentMatches(); track recentRating) {

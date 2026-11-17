@@ -1,4 +1,4 @@
-import { Component, NgZone, OnInit, OnDestroy, Input } from '@angular/core';
+import { Component, NgZone, OnInit, OnDestroy, Input, ChangeDetectionStrategy } from '@angular/core';
 import { Subscription, Subject } from 'rxjs';
 import { Match } from '../shared/match.model';
 import { Player, filterPlayerArray } from '../shared/player.model';
@@ -26,6 +26,7 @@ import { PlayerFilterPipe } from '../matches/player-filter.pipe';
 ],
     selector: 'app-customgame',
     styleUrl: './customgame.component.css',
+    changeDetection: ChangeDetectionStrategy.Eager,
     templateUrl: './customgame.component.html'
 })
 export class CustomgameComponent implements OnInit, OnDestroy {

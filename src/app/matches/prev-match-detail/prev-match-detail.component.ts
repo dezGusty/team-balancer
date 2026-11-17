@@ -1,4 +1,4 @@
-import { Component, OnInit, OnDestroy, input, signal, model } from '@angular/core';
+import { Component, OnInit, OnDestroy, input, signal, model, ChangeDetectionStrategy } from '@angular/core';
 import { Player, getDisplayName } from '../../shared/player.model';
 import { ActivatedRoute, Params } from '@angular/router';
 import { CustomPrevGame } from '../../shared/custom-prev-game.model';
@@ -17,6 +17,7 @@ import { MatchStatus } from 'src/app/matchesnew/match-status';
   standalone: true,
   imports: [CommonModule, FormsModule, SmallLoadingSpinnerComponent],
   styleUrls: ['./prev-match-detail.component.css'],
+  changeDetection: ChangeDetectionStrategy.Eager,
   templateUrl: './prev-match-detail.component.html'
 })
 export class PrevMatchDetailComponent implements OnInit, OnDestroy {

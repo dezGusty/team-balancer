@@ -100,6 +100,11 @@ export class SummaryComponent {
   protected readonly activeMatchesSig = toSignal(this.activeMatchPlus$, { initialValue: [] });
 
 
+  private isReservePlayer(player: { reserve?: boolean }, index: number): boolean {
+    const preferredCount = this.settingsService.getPreferredPlayerCount?.() ?? 12;
+    return Boolean(player.reserve) || index >= preferredCount;
+  }
+
   // Active matches sig will contain the list of active matches.
   // We need to transpose the data to be able to display it in the table.
   public readonly transposedSignal = computed(() => {
@@ -112,9 +117,9 @@ export class SummaryComponent {
       let cells: string[] = [];
       const sysNewline = '\n';
       header.push('📅' + match.matchDate + ' ' + sysNewline + '🕒' + match.label);
-      match.registeredPlayers.forEach(player => {
+      match.registeredPlayers.forEach((player, index) => {
         cells.push(
-          player.name + ' ' + (player.stars > 0 ? '⭐' : '') + (player.reserve ? ' (rez.)' : '')
+          player.name + ' ' + (player.stars > 0 ? '⭐' : '') + (this.isReservePlayer(player, index) ? ' (rez.)' : '')
         );
       });
       lines.push(cells);
@@ -198,7 +203,7 @@ export class SummaryComponent {
         result += '' + (index + 1) + '. '
           + player.name + ' '
           + (showIcons && player.stars > 0 ? '⭐' : '')
-          + (player.reserve ? ' (rez.)' : '')
+          + (this.isReservePlayer(player, index) ? ' (rez.)' : '')
           + '\n';
       });
       result += '\n';

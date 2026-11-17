@@ -1,5 +1,5 @@
 
-import { Component, OnInit, OnDestroy } from '@angular/core';
+import { Component, OnInit, OnDestroy, ChangeDetectionStrategy } from '@angular/core';
 import { RouterModule } from '@angular/router';
 // import { NgcCookieConsentService, NgcInitializingEvent, NgcStatusChangeEvent, NgcNoCookieLawEvent } from 'ngx-cookieconsent';
 import { Subscription } from 'rxjs';
@@ -16,6 +16,7 @@ import { NotificationComponent } from './utils/notification/notification.compone
 ],
     selector: 'app-root',
     styles: [''],
+    changeDetection: ChangeDetectionStrategy.Eager,
     template: `
 <div class="main-layout">
   <app-header />

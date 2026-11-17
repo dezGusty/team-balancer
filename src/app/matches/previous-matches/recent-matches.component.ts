@@ -1,5 +1,5 @@
 
-import { Component, OnInit, OnDestroy, signal } from '@angular/core';
+import { Component, OnInit, OnDestroy, signal, ChangeDetectionStrategy } from '@angular/core';
 import { RouterModule } from '@angular/router';
 import { EMPTY, Observable, Subscription } from 'rxjs';
 import { Match } from 'src/app/shared/match.model';
@@ -10,6 +10,7 @@ import { MatchStatus } from 'src/app/matchesnew/match-status';
     imports: [RouterModule],
     selector: 'app-recent-matches',
     styleUrls: ['./recent-matches.component.css'],
+    changeDetection: ChangeDetectionStrategy.Eager,
     templateUrl: './recent-matches.component.html'
 })
 export class RecentMatchesComponent implements OnInit, OnDestroy {

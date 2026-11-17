@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ChangeDetectionStrategy } from '@angular/core';
 import { Router, RouterModule } from '@angular/router';
 import { UserAuthService } from '../user-auth.service';
 
@@ -7,6 +7,7 @@ import { UserAuthService } from '../user-auth.service';
   standalone: true,
   selector: 'app-signin',
   styles: [''],
+  changeDetection: ChangeDetectionStrategy.Eager,
   templateUrl: './signin.component.html'
 })
 export class SigninComponent implements OnInit {

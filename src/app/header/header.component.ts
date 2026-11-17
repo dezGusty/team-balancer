@@ -9,6 +9,7 @@ import { UserAuthService } from '../auth/user-auth.service';
     selector: 'app-header',
     templateUrl: './header.component.html',
     styleUrls: ['./header.component.css'],
+    changeDetection: ChangeDetectionStrategy.Eager,
     imports: [
     RouterModule,
     FormsModule,

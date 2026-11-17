@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ChangeDetectionStrategy } from '@angular/core';
 import { ActivatedRoute, Params, Router } from '@angular/router';
 
 import { Player, getDisplayName } from '../../shared/player.model';
@@ -11,6 +11,7 @@ import { UserAuthService } from 'src/app/auth/user-auth.service';
     standalone: true,
     imports: [],
     styles: [''],
+    changeDetection: ChangeDetectionStrategy.Eager,
     templateUrl: './player-details.component.html'
 })
 export class PlayerDetailsComponent implements OnInit {

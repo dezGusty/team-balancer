@@ -1,6 +1,6 @@
 
 import { CommonModule } from '@angular/common';
-import { AfterViewInit, Component, ElementRef, EventEmitter, OnDestroy, Output, ViewChild, effect, inject, model } from '@angular/core';
+import { AfterViewInit, Component, ElementRef, EventEmitter, OnDestroy, Output, ViewChild, effect, inject, model, ChangeDetectionStrategy } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { Chart, ChartConfiguration, TooltipItem, registerables } from 'chart.js';
 import { UserAuthService } from 'src/app/auth/user-auth.service';
@@ -22,6 +22,7 @@ interface RatingHistoryPoint {
     standalone: true,
     imports: [CommonModule, FormsModule],
     templateUrl: './player-details-new.component.html',
+    changeDetection: ChangeDetectionStrategy.Eager,
     styleUrl: './player-details-new.component.css'
 })
 export class PlayerDetailsNewComponent implements AfterViewInit, OnDestroy {

@@ -1,4 +1,4 @@
-import { Component, OnInit, Input, OnDestroy } from '@angular/core';
+import { Component, OnInit, Input, OnDestroy, ChangeDetectionStrategy } from '@angular/core';
 import { Player } from 'src/app/shared/player.model';
 import { EMPTY, Observable, Subscription } from 'rxjs';
 import { CustomGame } from 'src/app/shared/custom-game.model';
@@ -14,6 +14,7 @@ import { MatchStorageComponent } from '../match-storage/match-storage.component'
 ],
     selector: 'app-match-combos',
     styleUrls: ['./match-combos.component.css'],
+    changeDetection: ChangeDetectionStrategy.Eager,
     templateUrl: './match-combos.component.html'
 })
 export class MatchCombosComponent implements OnInit, OnDestroy {
